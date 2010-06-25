@@ -19,6 +19,10 @@ proc take {varname} {
 # # ## ### ##### ######## #############
 ## Implementation.
 
+catch {
+    critcl::cheaders -g
+    critcl::debug memory symbols
+}
 critcl::config tk 1
 critcl::ccode {
     #include <math.h>

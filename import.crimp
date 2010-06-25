@@ -1,0 +1,26 @@
+import
+char* photo
+
+Tk_PhotoHandle handle = Tk_FindPhoto(interp, photo);
+if (handle == NULL) {
+    Tcl_ResetResult(interp);
+    Tcl_AppendResult(interp, "image \"", photo, "\" doesn't exist");
+    return TCL_ERROR;
+}
+
+Tk_PhotoImageBlock pib;
+Tk_PhotoGetImage(handle, &pib);
+if (pib.pixelSize != 4 || pib.pitch != 4 * pib.width || pib.offset[0] != 0
+ || pib.offset[1] != 1 || pib.offset[2] != 2 || pib.offset[3] != 3) {
+    Tcl_SetResult(interp, "unsupported image format", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+Tcl_Obj *list[] = {
+    Tcl_NewIntObj(pib.width), Tcl_NewIntObj(pib.height),
+    Tcl_NewByteArrayObj(pib.pixelPtr, 4 * pib.width * pib.height)
+};
+Tcl_SetObjResult(interp, Tcl_NewListObj(3, list));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */

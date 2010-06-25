@@ -1,0 +1,30 @@
+export
+char* photo Tcl_Obj* imageObj
+
+Tk_PhotoHandle handle = Tk_FindPhoto(interp, photo);
+if (handle == NULL) {
+    Tcl_ResetResult(interp);
+    Tcl_AppendResult(interp, "image \"", photo, "\" doesn't exist");
+    return TCL_ERROR;
+}
+
+Tk_PhotoImageBlock pib;
+if (decodeImageObj(interp, imageObj, &pib.width, &pib.height,
+                   &pib.pixelPtr) != TCL_OK) {
+    return TCL_ERROR;
+}
+pib.pixelSize = 4;
+pib.pitch = 4 * pib.width;
+pib.offset[0] = 0;
+pib.offset[1] = 1;
+pib.offset[2] = 2;
+pib.offset[3] = 3;
+
+if (Tk_PhotoSetSize(interp, handle, pib.width, pib.height) != TCL_OK
+ || Tk_PhotoPutBlock(interp, handle, &pib, 0, 0, pib.width, pib.height,
+                     TK_PHOTO_COMPOSITE_SET) != TCL_OK) {
+    return TCL_ERROR;
+}
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */

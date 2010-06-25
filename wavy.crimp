@@ -1,0 +1,44 @@
+wavy
+Tcl_Obj* imageObj float offset float adj1 float adj2
+
+int w, h;
+unsigned char *pixels;
+if (decodeImageObj(interp, imageObj, &w, &h, &pixels) != TCL_OK) {
+    return TCL_ERROR;
+}
+
+Tcl_Obj *dataObj = Tcl_NewByteArrayObj(NULL, 4 * w * h);
+unsigned char (*in)[h][w][4] = (unsigned char (*)[h][w][4])pixels;
+unsigned char (*out)[h][w][4] = (unsigned char (*)[h][w][4])
+        Tcl_GetByteArrayFromObj(dataObj, NULL);
+
+int oy, ox, c, iy, ix;
+for (oy = 0; oy < h; ++oy) {
+    for (ox = 0; ox < w; ++ox) {
+        float r = sinf(
+            hypotf(oy - h / 2, ox - w / 2) * adj1 / w + offset) / adj2 + 1;
+        float iyf = (oy - h / 2) * r + h / 2;
+        float ixf = (ox - w / 2) * r + w / 2;
+        int iyw = iyf;
+        int ixw = ixf;
+        iyf -= iyw;
+        ixf -= ixw;
+        for (c = 0; c < 4; ++c) {
+            float val = 0;
+            for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, h); ++iy) {
+                iyf = 1 - iyf;
+                for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, w); ++ix) {
+                    ixf = 1 - ixf;
+                    val += (*in)[iy][ix][c] * iyf * ixf;
+                }
+            }
+            (*out)[oy][ox][c] = val;
+        }
+    }
+}
+
+Tcl_Obj *list[] = {Tcl_NewIntObj(w), Tcl_NewIntObj(h), dataObj};
+Tcl_SetObjResult(interp, Tcl_NewListObj(3, list));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */

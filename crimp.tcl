@@ -1,9 +1,12 @@
-#!/bin/sh
-# The next line restarts with tclsh.\
-exec tclsh "$0" ${1+"$@"}
+# -*- tcl -*-
+# CRIMP == C Runtime Image Manipulation Package
+#
+# (c) 2010 Andrew M. Goth  http://wiki.tcl.tk/andy%20goth
+# (c) 2010 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
+#
 
-set dir [file dirname [info script]]
-lappend auto_path [file join $dir critcl.vfs lib]
+# # ## ### ##### ######## #############
+## Requisites
 
 package require Tk
 package require critcl
@@ -13,8 +16,10 @@ proc take {varname} {
     return $var[set var ""]
 }
 
-critcl::config tk 1
+# # ## ### ##### ######## #############
+## Implementation.
 
+critcl::config tk 1
 critcl::ccode {
     #include <math.h>
     #include <stdlib.h>
@@ -85,17 +90,11 @@ foreach filename [lsort [glob -nocomplain [file join $dir *.crimp]]] {
     close $chan
 }
 
-set photo [image create photo -file [file join $dir conformer.png]]
-set image [crimp import $photo]
-label .l -image $photo
-pack .l
-scale .s -from -180 -to 180 -orient horizontal -command [list apply {
-{photo image angle} {
-    set s [expr {sin($angle * 0.017453292519943295769236907684886)}]
-    set c [expr {cos($angle * 0.017453292519943295769236907684886)}]
-    set matrix [list [list $c $s 0] [list [expr {-$s}] $c 0] [list $s $s 1]]
-    crimp export $photo [crimp matrix $image $matrix]
-}} $photo $image]
-pack .s -fill x
+
+# # ## ### ##### ######## #############
+## Ready. Export.
+
+package provide crimp 1
+return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

@@ -8,7 +8,7 @@
 # # ## ### ##### ######## #############
 ## Requisites
 
-package require Tk
+#package require Tk
 package require critcl
 
 proc take {varname} {
@@ -24,6 +24,8 @@ catch {
     critcl::debug memory symbols
 }
 critcl::config tk 1
+critcl::cheaders c/*.h
+critcl::csources c/*.c
 critcl::ccode {
     #include <math.h>
     #include <stdlib.h>

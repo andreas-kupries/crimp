@@ -11,6 +11,7 @@
 #include <util.h>
 #include <tcl.h>
 #include <string.h>
+#include <limits.h> /* HAVE_LIMITS_H check ? */
 
 /*
  * Internal declarations.
@@ -128,26 +129,81 @@ DupImage (Tcl_Obj* imgObjPtr, Tcl_Obj* dupObjPtr)
 static void
 StringOfImage (Tcl_Obj* imgObjPtr)
 {
-    /* panic - No string rep for images */
-    Tcl_Panic ("No string representation for images");
+    crimp_image* ci  = (crimp_image*) imgObjPtr->internalRep.otherValuePtr;
+    char wstring [20];
+    char hstring [20];
+    char* dst;
+    int length, i, expanded, wlen, hlen, tlen, plen;
 
-#if 0
-Tcl_Obj *list[] = {
-    Tcl_NewIntObj(pib.width), Tcl_NewIntObj(pib.height),
-    Tcl_NewByteArrayObj(pib.pixelPtr, 4 * pib.width * pib.height)
-};
-    /* convert via a byte array to properly handle null bytes */
-    temp = Tcl_NewByteArrayObj(buf, sizeof buf);
-    Tcl_IncrRefCount(temp);
-            
-    str = Tcl_GetStringFromObj(temp, &obj->length);
-    obj->bytes = Tcl_Alloc(obj->length + 1);
-    memcpy(obj->bytes, str, obj->length + 1);
-            
-    Tcl_DecrRefCount(temp);
+    sprintf (wstring, "%u", ci->w);
+    sprintf (hstring, "%u", ci->h);
 
-#endif
+    /*
+     * Basic length of the various pieces going into the string, from type
+     * name, formatted width/height numbers, number of pixels.
+     */
 
+    tlen = strlen (ci->type->name);
+    wlen = strlen (wstring);
+    hlen = strlen (hstring);
+    plen = ci->type->size * ci->w * ci->h;
+
+    /*
+     * Now correct the length for the pixels. This is binary data, and the
+     * utf8 representation for 0 and anything >128 needs an additional byte
+     * each. Snarfed from UpdateStringOfByteArray in generic/tclBinary.c
+     */
+
+    expanded = 0;
+    for (i = 0; i < (ci->type->size * ci->w * ci->h) && plen >= 0; i++) {
+	if ((ci->pixel[i] == 0) || (ci->pixel[i] > 127)) {
+	    plen ++;
+	    expanded = 1;
+	}
+    }
+
+    if (plen < 0) {
+	Tcl_Panic("max size for a Tcl value (%d bytes) exceeded", INT_MAX);
+    }
+
+    length = tlen + 1 + wlen + 1 + hlen + 1 + plen;
+
+    if (length < 0) {
+	Tcl_Panic("max size for a Tcl value (%d bytes) exceeded", INT_MAX);
+    }
+
+    imgObjPtr->bytes  = NALLOC (length,char);
+    imgObjPtr->length = length;
+
+    dst = imgObjPtr->bytes;
+
+    /*
+     * We have space for the string rep, now assemble it. Mainly copying the
+     * parts over.
+     */
+
+    memcpy (dst, ci->type->name, tlen); dst += tlen;
+    *dst = ' '                        ; dst ++;
+    memcpy (dst, wstring, wlen)       ; dst += wlen;
+    *dst = ' '                        ; dst ++;
+    memcpy (dst, hstring, hlen)       ; dst += hlen;
+    *dst = ' '                        ; dst ++;
+
+    if (expanded) {
+	/*
+	 * If bytes have to be expanded we have to handle them 1-by-1.
+	 */
+	for (i = 0; i < (ci->type->size * ci->w * ci->h); i++) {
+	    dst += Tcl_UniCharToUtf(ci->pixel[i], dst);
+	}
+    } else {
+	/*
+	 * All bytes are represented by single chars. We can copy them as a
+	 * block.
+	 */
+	memcpy(dst, ci->pixel, (size_t) plen); dst += plen;
+    }
+    *dst = '\0';
 }
 
 static int

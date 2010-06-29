@@ -1,3 +1,5 @@
+#ifndef CRIMP_IMAGE_TYPE_H
+#define CRIMP_IMAGE_TYPE_H
 /*
  * CRIMP :: Image Type Declarations, and API.
  * (C) 2010.
@@ -39,3 +41,4 @@ extern int      crimp_get_imagetype_from_obj (Tcl_Interp*       interp,
  * fill-column: 78
  * End:
  */
+#endif /* CRIMP_IMAGE_TYPE_H */

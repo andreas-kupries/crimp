@@ -172,6 +172,7 @@ TypeInit (void)
     static crimp_imagetype rgb    = { "crimp::image::rgb",    3 };
     static crimp_imagetype grey8  = { "crimp::image::grey8",  1 };
     static crimp_imagetype grey16 = { "crimp::image::grey16", 2 };
+    static crimp_imagetype grey32 = { "crimp::image::grey32", 4 };
     static crimp_imagetype bw     = { "crimp::image::bw",     1 };
 
     static initialized = 0;

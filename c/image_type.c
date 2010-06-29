@@ -152,7 +152,7 @@ ImageTypeFromAny (Tcl_Interp* interp,
 
     /* XXX Check docs, do I have to free the previous intrep myself ? */
 
-    imagetypeObjPtr->internalRep.otherValuePtr = cit;
+    imagetypeObjPtr->internalRep.otherValuePtr = (crimp_imagetype*) cit;
     imagetypeObjPtr->typePtr                   = &ImageTypeType;
     return TCL_OK;
 }

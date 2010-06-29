@@ -29,7 +29,7 @@ extern const crimp_imagetype* crimp_imagetype_find (const char* name);
  * API :: Tcl. Manage Tcl_Obj's references to crimp image types.
  */
 
-extern Tcl_Obj* crimp_new_imagetype_obj      (crimp_imagetype*  imagetype);
+extern Tcl_Obj* crimp_new_imagetype_obj      (const crimp_imagetype*  imagetype);
 extern int      crimp_get_imagetype_from_obj (Tcl_Interp*       interp,
 					      Tcl_Obj*          imagetypeObj,
 					      crimp_imagetype** imagetype);

@@ -80,11 +80,11 @@ crimp_imagetype_find (const char* name)
  */
 
 Tcl_Obj*
-crimp_new_imagetype_obj (crimp_imagetype* imagetype)
+crimp_new_imagetype_obj (const crimp_imagetype* imagetype)
 {
     Tcl_Obj* obj = Tcl_NewObj ();
 
-    obj->internalRep.otherValuePtr = imagetype;
+    obj->internalRep.otherValuePtr = (crimp_imagetype*) imagetype;
     obj->typePtr                   = &ImageTypeType;
 
     return obj;

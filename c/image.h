@@ -1,3 +1,5 @@
+#ifndef CRIMP_IMAGE_H
+#define CRIMP_IMAGE_H
 /*
  * CRIMP :: Image Declarations, and API.
  * (C) 2010.
@@ -72,7 +74,7 @@ typedef struct crimp_image {
  * API :: Core. Image lifecycle management,
  */
 
-extern crimp_image* crimp_new (crimp_imagetype* type, int w, int h);
+extern crimp_image* crimp_new (const crimp_imagetype* type, int w, int h);
 extern crimp_image* crimp_dup (crimp_image* image);
 extern void         crimp_del (crimp_image* image);
 
@@ -92,3 +94,4 @@ extern int      crimp_get_image_from_obj (Tcl_Interp*   interp,
  * fill-column: 78
  * End:
  */
+#endif /* CRIMP_IMAGE_H */

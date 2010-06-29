@@ -36,7 +36,7 @@ static Tcl_ObjType ImageType = {
  */
 
 crimp_image*
-crimp_new (crimp_imagetype* type, int w, int h)
+crimp_new (const crimp_imagetype* type, int w, int h)
 {
     /*
      * Note: Pixel storage and header describing it are allocated together.

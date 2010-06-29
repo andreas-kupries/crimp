@@ -6,9 +6,9 @@ exec tclsh "$0" ${1+"$@"}
 # With 8.5 we need a separate package to handle the PNG.
 # With 8.6 we can use the one integrated in Tk.
 
-package require Tcl 8.5
-package require Tk
-package require img::png
+package require Tcl 8.6
+package require Tk 8.6
+#package require img::png
 
 puts [join [info loaded] \n]
 
@@ -29,18 +29,18 @@ label .l -image $photo
 pack .l
 scale .s -from -180 -to 180 -orient horizontal -command \
     [list apply {{photo image angle} {
-puts apply...|$angle|
+	#puts apply...|$angle|
 	set s [expr {sin($angle * 0.017453292519943295769236907684886)}]
 	set c [expr {cos($angle * 0.017453292519943295769236907684886)}]
 	set matrix [list \
 			[list $c $s 0] \
 			[list [expr {-$s}] $c 0] \
 			[list $s $s 1]]
-puts matrix...
+	#puts matrix...
 	set deformed [crimp matrix $image $matrix]
-puts export...
+	#puts export...
 	crimp export $photo $deformed
-puts ...ok
+	#puts ...ok
     }} $photo $image]
 
 pack .s -fill x

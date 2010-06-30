@@ -37,8 +37,7 @@ if (pib.pixelSize != 4 ||
     return TCL_ERROR;
 }
 
-image = crimp_new (crimp_imagetype_find ("crimp::image::rgba"),
-		   pib.width, pib.height);
+image = crimp_new_rgba (pib.width, pib.height);
 memcpy (image->pixel, pib.pixelPtr, 4 * pib.width * pib.height);
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (image));

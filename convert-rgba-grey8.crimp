@@ -12,8 +12,7 @@ if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
 ASSERT (image->type == crimp_imagetype_find ("crimp::image::rgba"),
 	"called with image-type <> rgba");
 
-lum = crimp_new (crimp_imagetype_find ("crimp::image::grey8"),
-		 image->w, image->h);
+lum = crimp_new_grey8 (image->w, image->h);
 
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {

@@ -1,0 +1,55 @@
+read_tk
+char* photo
+
+Tk_PhotoHandle     handle = Tk_FindPhoto (interp, photo);
+Tk_PhotoImageBlock pib;
+Tcl_Obj*           imageObj;
+crimp_image*       image;
+
+if (!handle) {
+    Tcl_ResetResult (interp);
+    Tcl_AppendResult(interp, "image \"", photo, "\" doesn't exist", NULL);
+    return TCL_ERROR;
+}
+
+Tk_PhotoGetImage(handle, &pib);
+
+/*
+ * Expect a Tk photo whose internal structure matches that of our RGBA images
+ * exactly. This enables us to later copy the data with a straightforward
+ * memcpy, instead of having to do it either by line, or even by pixel.
+ *
+ * XXX, FUTURE: Accept different structures, where more work is required to
+ * convert them into one of our formats.
+ *
+ * XXX: See also the extensive notes in export.crimp regarding possible
+ * organization and data structures, import is complementary to export, and
+ * should be organized similarly, or even share data structures.
+ */
+
+if (pib.pixelSize != 4 ||
+    pib.pitch     != (4 * pib.width) ||
+    pib.offset[0] != 0 ||
+    pib.offset[1] != 1 ||
+    pib.offset[2] != 2 ||
+    pib.offset[3] != 3) {
+    Tcl_SetResult(interp, "unsupported image format", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+image = crimp_new (crimp_imagetype_find ("crimp::image::rgba"),
+		   pib.width, pib.height);
+memcpy (image->pixel, pib.pixelPtr, 4 * pib.width * pib.height);
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (image));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

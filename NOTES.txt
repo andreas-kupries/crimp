@@ -3,10 +3,9 @@ A bit on the design.
 
 My plan is to implement only the bare functionality at the C level,
 with a multitude of simple commands, and each command handling only a
-specific image format, or combination of formats. The proper API to
-the functions is then done in Tcl, making changes to option
-processing, automatic selection of a function, etc. easy to code, and
-change.
+specific image type, or combination of types. The proper API to the
+functions is then done in Tcl, making changes to option processing,
+automatic selection of a function, etc. easy to code, and change.
 
 See http://wiki.tcl.tk/2520 (A critical mindset about policy), which
 summarizes to "No poli-C, please", or, slightly longer, "Policy issues
@@ -14,18 +13,19 @@ must be scripted".
 
 As a simple example, consider the operation ot invert images.
 
-	We will have one command for each image format supporting the
+	We will have one command for each image type supporting the
 	operation. Currently we have three, one each for rgb, rgba,
 	and grey8. The API is then a single invert procedure which
 	queries the type of its argument and then dispatches to the
-	proper function, or throws an error with a nice error message.
+	proper low-level command, or throws an error with a nice
+	message.
 
 	Now any changes to the error message can be done by easy
 	editing of the Tcl layer, without having to recompile the C
 	level.
 
 Similarly for importing from and exporting to files/channels/tk,
-conversion between formats (where sensible or possible), etc.
+conversion between types (where sensible or possible), etc.
 
 Side note:
 	Writing the Tcl layer should become easier the more uniform
@@ -47,19 +47,20 @@ Operations done and under consideration
 
 	[done]	read_tk
 
-[]	convert - convert between the various crimp image formats
+[]	convert - convert between the various crimp image types.
 
 	[]	convert_hsv_grey16
 	[]	convert_hsv_grey32
 	[]	convert_hsv_grey8
 	[]	convert_hsv_rgb
-	[]	convert_hsv_rgba
+	[]	convert_hsv_rgba	- see the notes on rgb_rgba below. essentially apply here as well.
 
 	[]	convert_rgb_grey16
 	[]	convert_rgb_grey32
 	[done]	convert_rgb_grey8
 	[]	convert_rgb_hsv
-	[]	convert_rgb_rgba
+	[]	convert_rgb_rgba	- set opaque alpha, or transparent, or via grey image ?
+					- could be done as split/join
 
 	[]	convert_rgba_grey16   - Like grey8, or should we expand to cover whole range ?
 	[]	convert_rgba_grey32   - S.a.
@@ -81,10 +82,84 @@ Operations done and under consideration
 		in a similar manner.
 
 []	split - split the input image into its channels, i.e.
-		RGBA into 4 images, one each for R, G, B, and A. Etc. for
-		the other formats.
+		RGBA into 4 images, one each for R, G, B, and A.
+		Etc. for the other types.
 
 	[done]	split_rgba
-	[]	split_rgb
+	[done]	split_rgb
 	[]	split_hsv
 
+[]	join - join multiple grey scale images into a multi-channel (colorized) image. Complementary to split.
+
+
+
+[]	blend   - Z = A*(1-alpha)+B*alpha   - alpha is scalar
+[]	compose - Z = A*(1-ALPHA)+B*ALPHA - alpha is grey8
+	?	- Z = TOP*(1-alpha(TOP))+BOTTOM*alpha(TOP) - alpha from top image.
+	== bring these together into single command group.
+
+	lighter	       Z = max(A,B)
+	darker	       Z = min(A,B)
+	difference     Z = |A-B|
+	multiply       Z = (A*B)/255
+	screen	       Z = 1-((1-A)*(1-B))
+	add	       Z = A+B
+	subtract       Z = A-B
+
+	// The above is a group of composition/merge operations
+
+	stencil - apply a mask - could be 'set alpha channel'
+			       - but also 'set black outside mask'
+			       (blue/green screen techniques)
+
+
+
+## constant - blank with a specific value
+## offset (x, y) - shift by (x,y) pixels [torus wrap around].
+## enhance: color, brightness, contrast, sharpness
+## filter:  blur, contour, detail, edge_enhance, edge_enhance_more, emboss, find_edges, smooth, smooth_more, and sharpen.
+## filter:  kernel3, kernel5, rank n, size/ min, max, median, mode(most common)
+##         (scale/offset - default: sum kernel/0)
+## autocontrast (max contrast, cutoff (%)) => image
+## colorize (grayscale, black-color, white-color) => image
+## crop (image, border=0) => image without border pixels all around.
+## deform - see transform (as basis)
+## equalize (image) of hist - non-linear map to create unform distribution of grayscale values.
+## expand (image, border=0,fill=0) - add border pixels all around (fill? color of border?)
+## flip/mirror (v/h)
+## posterize (image,bits) - reduce colors to max bits.
+## solarize (threshold) - invert pixels above threshold
+
+## cmyk and back, hsv revers
+
+## stat (image ?mask?) - statistics
+##  extrema min/max per channel
+##  count - #pixels
+##  sum - sum of pixels
+## sum2 - squared sum, mean, median, root-mean-square, variance, stddev
+
+## eval (image f) - f applied to each pixel, each channel.
+##                  f called at most once per value => at most 255 times.
+##                  generators, random-ness not possible
+
+## point table|f -> f converted to table
+##                  256 values in table per channel.
+##                  table of f => replicated 3x
+## (non-)linear mapping.
+##
+## putalpha -: make data in specified channel the alpha
+##
+## bbox - region of non-zero pixels.
+## getcolors -> dict (color -> count)
+## getextrema (per channel) min/max pixel values
+## histogram (?mask?) - (per channel) dict (pixel -> count)
+
+## resize (filter), rotate(angle,expand=0,filter)
+## filters = interpolation = nearest (default), bilinear 2x2, bicubic 4x4, antialias
+
+## transform extent sz rect (4-tuple)        - crop, stretch, shrink /rectangle to square
+##          |affine sz 2x3-matrix (6-tuple)  - scale, translate, rotate, and shear
+##          |quad   sz 4-points (8-tuple)    - arbitrary deformation
+##          |mesh   sz list of (rect, quads) - s.a.
+# quad(rilateral)
+# transpose - flip_left_right, flip_top_bottom, rotate_90, rotate_180, or rotate_270

@@ -22,16 +22,17 @@ source [file join $dir crimp.tcl]
 
 proc gui {} {
     widget::toolbar .t
-    .t add button origin -text Original   -command sorigin
-    .t add button invert -text Invert     -command sinvert
-    .t add button red    -text Red        -command {schan 0}
-    .t add button green  -text Green      -command {schan 1}
-    .t add button blue   -text Blue       -command {schan 2}
-    .t add button ired   -text iRed       -command {sichan 0}
-    .t add button igreen -text iGreen     -command {sichan 1}
-    .t add button iblue  -text iBlue      -command {sichan 2}
-    .t add button ilum   -text Luminosity -command sluminosity
-    .t add button exit   -text Exit       -command ::exit -separator 1
+    .t add button origin -text Original    -command sorigin
+    .t add button invert -text Invert      -command sinvert
+    .t add button red    -text Red         -command {schan 0}
+    .t add button green  -text Green       -command {schan 1}
+    .t add button blue   -text Blue        -command {schan 2}
+    .t add button ired   -text iRed        -command {sichan 0}
+    .t add button igreen -text iGreen      -command {sichan 1}
+    .t add button iblue  -text iBlue       -command {sichan 2}
+    .t add button ilum   -text Luminosity  -command sluminosity
+    .t add button iilum  -text iLuminosity -command siluminosity
+    .t add button exit   -text Exit        -command ::exit -separator 1
 
     widget::scrolledwindow .sl -borderwidth 1 -relief sunken
     widget::scrolledwindow .sc -borderwidth 1 -relief sunken
@@ -99,6 +100,13 @@ proc sinvert {} {
 proc sluminosity {} {
     global base
     setimage  [crimp convert_[typeof $base]_grey8 $base] 
+    return
+}
+
+proc siluminosity {} {
+    global base
+    set image [crimp invert_[typeof $base] $base]
+    setimage  [crimp convert_[typeof $image]_grey8 $image]
     return
 }
 

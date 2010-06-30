@@ -9,7 +9,7 @@ if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
     return TCL_ERROR;
 }
 
-ASSERT (image->type == crimp_imagetype_find ("crimp::image::grey8"), "called with image-type <> rgb");
+ASSERT (image->type == crimp_imagetype_find ("crimp::image::grey8"), "called with image-type <> grey8");
 
 inverted = crimp_new (image->type, image->w, image->h);
 

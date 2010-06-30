@@ -15,7 +15,7 @@ if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
     return TCL_ERROR;
 }
 
-ASSERT (image->type == crimp_imagetype_find ("crimp::image::rgb"), "called with image-type <> rgba");
+ASSERT (image->type == crimp_imagetype_find ("crimp::image::rgb"), "called with image-type <> rgb");
 
 /*
  * Fill the Tk image block to match our structure.

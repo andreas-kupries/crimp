@@ -18,7 +18,6 @@ for (y = 0; y < image->h; y++) {
 
 	/*
 	 * We are inverting (only) the color channels.
-	 * The alpha channel is copied as is.
 	 */
 
 	R (inverted, x, y) = WHITE - R (image, x, y);

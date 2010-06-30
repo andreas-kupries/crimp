@@ -1,0 +1,50 @@
+split_rgb
+Tcl_Obj* imageObj
+
+Tcl_Obj*         list[3];
+crimp_imagetype* grey = crimp_imagetype_find ("crimp::image::grey8");
+crimp_image*     image;
+crimp_image*     red;
+crimp_image*     green;
+crimp_image*     blue;
+int              x, y;
+
+if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
+    return TCL_ERROR;
+}
+
+ASSERT (image->type == crimp_imagetype_find ("crimp::image::rgb"), "called with image-type <> rgb");
+
+red   = crimp_new (grey, image->w, image->h);
+green = crimp_new (grey, image->w, image->h);
+blue  = crimp_new (grey, image->w, image->h);
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+	/*
+	 * Placing the pixels of each color channel into their own images.
+	 */
+
+	GREY8 (red,   x, y) = R (image, x, y);
+	GREY8 (green, x, y) = G (image, x, y);
+	GREY8 (blue,  x, y) = B (image, x, y);
+    }
+}
+
+list [0] = crimp_new_image_obj (red);
+list [1] = crimp_new_image_obj (green);
+list [2] = crimp_new_image_obj (blue);
+
+Tcl_SetObjResult(interp, Tcl_NewListObj (3, list));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

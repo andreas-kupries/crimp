@@ -70,6 +70,10 @@ typedef struct crimp_image {
 #define BLACK 0
 #define WHITE 255
 
+#define ASSERT_IMGTYPE(image,itype) \
+    ASSERT ((image)->type == crimp_imagetype_find ("crimp::image::" STR(itype)), \
+	    "expected image type " STR(itype))
+
 /*
  * API :: Core. Image lifecycle management.
  */

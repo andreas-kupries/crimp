@@ -2,7 +2,7 @@ split_rgb
 Tcl_Obj* imageObj
 
 Tcl_Obj*         list[3];
-crimp_imagetype* grey = crimp_imagetype_find ("crimp::image::grey8");
+const crimp_imagetype* grey = crimp_imagetype_find ("crimp::image::grey8");
 crimp_image*     image;
 crimp_image*     red;
 crimp_image*     green;
@@ -13,7 +13,7 @@ if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
     return TCL_ERROR;
 }
 
-ASSERT (image->type == crimp_imagetype_find ("crimp::image::rgb"), "called with image-type <> rgb");
+ASSERT_IMGTYPE (image, rgb);
 
 red   = crimp_new (grey, image->w, image->h);
 green = crimp_new (grey, image->w, image->h);

@@ -32,6 +32,7 @@ critcl::ccode {
     #include <string.h>
     #include <image_type.h>
     #include <image.h>
+    #include <color.h>
     #include <util.h>
 
     #define MIN(a, b) ((a) < (b) ? (a) : (b))

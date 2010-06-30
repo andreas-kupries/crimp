@@ -1,0 +1,38 @@
+convert_hsv_rgba
+Tcl_Obj* imageObj
+
+crimp_image* image;
+crimp_image* result;
+int          x, y, r, g, b;
+
+crimp_input (imageObj, image, hsv);
+
+result = crimp_new_rgba (image->w, image->h);
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+	color_rgb_to_hsv (H (image, x, y),
+			  S (image, x, y),
+			  V (image, x, y),
+			  &r, &g, &b);
+
+	R (image, x, y) = r;
+	G (image, x, y)	= g;
+	B (image, x, y)	= b;
+	A (image, x, y)	= OPAQUE;
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

@@ -175,6 +175,7 @@ TypeInit (void)
 
     static crimp_imagetype rgba   = { "crimp::image::rgba",   4 };
     static crimp_imagetype rgb    = { "crimp::image::rgb",    3 };
+    static crimp_imagetype hsv    = { "crimp::image::hsv",    3 };
     static crimp_imagetype grey8  = { "crimp::image::grey8",  1 };
     static crimp_imagetype grey16 = { "crimp::image::grey16", 2 };
     static crimp_imagetype grey32 = { "crimp::image::grey32", 4 };
@@ -193,6 +194,7 @@ TypeInit (void)
     crimp_imagetype_def (&bw);
     crimp_imagetype_def (&grey8);
     crimp_imagetype_def (&grey16);
+    crimp_imagetype_def (&hsv);
     crimp_imagetype_def (&rgb);
     crimp_imagetype_def (&rgba);
 }

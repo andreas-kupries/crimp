@@ -1,0 +1,46 @@
+split_hsv
+Tcl_Obj* imageObj
+
+Tcl_Obj*         list[3];
+const crimp_imagetype* grey = crimp_imagetype_find ("crimp::image::grey8");
+crimp_image*     image;
+crimp_image*     hue;
+crimp_image*     sat;
+crimp_image*     val;
+int              x, y;
+
+crimp_input (imageObj, image, hsv);
+
+hue = crimp_new (grey, image->w, image->h);
+sat = crimp_new (grey, image->w, image->h);
+val = crimp_new (grey, image->w, image->h);
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+	/*
+	 * Placing the pixels of each color channel into their own images.
+	 */
+
+	GREY8 (hue, x, y) = H (image, x, y);
+	GREY8 (sat, x, y) = S (image, x, y);
+	GREY8 (val, x, y) = V (image, x, y);
+    }
+}
+
+list [0] = crimp_new_image_obj (hue);
+list [1] = crimp_new_image_obj (sat);
+list [2] = crimp_new_image_obj (val);
+
+Tcl_SetObjResult(interp, Tcl_NewListObj (3, list));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

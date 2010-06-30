@@ -64,11 +64,26 @@ typedef struct crimp_image {
 #define GREY32(iptr,x,y) *((unsigned long*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
 
 /*
+ * Pixel Access Macros. HSV.
+ */
+
+#define HUE(iptr,x,y) (0 + SZ(iptr) * ((x) + (y)*(iptr)->w))
+#define SAT(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*(iptr)->w))
+#define VAL(iptr,x,y) (2 + SZ(iptr) * ((x) + (y)*(iptr)->w))
+
+#define H(iptr,x,y) (iptr)->pixel [HUE (iptr,x,y)]
+#define S(iptr,x,y) (iptr)->pixel [SAT (iptr,x,y)]
+#define V(iptr,x,y) (iptr)->pixel [VAL (iptr,x,y)]
+
+/*
  * Other constants
  */
 
 #define BLACK 0
 #define WHITE 255
+
+#define OPAQUE      0
+#define TRANSPARENT 255
 
 /*
  * Convenient checking of image types.
@@ -86,6 +101,7 @@ extern crimp_image* crimp_new (const crimp_imagetype* type, int w, int h);
 extern crimp_image* crimp_dup (crimp_image* image);
 extern void         crimp_del (crimp_image* image);
 
+#define crimp_new_hsv(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),   (w), (h)))
 #define crimp_new_rgba(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),  (w), (h)))
 #define crimp_new_rgb(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),   (w), (h)))
 #define crimp_new_grey8(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::grey8"), (w), (h)))

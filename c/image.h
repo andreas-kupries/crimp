@@ -70,6 +70,10 @@ typedef struct crimp_image {
 #define BLACK 0
 #define WHITE 255
 
+/*
+ * Convenient checking of image types.
+ */
+
 #define ASSERT_IMGTYPE(image,itype) \
     ASSERT ((image)->type == crimp_imagetype_find ("crimp::image::" STR(itype)), \
 	    "expected image type " STR(itype))
@@ -95,6 +99,13 @@ extern Tcl_Obj* crimp_new_image_obj      (crimp_image*  image);
 extern int      crimp_get_image_from_obj (Tcl_Interp*   interp,
 					  Tcl_Obj*      imageObj,
 					  crimp_image** image);
+
+#define crimp_input(objvar,imagevar,itype) \
+    if (crimp_get_image_from_obj (interp, (objvar), &(imagevar)) != TCL_OK) { \
+	return TCL_ERROR; \
+    } \
+    ASSERT_IMGTYPE (imagevar, itype)
+
 
 /*
  * Local Variables:

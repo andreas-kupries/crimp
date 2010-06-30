@@ -2,29 +2,22 @@ invert_grey8
 Tcl_Obj* imageObj
 
 crimp_image* image;
-crimp_image* inverted;
+crimp_image* result;
 int          x, y;
 
-if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
-    return TCL_ERROR;
-}
+crimp_input (imageObj, image, grey8);
 
-ASSERT_IMGTYPE (image, grey8);
-
-inverted = crimp_new_like (image);
+result = crimp_new_like (image);
 
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
 
-	/*
-	 * We are inverting (only) the color channels.
-	 */
+	GREY8 (result, x, y) = WHITE - GREY8 (image, x, y);
 
-	GREY8 (inverted, x, y) = WHITE - GREY8 (image, x, y);
     }
 }
 
-Tcl_SetObjResult(interp, crimp_new_image_obj (inverted));
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;
 
 

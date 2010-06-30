@@ -11,11 +11,7 @@ if (!handle) {
     return TCL_ERROR;
 }
 
-if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
-    return TCL_ERROR;
-}
-
-ASSERT_IMGTYPE (image, rgba);
+crimp_input (imageObj, image, rgba);
 
 /*
  * Fill the Tk image block to match our structure.

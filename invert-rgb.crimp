@@ -2,16 +2,12 @@ invert_rgb
 Tcl_Obj* imageObj
 
 crimp_image* image;
-crimp_image* inverted;
+crimp_image* result;
 int          x, y;
 
-if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
-    return TCL_ERROR;
-}
+crimp_input (imageObj, image, rgb);
 
-ASSERT_IMGTYPE (image, rgb);
-
-inverted = crimp_new_like (image);
+result = crimp_new_like (image);
 
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
@@ -20,13 +16,13 @@ for (y = 0; y < image->h; y++) {
 	 * We are inverting (only) the color channels.
 	 */
 
-	R (inverted, x, y) = WHITE - R (image, x, y);
-	G (inverted, x, y) = WHITE - G (image, x, y);
-	B (inverted, x, y) = WHITE - B (image, x, y);
+	R (result, x, y) = WHITE - R (image, x, y);
+	G (result, x, y) = WHITE - G (image, x, y);
+	B (result, x, y) = WHITE - B (image, x, y);
     }
 }
 
-Tcl_SetObjResult(interp, crimp_new_image_obj (inverted));
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;
 
 

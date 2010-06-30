@@ -2,16 +2,12 @@ convert_rgba_grey8
 Tcl_Obj* imageObj
 
 crimp_image* image;
-crimp_image* lum;
+crimp_image* result;
 int          x, y;
 
-if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
-    return TCL_ERROR;
-}
+crimp_input (imageObj, image, rgba);
 
-ASSERT_IMGTYPE (image, rgba);
-
-lum = crimp_new_grey8 (image->w, image->h);
+result = crimp_new_grey8 (image->w, image->h);
 
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
@@ -25,7 +21,7 @@ for (y = 0; y < image->h; y++) {
 	 * without requiring clamping.
 	 */
 
-	GREY8 (lum, x, y) = 
+	GREY8 (result, x, y) = 
 	  (299 * R (image, x, y) +
 	   587 * G (image, x, y) +
 	   114 * B (image, x, y))/1000;
@@ -33,7 +29,7 @@ for (y = 0; y < image->h; y++) {
     }
 }
 
-Tcl_SetObjResult(interp, crimp_new_image_obj (lum));
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;
 
 

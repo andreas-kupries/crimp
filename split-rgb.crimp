@@ -9,11 +9,7 @@ crimp_image*     green;
 crimp_image*     blue;
 int              x, y;
 
-if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
-    return TCL_ERROR;
-}
-
-ASSERT_IMGTYPE (image, rgb);
+crimp_input (imageObj, image, rgb);
 
 red   = crimp_new (grey, image->w, image->h);
 green = crimp_new (grey, image->w, image->h);

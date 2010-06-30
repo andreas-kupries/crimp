@@ -88,6 +88,7 @@ crimp_new_image_obj (crimp_image* image)
 {
     Tcl_Obj* obj = Tcl_NewObj ();
 
+    Tcl_InvalidateStringRep (obj);
     obj->internalRep.otherValuePtr = image;
     obj->typePtr                   = &ImageType;
 
@@ -130,80 +131,98 @@ static void
 StringOfImage (Tcl_Obj* imgObjPtr)
 {
     crimp_image* ci  = (crimp_image*) imgObjPtr->internalRep.otherValuePtr;
-    char wstring [20];
-    char hstring [20];
-    char* dst;
-    int length, i, expanded, wlen, hlen, tlen, plen;
+    int length;
+    Tcl_DString ds;
 
-    sprintf (wstring, "%u", ci->w);
-    sprintf (hstring, "%u", ci->h);
+    Tcl_DStringInit (&ds);
 
-    /*
-     * Basic length of the various pieces going into the string, from type
-     * name, formatted width/height numbers, number of pixels.
-     */
+    /* image type */
+    Tcl_DStringAppendElement (&ds, ci->type->name);
 
-    tlen = strlen (ci->type->name);
-    wlen = strlen (wstring);
-    hlen = strlen (hstring);
-    plen = ci->type->size * ci->w * ci->h;
+    /* image width */
+    {
+	char wstring [20];
+	sprintf (wstring, "%u", ci->w);
+	Tcl_DStringAppendElement (&ds, wstring);
+    }
 
-    /*
-     * Now correct the length for the pixels. This is binary data, and the
-     * utf8 representation for 0 and anything >128 needs an additional byte
-     * each. Snarfed from UpdateStringOfByteArray in generic/tclBinary.c
-     */
+    /* image width */
+    {
+	char hstring [20];
+	sprintf (hstring, "%u", ci->h);
+	Tcl_DStringAppendElement (&ds, hstring);
+    }
 
-    expanded = 0;
-    for (i = 0; i < (ci->type->size * ci->w * ci->h) && plen >= 0; i++) {
-	if ((ci->pixel[i] == 0) || (ci->pixel[i] > 127)) {
-	    plen ++;
-	    expanded = 1;
+    /* image pixels */
+    {
+	/*
+	 * Basic length of the various pieces going into the string, from type
+	 * name, formatted width/height numbers, number of pixels.
+	 */
+
+	char* tmp;
+	char* dst;
+	int plen = ci->type->size * ci->w * ci->h;
+	int expanded, i;
+
+	/*
+	 * Now correct the length for the pixels. This is binary data, and the
+	 * utf8 representation for 0 and anything >128 needs an additional
+	 * byte each. Snarfed from UpdateStringOfByteArray in
+	 * generic/tclBinary.c
+	 */
+
+	expanded = 0;
+	for (i = 0; i < (ci->type->size * ci->w * ci->h) && plen >= 0; i++) {
+	    if ((ci->pixel[i] == 0) || (ci->pixel[i] > 127)) {
+		plen ++;
+		expanded = 1;
+	    }
 	}
+
+	if (plen < 0) {
+	    Tcl_Panic("max size for a Tcl value (%d bytes) exceeded", INT_MAX);
+	}
+
+	/*
+	 * We need the temporary array because ...AppendElement below expects
+	 * a 0-terminated string, and the pixels aren't
+	 */
+
+	dst = tmp = NALLOC (plen+1, char);
+	if (expanded) {
+	    /*
+	     * If bytes have to be expanded we have to handle them 1-by-1.
+	     */
+	    for (i = 0; i < (ci->type->size * ci->w * ci->h); i++) {
+		dst += Tcl_UniCharToUtf(ci->pixel[i], dst);
+	    }
+	} else {
+	    /*
+	     * All bytes are represented by single chars. We can copy them as a
+	     * block.
+	     */
+	    memcpy(dst, ci->pixel, (size_t) plen);
+	    dst += plen;
+	}
+	*dst = '\0';
+
+	/*
+	 * Note that this adds another layer of quoting to the string:
+	 * list quoting.
+	 */
+	Tcl_DStringAppendElement (&ds, tmp);
+	ckfree (tmp);
     }
 
-    if (plen < 0) {
-	Tcl_Panic("max size for a Tcl value (%d bytes) exceeded", INT_MAX);
-    }
+    length = Tcl_DStringLength (&ds);
 
-    length = tlen + 1 + wlen + 1 + hlen + 1 + plen;
-
-    if (length < 0) {
-	Tcl_Panic("max size for a Tcl value (%d bytes) exceeded", INT_MAX);
-    }
-
-    imgObjPtr->bytes  = NALLOC (length,char);
+    imgObjPtr->bytes  = NALLOC (length+1, char);
     imgObjPtr->length = length;
 
-    dst = imgObjPtr->bytes;
+    memcpy (imgObjPtr->bytes, Tcl_DStringValue (&ds), length+1);
 
-    /*
-     * We have space for the string rep, now assemble it. Mainly copying the
-     * parts over.
-     */
-
-    memcpy (dst, ci->type->name, tlen); dst += tlen;
-    *dst = ' '                        ; dst ++;
-    memcpy (dst, wstring, wlen)       ; dst += wlen;
-    *dst = ' '                        ; dst ++;
-    memcpy (dst, hstring, hlen)       ; dst += hlen;
-    *dst = ' '                        ; dst ++;
-
-    if (expanded) {
-	/*
-	 * If bytes have to be expanded we have to handle them 1-by-1.
-	 */
-	for (i = 0; i < (ci->type->size * ci->w * ci->h); i++) {
-	    dst += Tcl_UniCharToUtf(ci->pixel[i], dst);
-	}
-    } else {
-	/*
-	 * All bytes are represented by single chars. We can copy them as a
-	 * block.
-	 */
-	memcpy(dst, ci->pixel, (size_t) plen); dst += plen;
-    }
-    *dst = '\0';
+    Tcl_DStringFree (&ds);
 }
 
 static int
@@ -240,12 +259,10 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
     memcpy(ci->pixel, pixel, length);
 
     /*
-     * Kill the changed intrep (List, ByteArray) above.  While the previous
-     * intrep may have been killed before this function was called, we
-     * generated a new one during the conversion and have to get rid of it.
+     * Kill the old intrep. This was delayed as much as possible.
      */
 
-    imgObjPtr->typePtr->freeIntRepProc (imgObjPtr);
+    FreeIntRep (imgObjPtr);
 
     /*
      * Now we can put in our own intrep.

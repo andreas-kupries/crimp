@@ -14,6 +14,13 @@
 #define ALLOC(type)    ((type *) ckalloc (sizeof (type)))
 #define NALLOC(n,type) ((type *) ckalloc ((n) * sizeof (type)))
 
+#define FreeIntRep(objPtr) \
+    if ((objPtr)->typePtr != NULL && \
+	    (objPtr)->typePtr->freeIntRepProc != NULL) { \
+	(objPtr)->typePtr->freeIntRepProc(objPtr); \
+	(objPtr)->typePtr = NULL; \
+    }
+
 /*
  * General math support.
  */

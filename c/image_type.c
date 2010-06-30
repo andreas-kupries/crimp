@@ -66,7 +66,7 @@ crimp_imagetype_find (const char* name)
 
     TypeInit();
 
-    for (kt = knowntypes; kt= NULL; kt = kt->next) {
+    for (kt = knowntypes; kt; kt = kt->next) {
 	if (strcmp (name, kt->type->name) == 0) {
 	    return kt->type;
 	}
@@ -84,6 +84,7 @@ crimp_new_imagetype_obj (const crimp_imagetype* imagetype)
 {
     Tcl_Obj* obj = Tcl_NewObj ();
 
+    Tcl_InvalidateStringRep (obj);
     obj->internalRep.otherValuePtr = (crimp_imagetype*) imagetype;
     obj->typePtr                   = &ImageTypeType;
 
@@ -150,7 +151,11 @@ ImageTypeFromAny (Tcl_Interp* interp,
 	return TCL_ERROR;
     }
 
-    /* XXX Check docs, do I have to free the previous intrep myself ? */
+    /*
+     * Kill the old intrep. This was delayed as much as possible.
+     */
+
+    FreeIntRep (imagetypeObjPtr);
 
     imagetypeObjPtr->internalRep.otherValuePtr = (crimp_imagetype*) cit;
     imagetypeObjPtr->typePtr                   = &ImageTypeType;

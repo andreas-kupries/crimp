@@ -1,0 +1,47 @@
+convert_rgba_grey8
+Tcl_Obj* imageObj
+
+crimp_image* image;
+crimp_image* lum;
+int          x, y;
+
+if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
+    return TCL_ERROR;
+}
+
+ASSERT (image->type == crimp_imagetype_find ("crimp::image::rgba"), "called with image-type <> rgb");
+
+lum = crimp_new (image->type, image->w, image->h);
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+	/*
+	 * This conversion to a grey scale is based on the ITU-R 601-2 luma
+	 * transform computing the "luminosity" of each pixel.
+	 *
+	 * Note: The factors for R, G, and B add up to 1000, which means that
+	 * after the scaling division the result is in the range 0..255
+	 * without requiring clamping.
+	 */
+
+	GREY8 (lum, x, y) = 
+	  (299 * R (image, x, y) +
+	   587 * G (image, x, y) +
+	   114 * B (image, x, y))/1000;
+
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (lum));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

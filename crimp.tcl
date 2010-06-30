@@ -30,6 +30,9 @@ critcl::ccode {
     #include <math.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <image_type.h>
+    #include <image.h>
+    #include <util.h>
 
     #define MIN(a, b) ((a) < (b) ? (a) : (b))
     #define MAX(a, b) ((a) > (b) ? (a) : (b))

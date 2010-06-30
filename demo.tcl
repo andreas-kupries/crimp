@@ -23,7 +23,7 @@ source [file join $dir crimp.tcl]
 ## Demo main - Skewed rotation
 
 puts demo...
-set photo [image create photo -file [file join $dir conformer.png]]
+set photo [image create photo -file [file join $dir images conformer.png]]
 set image [crimp import $photo]
 label .l -image $photo
 pack .l

@@ -52,20 +52,20 @@ Operations done and under consideration
 	[]	convert_hsv_grey16
 	[]	convert_hsv_grey32
 	[]	convert_hsv_grey8
-	[]	convert_hsv_rgb
-	[]	convert_hsv_rgba	- see the notes on rgb_rgba below. essentially apply here as well.
+	[done]	convert_hsv_rgb
+	[done]	convert_hsv_rgba	- see the notes on rgb_rgba below. essentially apply here as well.
 
 	[]	convert_rgb_grey16
 	[]	convert_rgb_grey32
 	[done]	convert_rgb_grey8
-	[]	convert_rgb_hsv
+	[done]	convert_rgb_hsv
 	[]	convert_rgb_rgba	- set opaque alpha, or transparent, or via grey image ?
 					- could be done as split/join
 
 	[]	convert_rgba_grey16   - Like grey8, or should we expand to cover whole range ?
 	[]	convert_rgba_grey32   - S.a.
 	[done]	convert_rgba_grey8    - Standard luma transform (ITU-R 601-2)
-	[]	convert_rgba_hsv
+	[done]	convert_rgba_hsv
 	[]	convert_rgba_rgb
 
 []	invert - invert colors
@@ -87,9 +87,14 @@ Operations done and under consideration
 
 	[done]	split_rgba
 	[done]	split_rgb
-	[]	split_hsv
+	[done]	split_hsv
 
-[]	join - join multiple grey scale images into a multi-channel (colorized) image. Complementary to split.
+[]	join - join multiple grey scale images into a multi-channel
+	       (colorized) image. Complementary to split.
+
+	[done]	join_rgba
+	[done]	join_rgb
+	[done]	join_hsv
 
 
 

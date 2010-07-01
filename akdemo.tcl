@@ -3,10 +3,14 @@
 # The next line restarts with tclsh.\
 exec tclsh "$0" ${1+"$@"}
 
-package require Tcl 8.6 ; # Some code uses 8.6 bytearray features [New (NULL,len)].
-package require Tk  8.6 ; #
-#package require img::png
-#package require Tk
+if {[catch {
+    package require Tcl 8.6
+    package require Tk  8.6
+}]} {
+    package require Tcl 8.5
+    package require Tk  8.5
+    package require img::png
+}
 package require widget::scrolledwindow
 package require widget::toolbar
 
@@ -24,14 +28,22 @@ proc gui {} {
     widget::toolbar .t
     .t add button origin -text Original    -command sorigin
     .t add button invert -text Invert      -command sinvert
-    .t add button red    -text Red         -command {schan 0}
-    .t add button green  -text Green       -command {schan 1}
-    .t add button blue   -text Blue        -command {schan 2}
-    .t add button ired   -text iRed        -command {sichan 0}
-    .t add button igreen -text iGreen      -command {sichan 1}
-    .t add button iblue  -text iBlue       -command {sichan 2}
+    .t add button red    -text Red         -command {srgbchan 0}
+    .t add button green  -text Green       -command {srgbchan 1}
+    .t add button blue   -text Blue        -command {srgbchan 2}
+    .t add button ired   -text iRed        -command {sirgbchan 0}
+    .t add button igreen -text iGreen      -command {sirgbchan 1}
+    .t add button iblue  -text iBlue       -command {sirgbchan 2}
     .t add button ilum   -text Luminosity  -command sluminosity
     .t add button iilum  -text iLuminosity -command siluminosity
+
+    .t add button hue    -text Hue         -command {shsvchan 0}
+    .t add button sat    -text Saturation  -command {shsvchan 1}
+    .t add button val    -text Value       -command {shsvchan 2}
+
+    .t add button rhr    -text {RGB <-> HSV} -command srgbhsvrgb
+    .t add button hr     -text {HSV as RGB}  -command shsvasrgb
+
     .t add button exit   -text Exit        -command ::exit -separator 1
 
     widget::scrolledwindow .sl -borderwidth 1 -relief sunken
@@ -110,13 +122,39 @@ proc siluminosity {} {
     return
 }
 
-proc schan  {idx} {
+
+proc shsvasrgb {} {
+    global base
+    set image [crimp convert_[typeof $base]_hsv $base]
+    lassign [crimp split_hsv $image] h s v
+    set image [crimp join_rgb $h $s $v]
+    setimage $image
+    return
+}
+
+
+proc srgbhsvrgb {} {
+    global base
+    set image [crimp convert_[typeof $base]_hsv $base]
+    set image [crimp convert_hsv_rgba $image]
+    setimage $image
+    return
+}
+
+proc shsvchan  {idx} {
+    global base
+    set image [crimp convert_[typeof $base]_hsv $base]
+    setimage [lindex [crimp split_[typeof $image] $image] $idx]
+    return
+}
+
+proc srgbchan  {idx} {
     global base
     setimage [lindex [crimp split_[typeof $base] $base] $idx]
     return
 }
 
-proc sichan {idx} {
+proc sirgbchan {idx} {
     global base
     set image [lindex [crimp split_[typeof $base] $base] $idx]
     setimage [crimp invert_[typeof $image] $image]

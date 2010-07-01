@@ -82,8 +82,8 @@ typedef struct crimp_image {
 #define BLACK 0
 #define WHITE 255
 
-#define OPAQUE      0
-#define TRANSPARENT 255
+#define OPAQUE      255
+#define TRANSPARENT 0
 
 /*
  * Convenient checking of image types.

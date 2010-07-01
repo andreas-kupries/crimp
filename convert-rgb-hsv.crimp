@@ -12,14 +12,14 @@ result = crimp_new_hsv (image->w, image->h);
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
 
-	color_rgb_to_hsv (R (image, x, y),
-			  G (image, x, y),
-			  B (image, x, y),
-			  &h, &s, &v);
+	crimp_color_rgb_to_hsv (R (image, x, y),
+				G (image, x, y),
+				B (image, x, y),
+				&h, &s, &v);
 
-	H (image, x, y) = h;
-	S (image, x, y)	= s;
-	V (image, x, y)	= v;
+	H (result, x, y) = h;
+	S (result, x, y) = s;
+	V (result, x, y) = v;
     }
 }
 

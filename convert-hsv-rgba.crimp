@@ -12,15 +12,15 @@ result = crimp_new_rgba (image->w, image->h);
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
 
-	color_rgb_to_hsv (H (image, x, y),
-			  S (image, x, y),
-			  V (image, x, y),
-			  &r, &g, &b);
+	crimp_color_hsv_to_rgb (H (image, x, y),
+				S (image, x, y),
+				V (image, x, y),
+				&r, &g, &b);
 
-	R (image, x, y) = r;
-	G (image, x, y)	= g;
-	B (image, x, y)	= b;
-	A (image, x, y)	= OPAQUE;
+	R (result, x, y) = r;
+	G (result, x, y) = g;
+	B (result, x, y) = b;
+	A (result, x, y) = OPAQUE;
     }
 }
 

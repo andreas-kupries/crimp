@@ -30,23 +30,23 @@ source [file join $dir crimp.tcl]
 
 proc gui {} {
     widget::toolbar .t
-    .t add button origin -text Original    -command sorigin
-    .t add button invert -text Invert      -command sinvert
-    .t add button red    -text Red         -command {srgbchan 0}
-    .t add button green  -text Green       -command {srgbchan 1}
-    .t add button blue   -text Blue        -command {srgbchan 2}
-    .t add button ired   -text iRed        -command {sirgbchan 0}
-    .t add button igreen -text iGreen      -command {sirgbchan 1}
-    .t add button iblue  -text iBlue       -command {sirgbchan 2}
-    .t add button ilum   -text Luminosity  -command sluminosity
-    .t add button iilum  -text iLuminosity -command siluminosity
+    .t add button origin -text Original    -command show_origin
+    .t add button invert -text Invert      -command show_invert
+    .t add button red    -text Red         -command {show_rgbchan 0}
+    .t add button green  -text Green       -command {show_rgbchan 1}
+    .t add button blue   -text Blue        -command {show_rgbchan 2}
+    .t add button ired   -text iRed        -command {show_irgbchan 0}
+    .t add button igreen -text iGreen      -command {show_irgbchan 1}
+    .t add button iblue  -text iBlue       -command {show_irgbchan 2}
+    .t add button ilum   -text Luminosity  -command show_luminosity
+    .t add button iilum  -text iLuminosity -command show_iluminosity
 
-    .t add button hue    -text Hue         -command {shsvchan 0}
-    .t add button sat    -text Saturation  -command {shsvchan 1}
-    .t add button val    -text Value       -command {shsvchan 2}
+    .t add button hue    -text Hue         -command {show_hsvchan 0}
+    .t add button sat    -text Saturation  -command {show_hsvchan 1}
+    .t add button val    -text Value       -command {show_hsvchan 2}
 
-    .t add button rhr    -text {RGB <-> HSV} -command srgbhsvrgb
-    .t add button hr     -text {HSV as RGB}  -command shsvasrgb
+    .t add button rhr    -text {RGB <-> HSV} -command show_rgbhsvrgb
+    .t add button hr     -text {HSV as RGB}  -command show_hsvasrgb
 
     .t add button exit   -text Exit        -command ::exit -separator 1
 
@@ -97,71 +97,57 @@ proc show {name} {
     set base  [crimp read tk $photo]
     image delete $photo
 
-    sorigin
+    show_origin
     return
 }
 
-proc sorigin {} {
-    global base 
-    setimage $base
-    return
-}
-
-proc sinvert {} {
-    global base 
-    setimage [crimp invert $base]
-    return
-}
-
-proc sluminosity {} {
+proc base {} {
     global base
-    setimage  [crimp convert 2grey8 $base] 
+    return $base
+}
+
+proc show_origin {} {
+    setimage [base]
     return
 }
 
-proc siluminosity {} {
-    global base
-    set image [crimp invert $base]
-    setimage  [crimp convert 2grey8 $image]
+proc show_invert {} {
+    setimage [crimp invert [base]]
     return
 }
 
-
-proc shsvasrgb {} {
-    global base
-    set image [crimp convert 2hsv $base]
-    lassign [crimp split $image] h s v
-    set image [crimp join 2rgb $h $s $v]
-    setimage $image
+proc show_luminosity {} {
+    setimage [crimp convert 2grey8 [base]]
     return
 }
 
-
-proc srgbhsvrgb {} {
-    global base
-    set image [crimp convert 2hsv $base]
-    set image [crimp convert 2rgba $image]
-    setimage $image
+proc show_iluminosity {} {
+    setimage [crimp convert 2grey8 [crimp invert [base]]]
     return
 }
 
-proc shsvchan  {idx} {
-    global base
-    set image [crimp convert 2hsv $base]
-    setimage [lindex [crimp split $image] $idx]
+proc show_hsvasrgb {} {
+    setimage [crimp join 2rgb {*}[crimp split [crimp convert 2hsv [base]]]]
     return
 }
 
-proc srgbchan  {idx} {
-    global base
-    setimage [lindex [crimp split $base] $idx]
+proc show_rgbhsvrgb {} {
+    setimage [crimp convert 2rgba [crimp convert 2hsv [base]]]
     return
 }
 
-proc sirgbchan {idx} {
-    global base
-    set image [lindex [crimp split $base] $idx]
-    setimage [crimp invert $image]
+proc show_hsvchan  {idx} {
+    setimage [lindex [crimp split [crimp convert 2hsv [base]]] $idx]
+    return
+}
+
+proc show_rgbchan  {idx} {
+    setimage [lindex [crimp split [base]] $idx]
+    return
+}
+
+proc show_irgbchan {idx} {
+    setimage [crimp invert [lindex [crimp split [base]] $idx]]
     return
 }
 

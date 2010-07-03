@@ -21,6 +21,10 @@ lappend auto_path [file join $dir critcl.vfs lib]
 # Direct access to the crimp package
 source [file join $dir crimp.tcl]
 
+#Use crimp as prebuilt package
+#lappend auto_path $dir/lib
+#package require crimp
+
 # # ## ### ##### ######## #############
 ##
 
@@ -90,7 +94,7 @@ proc show {name} {
     global dir base
 
     set photo [image create photo -file [file join $dir images $name]]
-    set base  [crimp read_tk $photo]
+    set base  [crimp read tk $photo]
     image delete $photo
 
     sorigin
@@ -105,29 +109,29 @@ proc sorigin {} {
 
 proc sinvert {} {
     global base 
-    setimage [crimp invert_[typeof $base] $base]
+    setimage [crimp invert $base]
     return
 }
 
 proc sluminosity {} {
     global base
-    setimage  [crimp convert_[typeof $base]_grey8 $base] 
+    setimage  [crimp convert 2grey8 $base] 
     return
 }
 
 proc siluminosity {} {
     global base
-    set image [crimp invert_[typeof $base] $base]
-    setimage  [crimp convert_[typeof $image]_grey8 $image]
+    set image [crimp invert $base]
+    setimage  [crimp convert 2grey8 $image]
     return
 }
 
 
 proc shsvasrgb {} {
     global base
-    set image [crimp convert_[typeof $base]_hsv $base]
-    lassign [crimp split_hsv $image] h s v
-    set image [crimp join_rgb $h $s $v]
+    set image [crimp convert 2hsv $base]
+    lassign [crimp split $image] h s v
+    set image [crimp join 2rgb $h $s $v]
     setimage $image
     return
 }
@@ -135,36 +139,36 @@ proc shsvasrgb {} {
 
 proc srgbhsvrgb {} {
     global base
-    set image [crimp convert_[typeof $base]_hsv $base]
-    set image [crimp convert_hsv_rgba $image]
+    set image [crimp convert 2hsv $base]
+    set image [crimp convert 2rgba $image]
     setimage $image
     return
 }
 
 proc shsvchan  {idx} {
     global base
-    set image [crimp convert_[typeof $base]_hsv $base]
-    setimage [lindex [crimp split_[typeof $image] $image] $idx]
+    set image [crimp convert 2hsv $base]
+    setimage [lindex [crimp split $image] $idx]
     return
 }
 
 proc srgbchan  {idx} {
     global base
-    setimage [lindex [crimp split_[typeof $base] $base] $idx]
+    setimage [lindex [crimp split $base] $idx]
     return
 }
 
 proc sirgbchan {idx} {
     global base
-    set image [lindex [crimp split_[typeof $base] $base] $idx]
-    setimage [crimp invert_[typeof $image] $image]
+    set image [lindex [crimp split $base] $idx]
+    setimage [crimp invert $image]
     return
 }
 
 proc setimage {i} {
     #puts si/[join [crimp dimensions $i] x]
     .c configure -scrollregion [list 0 0 {*}[crimp dimensions $i]]
-    crimp write_[typeof $i]_tk [.c itemcget photo -image] $i
+    crimp write 2tk [.c itemcget photo -image] $i
     return
 }
 

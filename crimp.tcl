@@ -26,6 +26,7 @@ catch {
 critcl::config tk 1
 critcl::cheaders c/*.h
 critcl::csources c/*.c
+critcl::tsources crimp_tcl.tcl
 critcl::ccode {
     #include <math.h>
     #include <stdlib.h>
@@ -78,9 +79,10 @@ critcl::ccode {
     }
 }
 
-namespace eval crimp {namespace ensemble create}
+# # ## ### ##### ######## #############
+## Read and execute all .crimp files in the current directory.
 
-foreach filename [lsort [glob -nocomplain [file join $dir *.crimp]]] {
+foreach filename [lsort [glob -nocomplain [file join [file dirname [file normalize [info script]]] *.crimp]]] {
     set chan [open $filename]
     set name [gets $chan]
     set params "Tcl_Interp* interp"
@@ -94,12 +96,19 @@ foreach filename [lsort [glob -nocomplain [file join $dir *.crimp]]] {
         append params " $line"
     }
     set body "\n#line $number \"[file tail $filename]\"\n[read $chan]"
-    namespace ensemble configure ::crimp -subcommands [concat\
-            [namespace ensemble configure crimp -subcommands] [list $name]]
-    namespace eval ::crimp [list ::critcl::cproc $name $params ok $body]
     close $chan
+    namespace eval ::crimp [list ::critcl::cproc $name $params ok $body]
 }
 
+# # ## ### ##### ######## #############
+## Pull in the Tcl layer aggregating the C primitives into useful
+## commands.
+##
+## NOTE: This is for the interactive use of crimp.tcl. When used as
+##       plain package the 'tsources' declaration at the top ensures
+##       the distribution and use of the Tcl layer.
+
+source [file join [file dirname [file normalize [info script]]] crimp_tcl.tcl]
 
 # # ## ### ##### ######## #############
 ## Ready. Export.

@@ -105,12 +105,56 @@ proc ::crimp::invert {image} {
     return [invert_$type $image]
 }
 
+proc ::crimp::map {image args} {
+    set type [TypeOf $image]
+    if {![Has map_$type]} {
+	return -code error "Unable to re-map images of type \"$type\""
+    }
+
+    # Extend the set of maps if not enough were specified, by
+    # replicating the last map, except for the alpha channel, where we
+    # use identity.
+
+    switch -- $type {
+	rgb {
+	    if {[llength $args]} {
+		while {[llength $args] < 3} {
+		    lappend args [lindex $args end]
+		}
+	    }
+	}
+	rgba {
+	    if {[llength $args]} {
+		while {[llength $args] < 3} {
+		    lappend args [lindex $args end]
+		}
+		if {[llength $args] < 4} {
+		    lappend args [identitymap]
+		}
+	    }
+	}
+    }
+
+    return [map_$type $image {*}$args]
+}
+
 proc ::crimp::split {image} {
     set type [TypeOf $image]
     if {![Has split_$type]} {
 	return -code error "Unable to split images of type \"$type\""
     }
     return [split_$type $image]
+}
+
+proc ::crimp::identitymap {} {
+    variable identity
+    if {![info exists identity]} {
+	for {set i 0} {$i < 256} {incr i} {
+	    lappend map $i
+	}
+	set identity [crimp read tcl [list $map]]
+    }
+    return $identity
 }
 
 # # ## ### ##### ######## #############
@@ -122,7 +166,9 @@ proc ::crimp::TypeOf {image} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp {
-    namespace export type width height dimensions read write convert invert split join
+    namespace export type width height dimensions
+    namespace export read write convert join
+    namespace export invert map split identitymap
     namespace ensemble create
 }
 

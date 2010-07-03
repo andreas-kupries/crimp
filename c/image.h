@@ -106,6 +106,7 @@ extern void         crimp_del (crimp_image* image);
 #define crimp_new_rgb(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),   (w), (h)))
 #define crimp_new_grey8(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::grey8"), (w), (h)))
 #define crimp_new_like(image) (crimp_new ((image)->type, (image)->w, (image)->h))
+#define crimp_new_like_transpose(image) (crimp_new ((image)->type, (image)->h, (image)->w))
 
 /*
  * API :: Tcl. Manage Tcl_Obj's of images.

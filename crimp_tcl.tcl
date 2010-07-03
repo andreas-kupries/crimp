@@ -95,6 +95,24 @@ namespace eval ::crimp::join {
     unset fun
 }
 
+namespace eval ::crimp::flip {
+    namespace export *
+    namespace ensemble create
+    variable fun
+    foreach fun [::crimp::List flip_*] {
+	proc [lindex [::crimp::P $fun] 0] {image} \
+	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
+		set type [::crimp::TypeOf $image]
+		if {![::crimp::Has flip_@_$type]} {
+		    return -code error "Unable to flip @ images of type \"$type\""
+		}
+		return [::crimp::flip_@_$type $image]
+	    }]
+    }
+    unset fun
+}
+
+
 # # ## ### ##### ######## #############
 
 proc ::crimp::invert {image} {
@@ -117,6 +135,13 @@ proc ::crimp::map {image args} {
 
     switch -- $type {
 	rgb {
+	    if {[llength $args]} {
+		while {[llength $args] < 3} {
+		    lappend args [lindex $args end]
+		}
+	    }
+	}
+	hsv {
 	    if {[llength $args]} {
 		while {[llength $args] < 3} {
 		    lappend args [lindex $args end]
@@ -167,7 +192,7 @@ proc ::crimp::TypeOf {image} {
 
 namespace eval ::crimp {
     namespace export type width height dimensions
-    namespace export read write convert join
+    namespace export read write convert join flip
     namespace export invert map split identitymap
     namespace ensemble create
 }

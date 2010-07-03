@@ -48,6 +48,11 @@ proc gui {} {
     .t add button rhr    -text {RGB <-> HSV} -command show_rgbhsvrgb
     .t add button hr     -text {HSV as RGB}  -command show_hsvasrgb
 
+    .t add button flipv  -text \u2191\u2193 -command show_flip_v
+    .t add button fliph  -text \u2194       -command show_flip_h
+    .t add button fliptp -text \\           -command show_transpose
+    .t add button fliptv -text /            -command show_transverse
+
     .t add button exit   -text Exit        -command ::exit -separator 1
 
     widget::scrolledwindow .sl -borderwidth 1 -relief sunken
@@ -171,6 +176,26 @@ proc show_rgbchan  {idx} {
 
 proc show_irgbchan {idx} {
     setimage [crimp invert [lindex [crimp split [base]] $idx]]
+    return
+}
+
+proc show_flip_v {} {
+    setimage [crimp flip vertical [base]]
+    return
+}
+
+proc show_flip_h {} {
+    setimage [crimp flip horizontal [base]]
+    return
+}
+
+proc show_transpose {} {
+    setimage [crimp flip transpose [base]]
+    return
+}
+
+proc show_transverse {} {
+    setimage [crimp flip transverse [base]]
     return
 }
 

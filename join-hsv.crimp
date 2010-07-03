@@ -13,7 +13,11 @@ crimp_input (hueImageObj, hue, grey8);
 crimp_input (satImageObj, sat, grey8);
 crimp_input (valImageObj, val, grey8);
 
-// XXX check dimensions, must be identical
+if (!crimp_eq_dim (hue, sat) ||
+    !crimp_eq_dim (hue, val)) {
+    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
 
 result = crimp_new_rgb (hue->w, hue->h);
 

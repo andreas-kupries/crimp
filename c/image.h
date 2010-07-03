@@ -122,6 +122,12 @@ extern int      crimp_get_image_from_obj (Tcl_Interp*   interp,
     } \
     ASSERT_IMGTYPE (imagevar, itype)
 
+#define crimp_eq_dim(imagea,imageb) \
+    (((imagea)->w == (imageb)->w) && ((imagea)->h == (imageb)->h))
+
+#define crimp_require_dim(image,rw,rh)					\
+    (((image)->w == (rw)) && ((image)->h == (rh)))
+
 
 /*
  * Local Variables:

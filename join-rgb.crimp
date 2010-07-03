@@ -13,7 +13,11 @@ crimp_input (redImageObj,   red,   grey8);
 crimp_input (greenImageObj, green, grey8);
 crimp_input (blueImageObj,  blue,  grey8);
 
-// XXX check dimensions, must be identical
+if (!crimp_eq_dim (red, green) ||
+    !crimp_eq_dim (red, blue)) {
+    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
 
 result = crimp_new_rgb (red->w, red->h);
 

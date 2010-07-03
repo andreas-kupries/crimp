@@ -56,15 +56,18 @@ proc gui {} {
 	-listvariable images
     canvas                 .c -width 800 -height 600 -scrollregion {-4000 -4000 4000 4000}
 
-    .c create image {0 0} -anchor nw -tags photo ;#-outline red
-    .c itemconfigure photo -image [image create photo]
+    set ::scala 255
+    scale .s -from 0 -to 255 -orient horizontal -variable ::scala
 
+    .c create image {0 0} -anchor nw -tags photo
+    .c itemconfigure photo -image [image create photo]
 
     .sl setwidget .l
     .sc setwidget .c
 
     pack .t  -fill both -expand 0 -side top -anchor w
     pack .sl -fill both -expand 1 -padx 4 -pady 4 -side left
+    pack .s  -fill both -expand 0 -side top
     pack .sc -fill both -expand 1 -padx 4 -pady 4 -side right
 
     bind .l <<ListboxSelect>> useSelection
@@ -79,6 +82,21 @@ proc gui {} {
     #crosshair::track on  .c TRACK
 
     wm deiconify .
+    return
+}
+
+proc rescale {v} {
+    global baseb
+    set map {}
+    for {set i 0} {$i < 256} {incr i} {
+	if {$i <= $v} {
+	    lappend map $i
+	} else {
+	    lappend map [expr {255 - $i}]
+	}
+    }
+    set map [crimp read tcl [list $map]]
+    setimageb [crimp map [baseb] $map]
     return
 }
 
@@ -104,6 +122,11 @@ proc show {name} {
 proc base {} {
     global base
     return $base
+}
+
+proc baseb {} {
+    global baseb
+    return $baseb
 }
 
 proc show_origin {} {
@@ -152,7 +175,17 @@ proc show_irgbchan {idx} {
 }
 
 proc setimage {i} {
-    #puts si/[join [crimp dimensions $i] x]
+    global baseb scala
+    set baseb $i
+    .c configure -scrollregion [list 0 0 {*}[crimp dimensions $i]]
+    crimp write 2tk [.c itemcget photo -image] $i
+    .s configure -command rescale
+    #set scala 255
+    return
+}
+
+proc setimageb {i} {
+    set basec $i
     .c configure -scrollregion [list 0 0 {*}[crimp dimensions $i]]
     crimp write 2tk [.c itemcget photo -image] $i
     return

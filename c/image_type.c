@@ -27,9 +27,6 @@ typedef struct knowntype {
 
 static knowntype* knowntypes;
 
-/* XXX FUTURE: Move this somewhere else when image types get more info, i.e. callbacks and get defined in their own files */
-static void TypeInit (void);
-
 static void FreeImageType     (Tcl_Obj* imagetypeObjPtr);
 static void DupImageType      (Tcl_Obj* imagetypeObjPtr,
 			       Tcl_Obj* dupObjPtr);
@@ -44,6 +41,53 @@ static Tcl_ObjType ImageTypeType = {
     StringOfImageType,
     ImageTypeFromAny
 };
+
+
+/*
+ * Definitions :: Initialization
+ */
+
+void
+crimp_imagetype_init (void)
+{
+    /*
+     * Standard image types.
+     */
+
+    static const char*     rgba_cname [] = {"red", "green", "blue", "alpha"};
+    static crimp_imagetype rgba = { "crimp::image::rgba", 4, 4, &rgba_cname };
+
+    static const char*     rgb_cname [] =  {"red", "green", "blue"};
+    static crimp_imagetype rgb = { "crimp::image::rgb", 3, 3, &rgb_cname };
+
+    static const char*     hsv_cname [] = {"hue", "saturation", "value"};
+    static crimp_imagetype hsv = { "crimp::image::hsv", 3, 3, &hsv_cname };
+
+    static const char*     grey_cname [] = {"luma"};
+    static crimp_imagetype grey8  = { "crimp::image::grey8",  1, 1, &grey_cname };
+    static crimp_imagetype grey16 = { "crimp::image::grey16", 2, 1, &grey_cname };
+    static crimp_imagetype grey32 = { "crimp::image::grey32", 4, 1, &grey_cname };
+
+    static const char*     bw_cname [] = {"bw"};
+    static crimp_imagetype bw = { "crimp::image::bw", 1, 1, &bw_cname };
+
+    static initialized = 0;
+
+    if (initialized) return;
+    initialized = 1;
+
+    /*
+     * Register most important last. Search is in reverse order of
+     * registration.
+     */
+
+    crimp_imagetype_def (&bw);
+    crimp_imagetype_def (&grey8);
+    crimp_imagetype_def (&grey16);
+    crimp_imagetype_def (&hsv);
+    crimp_imagetype_def (&rgb);
+    crimp_imagetype_def (&rgba);
+}
 
 
 /*
@@ -63,8 +107,6 @@ const crimp_imagetype*
 crimp_imagetype_find (const char* name)
 {
     knowntype* kt;
-
-    TypeInit();
 
     for (kt = knowntypes; kt; kt = kt->next) {
 	if (strcmp (name, kt->type->name) == 0) {
@@ -160,43 +202,6 @@ ImageTypeFromAny (Tcl_Interp* interp,
     imagetypeObjPtr->internalRep.otherValuePtr = (crimp_imagetype*) cit;
     imagetypeObjPtr->typePtr                   = &ImageTypeType;
     return TCL_OK;
-}
-
-/*
- * Definitions :: Internal Initialization.
- */
-
-static void
-TypeInit (void)
-{
-    /*
-     * Standard image types.
-     */
-
-    static crimp_imagetype rgba   = { "crimp::image::rgba",   4 };
-    static crimp_imagetype rgb    = { "crimp::image::rgb",    3 };
-    static crimp_imagetype hsv    = { "crimp::image::hsv",    3 };
-    static crimp_imagetype grey8  = { "crimp::image::grey8",  1 };
-    static crimp_imagetype grey16 = { "crimp::image::grey16", 2 };
-    static crimp_imagetype grey32 = { "crimp::image::grey32", 4 };
-    static crimp_imagetype bw     = { "crimp::image::bw",     1 };
-
-    static initialized = 0;
-
-    if (initialized) return;
-    initialized = 1;
-
-    /*
-     * Register most important last. Search is in reverse order of
-     * registration.
-     */
-
-    crimp_imagetype_def (&bw);
-    crimp_imagetype_def (&grey8);
-    crimp_imagetype_def (&grey16);
-    crimp_imagetype_def (&hsv);
-    crimp_imagetype_def (&rgb);
-    crimp_imagetype_def (&rgba);
 }
 
 /*

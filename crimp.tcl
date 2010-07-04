@@ -27,6 +27,9 @@ critcl::config tk 1
 critcl::cheaders c/*.h
 critcl::csources c/*.c
 critcl::tsources crimp_tcl.tcl
+critcl::cinit {
+    crimp_imagetype_init ();
+} {}
 critcl::ccode {
     #include <math.h>
     #include <stdlib.h>
@@ -35,10 +38,6 @@ critcl::ccode {
     #include <image.h>
     #include <color.h>
     #include <util.h>
-
-    #define MIN(a, b) ((a) < (b) ? (a) : (b))
-    #define MAX(a, b) ((a) > (b) ? (a) : (b))
-    #define CLAMP(min, v, max) ((v) < (min) ? (min) : (v) < (max) ? (v) : (max))
 
     static int decodeImageObj(Tcl_Interp *interp, Tcl_Obj *imageObj, int *width,
     int *height, unsigned char **pixels)

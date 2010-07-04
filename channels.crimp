@@ -1,0 +1,30 @@
+channels
+Tcl_Obj* imageObj
+
+crimp_image* image;
+Tcl_Obj**    listv;
+int          i;
+
+if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
+    return TCL_ERROR;
+}
+
+listv = NALLOC (image->itype->channels, Tcl_Obj*);
+for (i=0; i < image->itype->channels; i++) {
+    listv[i] = Tcl_NewStringObj (image->itype->cname [i], -1);
+}
+
+Tcl_SetObjResult (interp, Tcl_NewListObj (image->itype->channels, listv));
+ckfree (listv);
+
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

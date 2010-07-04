@@ -14,9 +14,17 @@
  */
 
 typedef struct crimp_imagetype {
-    const char* name;   /* Image type code     */
-    int         size;   /* Pixel size in bytes */
+    const char*  name;     /* Image type code     */
+    int          size;     /* Pixel size in bytes */
+    int          channels; /* Number of 'color' channels */
+    const char** cname;    /* Names of the color channels */
 } crimp_imagetype;
+
+/*
+ * API :: Initialization.
+ */
+
+extern void crimp_imagetype_init (void);
 
 /*
  * API :: Core. Manage a mapping of types to names.

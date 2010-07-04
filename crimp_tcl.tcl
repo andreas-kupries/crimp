@@ -191,7 +191,7 @@ proc ::crimp::TypeOf {image} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp {
-    namespace export type width height dimensions
+    namespace export type width height dimensions channels
     namespace export read write convert join flip
     namespace export invert map split identitymap
     namespace ensemble create

@@ -37,16 +37,16 @@ static Tcl_ObjType ImageType = {
  */
 
 crimp_image*
-crimp_new (const crimp_imagetype* type, int w, int h)
+crimp_new (const crimp_imagetype* itype, int w, int h)
 {
     /*
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    int          size  = sizeof (crimp_image) + w * h * type->size;
+    int          size  = sizeof (crimp_image) + w * h * itype->size;
     crimp_image* image = (crimp_image*) ckalloc (size);
 
-    image->type  = type;
+    image->itype = itype;
     image->w     = w;
     image->h     = h;
 
@@ -56,7 +56,7 @@ crimp_new (const crimp_imagetype* type, int w, int h)
 crimp_image*
 crimp_dup (crimp_image* image)
 {
-    int          size      = sizeof (crimp_image) + image->w * image->h * image->type->size;
+    int          size      = sizeof (crimp_image) + image->w * image->h * image->itype->size;
     crimp_image* new_image = (crimp_image*) ckalloc (size);
 
     /*
@@ -137,7 +137,7 @@ StringOfImage (Tcl_Obj* imgObjPtr)
     Tcl_DStringInit (&ds);
 
     /* image type */
-    Tcl_DStringAppendElement (&ds, ci->type->name);
+    Tcl_DStringAppendElement (&ds, ci->itype->name);
 
     /* image width */
     {
@@ -162,7 +162,7 @@ StringOfImage (Tcl_Obj* imgObjPtr)
 
 	char* tmp;
 	char* dst;
-	int plen = ci->type->size * ci->w * ci->h;
+	int plen = ci->itype->size * ci->w * ci->h;
 	int expanded, i;
 
 	/*
@@ -173,7 +173,7 @@ StringOfImage (Tcl_Obj* imgObjPtr)
 	 */
 
 	expanded = 0;
-	for (i = 0; i < (ci->type->size * ci->w * ci->h) && plen >= 0; i++) {
+	for (i = 0; i < (ci->itype->size * ci->w * ci->h) && plen >= 0; i++) {
 	    if ((ci->pixel[i] == 0) || (ci->pixel[i] > 127)) {
 		plen ++;
 		expanded = 1;
@@ -194,7 +194,7 @@ StringOfImage (Tcl_Obj* imgObjPtr)
 	    /*
 	     * If bytes have to be expanded we have to handle them 1-by-1.
 	     */
-	    for (i = 0; i < (ci->type->size * ci->w * ci->h); i++) {
+	    for (i = 0; i < (ci->itype->size * ci->w * ci->h); i++) {
 		dst += Tcl_UniCharToUtf(ci->pixel[i], dst);
 	    }
 	} else {

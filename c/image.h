@@ -14,7 +14,7 @@
 typedef unsigned char* crimp_pixel_array;
 
 typedef struct crimp_image {
-    const crimp_imagetype* type;     /* Reference to type descriptor */
+    const crimp_imagetype* itype;    /* Reference to type descriptor */
     int                    w;        /* Image dimension, width  */
     int                    h;        /* Image dimension, height */
     unsigned char          pixel[4]; /* Integrated pixel storage */
@@ -34,7 +34,7 @@ typedef struct crimp_image {
  * 3.
  */
 
-#define SZ(iptr) ((iptr)->type->size)
+#define SZ(iptr) ((iptr)->itype->size)
 
 #define RED(iptr,x,y)   (0 + SZ(iptr) * ((x) + (y)*(iptr)->w))
 #define GREEN(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*(iptr)->w))
@@ -89,9 +89,9 @@ typedef struct crimp_image {
  * Convenient checking of image types.
  */
 
-#define ASSERT_IMGTYPE(image,itype) \
-    ASSERT ((image)->type == crimp_imagetype_find ("crimp::image::" STR(itype)), \
-	    "expected image type " STR(itype))
+#define ASSERT_IMGTYPE(image,imtype) \
+    ASSERT ((image)->itype == crimp_imagetype_find ("crimp::image::" STR(imtype)), \
+	    "expected image type " STR(imtype))
 
 /*
  * API :: Core. Image lifecycle management.
@@ -105,8 +105,8 @@ extern void         crimp_del (crimp_image* image);
 #define crimp_new_rgba(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),  (w), (h)))
 #define crimp_new_rgb(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),   (w), (h)))
 #define crimp_new_grey8(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::grey8"), (w), (h)))
-#define crimp_new_like(image) (crimp_new ((image)->type, (image)->w, (image)->h))
-#define crimp_new_like_transpose(image) (crimp_new ((image)->type, (image)->h, (image)->w))
+#define crimp_new_like(image) (crimp_new ((image)->itype, (image)->w, (image)->h))
+#define crimp_new_like_transpose(image) (crimp_new ((image)->itype, (image)->h, (image)->w))
 
 /*
  * API :: Tcl. Manage Tcl_Obj's of images.

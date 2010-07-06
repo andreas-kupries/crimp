@@ -67,6 +67,9 @@ proc gui {} {
     set ::gamma 1.0
     scale .g -from 0.1 -to 5.0 -orient horizontal -variable ::gamma -resolution 0.1
 
+    set ::sat 1.0
+    scale .b -from 0 -to 5.0 -orient horizontal -variable ::sat -resolution 0.1
+
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
 
@@ -77,6 +80,7 @@ proc gui {} {
     pack .sl -fill both -expand 1 -padx 4 -pady 4 -side left
     pack .s  -fill both -expand 0 -side top
     pack .g  -fill both -expand 0 -side top
+    pack .b  -fill both -expand 0 -side top
     pack .sc -fill both -expand 1 -padx 4 -pady 4 -side right
 
     bind .l <<ListboxSelect>> useSelection
@@ -103,6 +107,19 @@ proc resolarize {v} {
 proc regamma {v} {
     global baseb
     setimageb [crimp degamma [baseb] $v]
+    return
+}
+
+proc resaturate {gain} {
+    global baseb
+
+    #set a [lindex [crimp split [base]] end]
+
+    lassign [crimp split [crimp convert 2hsv [baseb]]] h s v
+
+    set s [crimp remap $s [crimp map gain $gain]]
+
+    setimageb [crimp convert 2rgb [crimp join 2hsv $h $s $v]]
     return
 }
 
@@ -207,6 +224,7 @@ proc setimage {i} {
     crimp write 2tk [.c itemcget photo -image] $i
     .s configure -command resolarize
     .g configure -command regamma
+    .b configure -command resaturate
     return
 }
 

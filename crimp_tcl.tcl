@@ -247,10 +247,7 @@ proc ::crimp::table::solarize {n} {
 
 proc ::crimp::table::gamma {y} {
     for {set i 0} {$i < 256} {incr i} {
-	set v [expr {round ($i ** $y)}]
-	if {$v < 0   } { set v 0   }
-	if {$v > 255 } { set v 255 }
-	lappend table $v
+	lappend table [CLAMP [expr {round ($i ** $y)}]]
     }
     return $table
 }
@@ -258,12 +255,24 @@ proc ::crimp::table::gamma {y} {
 proc ::crimp::table::degamma {y} {
     set dy [expr {1.0/$y}]
     for {set i 0} {$i < 256} {incr i} {
-	set v [expr {round ($i ** $dy)}]
-	if {$v < 0   } { set v 0   }
-	if {$v > 255 } { set v 255 }
-	lappend table $v
+	lappend table [CLAMP [expr {round ($i ** $dy)}]]
     }
     return $table
+}
+
+proc ::crimp::table::gain {gain {bias 0}} {
+    for {set x 0} {$x < 256} {incr x} {
+	lappend table [CLAMP [expr {round(double($gain) * $x + double($bias))}]]
+    }
+    return $table
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::table::CLAMP {x} {
+    if {$x < 0  } { return 0   }
+    if {$x > 255} { return 255 }
+    return $x
 }
 
 # # ## ### ##### ######## #############

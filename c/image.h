@@ -21,6 +21,13 @@ typedef struct crimp_image {
 } crimp_image;
 
 /*
+ * Pixel Access Macros. General access to a 'color' channel.
+ */
+
+#define CHAN(iptr,c,x,y) ((c) + SZ(iptr) * ((x) + (y)*(iptr)->w))
+#define CH(iptr,c,x,y) (iptr)->pixel [CHAN (iptr,c,x,y)]
+
+/*
  * Pixel Access Macros. RGBA / RGB
  */
 

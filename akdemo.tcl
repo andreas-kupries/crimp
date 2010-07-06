@@ -61,8 +61,8 @@ proc gui {} {
 	-listvariable images
     canvas                 .c -width 800 -height 600 -scrollregion {-4000 -4000 4000 4000}
 
-    set ::scala 255
-    scale .s -from 0 -to 255 -orient horizontal -variable ::scala
+    set ::scala 256
+    scale .s -from 0 -to 256 -orient horizontal -variable ::scala
 
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
@@ -94,7 +94,7 @@ proc rescale {v} {
     global baseb
     set map {}
     for {set i 0} {$i < 256} {incr i} {
-	if {$i <= $v} {
+	if {$i < $v} {
 	    lappend map $i
 	} else {
 	    lappend map [expr {255 - $i}]

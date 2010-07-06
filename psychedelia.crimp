@@ -2,13 +2,13 @@ psychedelia
 int width int height int frames
 
 static float prev[4][3], next[4][3];
-static int frame;
+static int   frame;
 static float tweaks[3] = {33, 35, 37};
+crimp_image* result;
+int          yi, xi, c;
+float        t, y, x;
 
-Tcl_Obj *dataObj = Tcl_NewByteArrayObj(NULL, 4 * width * height);
-unsigned char (*pixels)[height][width][4] =
-        (unsigned char (*)[height][width][4])
-        Tcl_GetByteArrayFromObj(dataObj, NULL);
+result = crimp_new_rgba (width, height);
 
 if (frame % frames == 0) {
     int i, c;
@@ -27,12 +27,10 @@ if (frame % frames == 0) {
     }
 }
 
-float t = (cosf((frame % frames) / (float)frames * M_PI) + 1) / 2;
-int yi, xi, c;
-float y, x;
+t = (cosf((frame % frames) / (float)frames * M_PI) + 1) / 2;
 for (yi = 0, y = 0; yi < height; ++yi, y += 1. / height) {
     for (xi = 0, x = 0; xi < width; ++xi, x += 1. / width) {
-        float v[3];
+        float i, v[3];
         for (c = 0; c < 3; ++c) {
             v[c] = cosf(frame / tweaks[c] + (
                 (prev[0][c] * t + next[0][c] * (1 - t)) * (1 - y) * (1 - x)
@@ -41,17 +39,25 @@ for (yi = 0, y = 0; yi < height; ++yi, y += 1. / height) {
               + (prev[3][c] * t + next[3][c] * (1 - t)) * (    y) * (    x)
             ) * 7 * M_PI);
         }
-        float i = (cosf((v[0] + v[1] + v[2] + frame / 17.) * M_PI) + 1) / 2;
-        for (c = 0; c < 3; ++c) {
-            (*pixels)[yi][xi][c] = CLAMP(0, v[c] * i * 255, 255);
-        }
-        (*pixels)[yi][xi][3] = 255;
+        i = (cosf((v[0] + v[1] + v[2] + frame / 17.) * M_PI) + 1) / 2;
+
+	R (result, xi, yi) = CLAMP(0, v[0] * i * 255, 255);
+	G (result, xi, yi) = CLAMP(0, v[1] * i * 255, 255);
+	B (result, xi, yi) = CLAMP(0, v[2] * i * 255, 255);
+	A (result, xi, yi) = OPAQUE;
     }
 }
-++frame;
 
-Tcl_Obj *list[] = {Tcl_NewIntObj(width), Tcl_NewIntObj(height), dataObj};
-Tcl_SetObjResult(interp, Tcl_NewListObj(3, list));
+frame ++;
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;
-
+
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

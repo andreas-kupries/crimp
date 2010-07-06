@@ -54,6 +54,7 @@ proc gui {} {
     .t add button fliptv -text /            -command show_transverse
 
     .t add button wavy   -text Waves        -command show_wavy
+    .t add button psych  -text Psych        -command show_psych
 
     .t add button exit   -text Exit        -command ::exit -separator 1
 
@@ -167,6 +168,12 @@ proc show_invert {} {
 proc show_wavy {} {
     # I have no idea what would be good parameters.
     setimage [crimp wavy [base] 2 8 3]
+    return
+}
+
+proc show_psych {} {
+    # I have no idea what would be good parameters.
+    setimage [crimp psych 320 280 100]
     return
 }
 

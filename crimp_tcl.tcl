@@ -287,6 +287,7 @@ namespace eval ::crimp {
     namespace export type width height dimensions channels
     namespace export read write convert join flip split table
     namespace export invert solarize gamma degamma remap map
+    namespace export wavy
     #
     namespace ensemble create
 }

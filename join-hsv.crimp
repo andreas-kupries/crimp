@@ -19,7 +19,7 @@ if (!crimp_eq_dim (hue, sat) ||
     return TCL_ERROR;
 }
 
-result = crimp_new_rgb (hue->w, hue->h);
+result = crimp_new_hsv (hue->w, hue->h);
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {

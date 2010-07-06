@@ -116,14 +116,22 @@ namespace eval ::crimp::flip {
 # # ## ### ##### ######## #############
 
 proc ::crimp::invert {image} {
-    set type [TypeOf $image]
-    if {![Has invert_$type]} {
-	return -code error "Unable to invert images of type \"$type\""
-    }
-    return [invert_$type $image]
+    remap $image [map invers]
 }
 
-proc ::crimp::map {image args} {
+proc ::crimp::solarize {image n} {
+    remap $image [map solarize $n]
+}
+
+proc ::crimp::gamma {image y} {
+    remap $image [map gamma $y]
+}
+
+proc ::crimp::degamma {image y} {
+    remap $image [map degamma $y]
+}
+
+proc ::crimp::remap {image args} {
     set type [TypeOf $image]
     if {![Has map_$type]} {
 	return -code error "Unable to re-map images of type \"$type\""
@@ -154,7 +162,7 @@ proc ::crimp::map {image args} {
 		    lappend args [lindex $args end]
 		}
 		if {[llength $args] < 4} {
-		    lappend args [identitymap]
+		    lappend args [map identity]
 		}
 	    }
 	}
@@ -171,15 +179,91 @@ proc ::crimp::split {image} {
     return [split_$type $image]
 }
 
-proc ::crimp::identitymap {} {
-    variable identity
-    if {![info exists identity]} {
-	for {set i 0} {$i < 256} {incr i} {
-	    lappend map $i
-	}
-	set identity [crimp read tcl [list $map]]
+# # ## ### ##### ######## #############
+## Tables and maps.
+## For performance we should memoize results.
+## This is not needed to just get things working howver.
+
+proc ::crimp::map {args} {
+    return [read tcl [list [table {*}$args]]]
+}
+
+namespace eval ::crimp::table {
+    namespace export *
+    namespace ensemble create
+}
+
+proc ::crimp::table::identity {} {
+    for {set i 0} {$i < 256} {incr i} {
+	lappend table $i
     }
-    return $identity
+    return $table
+}
+
+proc ::crimp::table::invers {} {
+    return [lreverse [identity]]
+}
+
+proc ::crimp::table::solarize {n} {
+    if {$n < 0}   { set n 0   }
+    if {$n > 256} { set n 256 }
+
+    # n is the threshold above which we invert the pixel values.
+    # Anything less is left untouched. This implies that 256 inverts
+    # nothing, as everything is less; and 0 inverts all, as everything
+    # is larger or equal.
+
+    set t {}
+    for {set i 0} {$i < 256} {incr i} {
+	if {$i < $n} {
+	    lappend t $i
+	} else {
+	    lappend t [expr {255 - $i}]
+	}
+    }
+    return $t
+
+    # In terms of existing tables, and joining parts ... When we
+    # memoize results in the future the code below should be faster,
+    # as it will have quick access to the (invers) identity
+    # tables. When computing from scratch the cont. recalc of these
+    # should be slower, hence the loop above.
+
+    if {$n == 0} {
+	# Full solarization
+	return [invers]
+    } elseif {$n == 256} {
+	# No solarization
+	return [identity]
+    } else {
+	# Take part of identity, and part of invers, as per the chosen
+	# threshold.
+	set l [expr {$n - 1}]
+	set     t    [lrange [identity] 0 $l]
+	lappend t {*}[lrange [invers] $n end]
+	return $t
+    }
+}
+
+proc ::crimp::table::gamma {y} {
+    for {set i 0} {$i < 256} {incr i} {
+	set v [expr {round ($i ** $y)}]
+	if {$v < 0   } { set v 0   }
+	if {$v > 255 } { set v 255 }
+	lappend table $v
+    }
+    return $table
+}
+
+proc ::crimp::table::degamma {y} {
+    set dy [expr {1.0/$y}]
+    for {set i 0} {$i < 256} {incr i} {
+	set v [expr {round ($i ** $dy)}]
+	if {$v < 0   } { set v 0   }
+	if {$v > 255 } { set v 255 }
+	lappend table $v
+    }
+    return $table
 }
 
 # # ## ### ##### ######## #############
@@ -192,8 +276,9 @@ proc ::crimp::TypeOf {image} {
 
 namespace eval ::crimp {
     namespace export type width height dimensions channels
-    namespace export read write convert join flip
-    namespace export invert map split identitymap
+    namespace export read write convert join flip split table
+    namespace export invert solarize gamma degamma remap map
+    #
     namespace ensemble create
 }
 

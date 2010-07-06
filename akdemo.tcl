@@ -64,6 +64,9 @@ proc gui {} {
     set ::scala 256
     scale .s -from 0 -to 256 -orient horizontal -variable ::scala
 
+    set ::gamma 1.0
+    scale .g -from 0.1 -to 5.0 -orient horizontal -variable ::gamma -resolution 0.1
+
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
 
@@ -73,6 +76,7 @@ proc gui {} {
     pack .t  -fill both -expand 0 -side top -anchor w
     pack .sl -fill both -expand 1 -padx 4 -pady 4 -side left
     pack .s  -fill both -expand 0 -side top
+    pack .g  -fill both -expand 0 -side top
     pack .sc -fill both -expand 1 -padx 4 -pady 4 -side right
 
     bind .l <<ListboxSelect>> useSelection
@@ -90,18 +94,15 @@ proc gui {} {
     return
 }
 
-proc rescale {v} {
+proc resolarize {v} {
     global baseb
-    set map {}
-    for {set i 0} {$i < 256} {incr i} {
-	if {$i < $v} {
-	    lappend map $i
-	} else {
-	    lappend map [expr {255 - $i}]
-	}
-    }
-    set map [crimp read tcl [list $map]]
-    setimageb [crimp map [baseb] $map]
+    setimageb [crimp solarize [baseb] $v]
+    return
+}
+
+proc regamma {v} {
+    global baseb
+    setimageb [crimp degamma [baseb] $v]
     return
 }
 
@@ -204,8 +205,8 @@ proc setimage {i} {
     set baseb $i
     .c configure -scrollregion [list 0 0 {*}[crimp dimensions $i]]
     crimp write 2tk [.c itemcget photo -image] $i
-    .s configure -command rescale
-    #set scala 255
+    .s configure -command resolarize
+    .g configure -command regamma
     return
 }
 

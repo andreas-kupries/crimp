@@ -15,7 +15,7 @@ for (i=0; i < image->itype->channels; i++) {
 }
 
 Tcl_SetObjResult (interp, Tcl_NewListObj (image->itype->channels, listv));
-ckfree (listv);
+ckfree ((char*) listv);
 
 return TCL_OK;
 

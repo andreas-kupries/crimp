@@ -73,6 +73,9 @@ proc gui {} {
     set ::sat 1.0
     scale .b -from 0 -to 5.0 -orient horizontal -variable ::sat -resolution 0.1
 
+    set ::rol 0
+    scale .r -from -180 -to 180 -orient horizontal -variable ::rol
+
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
 
@@ -84,6 +87,7 @@ proc gui {} {
     pack .s  -fill both -expand 0 -side top
     pack .g  -fill both -expand 0 -side top
     pack .b  -fill both -expand 0 -side top
+    pack .r  -fill both -expand 0 -side top
     pack .sc -fill both -expand 1 -padx 4 -pady 4 -side right
 
     bind .l <<ListboxSelect>> useSelection
@@ -104,6 +108,21 @@ proc gui {} {
 proc resolarize {v} {
     global baseb
     setimageb [crimp solarize [baseb] $v]
+    return
+}
+
+proc rematrix {angle} {
+    global baseb
+
+    #puts apply...|$angle|
+    set s [expr {sin($angle * 0.017453292519943295769236907684886)}]
+    set c [expr {cos($angle * 0.017453292519943295769236907684886)}]
+    set matrix [list \
+		    [list $c           $s 0] \
+		    [list [expr {-$s}] $c 0] \
+		    [list $s           $s 1]]
+    #puts matrix...
+    setimageb [crimp matrix [baseb] $matrix]
     return
 }
 
@@ -240,6 +259,7 @@ proc setimage {i} {
     .s configure -command resolarize
     .g configure -command regamma
     .b configure -command resaturate
+    .r configure -command rematrix
     return
 }
 

@@ -4,6 +4,27 @@ Tcl_Obj* imageObj Tcl_Obj* matrixObj
 int objc;
 Tcl_Obj **rowv, **colv;
 double matrix[3][3];
+int i, j, w, h;
+double cofact[3][3], invert[3][3];
+double det = 0;
+double sign = 1;
+crimp_image*     result;
+crimp_image*     image;
+int oy, ox, c, iy, ix;
+double oyf, oxf;
+
+/*
+ * Generic image deformation. The result is restricted to the input
+ * dimensions.  Consider flag to allow the result to expand to fit all pixels.
+ * It is unclear from the math below if this a projective transform, or
+ * something else.
+ */
+
+/*
+ * Decode the matrix (a list of lists of 3 doubles).
+ * Would be easier to provide as list of 9 doubles, no nesting.
+ * The higher levels would convert between the representations.
+ */
 
 if (Tcl_ListObjGetElements(interp, matrixObj, &objc, &rowv) != TCL_OK) {
     return TCL_ERROR;
@@ -12,7 +33,6 @@ if (Tcl_ListObjGetElements(interp, matrixObj, &objc, &rowv) != TCL_OK) {
     return TCL_ERROR;
 }
 
-int i, j;
 for (i = 0; i < 3; ++i) {
     if (Tcl_ListObjGetElements(interp, rowv[i], &objc, &colv) != TCL_OK) {
         return TCL_ERROR;
@@ -27,9 +47,10 @@ for (i = 0; i < 3; ++i) {
     }
 }
 
-double cofact[3][3], invert[3][3];
-double det = 0;
-double sign = 1;
+/*
+ * Invert the matrix.
+ */
+
 for (i = 0; i < 3; ++i) {
     int i1 = !i, i2 = 2 - !(i - 2);
     for (j = 0; j < 3; ++j) {
@@ -50,46 +71,54 @@ for (i = 0; i < 3; ++i) {
     }
 }
 
-int w, h;
-unsigned char *pixels;
-if (decodeImageObj(interp, imageObj, &w, &h, &pixels) != TCL_OK) {
-    return TCL_ERROR;
-}
+crimp_input (imageObj, image, rgba);
 
-Tcl_Obj *dataObj = Tcl_NewByteArrayObj(NULL, 4 * w * h);
-unsigned char (*in)[h][w][4] = (unsigned char (*)[h][w][4])pixels;
-unsigned char (*out)[h][w][4] = (unsigned char (*)[h][w][4])
-        Tcl_GetByteArrayFromObj(dataObj, NULL);
+w = image->w;
+h = image->h;
 
-int oy, ox, c, iy, ix;
-double oyf, oxf;
+result = crimp_new_like (image);
+
 for (oy = 0, oyf = -1; oy < h; ++oy, oyf += 2.0 / h) {
     for (ox = 0, oxf = -1; ox < w; ++ox, oxf += 2.0 / w) {
         double ixf = (invert[0][0] * oxf + invert[0][1] * oyf + invert[0][2]);
         double iyf = (invert[1][0] * oxf + invert[1][1] * oyf + invert[1][2]);
         double iwf = (invert[2][0] * oxf + invert[2][1] * oyf + invert[2][2]);
+        int ixw;
+        int iyw;
+
         ixf = ((ixf / iwf) + 1) * w / 2;
         iyf = ((iyf / iwf) + 1) * h / 2;
-        int ixw = ixf;
-        int iyw = iyf;
+
+        ixw = ixf;
+        iyw = iyf;
+
         ixf -= ixw;
         iyf -= iyw;
+
         for (c = 0; c < 4; ++c) {
             float val = 0;
             for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, h); ++iy) {
                 iyf = 1 - iyf;
                 for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, w); ++ix) {
                     ixf = 1 - ixf;
-                    val += (*in)[iy][ix][c] * iyf * ixf;
+
+		    val += CH (image, c, ix, iy) * iyf * ixf;
                 }
             }
-            (*out)[oy][ox][c] = val;
+
+	    CH (result,c,ox,oy) = val;
         }
     }
 }
 
-Tcl_Obj *list[] = {Tcl_NewIntObj(w), Tcl_NewIntObj(h), dataObj};
-Tcl_SetObjResult(interp, Tcl_NewListObj(3, list));
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;
-
+
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

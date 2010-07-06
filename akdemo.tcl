@@ -53,6 +53,8 @@ proc gui {} {
     .t add button fliptp -text \\           -command show_transpose
     .t add button fliptv -text /            -command show_transverse
 
+    .t add button wavy   -text Waves        -command show_wavy
+
     .t add button exit   -text Exit        -command ::exit -separator 1
 
     widget::scrolledwindow .sl -borderwidth 1 -relief sunken
@@ -159,6 +161,12 @@ proc show_origin {} {
 
 proc show_invert {} {
     setimage [crimp invert [base]]
+    return
+}
+
+proc show_wavy {} {
+    # I have no idea what would be good parameters.
+    setimage [crimp wavy [base] 2 8 3]
     return
 }
 

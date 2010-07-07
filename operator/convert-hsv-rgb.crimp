@@ -1,4 +1,4 @@
-convert_hsv_rgb
+convert_2rgb_hsv
 Tcl_Obj* imageObj
 
 crimp_image* image;

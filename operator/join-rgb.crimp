@@ -1,4 +1,4 @@
-join_rgb
+join_2rgb
 Tcl_Obj* redImageObj
 Tcl_Obj* greenImageObj
 Tcl_Obj* blueImageObj

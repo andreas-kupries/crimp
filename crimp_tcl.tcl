@@ -54,13 +54,13 @@ namespace eval ::crimp::write {
     namespace ensemble create
     variable fun
     foreach fun [::crimp::List write_*] {
-	proc 2[lindex [::crimp::P $fun] end] {dst image} \
-	    [string map [list @ [lindex [::crimp::P $fun] end]] {
+	proc [lindex [::crimp::P $fun] 0] {dst image} \
+	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
 		set type [::crimp::TypeOf $image]
-		if {![::crimp::Has write_${type}_@]} {
+		if {![::crimp::Has write_@_${type}]} {
 		    return -code error "Unable to write images of type \"$type\" to \"@\""
 		}
-		return [::crimp::write_${type}_@ $dst $image]
+		return [::crimp::write_@_${type} $dst $image]
 	    }]
     }
     unset fun
@@ -71,13 +71,13 @@ namespace eval ::crimp::convert {
     namespace ensemble create
     variable fun
     foreach fun [::crimp::List convert_*] {
-	proc 2[lindex [::crimp::P $fun] end] {image} \
-	    [string map [list @ [lindex [::crimp::P $fun] end]] {
+	proc [lindex [::crimp::P $fun] 0] {image} \
+	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
 		set type [::crimp::TypeOf $image]
-		if {![::crimp::Has convert_${type}_@]} {
+		if {![::crimp::Has convert_@_${type}]} {
 		    return -code error "Unable to convert images of type \"$type\" to \"@\""
 		}
-		return [::crimp::convert_${type}_@ $image]
+		return [::crimp::convert_@_${type} $image]
 	    }]
     }
     unset fun
@@ -88,7 +88,7 @@ namespace eval ::crimp::join {
     namespace ensemble create
     variable fun
     foreach fun [::crimp::List join_*] {
-	proc 2[::crimp::P $fun] {args} [string map [list @ $fun] {
+	proc [::crimp::P $fun] {args} [string map [list @ $fun] {
 	    return [@ {*}$args]
 	}]
     }

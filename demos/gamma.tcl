@@ -1,4 +1,4 @@
-def gamma {
+def op_gamma {
     label Gamma
     setup {
 	set ::GAMMA 1

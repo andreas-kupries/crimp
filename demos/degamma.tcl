@@ -1,4 +1,4 @@
-def degamma {
+def op_gamma_invers {
     label Degamma
     setup {
 	set ::DEGAMMA 1

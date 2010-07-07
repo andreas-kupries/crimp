@@ -1,4 +1,4 @@
-def psychedelia {
+def effect_psychedelia {
     label Psychedelia
     setup {
 	proc ::P {} {
@@ -9,5 +9,6 @@ def psychedelia {
     }
     shutdown {
 	after cancel $::PX
+	unset ::PX
     }
 }

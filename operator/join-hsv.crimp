@@ -1,4 +1,4 @@
-join_hsv
+join_2hsv
 Tcl_Obj* hueImageObj
 Tcl_Obj* satImageObj
 Tcl_Obj* valImageObj

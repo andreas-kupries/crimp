@@ -1,4 +1,4 @@
-convert_rgba_grey8
+convert_2grey8_rgba
 Tcl_Obj* imageObj
 
 crimp_image* image;

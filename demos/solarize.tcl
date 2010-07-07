@@ -1,4 +1,4 @@
-def solarize {
+def op_solarize {
     label Solarize
     setup {
 	set ::X 256

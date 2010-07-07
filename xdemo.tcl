@@ -57,7 +57,7 @@ proc demo_list {} {
 	set demo([dict get $thedemo name]) $thedemo
     }
 
-    return [array names demo]
+    return [lsort -dict [array names demo]]
 }
 
 proc demo_label {name} {

@@ -1,12 +1,11 @@
-alpha_over_rgba_rgba
+alpha_over_rgba_rgb
 Tcl_Obj* imageForeObj
 Tcl_Obj* imageBackObj
 
 /*
  * Alpha-based blending of two images, foreground, and background.  The
  * foreground's alpha channel is used to determine how much of the background
- * is seen. The result's alpha is the input's alpha attenuated by the
- * background's alpha.
+ * is seen. The result's alpha channel is a copy of the input's alpha.
  */
 
 crimp_image*     result;
@@ -15,7 +14,7 @@ crimp_image*     imageB;
 int x, y;
 
 crimp_input (imageForeObj, imageF, rgba);
-crimp_input (imageBackObj, imageB, rgba);
+crimp_input (imageBackObj, imageB, rgb);
 
 if (!crimp_eq_dim (imageF, imageB)) {
     Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
@@ -40,7 +39,7 @@ for (y = 0; y < result->h; y++) {
 	R (result, x, y) = (R (imageF, x, y) * alpha + (255 - alpha) * R (imageB, x, y)) / 255;
 	G (result, x, y) = (G (imageF, x, y) * alpha + (255 - alpha) * G (imageB, x, y)) / 255;
 	B (result, x, y) = (B (imageF, x, y) * alpha + (255 - alpha) * B (imageB, x, y)) / 255;
-	A (result, x, y) = alpha - (alpha * A (imageB, x, y)) / 255;
+	A (result, x, y) = alpha;
     }
 }
 

@@ -46,6 +46,7 @@ Operations done and under consideration
 []	read  - Import crimp images from other formats.
 
 	[done]	read_tk
+	[done]	read_tcl	(list of list of grey)
 
 []	convert - convert between the various crimp image types.
 
@@ -92,17 +93,70 @@ Operations done and under consideration
 []	join - join multiple grey scale images into a multi-channel
 	       (colorized) image. Complementary to split.
 
-	[done]	join_rgba
-	[done]	join_rgb
 	[done]	join_hsv
+	[done]	join_rgb
+	[done]	join_rgba
+
+[]	blank - blank (black, possibly transparent) image of a given size.
+
+	[done]	blank_grey8
+	[]	blank_grey16
+	[]	blank_grey32
+	[]	blank_hsv
+	[done]	blank_rgb
+	[done]	blank_rgba
+
+[]	over
+
+	Blending foreground and background, based on the foreground's
+	alpha.
+
+		Z = TOP*(1-alpha(TOP))+BOTTOM*alpha(TOP) - alpha from top image.
+
+	[]	alpha_over_rgba_rgba
+	[]	alpha_over_rgba_rgb
+
+[]	blend
+
+	Blending foreground and background, based on a scalar alpha
+	value.
+
+		Z = BACK*(1-alpha)+FORE*alpha   - alpha is scalar
+
+
+	[done]	alpha_blend_grey8_grey8
+	[]	alpha_blend_grey8_rgb  - which channel ? luma ?
+	[]	alpha_blend_grey8_rgba - which channel ? luma ?
+	[done]	alpha_blend_rgb_grey8
+	[done]	alpha_blend_rgb_rgb
+	[done]	alpha_blend_rgb_rgba
+	[done]	alpha_blend_rgba_grey8
+	[done]	alpha_blend_rgba_rgb
+	[done]	alpha_blend_rgba_rgba
+
+[]	Blending foreground and background, based on an alpha mask
+	image.
+
+	This is not a primitive. Can be had by combining 'over' above
+	with an operator to set an image's alpha channel.
+
+		compose FORE BACK MASK =
+			over [setalpha FORE MASK] BACK
+
+[]	Set/Replace/Extend/Copy an image's alpha channel from a second
+	image.
+
+	setalpha
+
+	[done]	setalpha_rgb_grey8
+	[done]	setalpha_rgb_rgba
+	[done]	setalpha_rgba_grey8
+	[done]	setalpha_rgba_rgba
 
 
 
-[]	blend   - Z = A*(1-alpha)+B*alpha   - alpha is scalar
-[]	compose - Z = A*(1-ALPHA)+B*ALPHA - alpha is grey8
-	?	- Z = TOP*(1-alpha(TOP))+BOTTOM*alpha(TOP) - alpha from top image.
-	== bring these together into single command group.
 
+[]
 	lighter	       Z = max(A,B)
 	darker	       Z = min(A,B)
 	difference     Z = |A-B|
@@ -116,18 +170,31 @@ Operations done and under consideration
 	stencil - apply a mask - could be 'set alpha channel'
 			       - but also 'set black outside mask'
 			       (blue/green screen techniques)
+		=> combination of setalpha, blend, and some blank image.
 
+
+
+--- leptonica - look for algorithms ---
+--- bit blit (block ops)
 
 
 ## constant - blank with a specific value
+
 ## offset (x, y) - shift by (x,y) pixels [torus wrap around].
+
 ## enhance: color, brightness, contrast, sharpness
+
 ## filter:  blur, contour, detail, edge_enhance, edge_enhance_more, emboss, find_edges, smooth, smooth_more, and sharpen.
 ## filter:  kernel3, kernel5, rank n, size/ min, max, median, mode(most common)
 ##         (scale/offset - default: sum kernel/0)
+
 ## autocontrast (max contrast, cutoff (%)) => image
+
 ## colorize (grayscale, black-color, white-color) => image
+
+
 ## crop (image, border=0) => image without border pixels all around.
+
 ## deform - see transform (as basis)
 ## equalize (image) of hist - non-linear map to create unform distribution of grayscale values.
 ## expand (image, border=0,fill=0) - add border pixels all around (fill? color of border?)

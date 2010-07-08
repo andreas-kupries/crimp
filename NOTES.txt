@@ -168,3 +168,45 @@ Operations done and under consideration
 ##          |mesh   sz list of (rect, quads) - s.a.
 # quad(rilateral)
 # transpose - flip_left_right, flip_top_bottom, rotate_90, rotate_180, or rotate_270
+
+
+RGB [0..1] --> CIE XYZ [0..1] (Y = luminosity)
+
+|X|      1      |0.49    0.31    0.2    |   |R|
+|Y| = ------- * |0.17697 0.81240 0.01063| * |G|
+|Z|   0.17697   |0       0.01    0.99   |   |B|
+
+ITU-R BT.709 is different
+|X|             |0.412453 0.357580 0.180423|   |R|
+|Y| =           |0.212671 0.715160 0.072169| * |G|
+|Z|             |0.019334 0.119193 0.950227|   |B|
+
+While the official definition of the CIE XYZ standard has the matrix
+normalized so that the Y value corresponding to pure red is 1, a more
+commonly used form is to omit the leading fraction, so that the second
+row sums up to one, i.e., the RGB triplet (1, 1, 1) maps to a Y value
+of 1.
+
+Chromacity:	S = X+y+Z, x=X/S, y=Y/S, z=Z/S
+
+Yxz - Represent luminosity and chromacity.
+
+
+L*a*b*
+
+L* = 116 * f (Y/Yn)			| scale 0..100
+a* = 500 * (f (X/Xn) - f (Y/Yn))	| s.a.
+b* = 200 * (f (Y/Yn) - f (Z/Zn))	| s.a.
+
+f(x) = x**(1/3)                   , x > delta**3
+       x/(3*delta**2) + 2*delta/3 , else
+       delta = 6/29
+
+f = cube root, approximated with finite slope
+
+(Xn,Yn,Zn) = white point
+
+L*u*v*
+
+The BT.709 system uses the daylight illuminant D65 as its reference
+white

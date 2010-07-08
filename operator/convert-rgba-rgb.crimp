@@ -1,0 +1,37 @@
+convert_2rgb_rgba
+Tcl_Obj* imageObj
+
+/*
+ * RGBA --> RGB,
+ * i.e. this operation removes the input image's alpha channel.
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          x, y, h, s, v;
+
+crimp_input (imageObj, image, rgba);
+
+result = crimp_new_rgb (image->w, image->h);
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+	R (result, x, y) = R (image, x, y);
+	G (result, x, y) = G (image, x, y);
+	B (result, x, y) = B (image, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

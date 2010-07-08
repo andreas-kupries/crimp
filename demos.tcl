@@ -106,7 +106,7 @@ proc gui {} {
     widget::scrolledwindow .sc -borderwidth 1 -relief sunken
     widget::scrolledwindow .sl -borderwidth 1 -relief sunken
     canvas                 .c -width 800 -height 600 -scrollregion {-4000 -4000 4000 4000}
-    listbox                .l -width 40 -selectmode single -listvariable images
+    listbox                .l -width 40 -selectmode extended -listvariable images
 
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
@@ -138,21 +138,23 @@ proc gui {} {
 proc show_selection {} {
     set selection [.l curselection]
     if {![llength $selection]} return
-    show [lindex $selection 0]
+    show $selection
     return
 }
 
-proc show {index} {
+proc show {indices} {
     global base
-    set base [images_get $index]
+    set base {}
+    foreach index $indices {
+	lappend base [images_get $index]
+    }
     reset
     return
 }
 
 proc reset {} {
-    global base
     demo_close
-    show_image $base
+    show_image [base]
     return
 }
 
@@ -171,9 +173,9 @@ proc show_image {image} {
     return
 }
 
-proc base {} {
+proc base {{i 0}} {
     global base
-    return $base
+    return [lindex $base $i]
 }
 
 proc extendgui {w} {

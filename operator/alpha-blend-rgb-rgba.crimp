@@ -1,12 +1,17 @@
-alpha_over_rgba_rgba
+alpha_blend_rgb_rgba
 Tcl_Obj* imageForeObj
 Tcl_Obj* imageBackObj
+int alpha
 
 /*
- * Alpha-based blending of two images, foreground, and background.  The
- * foreground's alpha channel is used to determine how much of the background
- * is seen. The result's alpha is the input's alpha attenuated by the
- * background's alpha.
+ * Alpha-based blending of two images, foreground, and background, controlled
+ * by a scalar (and extern) alpha factor.
+ *
+ * alpha is Opacity
+ * 255 <=> Fully opaque      <=> imageF
+ * 0   <=> Fully transparent <=> imageB
+ *
+ * => OUT = F*alpha + B*(1-alpha)
  */
 
 crimp_image*     result;
@@ -14,7 +19,7 @@ crimp_image*     imageF;
 crimp_image*     imageB;
 int x, y;
 
-crimp_input (imageForeObj, imageF, rgba);
+crimp_input (imageForeObj, imageF, rgb);
 crimp_input (imageBackObj, imageB, rgba);
 
 if (!crimp_eq_dim (imageF, imageB)) {
@@ -26,21 +31,9 @@ result = crimp_new_like (imageF);
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-
-	int alpha = A (imageF, x, y);
-
-	/*
-	 * alpha is Opacity
-	 * 255 <=> Fully opaque      <=> imageF
-	 * 0   <=> Fully transparent <=> imageB
-	 *
-	 * => OUT = F*alpha + B*(1-alpha)
-	 */
-
 	R (result, x, y) = (R (imageF, x, y) * alpha + (255 - alpha) * R (imageB, x, y)) / 255;
 	G (result, x, y) = (G (imageF, x, y) * alpha + (255 - alpha) * G (imageB, x, y)) / 255;
 	B (result, x, y) = (B (imageF, x, y) * alpha + (255 - alpha) * B (imageB, x, y)) / 255;
-	A (result, x, y) = alpha - (alpha * A (imageB, x, y)) / 255;
     }
 }
 

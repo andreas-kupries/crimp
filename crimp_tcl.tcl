@@ -180,6 +180,82 @@ proc ::crimp::split {image} {
 }
 
 # # ## ### ##### ######## #############
+
+proc ::crimp::blank {type args} {
+    if {![Has blank_$type]} {
+	return -code error "Unable to create blank images of type \"$type\""
+    }
+
+    # Extend the set of channel values if not enough were specified,
+    # by setting to them to BLACK or TRANSPARENT, respectively.
+
+    switch -- $type {
+	rgb {
+	    if {[llength $args]} {
+		while {[llength $args] < 3} {
+		    lappend args 0
+		}
+	    }
+	}
+	hsv {
+	    if {[llength $args]} {
+		while {[llength $args] < 3} {
+		    lappend args 0
+		}
+	    }
+	}
+	rgba {
+	    # black and transparent have the same raw value, 0. This
+	    # obviates the need to handle the alpha channel
+	    # separately.
+	    if {[llength $args]} {
+		while {[llength $args] < 4} {
+		    lappend args 0
+		}
+	    }
+	}
+    }
+
+    return [blank_$type {*}$args]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::setalpha {image mask} {
+    set itype [TypeOf $image]
+    set mtype [TypeOf $mask]
+    set f     setalpha_${itype}_$mtype
+    if {![Has $f]} {
+	return -code error "Setting the alpha channel is not supported for images of type \"$itype\" and mask of type \"$mtype\""
+    }
+    return [$f $image $mask]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::blend {fore back alpha} {
+    set ftype [TypeOf $fore]
+    set btype [TypeOf $back]
+    set f     alpha_blend_${ftype}_$btype
+    if {![Has $f]} {
+	return -code error "Blending not supported for a foreground of type \"$btype\" and a background of type \"$btype\""
+    }
+    return [$f $fore $back [table::CLAMP $alpha]]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::over {fore back} {
+    set ftype [TypeOf $fore]
+    set btype [TypeOf $back]
+    set f     alpha_over_${ftype}_$btype
+    if {![Has $f]} {
+	return -code error "Blending not supported for a foreground of type \"$btype\" and a background of type \"$btype\""
+    }
+    return [$f $fore $back]
+}
+
+# # ## ### ##### ######## #############
 ## Tables and maps.
 ## For performance we should memoize results.
 ## This is not needed to just get things working howver.
@@ -287,7 +363,8 @@ namespace eval ::crimp {
     namespace export type width height dimensions channels
     namespace export read write convert join flip split table
     namespace export invert solarize gamma degamma remap map
-    namespace export wavy psychedelia matrix
+    namespace export wavy psychedelia matrix blend over blank
+    namespace export setalpha
     #
     namespace ensemble create
 }

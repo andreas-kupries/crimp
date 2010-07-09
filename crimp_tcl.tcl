@@ -322,16 +322,20 @@ proc ::crimp::table::solarize {n} {
 }
 
 proc ::crimp::table::gamma {y} {
+    # Note: gamma operates in range [0..1], our data is [0..255]. We
+    # have to scale down before applying the gamma, then scale back.
     for {set i 0} {$i < 256} {incr i} {
-	lappend table [CLAMP [expr {round ($i ** $y)}]]
+	lappend table [CLAMP [expr {round ((($i/255.0) ** $y)*255.0)}]]
     }
     return $table
 }
 
 proc ::crimp::table::degamma {y} {
+    # Note: gamma operates in range [0..1], our data is [0..255]. We
+    # have to scale down before applying the gamma, then scale back.
     set dy [expr {1.0/$y}]
     for {set i 0} {$i < 256} {incr i} {
-	lappend table [CLAMP [expr {round ($i ** $dy)}]]
+	lappend table [CLAMP [expr {round ((($i/255.0) ** $dy)*255.0)}]]
     }
     return $table
 }

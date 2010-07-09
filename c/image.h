@@ -100,6 +100,10 @@ typedef struct crimp_image {
     ASSERT ((image)->itype == crimp_imagetype_find ("crimp::image::" STR(imtype)), \
 	    "expected image type " STR(imtype))
 
+#define ASSERT_NOTIMGTYPE(image,imtype) \
+    ASSERT ((image)->itype != crimp_imagetype_find ("crimp::image::" STR(imtype)), \
+	    "unexpected image type " STR(imtype))
+
 /*
  * API :: Core. Image lifecycle management.
  */

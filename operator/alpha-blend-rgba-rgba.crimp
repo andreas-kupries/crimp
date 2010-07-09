@@ -41,19 +41,16 @@ if (alpha == 255) {
  */
 
 result = crimp_new_like (imageF);
+ralpha = 255 - alpha;
 
 #define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
-
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
 	R (result, x, y) = MIX (R (imageF, x, y), R (imageB, x, y));
 	G (result, x, y) = MIX (G (imageF, x, y), G (imageB, x, y));
 	B (result, x, y) = MIX (B (imageF, x, y), B (imageB, x, y));
-	//A (result, x, y) = OPAQUE;/*alpha - (alpha * A (imageB, x, y)) / 255;*/
 	A (result, x, y) = MIX (alpha, A (imageB, x, y));
-
-	/* The attenuation for A is wrong I believe. Rethink this part. */
     }
 }
 

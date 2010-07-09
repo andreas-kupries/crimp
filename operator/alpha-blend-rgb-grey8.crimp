@@ -17,7 +17,7 @@ int alpha
 crimp_image*     result;
 crimp_image*     imageF;
 crimp_image*     imageB;
-int x, y;
+int x, y, ralpha;
 
 crimp_input (imageForeObj, imageF, rgb);
 crimp_input (imageBackObj, imageB, grey8);
@@ -28,12 +28,15 @@ if (!crimp_eq_dim (imageF, imageB)) {
 }
 
 result = crimp_new_like (imageF);
+ralpha = 255 - alpha;
+
+#define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	R (result, x, y) = (R (imageF, x, y) * alpha + (255 - alpha) * GREY8 (imageB, x, y)) / 255;
-	G (result, x, y) = (G (imageF, x, y) * alpha + (255 - alpha) * GREY8 (imageB, x, y)) / 255;
-	B (result, x, y) = (B (imageF, x, y) * alpha + (255 - alpha) * GREY8 (imageB, x, y)) / 255;
+	R (result, x, y) = MIX (R (imageF, x, y), GREY8 (imageB, x, y));
+	G (result, x, y) = MIX (G (imageF, x, y), GREY8 (imageB, x, y));
+	B (result, x, y) = MIX (B (imageF, x, y), GREY8 (imageB, x, y));
     }
 }
 

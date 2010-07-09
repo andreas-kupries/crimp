@@ -1,4 +1,4 @@
-alpha_blend_rgba_grey8
+alpha_blend_hsv_hsv
 Tcl_Obj* imageForeObj
 Tcl_Obj* imageBackObj
 int alpha
@@ -6,8 +6,7 @@ int alpha
 /*
  * Alpha-based blending of two images, foreground, and background, controlled
  * by a scalar (and extern) alpha factor. The result's alpha is the alpha
- * factor. No attenuation by the background's alpha, as such doesn't
- * exist. Presumed to be TRANSPARENT = No attenuation.
+ * factor attenuated by the background's alpha.
  *
  * alpha is Opacity
  * 255 <=> Fully opaque      <=> imageF
@@ -21,25 +20,36 @@ crimp_image*     imageF;
 crimp_image*     imageB;
 int x, y, ralpha;
 
-crimp_input (imageForeObj, imageF, rgba);
-crimp_input (imageBackObj, imageB, grey8);
+crimp_input (imageForeObj, imageF, hsv);
+crimp_input (imageBackObj, imageB, hsv);
 
 if (!crimp_eq_dim (imageF, imageB)) {
     Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
     return TCL_ERROR;
 }
 
-result = crimp_new_like (imageF);
+if (alpha == 255) {
+    Tcl_SetObjResult(interp, imageForeObj);
+    return TCL_OK;
+} else if (alpha == 0) {
+    Tcl_SetObjResult(interp, imageBackObj);
+    return TCL_OK;
+}
+
+/*
+ * True alpha mixture.
+ */
+
 ralpha = 255 - alpha;
+result = crimp_new_like (imageF);
 
 #define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	R (result, x, y) = MIX (R (imageF, x, y), GREY8 (imageB, x, y));
-	G (result, x, y) = MIX (G (imageF, x, y), GREY8 (imageB, x, y));
-	B (result, x, y) = MIX (B (imageF, x, y), GREY8 (imageB, x, y));
-	A (result, x, y) = alpha;
+	H (result, x, y) = MIX (H (imageF, x, y), H (imageB, x, y));
+	S (result, x, y) = MIX (S (imageF, x, y), S (imageB, x, y));
+	V (result, x, y) = MIX (V (imageF, x, y), V (imageB, x, y));
     }
 }
 

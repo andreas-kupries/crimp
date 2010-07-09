@@ -6,37 +6,51 @@ Tcl_Obj* imageObj
  */
 
 crimp_image*     image;
-int              x, y, c, i, count;
+int              x, y, c, i, count, maxv, largegrey;
 int*             histogram;
 Tcl_Obj*         d; /* dict of histograms, indexed by channel name */
 Tcl_Obj*         h; /* histogram dict, indexed by pixel value */
 Tcl_Obj*         k; /* channel name as Tcl_Obj, for the main dict */
 
 crimp_input_any (imageObj, image);
+ASSERT_NOTIMGTYPE(image,grey32);
 /*
- * Actually NOT any. The code below is not able to handle grey16 and grey32,
- * as images with these types can have more than 256 distinct pixel values.
- * They have 64K and 4G possibilities.
-
- * XXX This needs fixing. The grey16 could possibly be fit into the code
- * below, grey32 however will definitely not fit without optimizations, like
- * not allocating memory for unused pixel values.
+ * Actually NOT any. The code below is not able to handle grey32, as images
+ * with these types can have 4G possible values, for which we cannot allocate
+ * a full counter array.
  *
- * Should maybe split per type, sharing the counter, etc. code.
+ * XXX This needs fixing. Use of a hashtable to allocate only pixel values
+ * actually seen. Will still run into trouble for extreme images which do
+ * contain all the possible values.
  */
 
-histogram = NALLOC (256 * image->itype->channels, int);
+largegrey = image->itype == crimp_imagetype_find ("crimp::image::grey16");
+if (largegrey) {
+    maxv = 65536;
+} else {
+    maxv = 256;
+}
+
+histogram = NALLOC (maxv * image->itype->channels, int);
 
 /*
  * Count the pixel values.
  */
 
-#define BUCKET(c,v) histogram [((c) * image->itype->channels + (v))]
+#define BUCKET(c,v) histogram [((c) * maxv + (v))]
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
-	for (c = 0; c < image->itype->channels; c++) {
-	    BUCKET (c, CH (image, c, x, y)) ++;
+if (largegrey) {
+    for (y = 0; y < image->h; y++) {
+	for (x = 0; x < image->w; x++) {
+	    BUCKET (0, GREY16 (image, x, y)) ++;
+	}
+    }
+} else {
+    for (y = 0; y < image->h; y++) {
+	for (x = 0; x < image->w; x++) {
+	    for (c = 0; c < image->itype->channels; c++) {
+		BUCKET (c, CH (image, c, x, y)) ++;
+	    }
 	}
     }
 }
@@ -44,9 +58,9 @@ for (y = 0; y < image->h; y++) {
 /*
  * Convert the data into a dictionary to return.
  *
- * XXX: For the (very) large histograms of grey16 (64K) and grey32 (4GB) it
- * would be sensible to suppress the entries for all pixel values which are
- * not used, i.e. have a count of zero.
+ * XXX: For the very large histograms of grey32 (4GB possible values) it would
+ * be sensible to suppress the entries for all pixel values which are not
+ * used, i.e. have a count of zero.
  */
 
 d = Tcl_NewDictObj ();
@@ -56,7 +70,7 @@ for (c = 0; c < image->itype->channels; c++) {
     k = Tcl_NewStringObj (image->itype->cname [c],-1);
     h = Tcl_NewDictObj ();
 
-    for (i = 0; i < 256; i++) {
+    for (i = 0; i < maxv; i++) {
 	count = BUCKET (c, i);
 
 	/*

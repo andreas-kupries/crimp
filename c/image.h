@@ -130,6 +130,11 @@ extern int      crimp_get_image_from_obj (Tcl_Interp*   interp,
     } \
     ASSERT_IMGTYPE (imagevar, itype)
 
+#define crimp_input_any(objvar,imagevar) \
+    if (crimp_get_image_from_obj (interp, (objvar), &(imagevar)) != TCL_OK) { \
+	return TCL_ERROR; \
+    }
+
 #define crimp_eq_dim(imagea,imageb) \
     (((imagea)->w == (imageb)->w) && ((imagea)->h == (imageb)->h))
 

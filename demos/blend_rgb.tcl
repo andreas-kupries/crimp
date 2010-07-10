@@ -1,36 +1,34 @@
 def op_alpha_blend_rgb {
     label {Blend RGB}
     setup {
-	set ::X 255
+	set ::ALPHA 255
 	set ::BLACK [crimp blank rgba 800 600 0 0 0 255]
 	# We manage a cache of the blended images to make the
 	# scrolling of the scale smoother over time. An improvement
 	# would be to use timer events to precompute the various
 	# blends.
-	array set ::B {}
-	set ::B(255) [base 0]
-	set ::B(0)   [base 1]
+	array set ::CACHE {}
+	set ::CACHE(255) [base 0]
+	set ::CACHE(0)   [base 1]
 
-	scale .s \
-	    -variable ::X \
-	    -from 0 \
-	    -to 255 \
+	scale .left.s -variable ::ALPHA \
+	    -from 0 -to 255 \
 	    -orient vertical \
 	    -command [list ::apply {{alpha} {
-		if {[info exists ::B($alpha)]} {
-		    show_image $::B($alpha)
+		if {[info exists ::CACHE($alpha)]} {
+		    show_image $::CACHE($alpha)
 		    return
 		}
 
 		set blend [crimp blend [base 0] [base 1] $alpha]
 		show_image [crimp setalpha $blend $::BLACK]
-		set ::B($alpha) $blend
+		set ::CACHE($alpha) $blend
 		return
 	    }}]
-	extendgui .s
+
+	pack .left.s -side left -fill both -expand 1
     }
     shutdown {
-	destroy .s
-	unset ::X ::BLACK ::B
+	unset ::ALPHA ::BLACK ::CACHE
     }
 }

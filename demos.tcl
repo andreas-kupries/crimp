@@ -76,6 +76,14 @@ proc demo_setup {name} {
 proc demo_close {} {
     global demo dcurrent
     if {$dcurrent eq {}} return
+
+    destroy \
+	{*}[winfo children .left]  \
+	{*}[winfo children .right] \
+	{*}[winfo children .top]   \
+	{*}[winfo children .bottom]
+    reframe
+
     uplevel #0 [dict get $demo($dcurrent) shutdown]
     set dcurrent {}
     return
@@ -88,6 +96,16 @@ proc def {name dict} {
 }
 
 # # ## ### ##### ######## #############
+
+proc reframe {} {
+    grid forget .left .right .top .bottom
+
+    grid .left   -row 2 -column 1               -sticky swen
+    grid .right  -row 2 -column 3               -sticky swen
+    grid .top    -row 1 -column 1 -columnspan 3 -sticky swen
+    grid .bottom -row 3 -column 1 -columnspan 3 -sticky swen
+    return
+}
 
 proc gui {} {
     widget::toolbar .t
@@ -108,15 +126,21 @@ proc gui {} {
     canvas                 .c -width 800 -height 600 -scrollregion {-4000 -4000 4000 4000}
     listbox                .l -width 40 -selectmode extended -listvariable images
 
+    ttk::frame .left
+    ttk::frame .top
+    ttk::frame .right
+    ttk::frame .bottom
+
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
 
     .sl setwidget .l
     .sc setwidget .c
 
-    pack .t  -fill both -expand 0 -side top -anchor w
-    pack .sl -fill both -expand 1 -padx 4 -pady 4 -side left
-    pack .sc -fill both -expand 1 -padx 4 -pady 4 -side right
+    grid .t  -row 0 -column 0 -columnspan 4 -sticky swen
+    grid .sl -row 1 -column 0 -rowspan 3    -sticky swen
+    grid .sc -row 2 -column 2               -sticky swen
+    reframe
 
     bind .l <<ListboxSelect>> show_selection
 
@@ -176,11 +200,6 @@ proc show_image {image} {
 proc base {{i 0}} {
     global base
     return [lindex $base $i]
-}
-
-proc extendgui {w} {
-    pack $w -after .sc -fill both -expand 0 -side left
-    return
 }
 
 # # ## ### ##### ######## #############

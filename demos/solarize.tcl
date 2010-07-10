@@ -1,19 +1,22 @@
 def op_solarize {
     label Solarize
     setup {
-	set ::X 256
-	scale .s \
-	    -variable ::X \
-	    -from 0 \
-	    -to 256 \
-	    -orient vertical \
+	set ::THRESHOLD  256
+	set ::TABLE {}
+
+	plot  .left.p -variable ::TABLE
+	scale .left.s -variable ::THRESHOLD \
+	    -from 0 -to 256 \
+	    -orient horizontal \
 	    -command [list ::apply {{threshold} {
-		show_image [crimp solarize [base] $threshold]
+		set ::TABLE [crimp table solarize  $threshold]
+		show_image  [crimp solarize [base] $threshold]
 	    }}]
-	extendgui .s
+
+	grid .left.s -row 0 -column 0 -sticky swen
+	grid .left.p -row 1 -column 0 -sticky swen
     }
     shutdown {
-	destroy .s
-	unset ::X
+	unset ::THRESHOLD ::TABLE
     }
 }

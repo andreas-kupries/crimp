@@ -1,37 +1,35 @@
 def op_alpha_blend_hsv {
     label {Blend HSV}
     setup {
-	set ::X 255
+	set ::ALPHA 255
 	# We manage a cache of the blended images to make the
 	# scrolling of the scale smoother over time. An improvement
 	# would be to use timer events to precompute the various
 	# blends.
-	array set ::B {}
-	set ::B(255) [base 0]
-	set ::B(0)   [base 1]
-	set ::FO [crimp convert 2hsv [base 0]]
-	set ::BA [crimp convert 2hsv [base 1]]
+	array set ::CACHE {}
+	set ::CACHE(255) [base 0]
+	set ::CACHE(0)   [base 1]
+	set ::FORE [crimp convert 2hsv [base 0]]
+	set ::BACK [crimp convert 2hsv [base 1]]
 
-	scale .s \
-	    -variable ::X \
-	    -from 0 \
-	    -to 255 \
+	scale .left.s -variable ::ALPHA \
+	    -from 0 -to 255 \
 	    -orient vertical \
 	    -command [list ::apply {{alpha} {
-		if {[info exists ::B($alpha)]} {
-		    show_image $::B($alpha)
+		if {[info exists ::CACHE($alpha)]} {
+		    show_image $::CACHE($alpha)
 		    return
 		}
 
-		set blend [crimp convert 2rgb [crimp blend $::FO $::BA $alpha]]
+		set blend [crimp convert 2rgb [crimp blend $::FORE $::BACK $alpha]]
 		show_image $blend
-		set ::B($alpha) $blend
+		set ::CACHE($alpha) $blend
 		return
 	    }}]
-	extendgui .s
+
+	pack .left.s -side left -fill both -expand 1
     }
     shutdown {
-	destroy .s
-	unset ::X ::B ::BA ::FO
+	unset ::ALPHA ::CACHE ::BACK ::FORE
     }
 }

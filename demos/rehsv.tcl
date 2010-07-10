@@ -1,38 +1,67 @@
 def effect_rehsv {
     label {Change HSV}
     setup {
-	proc ::RE {args} {
-	    global gh gs gv ghsv
+	set ::HSVBASE [crimp convert 2hsv [base]]
 
-	    set mh [crimp map gain $gh]
-	    set ms [crimp map gain $gs]
-	    set mv [crimp map gain $gv]
+	set ::GHG 1
+	set ::GHB 0
+	set ::TH [crimp table gainw $::GHG $::GHB]
+	set ::MH [crimp map   gainw $::GHG $::GHB]
 
-	    show_image [crimp convert 2rgb [crimp remap $ghsv $mh $ms $mv]]
+	set ::GS 1 ; set ::TS [crimp table gain $::GS] ; set ::MS [crimp map gain $::GS]
+	set ::GV 1 ; set ::TV [crimp table gain $::GV] ; set ::MV [crimp map gain $::GV]
+
+	proc HG {gain} {
+	    set ::TH [crimp table gainw $gain $::GHB]
+	    set ::MH [crimp map   gainw $gain $::GHB]
+	    UPDATE
+	}
+	proc HB {bias} {
+	    set ::TH [crimp table gainw $::GHG $bias]
+	    set ::MH [crimp map   gainw $::GHG $bias]
+	    UPDATE
+	}
+	proc S {gain} {
+	    set ::TS [crimp table gain $gain]
+	    set ::MS [crimp map   gain $gain]
+	    UPDATE
+	}
+	proc V {gain} {
+	    set ::TV [crimp table gain $gain]
+	    set ::MV [crimp map   gain $gain]
+	    UPDATE
+	}
+
+	proc ::UPDATE {} {
+	    global MH MS MV HSVBASE
+	    show_image [crimp convert 2rgb [crimp remap $HSVBASE $MH $MS $MV]]
 	    return
 	}
 
-	set ::gh 1
-	set ::gs 1
-	set ::gv 1
+	scale .left.hg -variable ::GHG -from 0 -to 20  -resolution 0.01 -orient vertical -command HG
+	scale .left.hb -variable ::GHB -from 0 -to 255 -resolution 1    -orient vertical -command HB
+	scale .left.s  -variable ::GS  -from 0 -to 20  -resolution 0.01 -orient vertical -command S
+	scale .left.v  -variable ::GV  -from 0 -to 20  -resolution 0.01 -orient vertical -command V
 
-	frame .f
+	plot  .left.ph -variable ::TH
+	plot  .left.ps -variable ::TS
+	plot  .left.pv -variable ::TV
 
-	scale .f.gh -variable ::gh -from 0 -to 20 -resolution 0.01 -orient vertical -command ::RE
-	scale .f.gs -variable ::gs -from 0 -to 20 -resolution 0.01 -orient vertical -command ::RE
-	scale .f.gv -variable ::gv -from 0 -to 20 -resolution 0.01 -orient vertical -command ::RE
+	grid .left.hg -row 0 -column 0 -sticky sen
+	grid .left.ph -row 0 -column 1 -sticky swen
+	grid .left.hb -row 0 -column 2 -sticky sen
 
-	pack .f.gh -side left -expand 1 -fill both
-	pack .f.gs -side left -expand 1 -fill both
-	pack .f.gv -side left -expand 1 -fill both
+	grid .left.pv -row 1 -column 1 -sticky swen
+	grid .left.v  -row 1 -column 2 -sticky sen
 
-	extendgui .f
-
-	set ::ghsv [crimp convert 2hsv [base]]
-
+	grid .left.ps -row 2 -column 1 -sticky swen
+	grid .left.s  -row 2 -column 2 -sticky sen
     }
     shutdown {
-	unset ::gh ::gs ::gv ::ghsv
-	destroy .f
+	rename HG {}
+	rename HB {}
+	rename S {}
+	rename V {}
+	unset ::GHG ::GHB ::GS ::GV ::TH ::TS ::TV ::MH ::MS ::MV ::HSVBASE
     }
 }

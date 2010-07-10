@@ -1,8 +1,10 @@
 def effect_matrix {
     label RotMatrix
     setup {
-	scale .s -from -180 -to 180 -resolution 0.01 \
-	    -orient vertical -command [list ::apply {{angle} {
+	scale .left.s \
+	    -from -180 -to 180 -resolution 0.01 \
+	    -orient vertical \
+	    -command [list ::apply {{angle} {
 		set s [expr {sin($angle * 0.017453292519943295769236907684886)}]
 		set c [expr {cos($angle * 0.017453292519943295769236907684886)}]
 		set matrix [list \
@@ -13,9 +15,6 @@ def effect_matrix {
 		show_image [crimp matrix [base] $matrix]
 	    }}]
 
-	extendgui .s
-    }
-    shutdown {
-	destroy .s
+	pack .left.s -side left -fill both -expand 1
     }
 }

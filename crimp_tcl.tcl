@@ -347,11 +347,28 @@ proc ::crimp::table::gain {gain {bias 0}} {
     return $table
 }
 
+proc ::crimp::table::gainw {gain {bias 0}} {
+    for {set x 0} {$x < 256} {incr x} {
+	lappend table [WRAP [expr {round(double($gain) * $x + double($bias))}]]
+    }
+    return $table
+}
+
 # # ## ### ##### ######## #############
 
 proc ::crimp::table::CLAMP {x} {
     if {$x < 0  } { return 0   }
     if {$x > 255} { return 255 }
+    return $x
+}
+
+proc ::crimp::table::WRAP {x} {
+    while {$x < 0  } {
+	incr x 255
+    }
+    while {$x > 255} {
+	incr x -255
+    }
     return $x
 }
 

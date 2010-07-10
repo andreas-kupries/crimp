@@ -68,6 +68,7 @@ foreach filename [lsort [glob -nocomplain -directory [file join [file dirname [f
 ##       the distribution and use of the Tcl layer.
 
 source [file join [file dirname [file normalize [info script]]] crimp_tcl.tcl]
+source [file join [file dirname [file normalize [info script]]] plot.tcl]
 
 # # ## ### ##### ######## #############
 ## Ready. Export.

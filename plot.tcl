@@ -17,9 +17,6 @@ snit::widget plot {
     constructor {args} {
 	canvas $win.c -bg white
 	pack   $win.c -side top -expand 1 -fill both
-	set myplot [Plotchart::createXYPlot $win.c {0 255 64} {0 255 64}]
-	$myplot dataconfig series -color blue
-	$myplot xconfig -format %d
         $self configurelist $args
 	return
     }
@@ -33,19 +30,40 @@ snit::widget plot {
 	}
 	set options($o) $value
 	if {$options($o) ne {}} {
-	    trace add variable $options($o) write [mymethod UpdateData]
-	    #catch { after cancel $myupdate }
-	    #set myupdate [after idle [mymethod UpdateData]]
+	    trace add variable $options($o) write [mymethod Refresh]
+
+	    # Force update now, to handle pre-existing data in the
+	    # variable, if any, as such does not invoke the trace.
+	    $self Refresh
 	}
 	return
     }
     # # ## ### ##### ######## ############# #####################
     # # ## ### ##### ######## ############# #####################
 
-    method UpdateData {args} {
+    method Refresh {args} {
+	catch { after cancel $myupdate }
+	set myupdate [after idle [mymethod UpdateData]]
+	return
+    }
+
+    method UpdateData {} {
 	upvar #0 $options(-variable) series
-	catch {	$win.c delete series }      msg ;# puts a|$msg|
-	catch {	$myplot plot series {} {} } msg ;# puts b|$msg|
+	if {![info exists series]} return
+
+	if {!$options(-locked)} {
+	    set scale [::Plotchart::determineScaleFromList $series]
+	    lset scale 0 0
+	} else {
+	    set scale {0 255 64}
+	}
+
+	$win.c delete all
+
+	set myplot [Plotchart::createXYPlot $win.c {0 255 64} $scale]
+	$myplot dataconfig series -color $options(-color)
+	$myplot xconfig -format %d
+
 	set x 0
 	foreach y $series {
 	    $myplot plot series $x $y
@@ -59,7 +77,18 @@ snit::widget plot {
     option  -color -default blue -configuremethod C-color
     method C-color {o value} {
 	set options($o) $value
-	$myplot dataconfig series -color $value
+	catch {
+	    $myplot dataconfig series -color $value
+	}
+	return
+    }
+
+    # # ## ### ##### ######## ############# #####################
+
+    option -locked -default 1 -configuremethod C-locked
+    method C-locked {o value} {
+	set options($o) $value
+	$self Refresh
 	return
     }
 

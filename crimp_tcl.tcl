@@ -385,7 +385,7 @@ namespace eval ::crimp {
     namespace export read write convert join flip split table
     namespace export invert solarize gamma degamma remap map
     namespace export wavy psychedelia matrix blend over blank
-    namespace export setalpha
+    namespace export setalpha histogram
     #
     namespace ensemble create
 }

@@ -32,6 +32,7 @@ if (largegrey) {
 }
 
 histogram = NALLOC (maxv * image->itype->channels, int);
+memset (histogram, '\0', maxv * image->itype->channels * sizeof (int));
 
 /*
  * Count the pixel values.

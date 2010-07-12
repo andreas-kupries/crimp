@@ -123,7 +123,8 @@ proc gui {} {
 
     widget::scrolledwindow .sc -borderwidth 1 -relief sunken
     widget::scrolledwindow .sl -borderwidth 1 -relief sunken
-    canvas                 .c -width 800 -height 600 -scrollregion {-4000 -4000 4000 4000}
+    #canvas                 .c -width 800 -height 600 -scrollregion {-4000 -4000 4000 4000}
+    canvas                 .c -scrollregion {-4000 -4000 4000 4000}
     listbox                .l -width 40 -selectmode extended -listvariable images
 
     ttk::frame .left
@@ -140,6 +141,16 @@ proc gui {} {
     grid .t  -row 0 -column 0 -columnspan 4 -sticky swen
     grid .sl -row 1 -column 0 -rowspan 3    -sticky swen
     grid .sc -row 2 -column 2               -sticky swen
+
+    grid rowconfigure    . 0 -weight 0
+    grid rowconfigure    . 1 -weight 0
+    grid rowconfigure    . 2 -weight 1
+    grid rowconfigure    . 3 -weight 0
+
+    grid columnconfigure . 0 -weight 0
+    grid columnconfigure . 1 -weight 0
+    grid columnconfigure . 2 -weight 1
+    grid columnconfigure . 3 -weight 0
     reframe
 
     bind .l <<ListboxSelect>> show_selection

@@ -1,0 +1,144 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin crimp n 1.0.1]
+[copyright {2010 Andreas Kupries}]
+[copyright {2010 Documentation, Andreas Kupries}]
+[moddesc   {Image Manipulation}]
+[titledesc {Image Manipulation (not yet independent of Tk)}]
+[require Tcl 8.5]
+[require Tk 8.5]
+[require crimp [opt 1]]
+[description]
+
+This package provides image manipulation commands which are mostly
+independent of Tk. The only parts currently depending on Tk are for
+the import and export of images from and to Tk photos, necessary for
+display.
+
+[para]
+
+Note that the intended audience of this document are the users of
+[package crimp]. Developers wishing to work on the internals of the
+package, but unfamiliar with them, should read ... instead.
+
+[section Images]
+
+Images are values. This means that they have a string
+representation. It is however strongly recommended to not access this
+representation at all, and to only use the accessor commands provided
+by crimp to obtain the information stored in the internal
+representation of image values.
+
+[para]
+
+The reason behind this is simple: Memory and speed. Images can be
+large. Generating the string representation from the internal one
+roughly doubles the memory needed to store it, actually a bit more,
+due to the necessary quoting of bytes in UTF-8 and list-quting them as
+well. Furthermore such a conversion takes time, roughly proportional
+to the size of the image itself, in either direction. Properly
+accessing the image information without the package's accessor
+commands requires list commands. This causes the loss of the internal
+representation, thus forcing later a reconversion to the image's
+internal represention when it is used as image again. I.e. the
+shimmering forces us to convert twice.
+
+[para]
+
+Therefore, avoid this, use only the crimp commands to access the
+images. The only part of them you are not able to access through these
+is the pixel data. And requiring access to that in a Tcl script is,
+IMHO, highly unusual. In such a situation it is likely better and
+easier to simply become a developer and extend the C level parts of
+crimp with the operation which would have required that access.
+
+[section {Image Types}]
+
+... rgb, hsv, grey{8,16,32}, bw ...
+
+
+[section {General design}]
+
+All commands operate in a pipeline fashion, taking zero or more image
+values, zero or more other arguments, and returning zero or more
+images or other values. None are operating in place, i.e. taking an
+image variable and writing back to it.
+
+[para]
+
+They fall into four categories, namely:
+
+[list_begin definitions]
+[def Accessors]
+
+They take one or more images, extract information about them, and
+return this information as their result. This can be a simple as
+querying the image's height, to something as complex as counting pixel
+values for a histogram.
+
+[para]
+
+The list of accessors, their syntax, and detailed meaning can be found
+in section [sectref Accessors].
+
+
+[def Manipulators]
+
+These take an image and transform its contents in some way, leaving
+the image type unchanged. Examples of commands in category are
+inversion, gamma conversion, etc.
+
+[para]
+
+The list of manipulators, their syntax, and detailed meaning can be
+found in section [sectref Manipulators].
+
+
+[def Converters]
+
+Similar to manipulators, except that they change the image's type,
+preserving the content instead. Here reside operations like conversion
+between the HSV and RGB colorspaces, to greyscale and back, etc.
+
+[para]
+
+The list of converters, their syntax, and detailed meaning can be
+found in section [sectref Converters].
+
+
+[def I/O]
+
+Lastly, but not leastly, they are akin to converters, reading and
+writing images from files and other data. I.e. converting between
+different serializations of image content and type.
+
+[para]
+
+The list of I/O commands, their syntax, and detailed meaning can be
+found in section [sectref {I/O commands}].
+
+[list_end]
+
+
+[section API]
+[subsection Accessors]
+
+
+[list_begin definitions]
+[call [cmd ::crimp] [method .] [arg .]]
+[list_end]
+
+
+[subsection Manipulators]
+
+
+
+[subsection Converters]
+
+
+
+[subsection {I/O commands}]
+
+
+[keywords photo image]
+[manpage_end]
+

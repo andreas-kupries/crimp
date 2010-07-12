@@ -61,6 +61,7 @@ snit::widget plot {
 	$win.c delete all
 
 	set myplot [Plotchart::createXYPlot $win.c {0 255 64} $scale]
+	$myplot title $options(-title)
 	$myplot dataconfig series -color $options(-color)
 	$myplot xconfig -format %d
 
@@ -79,6 +80,15 @@ snit::widget plot {
 	set options($o) $value
 	catch {
 	    $myplot dataconfig series -color $value
+	}
+	return
+    }
+
+    option  -title -default {} -configuremethod C-title
+    method C-title {o value} {
+	set options($o) $value
+	catch {
+	    $myplot title $value
 	}
 	return
     }

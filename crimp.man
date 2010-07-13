@@ -65,7 +65,7 @@ image variable and writing back to it.
 
 [para]
 
-They fall into four categories, namely:
+They fall, into five categories, namely:
 
 [list_begin definitions]
 [def Accessors]
@@ -107,8 +107,9 @@ found in section [sectref Converters].
 
 [def I/O]
 
-Lastly, but not leastly, they are akin to converters, reading and
-writing images from files and other data. I.e. converting between
+Another variant of the same theme, i.e. akin to converters and
+manipulators, yet not the same, these commands read and write images
+from and to files or other data structures. I.e. they convert between
 different serializations of image content and type.
 
 [para]
@@ -116,27 +117,86 @@ different serializations of image content and type.
 The list of I/O commands, their syntax, and detailed meaning can be
 found in section [sectref {I/O commands}].
 
+
+[def Support]
+
+Lastly, but not leastly a number of commands, which, while not image
+commands themselves, support the others.
+
+[para]
+
+The list of supporting commands, their syntax, and detailed meaning
+can be found in section [sectref Support].
+
+
 [list_end]
 
 
 [section API]
 [subsection Accessors]
-
-
 [list_begin definitions]
-[call [cmd ::crimp] [method .] [arg .]]
+[call [cmd ::crimp] [method channels] [arg image]]
+[call [cmd ::crimp] [method dimensions] [arg image]]
+[call [cmd ::crimp] [method height] [arg image]]
+[call [cmd ::crimp] [method histogram] [arg image]]
+[call [cmd ::crimp] [method type] [arg image]]
+[call [cmd ::crimp] [method width] [arg image]]
 [list_end]
 
 
 [subsection Manipulators]
-
+[list_begin definitions]
+[call [cmd ::crimp] [method blank] [arg type] [arg value]...]
+[call [cmd ::crimp] [method blend] [arg foreground] [arg background] [arg alpha]]
+[call [cmd ::crimp] [method degamma] [arg image] [arg y]]
+[call [cmd ::crimp] [method gamma] [arg image] [arg y]]
+[call [cmd ::crimp] [method invert] [arg image]]
+[call [cmd ::crimp] [method matrix] [arg image] [arg matrix]]
+[call [cmd ::crimp] [method over] [arg foreground] [arg background]]
+[call [cmd ::crimp] [method psychedelia] [arg width] [arg height] [arg frames]]
+[call [cmd ::crimp] [method remap] [arg image] [arg map]...]
+[call [cmd ::crimp] [method setalpha] [arg image] [arg mask]]
+[call [cmd ::crimp] [method solarize] [arg image] [arg threshold]]
+[call [cmd ::crimp] [method wavy] [arg image] [arg offset] [arg adj1] [arg adjb]]
+[call [cmd ::crimp] [method {flip horizontal}] [arg image]]
+[call [cmd ::crimp] [method {flip transpose}] [arg image]]
+[call [cmd ::crimp] [method {flip transverse}] [arg image]]
+[call [cmd ::crimp] [method {flip vertical}] [arg image]]
+[list_end]
 
 
 [subsection Converters]
-
+[list_begin definitions]
+[call [cmd ::crimp] [method {convert 2grey8}] [arg image]]
+[call [cmd ::crimp] [method {convert 2hsv}] [arg image]]
+[call [cmd ::crimp] [method {convert 2rgba}] [arg image]]
+[call [cmd ::crimp] [method {convert 2rgb}] [arg image]]
+[call [cmd ::crimp] [method {join 2hsv}] [arg image]]
+[call [cmd ::crimp] [method {join 2rgba}] [arg image]]
+[call [cmd ::crimp] [method {join 2rgb}] [arg image]]
+[call [cmd ::crimp] [method split] [arg image]]
+[list_end]
 
 
 [subsection {I/O commands}]
+[list_begin definitions]
+[call [cmd ::crimp] [method {read tcl}] [arg pixelmatrix]]
+[call [cmd ::crimp] [method {read tk}] [arg photo]]
+[call [cmd ::crimp] [method {write 2tk}] [arg photo] [arg image]]
+[list_end]
+
+
+[subsection Support]
+[list_begin definitions]
+[call [cmd ::crimp] [method map] [arg arg]...]
+[call [cmd ::crimp] [method {table degamma}] [arg y]]
+[call [cmd ::crimp] [method {table gainw}] [arg gain] [arg bias]]
+[call [cmd ::crimp] [method {table gain}] [arg gain] [arg bias]]
+[call [cmd ::crimp] [method {table gamma}] [arg y]]
+[call [cmd ::crimp] [method {table identity}]]
+[call [cmd ::crimp] [method {table invers}]]
+[call [cmd ::crimp] [method {table solarize}] [arg threshold]]
+[list_end]
 
 
 [keywords photo image]

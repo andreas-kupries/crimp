@@ -1,0 +1,1 @@
+f^{clamp}_{gain,bias} (x) = min (0, max (255, [ gain x + bias ]))

@@ -92,7 +92,7 @@
     }
 --></style>
 </head>
-<! -- Generated from file 'doc/crimp.man' by tcllib/doctools with format 'html'
+<! -- Generated from file 'crimp.man' by tcllib/doctools with format 'html'
    -->
 <! -- Copyright &copy; 2010 Andreas Kupries   -- Copyright &copy; 2010 Documentation, Andreas Kupries
    -->
@@ -451,21 +451,59 @@ counter values shared in a single object).</p></dd>
 <div id="subsection5" class="subsection"><h3><a name="subsection5">Support</a></h3>
 <dl class="definitions">
 <dt><a name="34"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></dt>
-<dd></dd>
+<dd><p>This method accepts the same sub-methods and arguments as are accepted
+by the <b class="method">table</b> method below. In contrast to <b class="method">table</b>
+the result is not a list of values, but a map image directly suitable
+as argument to the <b class="method">remap</b> method.</p></dd>
 <dt><a name="35"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></dt>
-<dd></dd>
+<dd><p>This method returns a list of 256 values, the result of running
+the values 0 to 255 through the <b class="function">inverse gamma correction</b> with
+parameter <i class="arg">y</i>.
+This inverse correction, defined in the domain of [0..1]
+for both argument and result, is defined as:</p>
+<p><img alt="gamma_inv" src="./image/gamma_inv.png"></p>
+<p>Scaling of argument and result into the domain [0..255]
+of pixel values, and rounding results to the nearest integer,
+causes the actual definition used to be</p>
+<p><img alt="scaled_gamma_inv" src="./image/scaled_gamma_inv.png"></p></dd>
 <dt><a name="36"><b class="cmd">::crimp</b> <b class="method">table gainw</b> <i class="arg">gain</i> <i class="arg">bias</i></a></dt>
-<dd></dd>
+<dd><p>This method returns a list of 256 values, the result of running
+the values 0 to 255 through a simple linear function with parameters
+<i class="arg">gain</i> and <i class="arg">bias</i>. The results are rounded to the nearest
+integer and forced into the domain [0..255] by wrapping them
+around (modulo), making the definition:</p>
+<p><img alt="linear_wrap" src="./image/linear_wrap.png"></p></dd>
 <dt><a name="37"><b class="cmd">::crimp</b> <b class="method">table gain</b> <i class="arg">gain</i> <i class="arg">bias</i></a></dt>
-<dd></dd>
+<dd><p>This method is like <b class="method">gainw</b>, except that it deals with results
+out of the domain [0..255] by clamping them to 0 and 255
+respectively instead of wrapping around. I.e. its definition is</p>
+<p><img alt="linear_clamp" src="./image/linear_clamp.png"></p></dd>
 <dt><a name="38"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
-<dd></dd>
+<dd><p>This method returns a list of 256 values, the result of running
+the values 0 to 255 through the <b class="function">gamma correction</b> with
+parameter <i class="arg">y</i>.
+This correction, defined in the domain of [0..1] for both
+argument and result, is defined as:</p>
+<p><img alt="gamma" src="./image/gamma.png"></p>
+<p>Scaling of argument and result into the domain [0..255]
+of pixel values, and rounding results to the nearest integer,
+causes the actual definition used to be</p>
+<p><img alt="scaled_gamma" src="./image/scaled_gamma.png"></p></dd>
 <dt><a name="39"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
-<dd></dd>
+<dd><p>This method returns a list of 256 values, the result of running
+the values 0 to 255 through the <b class="function">identity</b> function, defined as</p>
+<p><img alt="identity" src="./image/identity.png"></p></dd>
 <dt><a name="40"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
-<dd></dd>
+<dd><p>This method returns a list of 256 values, the result of running
+the values 0 to 255 through the <b class="function">inverse</b> function, defined as</p>
+<p><img alt="inverse" src="./image/inverse.png"></p></dd>
 <dt><a name="41"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
-<dd></dd>
+<dd><p>This method returns a list of 256 values, the result of running
+the values 0 to 255 through the <b class="function">solarize</b> function, with
+parameter <i class="arg">threshold</i>. The function is defined as:</p>
+<p><img alt="solarize" src="./image/solarize.png"></p>
+<p>Note how the function is the <b class="function">identity</b> for values under the
+threshold, and the <b class="function">inverse</b> for values at and above it.</p></dd>
 </dl>
 </div>
 </div>

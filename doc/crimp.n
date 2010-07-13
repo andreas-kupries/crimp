@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file 'doc/crimp.man' by tcllib/doctools with format 'nroff'
+'\" Generated from file 'crimp.man' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -650,20 +650,78 @@ The method supports all image types.
 .SS SUPPORT
 .TP
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
+This method accepts the same sub-methods and arguments as are accepted
+by the \fBtable\fR method below. In contrast to \fBtable\fR
+the result is not a list of values, but a map image directly suitable
+as argument to the \fBremap\fR method.
 .TP
 \fB::crimp\fR \fBtable degamma\fR \fIy\fR
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the \fBinverse gamma correction\fR with
+parameter \fIy\fR.
+This inverse correction, defined in the domain of [0..1]
+for both argument and result, is defined as:
+.sp
+IMAGE: gamma_inv
+.sp
+Scaling of argument and result into the domain [0..255]
+of pixel values, and rounding results to the nearest integer,
+causes the actual definition used to be
+.sp
+IMAGE: scaled_gamma_inv
 .TP
 \fB::crimp\fR \fBtable gainw\fR \fIgain\fR \fIbias\fR
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through a simple linear function with parameters
+\fIgain\fR and \fIbias\fR. The results are rounded to the nearest
+integer and forced into the domain [0..255] by wrapping them
+around (modulo), making the definition:
+.sp
+IMAGE: linear_wrap
 .TP
 \fB::crimp\fR \fBtable gain\fR \fIgain\fR \fIbias\fR
+This method is like \fBgainw\fR, except that it deals with results
+out of the domain [0..255] by clamping them to 0 and 255
+respectively instead of wrapping around. I.e. its definition is
+.sp
+IMAGE: linear_clamp
 .TP
 \fB::crimp\fR \fBtable gamma\fR \fIy\fR
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the \fBgamma correction\fR with
+parameter \fIy\fR.
+This correction, defined in the domain of [0..1] for both
+argument and result, is defined as:
+.sp
+IMAGE: gamma
+.sp
+Scaling of argument and result into the domain [0..255]
+of pixel values, and rounding results to the nearest integer,
+causes the actual definition used to be
+.sp
+IMAGE: scaled_gamma
 .TP
 \fB::crimp\fR \fBtable identity\fR
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the \fBidentity\fR function, defined as
+.sp
+IMAGE: identity
 .TP
 \fB::crimp\fR \fBtable invers\fR
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the \fBinverse\fR function, defined as
+.sp
+IMAGE: inverse
 .TP
 \fB::crimp\fR \fBtable solarize\fR \fIthreshold\fR
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the \fBsolarize\fR function, with
+parameter \fIthreshold\fR. The function is defined as:
+.sp
+IMAGE: solarize
+.sp
+Note how the function is the \fBidentity\fR for values under the
+threshold, and the \fBinverse\fR for values at and above it.
 .PP
 .SH KEYWORDS
 image, photo

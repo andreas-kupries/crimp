@@ -303,13 +303,97 @@ This method returns the width of the [arg image] (in pixels).
 [subsection Support]
 [list_begin definitions]
 [call [cmd ::crimp] [method map] [arg arg]...]
+
+This method accepts the same sub-methods and arguments as are accepted
+by the [method table] method below. In contrast to [method table]
+the result is not a list of values, but a map image directly suitable
+as argument to the [method remap] method.
+
+
 [call [cmd ::crimp] [method {table degamma}] [arg y]]
+
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the [fun {inverse gamma correction}] with
+parameter [arg y].
+
+This inverse correction, defined in the domain of [lb]0..1[rb]
+for both argument and result, is defined as:
+
+[para][image gamma_inv][para]
+
+Scaling of argument and result into the domain [lb]0..255[rb]
+of pixel values, and rounding results to the nearest integer,
+causes the actual definition used to be
+
+[para][image scaled_gamma_inv]
+
+
 [call [cmd ::crimp] [method {table gainw}] [arg gain] [arg bias]]
+
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through a simple linear function with parameters
+[arg gain] and [arg bias]. The results are rounded to the nearest
+integer and forced into the domain [lb]0..255[rb] by wrapping them
+around (modulo), making the definition:
+
+[para][image linear_wrap]
+
+
 [call [cmd ::crimp] [method {table gain}] [arg gain] [arg bias]]
+
+This method is like [method gainw], except that it deals with results
+out of the domain [lb]0..255[rb] by clamping them to 0 and 255
+respectively instead of wrapping around. I.e. its definition is
+
+[para][image linear_clamp]
+
+
 [call [cmd ::crimp] [method {table gamma}] [arg y]]
+
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the [fun {gamma correction}] with
+parameter [arg y].
+
+This correction, defined in the domain of [lb]0..1[rb] for both
+argument and result, is defined as:
+
+[para][image gamma][para]
+
+Scaling of argument and result into the domain [lb]0..255[rb]
+of pixel values, and rounding results to the nearest integer,
+causes the actual definition used to be
+
+[para][image scaled_gamma]
+
+
 [call [cmd ::crimp] [method {table identity}]]
+
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the [fun identity] function, defined as
+
+[para][image identity]
+
+
 [call [cmd ::crimp] [method {table invers}]]
+
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the [fun inverse] function, defined as
+
+[para][image inverse]
+
+
 [call [cmd ::crimp] [method {table solarize}] [arg threshold]]
+
+This method returns a list of 256 values, the result of running
+the values 0 to 255 through the [fun solarize] function, with
+parameter [arg threshold]. The function is defined as:
+
+[para][image solarize]
+[para]
+
+Note how the function is the [fun identity] for values under the
+threshold, and the [fun inverse] for values at and above it.
+
 [list_end]
 
 

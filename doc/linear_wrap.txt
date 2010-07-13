@@ -1,0 +1,1 @@
+f^{wrap}_{gain,bias} (x) = [ gain x + bias ] \oplus_{256} 0

@@ -260,22 +260,219 @@ This method returns the width of the [arg image] (in pixels).
 
 [subsection Manipulators]
 [list_begin definitions]
-[call [cmd ::crimp] [method blank] [arg type] [arg value]...]
+[call [cmd ::crimp] [method blank] [arg type] [arg width] [arg height] [arg value]...]
+
+This method returns a blank image of the given image type and dimensions.
+The [arg value]s after the dimensions are the pixel values to fill the
+pixels in the image's channels with, per its type.
+
+[para] This method currently support only the types [const rgb], [const rgba],
+and [const grey8].
+
+
 [call [cmd ::crimp] [method blend] [arg foreground] [arg background] [arg alpha]]
+
+This method takes two images of identical dimensions and a blending factor
+[arg alpha] and returns an image which is a mix of both, with each pixel
+blended per the formula
+
+[para][image blend]
+[para]
+
+or, alternatively written
+
+[para][image blend_alt]
+[para]
+
+This means that the [arg foreground] is returned as is for "[arg alpha] == 1",
+and the [arg background] for "[arg alpha] == 1". I.e. the argument [arg alpha]
+controls the [term opacity] of the foreground, with [const 1] and [const 0]
+standing for "fully opaque" and "fully transparent", respectively.
+
+[para]
+
+The following combinations of fore- and background image types are supported:
+
+[example {
+    grey8/grey8
+    hsv/hsv
+    rgb/grey8
+    rgb/rgb
+    rgb/rgba
+    rgba/grey8
+    rgba/rgb
+    rgba/rgba
+}]
+
 [call [cmd ::crimp] [method degamma] [arg image] [arg y]]
+
+This method takes an image, runs it through an [fun {inverse gamma correction}]
+with parameter [arg y], and returns the corrected image as it result.
+
+This is an application of method [method remap], using the mapping returned
+by "[method {map degamma}] [arg y]".
+
+This method supports all image types supported by the method [method remap].
+
+
 [call [cmd ::crimp] [method gamma] [arg image] [arg y]]
+
+This method takes an image, runs it through a [fun {gamma correction}] with
+parameter [arg y], and returns the corrected image as it result.
+
+This is an application of method [method remap], using the mapping returned
+by "[method {map gamma}] [arg y]".
+
+This method supports all image types supported by the method [method remap].
+
+
 [call [cmd ::crimp] [method invert] [arg image]]
+
+This method takes an image, runs it through the [fun inverse] function, and
+returns the modified image as it result.
+
+This is an application of method [method remap], using the mapping returned
+by "[method {map inverse}]".
+
+This method supports all image types supported by the method [method remap].
+
+
 [call [cmd ::crimp] [method matrix] [arg image] [arg matrix]]
+
+This method takes an image and a 3x3 matrix specified as nested Tcl list
+(row major order), applies the projective transform represented by the matrix
+to the image and returns the transformed image as its result.
+
+[para]
+
+Notes: It is currently unclear how the output pixel is computed (nearest
+neighbour, bilinear, etc.) (code inherited from AMG). This requires more
+reading, and teasing things apart. The transfomred image is clipped to the
+dimensions of the input image, i.e. pixels from the input may be lost, and
+pixels in the output may be unset as their input would come from outside of
+the input.
+
+[para]
+
+The operation supports only images of type [const rgba], and returns images of
+the same type.
+
+
 [call [cmd ::crimp] [method over] [arg foreground] [arg background]]
+
+This method is similar to [method blend] above, except that there is no global
+blending parameter. This information is taken from the "alpha" channel of the
+[arg foreground] image instead. The blending formula is the same, except that
+the alpha parameter is now a per-pixel value, and not constant across the image.
+
+[para]
+
+Due to the need for an alpha channel the [arg foreground] has to be of
+type [const rgba]. For the [arg background] image the types [const rgb] and
+[const rgba] are supported.
+
+
 [call [cmd ::crimp] [method psychedelia] [arg width] [arg height] [arg frames]]
+
+This method creates an [const rgba] image of the specified dimensions according
+to an algorithm devised by Andrew M. Goth. The [arg frames] argument specifies
+how many images are in the series.
+
+[para][emph Attention:] This method keeps internal global state, ensuring that
+each call returns a slightly different image. Showing a series of such images
+as animation provides an effect similar to a lava lamp or hallucination.
+
+
 [call [cmd ::crimp] [method remap] [arg image] [arg map]...]
+
+[comment {one of three cor -- remap-conditional, and recolor by 3x3 matrix}]
+This method is the core primitive for the per-pixel transformation of images,
+with each pixel (and channels within, if any) handled independently of all others.
+
+Applications of this operator provided by this package are (inverse) gamma
+correction, pixel inversion, and solarization. Many more are possible,
+especially when considering other colorspaces like HSV. There, for example,
+it is possible change the saturation of pixels, or shift the hue in arbitrary
+manner.
+
+[para]
+
+Beyond the input [arg image] to transform one or more [term maps] are specified
+which define how each pixel value in the input is mapped to a pixel value in the
+output. The command will accept at most that many maps as the input image has channels.
+If there are less maps than channel the last map specified is replicated to cover
+the other channels. An exception of this is the handling of the alpha channel,
+should the input image have such. There a missing map is handle as [fun identity],
+i.e. the channel copied as is, without changes.
+
+[para]
+
+The maps are not Tcl data structures, but images themselves.
+They have to be of type [const grey8], and be of dimension 256x1 (width by height).
+
+[para]
+
+The [method {crimp map ...}] methods are sources for a number of predefined maps.
+And the [method {read tcl}] method allows the construction of maps from Tcl data
+structures, namely nested lists.
+
+[para] This method supports all image types with one or more single-byte channels,
+i.e. all but [const grey16], [const grey32], and [const bw].
+
+
 [call [cmd ::crimp] [method setalpha] [arg image] [arg mask]]
+
+This command takes two images, the input and a [arg mask], and returns
+an image as result in which the mask is the alpha channel of the input.
+
+The result is therefore always of type [const rgba], as the only type
+supporting an alpha channel.
+
+[para] The input image can be of type [const rgb] or [const rgba].
+In case of the latter the existing alpha channel is replaced,
+in case of the former an alpha channel is added.
+
+[para] For the mask images of type [const grey8] and [const rgba] are accepted.
+In the case of the latter the mask's alpha channel is used as the new alpha channel,
+in case of the former the mask itself is used.
+
+
 [call [cmd ::crimp] [method solarize] [arg image] [arg threshold]]
+
+This method takes an image, runs it through the [fun solarize] function with
+parameter [arg threshold], and returns the modified image as it result.
+
+This is an application of method [method remap], using the mapping returned
+by "[method {map solarize}] [arg threshold]".
+
+This method supports all image types supported by the method [method remap].
+
+
 [call [cmd ::crimp] [method wavy] [arg image] [arg offset] [arg adj1] [arg adjb]]
+
+This method processes the input [arg image] according to an algorithm devised by
+Andrew M. Goth, according to the three parameters [arg offset], [arg adj1], and
+[arg adjb], and returns the modified image as its result.
+
+[para]
+
+The operation supports only images of type [const rgba], and returns images of
+the same type.
+
+
 [call [cmd ::crimp] [method {flip horizontal}] [arg image]]
 [call [cmd ::crimp] [method {flip transpose}] [arg image]]
 [call [cmd ::crimp] [method {flip transverse}] [arg image]]
 [call [cmd ::crimp] [method {flip vertical}] [arg image]]
+
+This set of methods performs mirroring along the horizontal, vertical and diagonal
+axes of the input [arg image], returning the mirrored image as their output.
+Transpose mirrors along the main diagonal, transverse along the secondary diagonal.
+These two methods also exchange width and height of the image in the output.
+
+[para] The methods currently support the image types [const rgb], [const rgba],
+[const hsv], and [const grey8].
+
 [list_end]
 
 

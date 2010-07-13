@@ -138,7 +138,7 @@
 <li><a href="#4"><b class="cmd">::crimp</b> <b class="method">histogram</b> <i class="arg">image</i></a></li>
 <li><a href="#5"><b class="cmd">::crimp</b> <b class="method">type</b> <i class="arg">image</i></a></li>
 <li><a href="#6"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></li>
-<li><a href="#7"><b class="cmd">::crimp</b> <b class="method">blank</b> <i class="arg">type</i> <i class="arg">value</i>...</a></li>
+<li><a href="#7"><b class="cmd">::crimp</b> <b class="method">blank</b> <i class="arg">type</i> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">value</i>...</a></li>
 <li><a href="#8"><b class="cmd">::crimp</b> <b class="method">blend</b> <i class="arg">foreground</i> <i class="arg">background</i> <i class="arg">alpha</i></a></li>
 <li><a href="#9"><b class="cmd">::crimp</b> <b class="method">degamma</b> <i class="arg">image</i> <i class="arg">y</i></a></li>
 <li><a href="#10"><b class="cmd">::crimp</b> <b class="method">gamma</b> <i class="arg">image</i> <i class="arg">y</i></a></li>
@@ -384,30 +384,125 @@ counter values shared in a single object).</p></dd>
 </div>
 <div id="subsection2" class="subsection"><h3><a name="subsection2">Manipulators</a></h3>
 <dl class="definitions">
-<dt><a name="7"><b class="cmd">::crimp</b> <b class="method">blank</b> <i class="arg">type</i> <i class="arg">value</i>...</a></dt>
-<dd></dd>
+<dt><a name="7"><b class="cmd">::crimp</b> <b class="method">blank</b> <i class="arg">type</i> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">value</i>...</a></dt>
+<dd><p>This method returns a blank image of the given image type and dimensions.
+The <i class="arg">value</i>s after the dimensions are the pixel values to fill the
+pixels in the image's channels with, per its type.</p>
+<p>This method currently support only the types <b class="const">rgb</b>, <b class="const">rgba</b>,
+and <b class="const">grey8</b>.</p></dd>
 <dt><a name="8"><b class="cmd">::crimp</b> <b class="method">blend</b> <i class="arg">foreground</i> <i class="arg">background</i> <i class="arg">alpha</i></a></dt>
-<dd></dd>
+<dd><p>This method takes two images of identical dimensions and a blending factor
+<i class="arg">alpha</i> and returns an image which is a mix of both, with each pixel
+blended per the formula</p>
+<p><img alt="blend" src="./image/blend.png"></p>
+<p>or, alternatively written</p>
+<p><img alt="blend_alt" src="./image/blend_alt.png"></p>
+<p>This means that the <i class="arg">foreground</i> is returned as is for &quot;<i class="arg">alpha</i> == 1&quot;,
+and the <i class="arg">background</i> for &quot;<i class="arg">alpha</i> == 1&quot;. I.e. the argument <i class="arg">alpha</i>
+controls the <i class="term">opacity</i> of the foreground, with <b class="const">1</b> and <b class="const">0</b>
+standing for &quot;fully opaque&quot; and &quot;fully transparent&quot;, respectively.</p>
+<p>The following combinations of fore- and background image types are supported:</p>
+<pre class="example">
+    grey8/grey8
+    hsv/hsv
+    rgb/grey8
+    rgb/rgb
+    rgb/rgba
+    rgba/grey8
+    rgba/rgb
+    rgba/rgba
+</pre>
+</dd>
 <dt><a name="9"><b class="cmd">::crimp</b> <b class="method">degamma</b> <i class="arg">image</i> <i class="arg">y</i></a></dt>
-<dd></dd>
+<dd><p>This method takes an image, runs it through an <b class="function">inverse gamma correction</b>
+with parameter <i class="arg">y</i>, and returns the corrected image as it result.
+This is an application of method <b class="method">remap</b>, using the mapping returned
+by &quot;<b class="method">map degamma</b> <i class="arg">y</i>&quot;.
+This method supports all image types supported by the method <b class="method">remap</b>.</p></dd>
 <dt><a name="10"><b class="cmd">::crimp</b> <b class="method">gamma</b> <i class="arg">image</i> <i class="arg">y</i></a></dt>
-<dd></dd>
+<dd><p>This method takes an image, runs it through a <b class="function">gamma correction</b> with
+parameter <i class="arg">y</i>, and returns the corrected image as it result.
+This is an application of method <b class="method">remap</b>, using the mapping returned
+by &quot;<b class="method">map gamma</b> <i class="arg">y</i>&quot;.
+This method supports all image types supported by the method <b class="method">remap</b>.</p></dd>
 <dt><a name="11"><b class="cmd">::crimp</b> <b class="method">invert</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This method takes an image, runs it through the <b class="function">inverse</b> function, and
+returns the modified image as it result.
+This is an application of method <b class="method">remap</b>, using the mapping returned
+by &quot;<b class="method">map inverse</b>&quot;.
+This method supports all image types supported by the method <b class="method">remap</b>.</p></dd>
 <dt><a name="12"><b class="cmd">::crimp</b> <b class="method">matrix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></dt>
-<dd></dd>
+<dd><p>This method takes an image and a 3x3 matrix specified as nested Tcl list
+(row major order), applies the projective transform represented by the matrix
+to the image and returns the transformed image as its result.</p>
+<p>Notes: It is currently unclear how the output pixel is computed (nearest
+neighbour, bilinear, etc.) (code inherited from AMG). This requires more
+reading, and teasing things apart. The transfomred image is clipped to the
+dimensions of the input image, i.e. pixels from the input may be lost, and
+pixels in the output may be unset as their input would come from outside of
+the input.</p>
+<p>The operation supports only images of type <b class="const">rgba</b>, and returns images of
+the same type.</p></dd>
 <dt><a name="13"><b class="cmd">::crimp</b> <b class="method">over</b> <i class="arg">foreground</i> <i class="arg">background</i></a></dt>
-<dd></dd>
+<dd><p>This method is similar to <b class="method">blend</b> above, except that there is no global
+blending parameter. This information is taken from the &quot;alpha&quot; channel of the
+<i class="arg">foreground</i> image instead. The blending formula is the same, except that
+the alpha parameter is now a per-pixel value, and not constant across the image.</p>
+<p>Due to the need for an alpha channel the <i class="arg">foreground</i> has to be of
+type <b class="const">rgba</b>. For the <i class="arg">background</i> image the types <b class="const">rgb</b> and
+<b class="const">rgba</b> are supported.</p></dd>
 <dt><a name="14"><b class="cmd">::crimp</b> <b class="method">psychedelia</b> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">frames</i></a></dt>
-<dd></dd>
+<dd><p>This method creates an <b class="const">rgba</b> image of the specified dimensions according
+to an algorithm devised by Andrew M. Goth. The <i class="arg">frames</i> argument specifies
+how many images are in the series.</p>
+<p><em>Attention:</em> This method keeps internal global state, ensuring that
+each call returns a slightly different image. Showing a series of such images
+as animation provides an effect similar to a lava lamp or hallucination.</p></dd>
 <dt><a name="15"><b class="cmd">::crimp</b> <b class="method">remap</b> <i class="arg">image</i> <i class="arg">map</i>...</a></dt>
-<dd></dd>
+<dd><p>This method is the core primitive for the per-pixel transformation of images,
+with each pixel (and channels within, if any) handled independently of all others.
+Applications of this operator provided by this package are (inverse) gamma
+correction, pixel inversion, and solarization. Many more are possible,
+especially when considering other colorspaces like HSV. There, for example,
+it is possible change the saturation of pixels, or shift the hue in arbitrary
+manner.</p>
+<p>Beyond the input <i class="arg">image</i> to transform one or more <i class="term">maps</i> are specified
+which define how each pixel value in the input is mapped to a pixel value in the
+output. The command will accept at most that many maps as the input image has channels.
+If there are less maps than channel the last map specified is replicated to cover
+the other channels. An exception of this is the handling of the alpha channel,
+should the input image have such. There a missing map is handle as <b class="function">identity</b>,
+i.e. the channel copied as is, without changes.</p>
+<p>The maps are not Tcl data structures, but images themselves.
+They have to be of type <b class="const">grey8</b>, and be of dimension 256x1 (width by height).</p>
+<p>The <b class="method">crimp map ...</b> methods are sources for a number of predefined maps.
+And the <b class="method">read tcl</b> method allows the construction of maps from Tcl data
+structures, namely nested lists.</p>
+<p>This method supports all image types with one or more single-byte channels,
+i.e. all but <b class="const">grey16</b>, <b class="const">grey32</b>, and <b class="const">bw</b>.</p></dd>
 <dt><a name="16"><b class="cmd">::crimp</b> <b class="method">setalpha</b> <i class="arg">image</i> <i class="arg">mask</i></a></dt>
-<dd></dd>
+<dd><p>This command takes two images, the input and a <i class="arg">mask</i>, and returns
+an image as result in which the mask is the alpha channel of the input.
+The result is therefore always of type <b class="const">rgba</b>, as the only type
+supporting an alpha channel.</p>
+<p>The input image can be of type <b class="const">rgb</b> or <b class="const">rgba</b>.
+In case of the latter the existing alpha channel is replaced,
+in case of the former an alpha channel is added.</p>
+<p>For the mask images of type <b class="const">grey8</b> and <b class="const">rgba</b> are accepted.
+In the case of the latter the mask's alpha channel is used as the new alpha channel,
+in case of the former the mask itself is used.</p></dd>
 <dt><a name="17"><b class="cmd">::crimp</b> <b class="method">solarize</b> <i class="arg">image</i> <i class="arg">threshold</i></a></dt>
-<dd></dd>
+<dd><p>This method takes an image, runs it through the <b class="function">solarize</b> function with
+parameter <i class="arg">threshold</i>, and returns the modified image as it result.
+This is an application of method <b class="method">remap</b>, using the mapping returned
+by &quot;<b class="method">map solarize</b> <i class="arg">threshold</i>&quot;.
+This method supports all image types supported by the method <b class="method">remap</b>.</p></dd>
 <dt><a name="18"><b class="cmd">::crimp</b> <b class="method">wavy</b> <i class="arg">image</i> <i class="arg">offset</i> <i class="arg">adj1</i> <i class="arg">adjb</i></a></dt>
-<dd></dd>
+<dd><p>This method processes the input <i class="arg">image</i> according to an algorithm devised by
+Andrew M. Goth, according to the three parameters <i class="arg">offset</i>, <i class="arg">adj1</i>, and
+<i class="arg">adjb</i>, and returns the modified image as its result.</p>
+<p>The operation supports only images of type <b class="const">rgba</b>, and returns images of
+the same type.</p></dd>
 <dt><a name="19"><b class="cmd">::crimp</b> <b class="method">flip horizontal</b> <i class="arg">image</i></a></dt>
 <dd></dd>
 <dt><a name="20"><b class="cmd">::crimp</b> <b class="method">flip transpose</b> <i class="arg">image</i></a></dt>
@@ -415,7 +510,12 @@ counter values shared in a single object).</p></dd>
 <dt><a name="21"><b class="cmd">::crimp</b> <b class="method">flip transverse</b> <i class="arg">image</i></a></dt>
 <dd></dd>
 <dt><a name="22"><b class="cmd">::crimp</b> <b class="method">flip vertical</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This set of methods performs mirroring along the horizontal, vertical and diagonal
+axes of the input <i class="arg">image</i>, returning the mirrored image as their output.
+Transpose mirrors along the main diagonal, transverse along the secondary diagonal.
+These two methods also exchange width and height of the image in the output.</p>
+<p>The methods currently support the image types <b class="const">rgb</b>, <b class="const">rgba</b>,
+<b class="const">hsv</b>, and <b class="const">grey8</b>.</p></dd>
 </dl>
 </div>
 <div id="subsection3" class="subsection"><h3><a name="subsection3">Converters</a></h3>

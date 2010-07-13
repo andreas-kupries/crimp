@@ -1,0 +1,1 @@
+gamma_y (x) = x^y

@@ -53,6 +53,77 @@ crimp with the operation which would have required that access.
 
 [section {Image Types}]
 
+Each image has a [term type], a string implicitly describing features
+like the colorspace the image is in, the number of (color) channels,
+the domain, i.e. bit-depth, of pixel values in the channels, etc.
+
+[para]
+
+All type strings have the form [const crimp::image::][var foo].
+
+[para]
+
+The package currently knows the following types:
+
+[list_begin definitions]
+[def [const rgba]]
+	[list_begin definitions]
+	[def Colorspace]	RGB also known as Red, Green, and Blue.
+	[def Channels]		4, named "red", "green", and "blue",
+				plus an "alpha" channel controlling
+				pixel opacity.
+	[def Bit-depth]		1 byte/channel (8 bit, values 0-255).
+	[def Pixel-size]	4 bytes.
+	[list_end]
+[def [const rgb]]
+	[list_begin definitions]
+	[def Colorspace]	RGB also known as Red, Green, and Blue.
+	[def Channels]		3, named "red", "green", and "blue".
+	[def Bit-depth]		1 byte/channel (8 bit, values 0-255).
+	[def Pixel-size]	3 bytes.
+	[list_end]
+[def [const hsv]]
+	[list_begin definitions]
+	[def Colorspace]	HSV, also known as Hue, Saturation, and Value.
+	[def Channels]		3, named "hue", "saturation", and "value".
+	[def Bit-depth]		1 byte/channel (8 bit, values 0-255).
+	[def Pixel-size]	3 bytes.
+	[list_end]
+[def [const grey8]]
+	[list_begin definitions]
+	[def Colorspace]	Greyscale.
+	[def Channels]		1, named "luma".
+	[def Bit-depth]		1 byte/channel (8 bit, values 0-255).
+	[def Pixel-size]	1 byte.
+	[list_end]
+[def [const grey16]]
+	[list_begin definitions]
+	[def Colorspace]	Greyscale.
+	[def Channels]		1, named "luma".
+	[def Bit-depth]		2 byte/channel (16 bit, values 0-65,535).
+	[def Pixel-size]	2 bytes.
+	[list_end]
+[def [const grey32]]
+	[list_begin definitions]
+	[def Colorspace]	Greyscale.
+	[def Channels]		1, named "luma".
+	[def Bit-depth]		4 byte/channel (16 bit, values 0-4,294,967,296).
+	[def Pixel-size]	4 bytes.
+	[list_end]
+[def [const bw]]
+	[list_begin definitions]
+	[def Colorspace]	Binary.
+	[def Channels]		1, named "bw".
+	[def Bit-depth]		1 bit/channel.
+	[def Pixel-size]	1 byte. I.e. 7 bits/channel are wasted.
+	[list_end]
+[list_end]
+
+Support for the various types varies by operation. The exact image
+types supported by each operation are listed the operation's
+description. Invoking an operation for a type it doesn't support will
+generally cause it to throw an error.
+
 ... rgb, hsv, grey{8,16,32}, bw ...
 
 

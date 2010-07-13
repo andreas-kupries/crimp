@@ -210,7 +210,104 @@ easier to simply become a developer and extend the C level parts of
 crimp with the operation which would have required that access.</p>
 </div>
 <div id="section3" class="section"><h2><a name="section3">Image Types</a></h2>
-<p>... rgb, hsv, grey{8,16,32}, bw ...</p>
+<p>Each image has a <i class="term">type</i>, a string implicitly describing features
+like the colorspace the image is in, the number of (color) channels,
+the domain, i.e. bit-depth, of pixel values in the channels, etc.</p>
+<p>All type strings have the form <b class="const">crimp::image::</b><b class="variable">foo</b>.</p>
+<p>The package currently knows the following types:</p>
+<dl class="definitions">
+<dt><b class="const">rgba</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>RGB also known as Red, Green, and Blue.</p></dd>
+<dt>Channels</dt>
+<dd><p>4, named &quot;red&quot;, &quot;green&quot;, and &quot;blue&quot;,
+				plus an &quot;alpha&quot; channel controlling
+				pixel opacity.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 byte/channel (8 bit, values 0-255).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>4 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">rgb</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>RGB also known as Red, Green, and Blue.</p></dd>
+<dt>Channels</dt>
+<dd><p>3, named &quot;red&quot;, &quot;green&quot;, and &quot;blue&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 byte/channel (8 bit, values 0-255).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>3 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">hsv</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>HSV, also known as Hue, Saturation, and Value.</p></dd>
+<dt>Channels</dt>
+<dd><p>3, named &quot;hue&quot;, &quot;saturation&quot;, and &quot;value&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 byte/channel (8 bit, values 0-255).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>3 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">grey8</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>Greyscale.</p></dd>
+<dt>Channels</dt>
+<dd><p>1, named &quot;luma&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 byte/channel (8 bit, values 0-255).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>1 byte.</p></dd>
+</dl></dd>
+<dt><b class="const">grey16</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>Greyscale.</p></dd>
+<dt>Channels</dt>
+<dd><p>1, named &quot;luma&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>2 byte/channel (16 bit, values 0-65,535).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>2 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">grey32</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>Greyscale.</p></dd>
+<dt>Channels</dt>
+<dd><p>1, named &quot;luma&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>4 byte/channel (16 bit, values 0-4,294,967,296).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>4 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">bw</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>Binary.</p></dd>
+<dt>Channels</dt>
+<dd><p>1, named &quot;bw&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 bit/channel.</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>1 byte. I.e. 7 bits/channel are wasted.</p></dd>
+</dl></dd>
+</dl>
+<p>Support for the various types varies by operation. The exact image
+types supported by each operation are listed the operation's
+description. Invoking an operation for a type it doesn't support will
+generally cause it to throw an error.
+... rgb, hsv, grey{8,16,32}, bw ...</p>
 </div>
 <div id="section4" class="section"><h2><a name="section4">General design</a></h2>
 <p>All commands operate in a pipeline fashion, taking zero or more image

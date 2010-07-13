@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file 'crimp.man' by tcllib/doctools with format 'nroff'
+'\" Generated from file 'doc/crimp.man' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -368,6 +368,132 @@ IMHO, highly unusual. In such a situation it is likely better and
 easier to simply become a developer and extend the C level parts of
 crimp with the operation which would have required that access.
 .SH "IMAGE TYPES"
+Each image has a \fItype\fR, a string implicitly describing features
+like the colorspace the image is in, the number of (color) channels,
+the domain, i.e. bit-depth, of pixel values in the channels, etc.
+.PP
+All type strings have the form \fBcrimp::image::\fR\fBfoo\fR.
+.PP
+The package currently knows the following types:
+.TP
+\fBrgba\fR
+.RS
+.TP
+Colorspace
+RGB also known as Red, Green, and Blue.
+.TP
+Channels
+4, named "red", "green", and "blue",
+plus an "alpha" channel controlling
+pixel opacity.
+.TP
+Bit-depth
+1 byte/channel (8 bit, values 0-255).
+.TP
+Pixel-size
+4 bytes.
+.RE
+.TP
+\fBrgb\fR
+.RS
+.TP
+Colorspace
+RGB also known as Red, Green, and Blue.
+.TP
+Channels
+3, named "red", "green", and "blue".
+.TP
+Bit-depth
+1 byte/channel (8 bit, values 0-255).
+.TP
+Pixel-size
+3 bytes.
+.RE
+.TP
+\fBhsv\fR
+.RS
+.TP
+Colorspace
+HSV, also known as Hue, Saturation, and Value.
+.TP
+Channels
+3, named "hue", "saturation", and "value".
+.TP
+Bit-depth
+1 byte/channel (8 bit, values 0-255).
+.TP
+Pixel-size
+3 bytes.
+.RE
+.TP
+\fBgrey8\fR
+.RS
+.TP
+Colorspace
+Greyscale.
+.TP
+Channels
+1, named "luma".
+.TP
+Bit-depth
+1 byte/channel (8 bit, values 0-255).
+.TP
+Pixel-size
+1 byte.
+.RE
+.TP
+\fBgrey16\fR
+.RS
+.TP
+Colorspace
+Greyscale.
+.TP
+Channels
+1, named "luma".
+.TP
+Bit-depth
+2 byte/channel (16 bit, values 0-65,535).
+.TP
+Pixel-size
+2 bytes.
+.RE
+.TP
+\fBgrey32\fR
+.RS
+.TP
+Colorspace
+Greyscale.
+.TP
+Channels
+1, named "luma".
+.TP
+Bit-depth
+4 byte/channel (16 bit, values 0-4,294,967,296).
+.TP
+Pixel-size
+4 bytes.
+.RE
+.TP
+\fBbw\fR
+.RS
+.TP
+Colorspace
+Binary.
+.TP
+Channels
+1, named "bw".
+.TP
+Bit-depth
+1 bit/channel.
+.TP
+Pixel-size
+1 byte. I.e. 7 bits/channel are wasted.
+.RE
+.PP
+Support for the various types varies by operation. The exact image
+types supported by each operation are listed the operation's
+description. Invoking an operation for a type it doesn't support will
+generally cause it to throw an error.
 ... rgb, hsv, grey{8,16,32}, bw ...
 .SH "GENERAL DESIGN"
 All commands operate in a pipeline fashion, taking zero or more image

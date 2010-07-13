@@ -494,7 +494,6 @@ Support for the various types varies by operation. The exact image
 types supported by each operation are listed the operation's
 description. Invoking an operation for a type it doesn't support will
 generally cause it to throw an error.
-... rgb, hsv, grey{8,16,32}, bw ...
 .SH "GENERAL DESIGN"
 All commands operate in a pipeline fashion, taking zero or more image
 values, zero or more other arguments, and returning zero or more
@@ -548,16 +547,45 @@ can be found in section \fBSupport\fR.
 .SS ACCESSORS
 .TP
 \fB::crimp\fR \fBchannels\fR \fIimage\fR
+This method returns a list containing the names of the channels in the
+\fIimage\fR. The order of channels is the same as expected by the
+\fBremap\fR method.
+.sp
+The method supports all image types.
 .TP
 \fB::crimp\fR \fBdimensions\fR \fIimage\fR
+This method returns the width and height of the \fIimage\fR (in pixels).
+The result is a 2-element list containing width and height, in this order.
+.sp
+The method supports all image types.
 .TP
 \fB::crimp\fR \fBheight\fR \fIimage\fR
+This method returns the height of the \fIimage\fR (in pixels).
+.sp
+The method supports all image types.
 .TP
 \fB::crimp\fR \fBhistogram\fR \fIimage\fR
+This method returns a nested dictionary as its result.
+The outer dictionary is indexed by the names of the
+channels in the \fIimage\fR. Its values, the inner
+dictionaries, are indexed by pixel value. The associated
+values are the number of pixels with that value.
+.sp
+The method supports all image types except "grey32".
+Under the current system the result would be a dictionary
+with 2^32 keys and values, taking up, roughly, 192 GiByte of
+memory in the worst case, and 96 GiByte in best case (all
+counter values shared in a single object).
 .TP
 \fB::crimp\fR \fBtype\fR \fIimage\fR
+This method returns the type of the \fIimage\fR.
+.sp
+The method supports all image types.
 .TP
 \fB::crimp\fR \fBwidth\fR \fIimage\fR
+This method returns the width of the \fIimage\fR (in pixels).
+.sp
+The method supports all image types.
 .PP
 .SS MANIPULATORS
 .TP

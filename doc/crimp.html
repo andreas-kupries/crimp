@@ -306,8 +306,7 @@ the domain, i.e. bit-depth, of pixel values in the channels, etc.</p>
 <p>Support for the various types varies by operation. The exact image
 types supported by each operation are listed the operation's
 description. Invoking an operation for a type it doesn't support will
-generally cause it to throw an error.
-... rgb, hsv, grey{8,16,32}, bw ...</p>
+generally cause it to throw an error.</p>
 </div>
 <div id="section4" class="section"><h2><a name="section4">General design</a></h2>
 <p>All commands operate in a pipeline fashion, taking zero or more image
@@ -353,17 +352,34 @@ can be found in section <span class="sectref"><a href="#subsection5">Support</a>
 <div id="subsection1" class="subsection"><h3><a name="subsection1">Accessors</a></h3>
 <dl class="definitions">
 <dt><a name="1"><b class="cmd">::crimp</b> <b class="method">channels</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This method returns a list containing the names of the channels in the
+<i class="arg">image</i>. The order of channels is the same as expected by the
+<b class="method">remap</b> method.</p>
+<p>The method supports all image types.</p></dd>
 <dt><a name="2"><b class="cmd">::crimp</b> <b class="method">dimensions</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This method returns the width and height of the <i class="arg">image</i> (in pixels).
+The result is a 2-element list containing width and height, in this order.</p>
+<p>The method supports all image types.</p></dd>
 <dt><a name="3"><b class="cmd">::crimp</b> <b class="method">height</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This method returns the height of the <i class="arg">image</i> (in pixels).</p>
+<p>The method supports all image types.</p></dd>
 <dt><a name="4"><b class="cmd">::crimp</b> <b class="method">histogram</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This method returns a nested dictionary as its result.
+The outer dictionary is indexed by the names of the
+channels in the <i class="arg">image</i>. Its values, the inner
+dictionaries, are indexed by pixel value. The associated
+values are the number of pixels with that value.</p>
+<p>The method supports all image types except &quot;grey32&quot;.
+Under the current system the result would be a dictionary
+with 2^32 keys and values, taking up, roughly, 192 GiByte of
+memory in the worst case, and 96 GiByte in best case (all
+counter values shared in a single object).</p></dd>
 <dt><a name="5"><b class="cmd">::crimp</b> <b class="method">type</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This method returns the type of the <i class="arg">image</i>.</p>
+<p>The method supports all image types.</p></dd>
 <dt><a name="6"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This method returns the width of the <i class="arg">image</i> (in pixels).</p>
+<p>The method supports all image types.</p></dd>
 </dl>
 </div>
 <div id="subsection2" class="subsection"><h3><a name="subsection2">Manipulators</a></h3>

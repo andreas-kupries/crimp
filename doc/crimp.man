@@ -124,8 +124,6 @@ types supported by each operation are listed the operation's
 description. Invoking an operation for a type it doesn't support will
 generally cause it to throw an error.
 
-... rgb, hsv, grey{8,16,32}, bw ...
-
 
 [section {General design}]
 
@@ -207,11 +205,56 @@ can be found in section [sectref Support].
 [subsection Accessors]
 [list_begin definitions]
 [call [cmd ::crimp] [method channels] [arg image]]
+
+This method returns a list containing the names of the channels in the
+[arg image]. The order of channels is the same as expected by the
+[method remap] method.
+
+[para] The method supports all image types.
+
+
 [call [cmd ::crimp] [method dimensions] [arg image]]
+
+This method returns the width and height of the [arg image] (in pixels).
+The result is a 2-element list containing width and height, in this order.
+
+[para] The method supports all image types.
+
+
 [call [cmd ::crimp] [method height] [arg image]]
+
+This method returns the height of the [arg image] (in pixels).
+
+[para] The method supports all image types.
+
+
 [call [cmd ::crimp] [method histogram] [arg image]]
+
+This method returns a nested dictionary as its result.
+The outer dictionary is indexed by the names of the
+channels in the [arg image]. Its values, the inner
+dictionaries, are indexed by pixel value. The associated
+values are the number of pixels with that value.
+
+[para] The method supports all image types except "grey32".
+Under the current system the result would be a dictionary
+with 2^32 keys and values, taking up, roughly, 192 GiByte of
+memory in the worst case, and 96 GiByte in best case (all
+counter values shared in a single object).
+
+
 [call [cmd ::crimp] [method type] [arg image]]
+
+This method returns the type of the [arg image].
+
+[para] The method supports all image types.
+
+
 [call [cmd ::crimp] [method width] [arg image]]
+
+This method returns the width of the [arg image] (in pixels).
+[para] The method supports all image types.
+
 [list_end]
 
 

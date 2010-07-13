@@ -23,6 +23,7 @@ critcl::config tk 1
 critcl::cheaders c/*.h
 critcl::csources c/*.c
 critcl::tsources crimp_tcl.tcl
+critcl::tsources plot.tcl
 
 critcl::cinit {
     crimp_imagetype_init ();

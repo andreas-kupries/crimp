@@ -69,7 +69,13 @@ foreach filename [lsort [glob -nocomplain -directory [file join [file dirname [f
 ##       the distribution and use of the Tcl layer.
 
 source [file join [file dirname [file normalize [info script]]] crimp_tcl.tcl]
-source [file join [file dirname [file normalize [info script]]] plot.tcl]
+
+# This can fail when compiling via 'critcl -pkg', because snit may not
+# be a visible package to the starkit. Have to think more about how to
+# separate the pieces. Plot should likely be its own package.
+catch {
+    source [file join [file dirname [file normalize [info script]]] plot.tcl]
+}
 
 # # ## ### ##### ######## #############
 ## Ready. Export.

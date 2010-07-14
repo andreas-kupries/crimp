@@ -602,11 +602,21 @@ This method takes two images of identical dimensions and a blending factor
 \fIalpha\fR and returns an image which is a mix of both, with each pixel
 blended per the formula
 .sp
-IMAGE: blend
+.PS
+.nf
+Z = F\\alpha + B(1-\\alpha)
+
+.fi
+.PE
 .sp
 or, alternatively written
 .sp
-IMAGE: blend_alt
+.PS
+.nf
+Z = (F - B)\\alpha + B
+
+.fi
+.PE
 .sp
 This means that the \fIforeground\fR is returned as is for "\fIalpha\fR == 1",
 and the \fIbackground\fR for "\fIalpha\fR == 1". I.e. the argument \fIalpha\fR
@@ -616,14 +626,17 @@ standing for "fully opaque" and "fully transparent", respectively.
 The following combinations of fore- and background image types are supported:
 .nf
 
-    grey8/grey8
-    hsv/hsv
-    rgb/grey8
-    rgb/rgb
-    rgb/rgba
-    rgba/grey8
-    rgba/rgb
-    rgba/rgba
+    Result = Foreground Background
+    ------   ---------- ----------
+    grey8    grey8      grey8
+    hsv      hsv        hsv
+    rgb      rgb        grey8
+    rgb      rgb        rgb
+    rgb      rgb        rgba
+    rgba     rgba       grey8
+    rgba     rgba       rgb
+    rgba     rgba       rgba
+    ------   ---------- ----------
 
 .fi
 .TP
@@ -762,6 +775,23 @@ The methods currently support the image types \fBrgb\fR, \fBrgba\fR,
 \fB::crimp\fR \fBconvert 2rgba\fR \fIimage\fR
 .TP
 \fB::crimp\fR \fBconvert 2rgb\fR \fIimage\fR
+This set of methods all convert their input \fIimage\fR to the
+specified type and returns it as their result.
+.sp
+The converters returning a \fBgrey8\fR image support \fBrgb\fR and
+\fBrgba\fR as their input, using the ITU-R 601-2 luma transform to
+merge the three color channels
+.sp
+The converters to HSV support \fBrgb\fR and \fBrgba\fR as their
+input as well.
+.sp
+The conversion to \fBrgba\fR accepts only \fBhsv\fR as input,
+adding a blank (fully opaque) alpha channel. For more control over the
+contents of an image's alpha channel see the methods \fBsetalpha\fR
+and \fBjoin rgba\fR.
+.sp
+At last, the conversion to \fBrgb\fR accepts both \fBrgba\fR and
+\fBhsv\fR images as input.
 .TP
 \fB::crimp\fR \fBjoin 2hsv\fR \fIimage\fR
 .TP
@@ -794,13 +824,23 @@ parameter \fIy\fR.
 This inverse correction, defined in the domain of [0..1]
 for both argument and result, is defined as:
 .sp
-IMAGE: gamma_inv
+.PS
+.nf
+gamma^{-1}_y (x) = x^{\\frac{1}{y}}
+
+.fi
+.PE
 .sp
 Scaling of argument and result into the domain [0..255]
 of pixel values, and rounding results to the nearest integer,
 causes the actual definition used to be
 .sp
-IMAGE: scaled_gamma_inv
+.PS
+.nf
+gamma^{-1}_y (x) = [ 255 (\\frac{x}{255})^{\\frac{1}{y}} ]
+
+.fi
+.PE
 .TP
 \fB::crimp\fR \fBtable gainw\fR \fIgain\fR \fIbias\fR
 This method returns a list of 256 values, the result of running
@@ -809,14 +849,24 @@ the values 0 to 255 through a simple linear function with parameters
 integer and forced into the domain [0..255] by wrapping them
 around (modulo), making the definition:
 .sp
-IMAGE: linear_wrap
+.PS
+.nf
+f^{wrap}_{gain,bias} (x) = [ gain x + bias ] \\oplus_{256} 0
+
+.fi
+.PE
 .TP
 \fB::crimp\fR \fBtable gain\fR \fIgain\fR \fIbias\fR
 This method is like \fBgainw\fR, except that it deals with results
 out of the domain [0..255] by clamping them to 0 and 255
 respectively instead of wrapping around. I.e. its definition is
 .sp
-IMAGE: linear_clamp
+.PS
+.nf
+f^{clamp}_{gain,bias} (x) = min (0, max (255, [ gain x + bias ]))
+
+.fi
+.PE
 .TP
 \fB::crimp\fR \fBtable gamma\fR \fIy\fR
 This method returns a list of 256 values, the result of running
@@ -825,32 +875,62 @@ parameter \fIy\fR.
 This correction, defined in the domain of [0..1] for both
 argument and result, is defined as:
 .sp
-IMAGE: gamma
+.PS
+.nf
+gamma_y (x) = x^y
+
+.fi
+.PE
 .sp
 Scaling of argument and result into the domain [0..255]
 of pixel values, and rounding results to the nearest integer,
 causes the actual definition used to be
 .sp
-IMAGE: scaled_gamma
+.PS
+.nf
+gamma_y (x) = [ 255 (\\frac{x}{255})^y ]
+
+.fi
+.PE
 .TP
 \fB::crimp\fR \fBtable identity\fR
 This method returns a list of 256 values, the result of running
 the values 0 to 255 through the \fBidentity\fR function, defined as
 .sp
-IMAGE: identity
+.PS
+.nf
+identity (x) = x
+
+.fi
+.PE
 .TP
 \fB::crimp\fR \fBtable invers\fR
 This method returns a list of 256 values, the result of running
 the values 0 to 255 through the \fBinverse\fR function, defined as
 .sp
-IMAGE: inverse
+.PS
+.nf
+inverse (x) = 255 - x
+
+.fi
+.PE
 .TP
 \fB::crimp\fR \fBtable solarize\fR \fIthreshold\fR
 This method returns a list of 256 values, the result of running
 the values 0 to 255 through the \fBsolarize\fR function, with
 parameter \fIthreshold\fR. The function is defined as:
 .sp
-IMAGE: solarize
+.PS
+.nf
+solarize_{threshold} (x) = \\left\\{\\begin{eqnarray}
+x       & x < threshold \\\\
+255 - x & x \\ge threshold \\\\
+\\end{eqnarray}\\right
+
+
+
+.fi
+.PE
 .sp
 Note how the function is the \fBidentity\fR for values under the
 threshold, and the \fBinverse\fR for values at and above it.

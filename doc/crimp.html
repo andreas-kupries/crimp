@@ -403,14 +403,17 @@ controls the <i class="term">opacity</i> of the foreground, with <b class="const
 standing for &quot;fully opaque&quot; and &quot;fully transparent&quot;, respectively.</p>
 <p>The following combinations of fore- and background image types are supported:</p>
 <pre class="example">
-    grey8/grey8
-    hsv/hsv
-    rgb/grey8
-    rgb/rgb
-    rgb/rgba
-    rgba/grey8
-    rgba/rgb
-    rgba/rgba
+    Result = Foreground Background 
+    ------   ---------- ---------- 
+    grey8    grey8      grey8
+    hsv      hsv        hsv
+    rgb      rgb        grey8
+    rgb      rgb        rgb
+    rgb      rgb        rgba
+    rgba     rgba       grey8
+    rgba     rgba       rgb
+    rgba     rgba       rgba
+    ------   ---------- ----------
 </pre>
 </dd>
 <dt><a name="9"><b class="cmd">::crimp</b> <b class="method">degamma</b> <i class="arg">image</i> <i class="arg">y</i></a></dt>
@@ -527,7 +530,19 @@ These two methods also exchange width and height of the image in the output.</p>
 <dt><a name="25"><b class="cmd">::crimp</b> <b class="method">convert 2rgba</b> <i class="arg">image</i></a></dt>
 <dd></dd>
 <dt><a name="26"><b class="cmd">::crimp</b> <b class="method">convert 2rgb</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This set of methods all convert their input <i class="arg">image</i> to the
+specified type and returns it as their result.</p>
+<p>The converters returning a <b class="const">grey8</b> image support <b class="const">rgb</b> and
+<b class="const">rgba</b> as their input, using the ITU-R 601-2 luma transform to
+merge the three color channels</p>
+<p>The converters to HSV support <b class="const">rgb</b> and <b class="const">rgba</b> as their
+input as well.</p>
+<p>The conversion to <b class="const">rgba</b> accepts only <b class="const">hsv</b> as input,
+adding a blank (fully opaque) alpha channel. For more control over the
+contents of an image's alpha channel see the methods <b class="method">setalpha</b>
+and <b class="method">join rgba</b>.</p>
+<p>At last, the conversion to <b class="const">rgb</b> accepts both <b class="const">rgba</b> and
+<b class="const">hsv</b> images as input.</p></dd>
 <dt><a name="27"><b class="cmd">::crimp</b> <b class="method">join 2hsv</b> <i class="arg">image</i></a></dt>
 <dd></dd>
 <dt><a name="28"><b class="cmd">::crimp</b> <b class="method">join 2rgba</b> <i class="arg">image</i></a></dt>

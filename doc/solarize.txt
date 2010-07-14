@@ -1,4 +1,4 @@
-solarize_{threshold} (x) = \left.\begin{eqnarray}
+solarize_{threshold} (x) = \left\{\begin{eqnarray}
 x       & x < threshold \\
 255 - x & x \ge threshold \\
 \end{eqnarray}\right

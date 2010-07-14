@@ -27,7 +27,7 @@ proc ::crimp::Has {name} {
 }
 
 proc ::crimp::P {fqn} {
-    return [lrange [split [namespace tail $fqn] _] 1 end]
+    return [lrange [::split [namespace tail $fqn] _] 1 end]
 }
 
 # # ## ### ##### ######## #############

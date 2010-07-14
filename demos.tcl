@@ -6,24 +6,56 @@ exec tclsh "$0" ${1+"$@"}
 if {[catch {
     package require Tcl 8.6
     package require Tk  8.6
+
+    puts "Using Tcl/Tk 8.6"
 }]} {
     package require Tcl 8.5
     package require Tk  8.5
     package require img::png
+
+    puts "Using Tcl/Tk 8.5 + img::png"
 }
 package require widget::scrolledwindow
 package require widget::toolbar
 
-# Access to critcl library from a local unwrapped critcl app.
-set dir [file dirname [info script]]
-lappend auto_path [file join $dir critcl.vfs lib]
+# Self dir
+set dir [file dirname [file normalize [info script]]]
 
-# Direct access to the crimp package
-source [file join $dir crimp.tcl]
+puts "In $dir"
 
-#Use crimp as prebuilt package
-#lappend auto_path $dir/lib
-#package require crimp
+set triedprebuilt 0
+if {![file exists $dir/lib] ||
+    [catch {
+	set triedprebuilt 1
+
+	puts "Trying prebuild crimp package"
+
+	# Use crimp as prebuilt package
+	lappend auto_path $dir/lib
+	package require crimp
+
+	puts "Using prebuilt crimp [package present crimp]"
+	puts "At [package ifneeded crimp [package present crimp]]"
+    } msg]} {
+
+    if {$triedprebuilt} {
+	puts "Trying to use a prebuilt crimp package failed ($msg)."
+	puts ==\t[join [split $::errorInfo \n] \n==\t]
+	puts "Falling back to dynamic compilation via local critcl package"
+    }
+
+    puts "Trying dynamically compiled crimp package"
+
+    # Access to critcl library from a local unwrapped critcl app.
+    lappend auto_path [file join $dir critcl.vfs lib]
+
+    # Direct access to the crimp package
+    source [file join $dir crimp.tcl]
+
+    puts "Using dynamically compiled crimp package"
+}
+
+puts "Starting up ..."
 
 # # ## ### ##### ######## #############
 

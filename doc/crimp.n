@@ -302,11 +302,11 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBconvert 2rgb\fR \fIimage\fR
 .sp
-\fB::crimp\fR \fBjoin 2hsv\fR \fIimage\fR
+\fB::crimp\fR \fBjoin 2hsv\fR \fIhueImage\fR \fIsatImage\fR \fIvalImage\fR
 .sp
-\fB::crimp\fR \fBjoin 2rgba\fR \fIimage\fR
+\fB::crimp\fR \fBjoin 2rgba\fR \fIredImage\fR \fIgreenImage\fR \fIblueImage\fR \fIalphaImage\fR
 .sp
-\fB::crimp\fR \fBjoin 2rgb\fR \fIimage\fR
+\fB::crimp\fR \fBjoin 2rgb\fR \fIredImage\fR \fIgreenImage\fR \fIblueImage\fR
 .sp
 \fB::crimp\fR \fBsplit\fR \fIimage\fR
 .sp
@@ -793,21 +793,48 @@ and \fBjoin rgba\fR.
 At last, the conversion to \fBrgb\fR accepts both \fBrgba\fR and
 \fBhsv\fR images as input.
 .TP
-\fB::crimp\fR \fBjoin 2hsv\fR \fIimage\fR
+\fB::crimp\fR \fBjoin 2hsv\fR \fIhueImage\fR \fIsatImage\fR \fIvalImage\fR
 .TP
-\fB::crimp\fR \fBjoin 2rgba\fR \fIimage\fR
+\fB::crimp\fR \fBjoin 2rgba\fR \fIredImage\fR \fIgreenImage\fR \fIblueImage\fR \fIalphaImage\fR
 .TP
-\fB::crimp\fR \fBjoin 2rgb\fR \fIimage\fR
+\fB::crimp\fR \fBjoin 2rgb\fR \fIredImage\fR \fIgreenImage\fR \fIblueImage\fR
+This set of methods is the complement of method \fBsplit\fR. Each
+take a set of \fBgrey8\fR images and fuse them together into an
+image of the given type, with each input image becoming one channel of
+the fusing result, which is returned as the result of the command. All
+input images have to have the same dimensions.
 .TP
 \fB::crimp\fR \fBsplit\fR \fIimage\fR
+This method takes an image of one of the multi-channel types,
+i.e. \fBrgb\fR, const rgba], and \fBhsv\fR and returns a list of
+\fBgrey8\fR images, each of which contains the contents of one of
+the channels found in the input image.
+.sp
+The channel images in the result are provided in the same order as
+they are accepted by the complementary \fBjoin\fR method, see
+above.
 .PP
 .SS "I/O COMMANDS"
 .TP
 \fB::crimp\fR \fBread tcl\fR \fIpixelmatrix\fR
+This method takes the \fIpixelmatrix\fR, a list of rows, each row
+a list of pixel values in the domain [0..255] and returns an
+image of type \fBgrey8\fR whose height is the number of rows, i.e.
+the length of the outer list, and whose width is the maximum length
+found among the inner lists. Rows whose inner list is shorter than
+the maximum length are padded with black pixels, i.e. a pixel
+value of \fB255\fR.
 .TP
 \fB::crimp\fR \fBread tk\fR \fIphoto\fR
+This method returns an image of type \fBrgba\fR containing the data
+from the specified Tk \fIphoto\fR image.
 .TP
 \fB::crimp\fR \fBwrite 2tk\fR \fIphoto\fR \fIimage\fR
+This method writes the input \fIimage\fR to the specified Tk
+\fIphoto\fR image.
+.sp
+The method supports the witing of \fBrgb\fR, \fBrgba\fR,
+and \fBgrey8\fR images.
 .PP
 .SS SUPPORT
 .TP

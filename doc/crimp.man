@@ -543,8 +543,31 @@ above.
 [subsection {I/O commands}]
 [list_begin definitions]
 [call [cmd ::crimp] [method {read tcl}] [arg pixelmatrix]]
+
+This method takes the [arg pixelmatrix], a list of rows, each row
+a list of pixel values in the domain [lb]0..255[rb] and returns an
+image of type [const grey8] whose height is the number of rows, i.e.
+the length of the outer list, and whose width is the maximum length
+found among the inner lists. Rows whose inner list is shorter than
+the maximum length are padded with black pixels, i.e. a pixel
+value of [const 255].
+
+
 [call [cmd ::crimp] [method {read tk}] [arg photo]]
+
+This method returns an image of type [const rgba] containing the data
+from the specified Tk [arg photo] image.
+
+
 [call [cmd ::crimp] [method {write 2tk}] [arg photo] [arg image]]
+
+This method writes the input [arg image] to the specified Tk
+[arg photo] image.
+
+[para] The method supports the witing of [const rgb], [const rgba],
+and [const grey8] images.
+
+
 [list_end]
 
 

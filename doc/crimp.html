@@ -158,9 +158,9 @@
 <li><a href="#24"><b class="cmd">::crimp</b> <b class="method">convert 2hsv</b> <i class="arg">image</i></a></li>
 <li><a href="#25"><b class="cmd">::crimp</b> <b class="method">convert 2rgba</b> <i class="arg">image</i></a></li>
 <li><a href="#26"><b class="cmd">::crimp</b> <b class="method">convert 2rgb</b> <i class="arg">image</i></a></li>
-<li><a href="#27"><b class="cmd">::crimp</b> <b class="method">join 2hsv</b> <i class="arg">image</i></a></li>
-<li><a href="#28"><b class="cmd">::crimp</b> <b class="method">join 2rgba</b> <i class="arg">image</i></a></li>
-<li><a href="#29"><b class="cmd">::crimp</b> <b class="method">join 2rgb</b> <i class="arg">image</i></a></li>
+<li><a href="#27"><b class="cmd">::crimp</b> <b class="method">join 2hsv</b> <i class="arg">hueImage</i> <i class="arg">satImage</i> <i class="arg">valImage</i></a></li>
+<li><a href="#28"><b class="cmd">::crimp</b> <b class="method">join 2rgba</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i> <i class="arg">alphaImage</i></a></li>
+<li><a href="#29"><b class="cmd">::crimp</b> <b class="method">join 2rgb</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i></a></li>
 <li><a href="#30"><b class="cmd">::crimp</b> <b class="method">split</b> <i class="arg">image</i></a></li>
 <li><a href="#31"><b class="cmd">::crimp</b> <b class="method">read tcl</b> <i class="arg">pixelmatrix</i></a></li>
 <li><a href="#32"><b class="cmd">::crimp</b> <b class="method">read tk</b> <i class="arg">photo</i></a></li>
@@ -543,24 +543,44 @@ contents of an image's alpha channel see the methods <b class="method">setalpha<
 and <b class="method">join rgba</b>.</p>
 <p>At last, the conversion to <b class="const">rgb</b> accepts both <b class="const">rgba</b> and
 <b class="const">hsv</b> images as input.</p></dd>
-<dt><a name="27"><b class="cmd">::crimp</b> <b class="method">join 2hsv</b> <i class="arg">image</i></a></dt>
+<dt><a name="27"><b class="cmd">::crimp</b> <b class="method">join 2hsv</b> <i class="arg">hueImage</i> <i class="arg">satImage</i> <i class="arg">valImage</i></a></dt>
 <dd></dd>
-<dt><a name="28"><b class="cmd">::crimp</b> <b class="method">join 2rgba</b> <i class="arg">image</i></a></dt>
+<dt><a name="28"><b class="cmd">::crimp</b> <b class="method">join 2rgba</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i> <i class="arg">alphaImage</i></a></dt>
 <dd></dd>
-<dt><a name="29"><b class="cmd">::crimp</b> <b class="method">join 2rgb</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dt><a name="29"><b class="cmd">::crimp</b> <b class="method">join 2rgb</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i></a></dt>
+<dd><p>This set of methods is the complement of method <b class="method">split</b>. Each
+take a set of <b class="const">grey8</b> images and fuse them together into an
+image of the given type, with each input image becoming one channel of
+the fusing result, which is returned as the result of the command. All
+input images have to have the same dimensions.</p></dd>
 <dt><a name="30"><b class="cmd">::crimp</b> <b class="method">split</b> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This method takes an image of one of the multi-channel types,
+i.e. <b class="const">rgb</b>, const rgba], and <b class="const">hsv</b> and returns a list of
+<b class="const">grey8</b> images, each of which contains the contents of one of
+the channels found in the input image.</p>
+<p>The channel images in the result are provided in the same order as
+they are accepted by the complementary <b class="method">join</b> method, see
+above.</p></dd>
 </dl>
 </div>
 <div id="subsection4" class="subsection"><h3><a name="subsection4">I/O commands</a></h3>
 <dl class="definitions">
 <dt><a name="31"><b class="cmd">::crimp</b> <b class="method">read tcl</b> <i class="arg">pixelmatrix</i></a></dt>
-<dd></dd>
+<dd><p>This method takes the <i class="arg">pixelmatrix</i>, a list of rows, each row
+a list of pixel values in the domain [0..255] and returns an
+image of type <b class="const">grey8</b> whose height is the number of rows, i.e.
+the length of the outer list, and whose width is the maximum length
+found among the inner lists. Rows whose inner list is shorter than
+the maximum length are padded with black pixels, i.e. a pixel
+value of <b class="const">255</b>.</p></dd>
 <dt><a name="32"><b class="cmd">::crimp</b> <b class="method">read tk</b> <i class="arg">photo</i></a></dt>
-<dd></dd>
+<dd><p>This method returns an image of type <b class="const">rgba</b> containing the data
+from the specified Tk <i class="arg">photo</i> image.</p></dd>
 <dt><a name="33"><b class="cmd">::crimp</b> <b class="method">write 2tk</b> <i class="arg">photo</i> <i class="arg">image</i></a></dt>
-<dd></dd>
+<dd><p>This method writes the input <i class="arg">image</i> to the specified Tk
+<i class="arg">photo</i> image.</p>
+<p>The method supports the witing of <b class="const">rgb</b>, <b class="const">rgba</b>,
+and <b class="const">grey8</b> images.</p></dd>
 </dl>
 </div>
 <div id="subsection5" class="subsection"><h3><a name="subsection5">Support</a></h3>

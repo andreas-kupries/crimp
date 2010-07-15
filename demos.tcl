@@ -107,16 +107,34 @@ proc demo_setup {name} {
 
 proc demo_close {} {
     global demo dcurrent
+
+    if {![bases]} return
     show_image [base]
 
     if {$dcurrent eq {}} return
-
     reframe
 
     uplevel #0 [dict get $demo($dcurrent) shutdown]
     set dcurrent {}
     return
 }
+
+proc demo_usable {} {
+    global demo
+    foreach n [array names demo] {
+	if {![dict exists $demo($n) active]} {
+	    set active [expr {[bases] == 1}]
+	} else {
+	    set active [uplevel #0 [dict get $demo($n) active]]
+	}
+	set state  [expr { $active ? "normal" : "disabled" }]
+
+	#puts du/$n/$active/$state
+	.t itemconfigure $n -state $state
+    }
+    return
+}
+
 
 proc def {name dict} {
     upvar 1 thedemo thedemo
@@ -202,8 +220,9 @@ proc gui {} {
 
 proc show_selection {} {
     set selection [.l curselection]
-    if {![llength $selection]} return
+    #if {![llength $selection]} return
     show $selection
+    demo_usable
     return
 }
 
@@ -237,12 +256,20 @@ proc base {{i 0}} {
     return [lindex $base $i]
 }
 
+proc bases {} {
+    global base
+    return [llength $base]
+}
+
 # # ## ### ##### ######## #############
 
 proc main {} {
     images_init
     gui
-    after 100 {show 0}
+    after 100 {
+	.l selection set 0
+	event generate .l <<ListboxSelect>>
+    }
     return
 }
 

@@ -1,5 +1,6 @@
 def op_alpha_blend_rgb {
     label {Blend RGB}
+    active { expr {[bases] == 2} }
     setup {
 	set ::ALPHA 255
 	set ::BLACK [crimp blank rgba 800 600 0 0 0 255]

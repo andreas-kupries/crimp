@@ -20,7 +20,7 @@ catch {
 }
 
 critcl::config tk 1
-critcl::cheaders c/*.h
+critcl::cheaders c/*.h operator/*.c
 critcl::csources c/*.c
 critcl::tsources crimp_tcl.tcl
 critcl::tsources plot.tcl

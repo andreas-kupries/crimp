@@ -1,5 +1,6 @@
 def op_alpha_blend_hsv {
     label {Blend HSV}
+    active { expr {[bases] == 2} }
     setup {
 	set ::ALPHA 255
 	# We manage a cache of the blended images to make the

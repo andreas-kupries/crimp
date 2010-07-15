@@ -1,5 +1,6 @@
 def op_alpha_over_revers {
     label {Over Revers}
+    active { expr {[bases] == 2} }
     setup {
 	# We use the foreground image's luma as opacity (bright =
 	# opaque, dark = transparent) to merge it with the background

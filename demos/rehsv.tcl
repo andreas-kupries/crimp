@@ -11,22 +11,22 @@ def effect_rehsv {
 	set ::GS 1 ; set ::TS [crimp table gain $::GS] ; set ::MS [crimp map gain $::GS]
 	set ::GV 1 ; set ::TV [crimp table gain $::GV] ; set ::MV [crimp map gain $::GV]
 
-	proc HG {gain} {
+	proc ::HG {gain} {
 	    set ::TH [crimp table gainw $gain $::GHB]
 	    set ::MH [crimp map   gainw $gain $::GHB]
 	    UPDATE
 	}
-	proc HB {bias} {
+	proc ::HB {bias} {
 	    set ::TH [crimp table gainw $::GHG $bias]
 	    set ::MH [crimp map   gainw $::GHG $bias]
 	    UPDATE
 	}
-	proc S {gain} {
+	proc ::S {gain} {
 	    set ::TS [crimp table gain $gain]
 	    set ::MS [crimp map   gain $gain]
 	    UPDATE
 	}
-	proc V {gain} {
+	proc ::V {gain} {
 	    set ::TV [crimp table gain $gain]
 	    set ::MV [crimp map   gain $gain]
 	    UPDATE
@@ -38,10 +38,10 @@ def effect_rehsv {
 	    return
 	}
 
-	scale .left.hg -variable ::GHG -from 0 -to 20  -resolution 0.01 -orient vertical -command HG
-	scale .left.hb -variable ::GHB -from 0 -to 255 -resolution 1    -orient vertical -command HB
-	scale .left.s  -variable ::GS  -from 0 -to 20  -resolution 0.01 -orient vertical -command S
-	scale .left.v  -variable ::GV  -from 0 -to 20  -resolution 0.01 -orient vertical -command V
+	scale .left.hg -variable ::GHG -from 0 -to 20  -resolution 0.01 -orient vertical -command ::HG
+	scale .left.hb -variable ::GHB -from 0 -to 255 -resolution 1    -orient vertical -command ::HB
+	scale .left.s  -variable ::GS  -from 0 -to 20  -resolution 0.01 -orient vertical -command ::S
+	scale .left.v  -variable ::GV  -from 0 -to 20  -resolution 0.01 -orient vertical -command ::V
 
 	plot  .left.ph -variable ::TH
 	plot  .left.ps -variable ::TS
@@ -58,10 +58,10 @@ def effect_rehsv {
 	grid .left.s  -row 2 -column 2 -sticky sen
     }
     shutdown {
-	rename HG {}
-	rename HB {}
-	rename S {}
-	rename V {}
+	rename ::HG {}
+	rename ::HB {}
+	rename ::S {}
+	rename ::V {}
 	unset ::GHG ::GHB ::GS ::GV ::TH ::TS ::TV ::MH ::MS ::MV ::HSVBASE
     }
 }

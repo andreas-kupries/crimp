@@ -8,7 +8,7 @@ def effect_histogram {
 	set ::TV {0 1}
 	set ::TL {0 1}
 
-	proc HISTO {image} {
+	proc ::HISTO {image} {
 	    global HR HG HB HL HH HS HV
 	    global TR TG TB TL    TS TV
 
@@ -39,12 +39,12 @@ def effect_histogram {
 	    return
 	}
 
-	proc EQNONE {} {
+	proc ::EQNONE {} {
 	    HISTO [base]
 	    show_image [base]
 	}
 
-	proc EQHSV {} {
+	proc ::EQHSV {} {
 	    HISTO [base]
 	    # H is not stretched. Does not make sense for HUE.
 	    global HH HS HV TS TV
@@ -68,7 +68,7 @@ def effect_histogram {
 	    return
 	}
 
-	proc EQRGB {} {
+	proc ::EQRGB {} {
 	    HISTO [base]
 	    global HR HG HB TR TG TB
 
@@ -88,7 +88,7 @@ def effect_histogram {
 	}
 
 	# series(int) --> series (int)
-	proc CUMULATE {series} {
+	proc ::CUMULATE {series} {
 	    set res {}
 	    set sum 0
 	    foreach x $series {
@@ -99,7 +99,7 @@ def effect_histogram {
 	}
 
 	# series(int/float) --> series(int), all(x): x <= max
-	proc FIT {series max} {
+	proc ::FIT {series max} {
 	    # Assumes that the input is a monotonically increasing
 	    # series. The maximum value of the series is at the end.
 	    set top [lindex $series end]
@@ -127,9 +127,9 @@ def effect_histogram {
 	plot  .top.hs -variable ::HS -locked 0 -title Saturation
 	plot  .top.hv -variable ::HV -locked 0 -title Value
 
-	ttk::button .right.eqhsv  -text {Equalize HSV}  -command EQHSV
-	ttk::button .right.eqrgb  -text {Equalize RGB}  -command EQRGB
-	ttk::button .right.eqnone -text {Equalize None} -command EQNONE
+	ttk::button .right.eqhsv  -text {Equalize HSV}  -command ::EQHSV
+	ttk::button .right.eqrgb  -text {Equalize RGB}  -command ::EQRGB
+	ttk::button .right.eqnone -text {Equalize None} -command ::EQNONE
 
 	plot  .right.tr -variable ::TR -locked 0 -title {CDF Red}
 	plot  .right.tg -variable ::TG -locked 0 -title {CDF Green}
@@ -162,9 +162,9 @@ def effect_histogram {
 
     }
     shutdown {
-	rename HISTO    {} ; rename EQRGB  {}
-	rename FIT      {} ; rename EQHSV  {}
-	rename CUMULATE {} ; rename EQNONE {}
+	rename ::HISTO    {} ; rename ::EQRGB  {}
+	rename ::FIT      {} ; rename ::EQHSV  {}
+	rename ::CUMULATE {} ; rename ::EQNONE {}
 	unset ::HR ::HG ::HB ::HL ::HH ::HS ::HV ::TR ::TG ::TB ::TS ::TV ::TL
     }
 }

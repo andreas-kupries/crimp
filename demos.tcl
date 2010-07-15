@@ -101,7 +101,7 @@ proc demo_setup {name} {
     global demo dcurrent
     demo_close
     set dcurrent $name
-    uplevel #0 [dict get $demo($name) setup]
+    namespace eval ::DEMO [dict get $demo($name) setup]
     return
 }
 
@@ -114,7 +114,8 @@ proc demo_close {} {
     if {$dcurrent eq {}} return
     reframe
 
-    uplevel #0 [dict get $demo($dcurrent) shutdown]
+    namespace eval ::DEMO [dict get $demo($dcurrent) shutdown]
+    namespace delete ::DEMO
     set dcurrent {}
     return
 }
@@ -125,7 +126,7 @@ proc demo_usable {} {
 	if {![dict exists $demo($n) active]} {
 	    set active [expr {[bases] == 1}]
 	} else {
-	    set active [uplevel #0 [dict get $demo($n) active]]
+	    set active [namespace eval ::DEMO [dict get $demo($n) active]]
 	}
 	set state  [expr { $active ? "normal" : "disabled" }]
 

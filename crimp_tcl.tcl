@@ -238,7 +238,7 @@ proc ::crimp::blend {fore back alpha} {
     set btype [TypeOf $back]
     set f     alpha_blend_${ftype}_$btype
     if {![Has $f]} {
-	return -code error "Blending not supported for a foreground of type \"$btype\" and a background of type \"$btype\""
+	return -code error "Blending not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
     return [$f $fore $back [table::CLAMP $alpha]]
 }
@@ -250,7 +250,7 @@ proc ::crimp::over {fore back} {
     set btype [TypeOf $back]
     set f     alpha_over_${ftype}_$btype
     if {![Has $f]} {
-	return -code error "Blending not supported for a foreground of type \"$btype\" and a background of type \"$btype\""
+	return -code error "Blending not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
     return [$f $fore $back]
 }

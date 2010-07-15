@@ -78,7 +78,7 @@ proc images_get {index} {
 
 # # ## ### ##### ######## #############
 
-proc demo_list {} {
+proc demo_init {} {
     global dir demo dcurrent
     set dcurrent {}
 
@@ -88,7 +88,11 @@ proc demo_list {} {
 	#puts <$thedemo>
 	set demo([dict get $thedemo name]) $thedemo
     }
+    return
+}
 
+proc demo_list {} {
+    global demo
     return [lsort -dict [array names demo]]
 }
 
@@ -97,12 +101,30 @@ proc demo_label {name} {
     return [dict get $demo($name) label]
 }
 
+proc demo_use {name} {
+    demo_setup $name
+    demo_setup_image
+    return
+}
+
 proc demo_setup {name} {
     global demo dcurrent
     demo_close
     set dcurrent $name
     namespace eval ::DEMO [dict get $demo($name) setup]
     return
+}
+
+proc demo_setup_image {} {
+    global dcurrent demo
+    namespace eval ::DEMO [dict get $demo($dcurrent) setup_image]
+    return
+}
+
+proc demo_isactive {} {
+    global dcurrent
+    if {$dcurrent eq {}} {return 0}
+    return [string equal [.t itemcget $dcurrent -state] normal]
 }
 
 proc demo_close {} {
@@ -114,7 +136,7 @@ proc demo_close {} {
     if {$dcurrent eq {}} return
     reframe
 
-    namespace eval ::DEMO [dict get $demo($dcurrent) shutdown]
+    namespace eval   ::DEMO [dict get $demo($dcurrent) shutdown]
     namespace delete ::DEMO
     set dcurrent {}
     return
@@ -123,11 +145,7 @@ proc demo_close {} {
 proc demo_usable {} {
     global demo
     foreach n [array names demo] {
-	if {![dict exists $demo($n) active]} {
-	    set active [expr {[bases] == 1}]
-	} else {
-	    set active [namespace eval ::DEMO [dict get $demo($n) active]]
-	}
+	set active [namespace eval ::DEMO [dict get $demo($n) active]]
 	set state  [expr { $active ? "normal" : "disabled" }]
 
 	#puts du/$n/$active/$state
@@ -136,10 +154,16 @@ proc demo_usable {} {
     return
 }
 
-
 proc def {name dict} {
     upvar 1 thedemo thedemo
-    lappend thedemo setup {} shutdown {} {*}$dict name $name
+    lappend thedemo \
+	setup       {} \
+	setup_image {} \
+	shutdown    {} \
+	active      {
+	    expr {[bases] == 1}
+	} \
+	{*}$dict name $name
     return
 }
 
@@ -163,12 +187,12 @@ proc reframe {} {
 proc gui {} {
     widget::toolbar .t
 
-    .t add button reset -text Reset -command demo_close
+    .t add button reset -text Original -command demo_close
     set sep 1
     foreach demo [demo_list] {
 	.t add button $demo \
 	    -text      [demo_label $demo] \
-	    -command   [list demo_setup $demo] \
+	    -command   [list demo_use $demo] \
 	    -separator $sep
 	set sep 0
     }
@@ -224,6 +248,11 @@ proc show_selection {} {
     #if {![llength $selection]} return
     show $selection
     demo_usable
+    if {[demo_isactive]} {
+	demo_setup_image
+    } else {
+	demo_close
+    }
     return
 }
 
@@ -233,7 +262,6 @@ proc show {indices} {
     foreach index $indices {
 	lappend base [images_get $index]
     }
-    demo_close
     return
 }
 
@@ -266,6 +294,7 @@ proc bases {} {
 
 proc main {} {
     images_init
+    demo_init
     gui
     after 100 {
 	.l selection set 0

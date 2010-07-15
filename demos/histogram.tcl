@@ -1,5 +1,9 @@
 def effect_histogram {
     label Histogram
+    setup_image {
+	variable mask [lindex [crimp split [base]] end]
+	EQNONE
+    }
     setup {
 	variable TR {0 1}
 	variable TG {0 1}
@@ -8,7 +12,7 @@ def effect_histogram {
 	variable TV {0 1}
 	variable TL {0 1}
 
-	variable mask [lindex [crimp split [base]] end]
+	variable mask
 
 	proc HISTO {image} {
 	    variable HR ; variable HG ; variable HB ; variable HL ; variable HH ; variable HS ; variable HV

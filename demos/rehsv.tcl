@@ -1,67 +1,75 @@
 def effect_rehsv {
     label {Change HSV}
     setup {
-	set ::HSVBASE [crimp convert 2hsv [base]]
+	variable hsvbase [crimp convert 2hsv [base]]
+	variable ghg 1 ; variable gsg 1 ; variable gvg 1
+	variable ghb 0 ; variable gsb 0 ; variable gvb 0
 
-	set ::GHG 1
-	set ::GHB 0
-	set ::TH [crimp table gainw $::GHG $::GHB]
-	set ::MH [crimp map   gainw $::GHG $::GHB]
+	variable th [crimp table gainw $ghg $ghb] ; variable mh [crimp map gainw $ghg $ghb]
+	variable ts [crimp table gain  $gsg $gsb] ; variable ms [crimp map gain  $gsg $gsb]
+	variable tv [crimp table gain  $gvg $gvb] ; variable mv [crimp map gain  $gvg $gvb]
 
-	set ::GS 1 ; set ::TS [crimp table gain $::GS] ; set ::MS [crimp map gain $::GS]
-	set ::GV 1 ; set ::TV [crimp table gain $::GV] ; set ::MV [crimp map gain $::GV]
+	variable mask [lindex [crimp split [base]] end]
 
-	proc ::HG {gain} {
-	    set ::TH [crimp table gainw $gain $::GHB]
-	    set ::MH [crimp map   gainw $gain $::GHB]
+	proc H {args} {
+	    variable ghb
+	    variable ghg
+	    variable th [crimp table gainw $ghg $ghb]
+	    variable mh [crimp map   gainw $ghg $ghb]
 	    UPDATE
+	    return
 	}
-	proc ::HB {bias} {
-	    set ::TH [crimp table gainw $::GHG $bias]
-	    set ::MH [crimp map   gainw $::GHG $bias]
+	proc S {args} {
+	    variable gsb
+	    variable gsg
+	    variable ts [crimp table gain $gsg $gsb]
+	    variable ms [crimp map   gain $gsg $gsb]
 	    UPDATE
+	    return
 	}
-	proc ::S {gain} {
-	    set ::TS [crimp table gain $gain]
-	    set ::MS [crimp map   gain $gain]
+	proc V {args} {
+	    variable gvb
+	    variable gvg
+	    variable tv [crimp table gain $gvg $gvb]
+	    variable mv [crimp map   gain $gvg $gvb]
 	    UPDATE
+	    return
 	}
-	proc ::V {gain} {
-	    set ::TV [crimp table gain $gain]
-	    set ::MV [crimp map   gain $gain]
-	    UPDATE
-	}
+	proc UPDATE {} {
+	    variable mh
+	    variable ms
+	    variable mv
+	    variable hsvbase
+	    variable mask
 
-	proc ::UPDATE {} {
-	    global MH MS MV HSVBASE
-	    show_image [crimp convert 2rgb [crimp remap $HSVBASE $MH $MS $MV]]
+	    show_image [crimp setalpha \
+			    [crimp convert 2rgb [crimp remap $hsvbase $mh $ms $mv]] \
+			    $mask]
 	    return
 	}
 
-	scale .left.hg -variable ::GHG -from 0 -to 20  -resolution 0.01 -orient vertical -command ::HG
-	scale .left.hb -variable ::GHB -from 0 -to 255 -resolution 1    -orient vertical -command ::HB
-	scale .left.s  -variable ::GS  -from 0 -to 20  -resolution 0.01 -orient vertical -command ::S
-	scale .left.v  -variable ::GV  -from 0 -to 20  -resolution 0.01 -orient vertical -command ::V
+	scale .left.hg -variable ::DEMO::ghg -from -10 -to 10  -resolution 0.01 -orient vertical -command ::DEMO::H
+	scale .left.sg -variable ::DEMO::gsg -from -10 -to 10  -resolution 0.01 -orient vertical -command ::DEMO::S
+	scale .left.vg -variable ::DEMO::gvg -from -10 -to 10  -resolution 0.01 -orient vertical -command ::DEMO::V
 
-	plot  .left.ph -variable ::TH
-	plot  .left.ps -variable ::TS
-	plot  .left.pv -variable ::TV
+	scale .left.hb -variable ::DEMO::ghb -from 0 -to 255 -resolution 1    -orient vertical -command ::DEMO::H
+	scale .left.sb -variable ::DEMO::gsb -from 0 -to 255 -resolution 1    -orient vertical -command ::DEMO::S
+	scale .left.vb -variable ::DEMO::gvb -from 0 -to 255 -resolution 1    -orient vertical -command ::DEMO::V
+
+	plot  .left.ph -variable ::DEMO::th -title Hue
+	plot  .left.ps -variable ::DEMO::ts -title Saturation
+	plot  .left.pv -variable ::DEMO::tv -title Value
 
 	grid .left.hg -row 0 -column 0 -sticky sen
 	grid .left.ph -row 0 -column 1 -sticky swen
 	grid .left.hb -row 0 -column 2 -sticky sen
 
-	grid .left.pv -row 1 -column 1 -sticky swen
-	grid .left.v  -row 1 -column 2 -sticky sen
+	grid .left.sg -row 1 -column 0 -sticky sen
+	grid .left.ps -row 1 -column 1 -sticky swen
+	grid .left.sb -row 1 -column 2 -sticky sen
 
-	grid .left.ps -row 2 -column 1 -sticky swen
-	grid .left.s  -row 2 -column 2 -sticky sen
-    }
-    shutdown {
-	rename ::HG {}
-	rename ::HB {}
-	rename ::S {}
-	rename ::V {}
-	unset ::GHG ::GHB ::GS ::GV ::TH ::TS ::TV ::MH ::MS ::MV ::HSVBASE
+	grid .left.vg -row 2 -column 0 -sticky sen
+	grid .left.pv -row 2 -column 1 -sticky swen
+	grid .left.vb -row 2 -column 2 -sticky sen
     }
 }

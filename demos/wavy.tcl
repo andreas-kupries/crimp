@@ -1,25 +1,24 @@
 def effect_wavy {
     label Wavy
     setup {
-	proc ::W {args} {
-	    global WA WB WC
-	    show_image [crimp wavy [base] $WA $WB $WC]
+	proc W {args} {
+	    variable wa
+	    variable wb
+	    variable wc
+	    show_image [crimp wavy [base] $wa $wb $wc]
 	    return
 	}
 
-	set ::WA 1
-	set ::WB 1
-	set ::WC 1
+	variable wa 1
+	variable wb 1
+	variable wc 1
 
-	scale .left.wa -variable ::WA -from -20 -to 20 -resolution 0.01 -orient vertical -command ::W
-	scale .left.wb -variable ::WB -from -20 -to 20 -resolution 0.01 -orient vertical -command ::W
-	scale .left.wc -variable ::WC -from -20 -to 20 -resolution 0.01 -orient vertical -command ::W
+	scale .left.wa -variable ::DEMO::wa -from -20 -to 20 -resolution 0.01 -orient vertical -command ::DEMO::W
+	scale .left.wb -variable ::DEMO::wb -from -20 -to 20 -resolution 0.01 -orient vertical -command ::DEMO::W
+	scale .left.wc -variable ::DEMO::wc -from -20 -to 20 -resolution 0.01 -orient vertical -command ::DEMO::W
 
 	pack .left.wa -side left -expand 1 -fill both
 	pack .left.wb -side left -expand 1 -fill both
 	pack .left.wc -side left -expand 1 -fill both
-    }
-    shutdown {
-	unset ::WA ::WB ::WC
     }
 }

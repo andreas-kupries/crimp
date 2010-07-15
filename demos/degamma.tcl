@@ -1,22 +1,19 @@
 def op_gamma_invers {
     label Degamma
     setup {
-	set ::DEGAMMA 1
-	set ::TABLE   {}
+	variable gamma 1
+	variable table {}
 
-	plot  .left.p -variable ::TABLE
-	scale .left.g -variable ::DEGAMMA \
+	plot  .left.p -variable ::DEMO::table -title {Invers Gamma}
+	scale .left.s -variable ::DEMO::gamma \
 	    -from 5 -to 1 -resolution 0.01 \
 	    -orient vertical \
-	    -command [list ::apply {{gamma} {
-		set ::TABLE [crimp table degamma  $gamma]
-		show_image  [crimp degamma [base] $gamma]
-	    }}]
+	    -command [list ::apply {{thegamma} {
+		variable table [crimp table degamma  $thegamma]
+		show_image     [crimp degamma [base] $thegamma]
+	    } ::DEMO}]
 
 	grid .left.p -row 0 -column 0 -sticky swen
-	grid .left.g -row 0 -column 1 -sticky swen
-    }
-    shutdown {
-	unset ::DEGAMMA ::TABLE
+	grid .left.s -row 0 -column 1 -sticky swen
     }
 }

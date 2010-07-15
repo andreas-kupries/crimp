@@ -1,16 +1,18 @@
 def effect_histogram {
     label Histogram
     setup {
-	set ::TR {0 1}
-	set ::TG {0 1}
-	set ::TB {0 1}
-	set ::TS {0 1}
-	set ::TV {0 1}
-	set ::TL {0 1}
+	variable TR {0 1}
+	variable TG {0 1}
+	variable TB {0 1}
+	variable TS {0 1}
+	variable TV {0 1}
+	variable TL {0 1}
 
-	proc ::HISTO {image} {
-	    global HR HG HB HL HH HS HV
-	    global TR TG TB TL    TS TV
+	variable mask [lindex [crimp split [base]] end]
+
+	proc HISTO {image} {
+	    variable HR ; variable HG ; variable HB ; variable HL ; variable HH ; variable HS ; variable HV
+	    variable TR ; variable TG ; variable TB ; variable TL ;               variable TS ; variable TV 
 
 	    array set TMP [crimp histogram $image]
 	    array set TMP [crimp histogram [crimp convert 2grey8 $image]]
@@ -39,15 +41,18 @@ def effect_histogram {
 	    return
 	}
 
-	proc ::EQNONE {} {
+	proc EQNONE {} {
 	    HISTO [base]
 	    show_image [base]
+	    return
 	}
 
-	proc ::EQHSV {} {
+	proc EQHSV {} {
 	    HISTO [base]
 	    # H is not stretched. Does not make sense for HUE.
-	    global HH HS HV TS TV
+	    variable HH ; variable HS ; variable HV
+	                  variable TS ; variable TV
+	    variable mask
 
 	    set fs [FIT $TS 255]
 	    set fv [FIT $TV 255]
@@ -58,19 +63,22 @@ def effect_histogram {
 	    set s [crimp read tcl [list $fs]]
 	    set v [crimp read tcl [list $fv]]
 
-	    set new [crimp convert 2rgb \
-			 [crimp remap \
-			      [crimp convert 2hsv [base]] \
-			      $h $s $v]]
+	    set new [crimp setalpha \
+			 [crimp convert 2rgb \
+			      [crimp remap \
+				   [crimp convert 2hsv [base]] \
+				   $h $s $v]] \
+			 $mask]
 
 	    show_image $new
 	    HISTO $new
 	    return
 	}
 
-	proc ::EQRGB {} {
+	proc EQRGB {} {
 	    HISTO [base]
-	    global HR HG HB TR TG TB
+	    variable HR ; variable HG ; variable HB
+	    variable TR ; variable TG ; variable TB
 
 	    set fr [FIT $TR 255]
 	    set fg [FIT $TG 255]
@@ -88,7 +96,7 @@ def effect_histogram {
 	}
 
 	# series(int) --> series (int)
-	proc ::CUMULATE {series} {
+	proc CUMULATE {series} {
 	    set res {}
 	    set sum 0
 	    foreach x $series {
@@ -99,7 +107,7 @@ def effect_histogram {
 	}
 
 	# series(int/float) --> series(int), all(x): x <= max
-	proc ::FIT {series max} {
+	proc FIT {series max} {
 	    # Assumes that the input is a monotonically increasing
 	    # series. The maximum value of the series is at the end.
 	    set top [lindex $series end]
@@ -118,25 +126,25 @@ def effect_histogram {
 	# black, as they are likely outliers with an extreme number of
 	# pixels using them.
 	
-	plot  .left.hr -variable ::HR -locked 0 -title Red
-	plot  .left.hg -variable ::HG -locked 0 -title Green
-	plot  .left.hb -variable ::HB -locked 0 -title Blue
+	plot  .left.hr -variable ::DEMO::HR -locked 0 -title Red
+	plot  .left.hg -variable ::DEMO::HG -locked 0 -title Green
+	plot  .left.hb -variable ::DEMO::HB -locked 0 -title Blue
 
-	plot  .top.hl -variable ::HL -locked 0 -title Luma
-	plot  .top.hh -variable ::HH -locked 0 -title Hue
-	plot  .top.hs -variable ::HS -locked 0 -title Saturation
-	plot  .top.hv -variable ::HV -locked 0 -title Value
+	plot  .top.hl -variable ::DEMO::HL -locked 0 -title Luma
+	plot  .top.hh -variable ::DEMO::HH -locked 0 -title Hue
+	plot  .top.hs -variable ::DEMO::HS -locked 0 -title Saturation
+	plot  .top.hv -variable ::DEMO::HV -locked 0 -title Value
 
-	ttk::button .right.eqhsv  -text {Equalize HSV}  -command ::EQHSV
-	ttk::button .right.eqrgb  -text {Equalize RGB}  -command ::EQRGB
-	ttk::button .right.eqnone -text {Equalize None} -command ::EQNONE
+	ttk::button .right.eqhsv  -text {Equalize HSV}  -command ::DEMO::EQHSV
+	ttk::button .right.eqrgb  -text {Equalize RGB}  -command ::DEMO::EQRGB
+	ttk::button .right.eqnone -text {Equalize None} -command ::DEMO::EQNONE
 
-	plot  .right.tr -variable ::TR -locked 0 -title {CDF Red}
-	plot  .right.tg -variable ::TG -locked 0 -title {CDF Green}
-	plot  .right.tb -variable ::TB -locked 0 -title {CDF Blue}
-	plot  .top.tl   -variable ::TL -locked 0 -title {CDF Luma}
-	plot  .top.ts   -variable ::TS -locked 0 -title {CDF Saturation}
-	plot  .top.tv   -variable ::TV -locked 0 -title {CDF Value}
+	plot  .right.tr -variable ::DEMO::TR -locked 0 -title {CDF Red}
+	plot  .right.tg -variable ::DEMO::TG -locked 0 -title {CDF Green}
+	plot  .right.tb -variable ::DEMO::TB -locked 0 -title {CDF Blue}
+	plot  .top.tl   -variable ::DEMO::TL -locked 0 -title {CDF Luma}
+	plot  .top.ts   -variable ::DEMO::TS -locked 0 -title {CDF Saturation}
+	plot  .top.tv   -variable ::DEMO::TV -locked 0 -title {CDF Value}
 
 
 	grid .left.hr -row 0 -column 0 -sticky swen
@@ -159,12 +167,5 @@ def effect_histogram {
 	grid .top.tl -row 1 -column 0 -sticky swen
 	grid .top.ts -row 1 -column 2 -sticky swen
 	grid .top.tv -row 1 -column 3 -sticky swen
-
-    }
-    shutdown {
-	rename ::HISTO    {} ; rename ::EQRGB  {}
-	rename ::FIT      {} ; rename ::EQHSV  {}
-	rename ::CUMULATE {} ; rename ::EQNONE {}
-	unset ::HR ::HG ::HB ::HL ::HH ::HS ::HV ::TR ::TG ::TB ::TS ::TV ::TL
     }
 }

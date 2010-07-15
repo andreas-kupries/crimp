@@ -1,14 +1,18 @@
 def effect_psychedelia {
     label Psychedelia
     setup {
-	proc ::P {} {
+	variable token
+
+	proc next {} {
+	    variable token
 	    show_image [crimp psychedelia 320 240 100]
-	    set ::PX [after 100 ::P]
+	    set token [after 100 DEMO::next]
+	    return
 	}
-	::P
+
+	next
     }
     shutdown {
-	after cancel $::PX
-	unset ::PX
+	after cancel $token
     }
 }

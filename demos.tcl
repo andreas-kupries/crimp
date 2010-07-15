@@ -107,13 +107,10 @@ proc demo_setup {name} {
 
 proc demo_close {} {
     global demo dcurrent
+    show_image [base]
+
     if {$dcurrent eq {}} return
 
-    destroy \
-	{*}[winfo children .left]  \
-	{*}[winfo children .right] \
-	{*}[winfo children .top]   \
-	{*}[winfo children .bottom]
     reframe
 
     uplevel #0 [dict get $demo($dcurrent) shutdown]
@@ -130,7 +127,12 @@ proc def {name dict} {
 # # ## ### ##### ######## #############
 
 proc reframe {} {
-    grid forget .left .right .top .bottom
+    destroy .left .right .top .bottom
+
+    ttk::frame .left
+    ttk::frame .top
+    ttk::frame .right
+    ttk::frame .bottom
 
     grid .left   -row 2 -column 1               -sticky swen
     grid .right  -row 2 -column 3               -sticky swen
@@ -142,7 +144,7 @@ proc reframe {} {
 proc gui {} {
     widget::toolbar .t
 
-    .t add button reset -text Reset -command reset
+    .t add button reset -text Reset -command demo_close
     set sep 1
     foreach demo [demo_list] {
 	.t add button $demo \
@@ -158,11 +160,6 @@ proc gui {} {
     #canvas                 .c -width 800 -height 600 -scrollregion {-4000 -4000 4000 4000}
     canvas                 .c -scrollregion {-4000 -4000 4000 4000}
     listbox                .l -width 40 -selectmode extended -listvariable images
-
-    ttk::frame .left
-    ttk::frame .top
-    ttk::frame .right
-    ttk::frame .bottom
 
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
@@ -183,6 +180,7 @@ proc gui {} {
     grid columnconfigure . 1 -weight 0
     grid columnconfigure . 2 -weight 1
     grid columnconfigure . 3 -weight 0
+
     reframe
 
     bind .l <<ListboxSelect>> show_selection
@@ -215,13 +213,7 @@ proc show {indices} {
     foreach index $indices {
 	lappend base [images_get $index]
     }
-    reset
-    return
-}
-
-proc reset {} {
     demo_close
-    show_image [base]
     return
 }
 

@@ -238,7 +238,7 @@ proc ::crimp::blend {fore back alpha} {
     set btype [TypeOf $back]
     set f     alpha_blend_${ftype}_$btype
     if {![Has $f]} {
-	return -code error "Blending not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
+	return -code error "Blend is not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
     return [$f $fore $back [table::CLAMP $alpha]]
 }
@@ -250,9 +250,98 @@ proc ::crimp::over {fore back} {
     set btype [TypeOf $back]
     set f     alpha_over_${ftype}_$btype
     if {![Has $f]} {
-	return -code error "Blending not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
+	return -code error "Over is not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
     return [$f $fore $back]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::add {a b {scale 1} {offset 0}} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+    set f     add_${atype}_$btype
+    if {![Has $f]} {
+	return -code error "Add is not supported for the combination of \"$atype\" and \"$btype\""
+    }
+    return [$f $a $b $scale $offset]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::subtract {a b {scale 1} {offset 0}} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+    set f     subtract_${atype}_$btype
+    if {![Has $f]} {
+	return -code error "Subtract is not supported for the combination of \"$atype\" and \"$btype\""
+    }
+    return [$f $a $b $scale $offset]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::difference {a b} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+    set f     difference_${atype}_$btype
+    if {![Has $f]} {
+	return -code error "Difference is not supported for the combination of \"$atype\" and \"$btype\""
+    }
+    return [$f $a $b]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::multiply {a b} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+    set f     multiply_${atype}_$btype
+    if {![Has $f]} {
+	return -code error "Multiply is not supported for the combination of \"$atype\" and \"$btype\""
+    }
+    return [$f $a $b]
+}
+
+# # ## ### ##### ######## #############
+## min aka 'darker' as the less brighter of each pixel is chosen.
+
+proc ::crimp::min {a b} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+    set f     min_${atype}_$btype
+    if {![Has $f]} {
+	return -code error "Min is not supported for the combination of \"$atype\" and \"$btype\""
+    }
+    return [$f $a $b]
+}
+
+# # ## ### ##### ######## #############
+## max aka 'lighter' as the brighter of each pixel is chosen.
+
+proc ::crimp::max {a b} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+    set f     max_${atype}_$btype
+    if {![Has $f]} {
+	return -code error "Max is not supported for the combination of \"$atype\" and \"$btype\""
+    }
+    return [$f $a $b]
+}
+
+# # ## ### ##### ######## #############
+## This operation could be done at this level, using a combination of
+## 'multiply' and 'invert'. Doing it in C on the other hand avoids the
+## three temporary images of such an implementation.
+
+proc ::crimp::screen {a b} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+    set f     screen_${atype}_$btype
+    if {![Has $f]} {
+	return -code error "Screen is not supported for the combination of \"$atype\" and \"$btype\""
+    }
+    return [$f $a $b]
 }
 
 # # ## ### ##### ######## #############
@@ -385,7 +474,8 @@ namespace eval ::crimp {
     namespace export read write convert join flip split table
     namespace export invert solarize gamma degamma remap map
     namespace export wavy psychedelia matrix blend over blank
-    namespace export setalpha histogram
+    namespace export setalpha histogram max min screen add
+    namespace export subtract difference multiply
     #
     namespace ensemble create
 }

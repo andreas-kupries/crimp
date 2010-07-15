@@ -1,7 +1,9 @@
 def effect_rehsv {
     label {Change HSV}
     setup {
-	variable hsvbase [crimp convert 2hsv [base]]
+	variable hsvbase
+	variable mask
+
 	variable ghg 1 ; variable gsg 1 ; variable gvg 1
 	variable ghb 0 ; variable gsb 0 ; variable gvb 0
 
@@ -9,7 +11,6 @@ def effect_rehsv {
 	variable ts [crimp table gain  $gsg $gsb] ; variable ms [crimp map gain  $gsg $gsb]
 	variable tv [crimp table gain  $gvg $gvb] ; variable mv [crimp map gain  $gvg $gvb]
 
-	variable mask [lindex [crimp split [base]] end]
 
 	proc H {args} {
 	    variable ghb
@@ -71,5 +72,10 @@ def effect_rehsv {
 	grid .left.vg -row 2 -column 0 -sticky sen
 	grid .left.pv -row 2 -column 1 -sticky swen
 	grid .left.vb -row 2 -column 2 -sticky sen
+    }
+    setup_image {
+	variable hsvbase [crimp convert 2hsv [base]]
+	variable mask    [lindex [crimp split [base]] end]
+	UPDATE
     }
 }

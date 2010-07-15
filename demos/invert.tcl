@@ -1,6 +1,6 @@
 def op_invert {
     label Invert
-    setup {
+    setup_image {
 	show_image [crimp invert [base]]
     }
 }

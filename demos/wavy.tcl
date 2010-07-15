@@ -1,7 +1,7 @@
 def effect_wavy {
     label Wavy
     setup {
-	proc W {args} {
+	proc show {args} {
 	    variable wa
 	    variable wb
 	    variable wc
@@ -13,12 +13,13 @@ def effect_wavy {
 	variable wb 1
 	variable wc 1
 
-	scale .left.wa -variable ::DEMO::wa -from -20 -to 20 -resolution 0.01 -orient vertical -command ::DEMO::W
-	scale .left.wb -variable ::DEMO::wb -from -20 -to 20 -resolution 0.01 -orient vertical -command ::DEMO::W
-	scale .left.wc -variable ::DEMO::wc -from -20 -to 20 -resolution 0.01 -orient vertical -command ::DEMO::W
+	scale .left.wa -variable ::DEMO::wa -from -20 -to 20 -resolution 0.01 -orient vertical -command ::DEMO::show
+	scale .left.wb -variable ::DEMO::wb -from -20 -to 20 -resolution 0.01 -orient vertical -command ::DEMO::show
+	scale .left.wc -variable ::DEMO::wc -from -20 -to 20 -resolution 0.01 -orient vertical -command ::DEMO::show
 
 	pack .left.wa -side left -expand 1 -fill both
 	pack .left.wb -side left -expand 1 -fill both
 	pack .left.wc -side left -expand 1 -fill both
     }
+    setup_image { show }
 }

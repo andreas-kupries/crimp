@@ -387,6 +387,25 @@ proc ::crimp::screen {a b} {
 }
 
 # # ## ### ##### ######## #############
+
+proc ::crimp::convolve {image kernel {scale {}}} {
+    set type [TypeOf $image]
+
+    set f convolve_${type}_const
+    if {![Has $f]} {
+	return -code error "Convolve is not supported for image type \"$type\""
+    }
+
+    # auto-scale
+    if {[llength [info level 0]] < 4} {
+	set scale 0
+	foreach r $kernel { foreach v $r { incr scale $v } }
+    }
+
+    return [$f $image [crimp read tcl $kernel] $scale]
+}
+
+# # ## ### ##### ######## #############
 ## Tables and maps.
 ## For performance we should memoize results.
 ## This is not needed to just get things working howver.
@@ -517,7 +536,7 @@ namespace eval ::crimp {
     namespace export invert solarize gamma degamma remap map
     namespace export wavy psychedelia matrix blend over blank
     namespace export setalpha histogram max min screen add
-    namespace export subtract difference multiply
+    namespace export subtract difference multiply convolve
     #
     namespace ensemble create
 }

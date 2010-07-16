@@ -25,7 +25,7 @@ static int  ImageFromAny  (Tcl_Interp* interp,
 			   Tcl_Obj* imgObjPtr);
 
 static Tcl_ObjType ImageType = {
-    "tim::image",
+    "crimp::image",
     FreeImage,
     DupImage,
     StringOfImage,

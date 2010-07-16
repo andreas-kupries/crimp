@@ -260,11 +260,18 @@ proc ::crimp::over {fore back} {
 proc ::crimp::add {a b {scale 1} {offset 0}} {
     set atype [TypeOf $a]
     set btype [TypeOf $b]
-    set f     add_${atype}_$btype
-    if {![Has $f]} {
-	return -code error "Add is not supported for the combination of \"$atype\" and \"$btype\""
+
+    set f add_${atype}_$btype
+    if {[Has $f]} {
+	return [$f $a $b $scale $offset]
     }
-    return [$f $a $b $scale $offset]
+
+    set f add_${btype}_$atype
+    if {[Has $f]} {
+	return [$f $b $a $scale $offset]
+    }
+
+    return -code error "Add is not supported for the combination of \"$atype\" and \"$btype\""
 }
 
 # # ## ### ##### ######## #############
@@ -284,11 +291,18 @@ proc ::crimp::subtract {a b {scale 1} {offset 0}} {
 proc ::crimp::difference {a b} {
     set atype [TypeOf $a]
     set btype [TypeOf $b]
-    set f     difference_${atype}_$btype
-    if {![Has $f]} {
-	return -code error "Difference is not supported for the combination of \"$atype\" and \"$btype\""
+
+    set f difference_${atype}_$btype
+    if {[Has $f]} {
+	return [$f $a $b]
     }
-    return [$f $a $b]
+
+    set f difference_${btype}_$atype
+    if {[Has $f]} {
+	return [$f $b $a]
+    }
+
+    return -code error "Difference is not supported for the combination of \"$atype\" and \"$btype\""
 }
 
 # # ## ### ##### ######## #############
@@ -296,11 +310,18 @@ proc ::crimp::difference {a b} {
 proc ::crimp::multiply {a b} {
     set atype [TypeOf $a]
     set btype [TypeOf $b]
-    set f     multiply_${atype}_$btype
-    if {![Has $f]} {
-	return -code error "Multiply is not supported for the combination of \"$atype\" and \"$btype\""
+
+    set f multiply_${atype}_$btype
+    if {[Has $f]} {
+	return [$f $a $b]
     }
-    return [$f $a $b]
+
+    set f multiply_${btype}_$atype
+    if {[Has $f]} {
+	return [$f $b $a]
+    }
+
+    return -code error "Multiply is not supported for the combination of \"$atype\" and \"$btype\""
 }
 
 # # ## ### ##### ######## #############
@@ -309,11 +330,18 @@ proc ::crimp::multiply {a b} {
 proc ::crimp::min {a b} {
     set atype [TypeOf $a]
     set btype [TypeOf $b]
-    set f     min_${atype}_$btype
-    if {![Has $f]} {
-	return -code error "Min is not supported for the combination of \"$atype\" and \"$btype\""
+
+    set f min_${atype}_$btype
+    if {[Has $f]} {
+	return [$f $a $b]
     }
-    return [$f $a $b]
+
+    set f min_${btype}_$atype
+    if {[Has $f]} {
+	return [$f $b $a]
+    }
+
+    return -code error "Min is not supported for the combination of \"$atype\" and \"$btype\""
 }
 
 # # ## ### ##### ######## #############
@@ -322,11 +350,18 @@ proc ::crimp::min {a b} {
 proc ::crimp::max {a b} {
     set atype [TypeOf $a]
     set btype [TypeOf $b]
-    set f     max_${atype}_$btype
-    if {![Has $f]} {
-	return -code error "Max is not supported for the combination of \"$atype\" and \"$btype\""
+
+    set f max_${atype}_$btype
+    if {[Has $f]} {
+	return [$f $a $b]
     }
-    return [$f $a $b]
+
+    set f max_${btype}_$atype
+    if {[Has $f]} {
+	return [$f $b $a]
+    }
+
+    return -code error "Max is not supported for the combination of \"$atype\" and \"$btype\""
 }
 
 # # ## ### ##### ######## #############
@@ -337,11 +372,18 @@ proc ::crimp::max {a b} {
 proc ::crimp::screen {a b} {
     set atype [TypeOf $a]
     set btype [TypeOf $b]
-    set f     screen_${atype}_$btype
-    if {![Has $f]} {
-	return -code error "Screen is not supported for the combination of \"$atype\" and \"$btype\""
+
+    set f screen_${atype}_$btype
+    if {[Has $f]} {
+	return [$f $a $b]
     }
-    return [$f $a $b]
+
+    set f screen_${btype}_$atype
+    if {[Has $f]} {
+	return [$f $b $a]
+    }
+
+    return -code error "Screen is not supported for the combination of \"$atype\" and \"$btype\""
 }
 
 # # ## ### ##### ######## #############

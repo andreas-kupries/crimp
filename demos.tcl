@@ -102,6 +102,8 @@ proc demo_label {name} {
 }
 
 proc demo_use {name} {
+    global times
+    set times {}
     demo_setup $name
     demo_setup_image
     return
@@ -111,13 +113,26 @@ proc demo_setup {name} {
     global demo dcurrent
     demo_close
     set dcurrent $name
-    namespace eval ::DEMO [dict get $demo($name) setup]
+    demo_run_hook [dict get $demo($name) setup]
     return
 }
 
 proc demo_setup_image {} {
-    global dcurrent demo
-    namespace eval ::DEMO [dict get $demo($dcurrent) setup_image]
+    global dcurrent demo times
+    demo_run_hook [dict get $demo($dcurrent) setup_image]
+    puts "Times: $times"
+    return
+}
+
+proc demo_run_hook {script} {
+    namespace eval ::DEMO [list demo_time_hook $script]
+    return
+}
+
+proc demo_time_hook {script} {
+    global  times
+    set     x  [lindex [uplevel 1 [list time $script 1]] 0]
+    lappend times [expr {double($x)/1E6}] [expr {double($x)/([crimp width [base]]*[crimp height [base]])}]
     return
 }
 

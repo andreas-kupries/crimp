@@ -221,6 +221,38 @@ proc ::crimp::blank {type args} {
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::border {args} {
+    # args = ?-type bordertype? image ww hn we hs ?type-specific arguments?
+
+    set btype const
+    while {1} {
+	set opt [lindex $args 0]
+	if {![string match -* $opt]} break
+	switch -- $opt {
+	    -type {
+		set args [lassign $args _ btype]
+	    }
+	    default {
+		return -code error "Unknown option \"$opt\", expected -type"
+	    }
+	}
+    }
+    if {[llength $args] < 5} {
+	return -code error "wrong\#args, expected: ?-type type? image ww hn we hs ?type specific arguments?"
+    }
+    set args [lassign $args image]
+    set type [TypeOf $image]
+
+    set f border_${type}_$btype
+    if {![Has $f]} {
+	return -code error "Unable to extend images of type \"$type\" by border \"$btype\""
+    }
+
+    return [$f $image {*}$args]
+}
+
+# # ## ### ##### ######## #############
+
 proc ::crimp::setalpha {image mask} {
     set itype [TypeOf $image]
     set mtype [TypeOf $mask]
@@ -546,7 +578,7 @@ namespace eval ::crimp {
     namespace export wavy psychedelia matrix blend over blank
     namespace export setalpha histogram max min screen add
     namespace export subtract difference multiply convolve
-    namespace export kernel tkernel
+    namespace export kernel tkernel border
     #
     namespace ensemble create
 }

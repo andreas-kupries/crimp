@@ -388,7 +388,22 @@ proc ::crimp::screen {a b} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::convolve {image kernel {scale {}}} {
+proc ::crimp::kernel {kernelmatrix {scale {}}} {
+    # auto-scale, if needed
+    if {[llength [info level 0]] < 3} {
+	set scale 0
+	foreach r $kernelmatrix { foreach v $r { incr scale $v } }
+    }
+
+    return [list [crimp read tcl $kernelmatrix] $scale]
+}
+
+proc ::crimp::tkernel {kernel} {
+    lassign $kernel K scale
+    return [list [crimp flip transpose $K] $scale]
+}
+
+proc ::crimp::convolve {image kernel} {
     set type [TypeOf $image]
 
     set f convolve_${type}_const
@@ -396,13 +411,7 @@ proc ::crimp::convolve {image kernel {scale {}}} {
 	return -code error "Convolve is not supported for image type \"$type\""
     }
 
-    # auto-scale
-    if {[llength [info level 0]] < 4} {
-	set scale 0
-	foreach r $kernel { foreach v $r { incr scale $v } }
-    }
-
-    return [$f $image [crimp read tcl $kernel] $scale]
+    return [$f $image {*}$kernel]
 }
 
 # # ## ### ##### ######## #############
@@ -537,6 +546,7 @@ namespace eval ::crimp {
     namespace export wavy psychedelia matrix blend over blank
     namespace export setalpha histogram max min screen add
     namespace export subtract difference multiply convolve
+    namespace export kernel tkernel
     #
     namespace ensemble create
 }

@@ -79,14 +79,32 @@ proc images_get {index} {
 # # ## ### ##### ######## #############
 
 proc demo_init {} {
-    global dir demo dcurrent
+    global dir demo dcurrent demo_map
     set dcurrent {}
 
+    array set demo {
+	aaaaa {
+	    label       Unmodified
+	    cmd         demo_close
+	    active      {expr {[bases] == 1}}
+	    setup       {}
+	    setup_image {}
+	    shutdown    {}
+	}
+    }
     foreach f [glob -directory $dir/demos *.tcl] {
 	set thedemo {}
 	source $f
+	set name [dict get $thedemo name]
 	#puts <$thedemo>
-	set demo([dict get $thedemo name]) $thedemo
+	set demo($name) $thedemo
+	lappend demo($name) cmd [list demo_use $name]
+    }
+
+    foreach name [demo_list] {
+	set label [demo_label $name]
+	set cmd   [demo_cmd   $name]
+	set demo_map($label) $cmd
     }
     return
 }
@@ -94,6 +112,11 @@ proc demo_init {} {
 proc demo_list {} {
     global demo
     return [lsort -dict [array names demo]]
+}
+
+proc demo_cmd {name} {
+    global demo
+    return [dict get $demo($name) cmd]
 }
 
 proc demo_label {name} {
@@ -137,9 +160,9 @@ proc demo_time_hook {script} {
 }
 
 proc demo_isactive {} {
-    global dcurrent
+    global dcurrent activedemos
     if {$dcurrent eq {}} {return 0}
-    return [string equal [.t itemcget $dcurrent -state] normal]
+    return [expr {[demo_label $dcurrent] in $activedemos}]
 }
 
 proc demo_close {} {
@@ -158,13 +181,12 @@ proc demo_close {} {
 }
 
 proc demo_usable {} {
-    global demo
-    foreach n [array names demo] {
+    global demo activedemos
+    set activedemos {}
+    foreach n [demo_list] {
 	set active [namespace eval ::DEMO [dict get $demo($n) active]]
-	set state  [expr { $active ? "normal" : "disabled" }]
-
-	#puts du/$n/$active/$state
-	.t itemconfigure $n -state $state
+	if {!$active} continue
+	lappend activedemos [demo_label $n]
     }
     return
 }
@@ -192,42 +214,37 @@ proc reframe {} {
     ttk::frame .right
     ttk::frame .bottom
 
-    grid .left   -row 2 -column 1               -sticky swen
-    grid .right  -row 2 -column 3               -sticky swen
-    grid .top    -row 1 -column 1 -columnspan 3 -sticky swen
-    grid .bottom -row 3 -column 1 -columnspan 3 -sticky swen
+    grid .left   -row 2 -column 2               -sticky swen
+    grid .right  -row 2 -column 4               -sticky swen
+    grid .top    -row 1 -column 2 -columnspan 3 -sticky swen
+    grid .bottom -row 3 -column 2 -columnspan 3 -sticky swen
     return
 }
 
 proc gui {} {
     widget::toolbar .t
 
-    .t add button reset -text Original -command demo_close
-    set sep 1
-    foreach demo [demo_list] {
-	.t add button $demo \
-	    -text      [demo_label $demo] \
-	    -command   [list demo_use $demo] \
-	    -separator $sep
-	set sep 0
-    }
     .t add button exit -text Exit -command ::exit -separator 1
 
     widget::scrolledwindow .sc -borderwidth 1 -relief sunken
     widget::scrolledwindow .sl -borderwidth 1 -relief sunken
+    widget::scrolledwindow .sd -borderwidth 1 -relief sunken
     #canvas                 .c -width 800 -height 600 -scrollregion {-4000 -4000 4000 4000}
     canvas                 .c -scrollregion {-4000 -4000 4000 4000}
     listbox                .l -width 40 -selectmode extended -listvariable images
+    listbox                .d -width 40 -selectmode single   -listvariable activedemos
 
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
 
     .sl setwidget .l
+    .sd setwidget .d
     .sc setwidget .c
 
     grid .t  -row 0 -column 0 -columnspan 4 -sticky swen
     grid .sl -row 1 -column 0 -rowspan 3    -sticky swen
-    grid .sc -row 2 -column 2               -sticky swen
+    grid .sd -row 1 -column 1 -rowspan 3    -sticky swen
+    grid .sc -row 2 -column 3               -sticky swen
 
     grid rowconfigure    . 0 -weight 0
     grid rowconfigure    . 1 -weight 0
@@ -236,12 +253,14 @@ proc gui {} {
 
     grid columnconfigure . 0 -weight 0
     grid columnconfigure . 1 -weight 0
-    grid columnconfigure . 2 -weight 1
-    grid columnconfigure . 3 -weight 0
+    grid columnconfigure . 2 -weight 0
+    grid columnconfigure . 3 -weight 1
+    grid columnconfigure . 4 -weight 0
 
     reframe
 
     bind .l <<ListboxSelect>> show_selection
+    bind .d <<ListboxSelect>> show_demo
 
     # Panning via mouse
     bind .c <ButtonPress-2> {%W scan mark   %x %y}
@@ -280,6 +299,20 @@ proc show {indices} {
     return
 }
 
+proc show_demo {} {
+    global demo_map activedemos
+    set selection [.d curselection]
+    if {![llength $selection]} return
+    set index [lindex $selection 0]
+
+    set label [lindex $activedemos $index]
+    set command $demo_map($label)
+
+    uplevel #0 $command
+    return
+
+}
+
 # # ## ### ##### ######## #############
 ## DEMO API
 ##
@@ -314,6 +347,10 @@ proc main {} {
     after 100 {
 	.l selection set 0
 	event generate .l <<ListboxSelect>>
+	after 100 {
+	    .d selection set 0
+	    event generate .d <<ListboxSelect>>
+	}
     }
     return
 }

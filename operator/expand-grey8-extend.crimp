@@ -1,0 +1,68 @@
+expand_grey8_extend
+Tcl_Obj* imageObj
+int ww
+int hn
+int we
+int hs
+
+/*
+ * Border expansion by subtracting mirrored pixels from the edge pixel, making
+ * this a combination of mirror and replicate.
+ */
+
+crimp_image* image;
+crimp_input (imageObj, image, grey8);
+
+/*
+ * This is the simple definition. Might be better to generate macros
+ * specialized to each quadrant. Except, even they have to perform modulo
+ * arithmetic, as the border may be larger than image's width or height,
+ * causing muliple wrapping.
+ *
+ * NOTE: The replicate part can be optimized for the eight outer quadrants.
+ */
+
+#define FILL(xo,yo) {						   \
+	int xb = xo - ww;					   \
+	int yb = yo - hn;					   \
+	int xi = xb;						   \
+	int yi = yb;						   \
+	int tg;							   \
+								   \
+	if      (xb < 0)         { xb = 0;            }		   \
+	else if (xb >= image->w) { xb = (image->w-1); }		   \
+								   \
+	if      (yb < 0)         { yb = 0;            }		   \
+	else if (yb >= image->h) { yb = (image->h-1); }		   \
+								   \
+	while (1) {						   \
+	    if      (xi < 0)         { xi = 0              - xi; } \
+	    else if (xi >= image->w) { xi = 2*(image->w-1) - xi; } \
+	    else break;						   \
+	}							   \
+								   \
+	while (1) {						   \
+	    if      (yi < 0)         { yi = 0              - yi; } \
+	    else if (yi >= image->h) { yi = 2*(image->h-1) - yi; } \
+	    else break;						   \
+	}							   \
+								   \
+	tg = GREY8 (image, xi, yi) - GREY8 (image, xb, yb);	   \
+								   \
+	GREY8 (result, xo, yo) = CLAMP (0, tg, 255);		   \
+    }
+
+#define COPY(xo,yo,xi,yi) {				\
+	GREY8 (result, xo, yo) = GREY8 (image, xi, yi); \
+    }
+
+#include <expand_op.c>
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

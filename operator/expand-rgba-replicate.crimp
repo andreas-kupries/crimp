@@ -1,4 +1,4 @@
-border_rgba_extend
+expand_rgba_replicate
 Tcl_Obj* imageObj
 int ww
 int hn
@@ -42,7 +42,7 @@ crimp_input (imageObj, image, rgba);
 	A (result, xo, yo) = A (image, xi, yi); \
     }
 
-#include <border_op.c>
+#include <expand_op.c>
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

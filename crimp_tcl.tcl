@@ -142,14 +142,7 @@ proc ::crimp::remap {image args} {
     # use identity.
 
     switch -- $type {
-	rgb {
-	    if {[llength $args]} {
-		while {[llength $args] < 3} {
-		    lappend args [lindex $args end]
-		}
-	    }
-	}
-	hsv {
+	hsv - rgb {
 	    if {[llength $args]} {
 		while {[llength $args] < 3} {
 		    lappend args [lindex $args end]
@@ -221,34 +214,77 @@ proc ::crimp::blank {type args} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::border {args} {
-    # args = ?-type bordertype? image ww hn we hs ?type-specific arguments?
+proc ::crimp::expand {bordertype image ww hn we hs args} {
+    # args = ?type-specific arguments?
+    # currently only for bordertype 'const'. Default to (0 0 0 255).
 
-    set btype const
-    while {1} {
-	set opt [lindex $args 0]
-	if {![string match -* $opt]} break
-	switch -- $opt {
-	    -type {
-		set args [lassign $args _ btype]
-	    }
-	    default {
-		return -code error "Unknown option \"$opt\", expected -type"
+    if {![llength [List expand_*_$bordertype]]} {
+	# TODO :: Compute/memoize available border types.
+	return -code error "Unknown border type \"$bordertype\", expected one of ..."
+    }
+
+    # Process type specific arguments.
+    switch -- $bordertype {
+	const {
+	    # TODO :: Introspect number of color channels from image
+	    # type, then extend or reduce the args accordingly.
+	    #
+	    # FOR NOW :: Hardwired map.
+	    # SEE ALSO :: remap.
+	    # TODO :: Unify using some higher-order code.
+
+	    set type [TypeOf $image]
+
+	    switch -- $type {
+		hsv - rgb {
+		    if {![llength $args]} {
+			set args {0 0 0}
+		    }
+		    while {[llength $args] < 3} {
+			lappend args [lindex $args end]
+		    }
+		    if {[llength $args] > 3} {
+			set args [lrange $args 0 2]
+		    }
+		}
+		rgba {
+		    if {![llength $args]} {
+			set args {0 0 0 255}
+		    }
+		    while {[llength $args] < 3} {
+			lappend args [lindex $args end]
+		    }
+		    if {[llength $args] < 4} {
+			lappend args 255
+		    }
+		    if {[llength $args] > 4} {
+			set args [lrange $args 0 3]
+		    }
+		}
+		grey8 {
+		    if {![llength $args]} {
+			set args {0}
+		    } elseif {[llength $args] > 1} {
+			set args [lrange $args 0 0]
+		    }
+		}
 	    }
 	}
-    }
-    if {[llength $args] < 5} {
-	return -code error "wrong\#args, expected: ?-type type? image ww hn we hs ?type specific arguments?"
-    }
-    set args [lassign $args image]
-    set type [TypeOf $image]
+	default {
+	    if {[llength $args]} {
+		return -code error "wrong\#args: expand $bordertype image ww hn we hs"
+	    }
 
-    set f border_${type}_$btype
+	    set type [TypeOf $image]
+	}
+    }
+
+    set f expand_${type}_$bordertype
     if {![Has $f]} {
-	return -code error "Unable to extend images of type \"$type\" by border \"$btype\""
+	return -code error "Unable to extend images of type \"$type\" by border \"$bordertype\""
     }
 
-    return [$f $image {*}$args]
+    return [$f $image $ww $hn $we $hs {*}$args]
 }
 
 # # ## ### ##### ######## #############
@@ -578,7 +614,7 @@ namespace eval ::crimp {
     namespace export wavy psychedelia matrix blend over blank
     namespace export setalpha histogram max min screen add
     namespace export subtract difference multiply convolve
-    namespace export kernel tkernel border
+    namespace export kernel tkernel expand
     #
     namespace ensemble create
 }

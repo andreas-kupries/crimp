@@ -1,4 +1,4 @@
-border_hsv_extend
+expand_hsv_replicate
 Tcl_Obj* imageObj
 int ww
 int hn
@@ -40,7 +40,7 @@ crimp_input (imageObj, image, hsv);
 	V (result, xo, yo) = V (image, xi, yi); \
     }
 
-#include <border_op.c>
+#include <expand_op.c>
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

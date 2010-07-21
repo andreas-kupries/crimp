@@ -1,4 +1,4 @@
-border_grey8_wrap
+expand_rgba_wrap
 Tcl_Obj* imageObj
 int ww
 int hn
@@ -10,7 +10,7 @@ int hs
  */
 
 crimp_image* image;
-crimp_input (imageObj, image, grey8);
+crimp_input (imageObj, image, rgba);
 
 /*
  * This is the simple definition. Might be better to generate macros
@@ -27,14 +27,20 @@ crimp_input (imageObj, image, grey8);
 	xi %= image->w;				\
 	yi %= image->h;				\
 						\
-	GREY8 (result, xo, yo) = GREY8 (image, xi, yi); \
+	R (result, xo, yo) = R (image, xi, yi); \
+	G (result, xo, yo) = G (image, xi, yi); \
+	B (result, xo, yo) = B (image, xi, yi); \
+	A (result, xo, yo) = A (image, xi, yi); \
     }
 
 #define COPY(xo,yo,xi,yi) {			\
-	GREY8 (result, xo, yo) = GREY8 (image, xi, yi); \
+	R (result, xo, yo) = R (image, xi, yi); \
+	G (result, xo, yo) = G (image, xi, yi); \
+	B (result, xo, yo) = B (image, xi, yi); \
+	A (result, xo, yo) = A (image, xi, yi); \
     }
 
-#include <border_op.c>
+#include <expand_op.c>
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

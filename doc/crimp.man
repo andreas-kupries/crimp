@@ -316,6 +316,19 @@ supported:
     ------   ---------- ----------
 }]
 
+
+[call [cmd ::crimp] [method convolve] [opt "[option -border] [arg spec]"] [arg kernel]...]
+[keywords convolution]
+
+
+
+
+[para]
+
+The [method {crimp kernel ...}] methods are constructors for kernels
+suitable as arguments to this method.
+
+
 [call [cmd ::crimp] [method degamma] [arg image] [arg y]]
 [keywords {gamma correction}]
 
@@ -466,7 +479,7 @@ lava lamp or hallucination.
 [call [cmd ::crimp] [method remap] [arg image] [arg map]...]
 [keywords {pixel mapping} remapping]
 
-[comment {one of three cor -- remap-conditional, and recolor by 3x3 matrix}]
+[comment {one of three core -- remap-conditional, and recolor by 3x3 matrix}]
 
 This method is the core primitive for the per-pixel transformation of
 images, with each pixel (and channels within, if any) handled
@@ -636,11 +649,11 @@ above.
 [list_begin definitions]
 [call [cmd ::crimp] [method {read tcl}] [arg pixelmatrix]]
 
-This method takes the [arg pixelmatrix], a list of rows, each row a
-list of pixel values in the domain [lb]0..255[rb] and returns an image
-of type [const grey8] whose height is the number of rows, i.e.  the
-length of the outer list, and whose width is the maximum length found
-among the inner lists. Rows whose inner list is shorter than the
+This method takes the [arg pixelmatrix], a list of rows, with each row
+a list of pixel values in the domain [lb]0..255[rb] and returns an
+image of type [const grey8] whose height is the number of rows, i.e.
+the length of the outer list, and whose width is the maximum length
+found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
 [const 255].
 
@@ -665,6 +678,44 @@ and [const grey8] images.
 
 [subsection Support]
 [list_begin definitions]
+
+[call [cmd ::crimp] [method {kernel make}] [arg matrix] [opt [arg scale]]]
+
+This method takes a [arg matrix] of weights and an optional
+[arg scale] factor and returns a structure containing the associated
+convolution kernel, ready for use by method [method convole].
+
+[para] If [arg scale] is left unspecified it defaults to the sum of
+all weights in the matrix.
+
+[para] The [arg matrix] has the same general format as the pixel
+matrix for method [method {read tcl}], i.e. a list of lists (rows) of
+values, and is treated in the same way, i.e. the number of columns is
+the maxium length over the row lists, and shorter lists are padded
+with [const 255].
+
+
+[call [cmd ::crimp] [method {kernel transpose}] [arg kernel]]
+
+This method takes a [arg kernel] as returned by the method
+[method {kernel make}] and returns a transposed kernel, i.e. one where
+the x- and y-axes are switched.
+
+For example
+[para][example {
+                    (1)
+                    (2)
+    {1 2 4 2 1} ==> (4)
+                    (2)
+                    (1)
+}][para]
+
+This method is its own inverse, i.e. application to its result returns
+the original input, i.e. [example {
+    [transpose [transpose $K]] == $K
+}]
+
+
 [call [cmd ::crimp] [method map] [arg arg]...]
 
 This method accepts the same sub-methods and arguments as are accepted

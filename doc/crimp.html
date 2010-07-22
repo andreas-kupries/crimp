@@ -142,10 +142,10 @@
 <li><a href="#8"><b class="cmd">::crimp</b> <b class="method">blend</b> <i class="arg">foreground</i> <i class="arg">background</i> <i class="arg">alpha</i></a></li>
 <li><a href="#9"><b class="cmd">::crimp</b> <b class="method">degamma</b> <i class="arg">image</i> <i class="arg">y</i></a></li>
 <li><a href="#10"><b class="cmd">::crimp</b> <b class="method">expand const</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></li>
-<li><a href="#11"><b class="cmd">::crimp</b> <b class="method">expand extend</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></li>
-<li><a href="#12"><b class="cmd">::crimp</b> <b class="method">expand mirror</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></li>
+<li><a href="#11"><b class="cmd">::crimp</b> <b class="method">expand extend</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
+<li><a href="#12"><b class="cmd">::crimp</b> <b class="method">expand mirror</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
 <li><a href="#13"><b class="cmd">::crimp</b> <b class="method">expand replicate</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
-<li><a href="#14"><b class="cmd">::crimp</b> <b class="method">expand wrap</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></li>
+<li><a href="#14"><b class="cmd">::crimp</b> <b class="method">expand wrap</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
 <li><a href="#15"><b class="cmd">::crimp</b> <b class="method">gamma</b> <i class="arg">image</i> <i class="arg">y</i></a></li>
 <li><a href="#16"><b class="cmd">::crimp</b> <b class="method">invert</b> <i class="arg">image</i></a></li>
 <li><a href="#17"><b class="cmd">::crimp</b> <b class="method">matrix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></li>
@@ -429,30 +429,34 @@ by &quot;<b class="method">map degamma</b> <i class="arg">y</i>&quot;.
 This method supports all image types supported by the method <b class="method">remap</b>.</p></dd>
 <dt><a name="10"><b class="cmd">::crimp</b> <b class="method">expand const</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="11"><b class="cmd">::crimp</b> <b class="method">expand extend</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></dt>
+<dt><a name="11"><b class="cmd">::crimp</b> <b class="method">expand extend</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
 <dd></dd>
-<dt><a name="12"><b class="cmd">::crimp</b> <b class="method">expand mirror</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></dt>
+<dt><a name="12"><b class="cmd">::crimp</b> <b class="method">expand mirror</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
 <dd></dd>
 <dt><a name="13"><b class="cmd">::crimp</b> <b class="method">expand replicate</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
 <dd></dd>
-<dt><a name="14"><b class="cmd">::crimp</b> <b class="method">expand wrap</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></dt>
+<dt><a name="14"><b class="cmd">::crimp</b> <b class="method">expand wrap</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
 <dd><p>This set of methods takes an image and expands it by adding a border.
-The size of this border is specified by the arguments <i class="arg">ww</i>, <i class="arg">hn</i>,
-<i class="arg">we</i>, and <i class="arg">hs</i> which provide the number of pixels to add at the
-named edge. See the image below for a graphical representation.
-The contents of the border pixels are specified by the type, as per the list below.</p>
+The size of this border is specified by the four arguments <i class="arg">ww</i>,
+<i class="arg">hn</i>, <i class="arg">we</i>, and <i class="arg">hs</i> which provide the number of pixels to
+add at the named edge. See the image below for a graphical
+representation.</p>
+<p><img alt="border" src="./image/border.png"></p>
+<p>The contents of the border's pixels are specified via the border type,
+the first argument after <b class="method">expand</b>, as per the list below.</p>
 <dl class="definitions">
 <dt><b class="method">const</b></dt>
-<dd><p>The additional <i class="arg">value</i>s specify the values to use for the color channels
-of the image. Values beyond the number of channels in the image are ignored.
-Missing values are generated by replicating the last value, except for the
-alpha channel, which will be set to <b class="const">255</b>. If no values are present
-they default to <b class="const">0</b>.</p></dd>
+<dd><p>The additional <i class="arg">value</i>s specify the values to use for the color
+channels of the image. Values beyond the number of channels in the
+image are ignored.
+Missing values are generated by replicating the last value, except for
+the alpha channel, which will be set to <b class="const">255</b>. If no values are
+present they default to <b class="const">0</b>.</p></dd>
 <dt><b class="method">extend</b></dt>
-<dd><p>This is a combination of <b class="method">mirror</b> and <b class="method">replicate</b>.
-The outside pixels are the result of subtracting the outside pixel
-for <b class="method">mirror</b> from the outside pixel for <b class="method">replicate</b>
-(and clamping to the range [0...255]).</p></dd>
+<dd><p>This is a combination of <b class="method">mirror</b> and <b class="method">replicate</b>.  The
+outside pixels are the result of subtracting the outside pixel for
+<b class="method">mirror</b> from the outside pixel for <b class="method">replicate</b> (and
+clamping to the range [0...255]).</p></dd>
 <dt><b class="method">mirror</b></dt>
 <dd><p>The outside pixels take the value of the associated inside pixels,
 found by reflecting its coordinates along the relevant edges.</p></dd>
@@ -685,7 +689,7 @@ threshold, and the <b class="function">inverse</b> for values at and above it.</
 </div>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p>image, photo</p>
+<p>affine transform, alpha, alpha blending, alpha channel, blending, channels, composite blending, composition, const expansion, cyclic wrap expansion, dimensions, expansion, extend expansion, flip, gamma correction, histogram, image, inversion, matrix, mirror expansion, photo, pixel mapping, projective transform, remapping, replicate edge expansion, sabatier effect, solarization, toroidal wrap expansion, transform, wrap expansion</p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2010 Andreas Kupries<br>

@@ -1,0 +1,28 @@
+# -*- tcl -*- tcl.tk//DSL diagram//EN//1.0
+
+set boxheight [1 cm]
+set boxwidth  [1 cm]
+
+# center = image
+box width [3 cm] height [2 cm] fillcolor grey text image
+
+# corner (diagonal) quadrants
+box with se at [1st box nw] text nw
+box with sw at [1st box ne] text ne
+box with nw at [1st box se] text se
+box with ne at [1st box sw] text sw
+
+# lines to close the horizontal/vertical quadrants 
+line from [2nd box ne] to [3rd box nw]
+line from [3rd box se] to [4th box ne]
+line from [4th box sw] to [5th box se]
+line from [5th box nw] to [2nd box sw]
+
+# annotations
+arrow <-> from [[2nd box nw] by 15 north] to [[2nd box ne] by 15 north] "ww"  above
+arrow <-> from [[3rd box nw] by 15 north] to [[3rd box ne] by 15 north] "we"  above
+arrow <-> from [[2nd box nw] by 15 west]  to [[2nd box sw] by 15 west]  "hn " rjust
+arrow <-> from [[5th box nw] by 15 west]  to [[5th box sw] by 15 west]  "hs " rjust
+
+#arrow <-> from [[1st line start] by 10 north] to [[1st line end] by 10 north] text "width" above
+#arrow <-> from [[4th line start] by 10 west] to [[4th line end] by 10 west] text "height " rjust

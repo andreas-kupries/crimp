@@ -266,6 +266,8 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBblend\fR \fIforeground\fR \fIbackground\fR \fIalpha\fR
 .sp
+\fB::crimp\fR \fBconvolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+.sp
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
 .sp
 \fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
@@ -325,6 +327,10 @@ package require \fBcrimp  ?1?\fR
 \fB::crimp\fR \fBread tk\fR \fIphoto\fR
 .sp
 \fB::crimp\fR \fBwrite 2tk\fR \fIphoto\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR?
+.sp
+\fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
 .sp
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 .sp
@@ -653,6 +659,11 @@ supported:
 
 .fi
 .TP
+\fB::crimp\fR \fBconvolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+.sp
+The \fBcrimp kernel ...\fR methods are constructors for kernels
+suitable as arguments to this method.
+.TP
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
 This method takes an image, runs it through an
 \fBinverse gamma correction\fR with parameter \fIy\fR, and returns
@@ -916,11 +927,11 @@ above.
 .SS "I/O COMMANDS"
 .TP
 \fB::crimp\fR \fBread tcl\fR \fIpixelmatrix\fR
-This method takes the \fIpixelmatrix\fR, a list of rows, each row a
-list of pixel values in the domain [0..255] and returns an image
-of type \fBgrey8\fR whose height is the number of rows, i.e.  the
-length of the outer list, and whose width is the maximum length found
-among the inner lists. Rows whose inner list is shorter than the
+This method takes the \fIpixelmatrix\fR, a list of rows, with each row
+a list of pixel values in the domain [0..255] and returns an
+image of type \fBgrey8\fR whose height is the number of rows, i.e.
+the length of the outer list, and whose width is the maximum length
+found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
 \fB255\fR.
 .TP
@@ -936,6 +947,44 @@ The method supports the witing of \fBrgb\fR, \fBrgba\fR,
 and \fBgrey8\fR images.
 .PP
 .SS SUPPORT
+.TP
+\fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR?
+This method takes a \fImatrix\fR of weights and an optional
+\fIscale\fR factor and returns a structure containing the associated
+convolution kernel, ready for use by method \fBconvole\fR.
+.sp
+If \fIscale\fR is left unspecified it defaults to the sum of
+all weights in the matrix.
+.sp
+The \fImatrix\fR has the same general format as the pixel
+matrix for method \fBread tcl\fR, i.e. a list of lists (rows) of
+values, and is treated in the same way, i.e. the number of columns is
+the maxium length over the row lists, and shorter lists are padded
+with \fB255\fR.
+.TP
+\fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
+This method takes a \fIkernel\fR as returned by the method
+\fBkernel make\fR and returns a transposed kernel, i.e. one where
+the x- and y-axes are switched.
+For example
+.sp
+.nf
+
+                    (1)
+                    (2)
+    {1 2 4 2 1} ==> (4)
+                    (2)
+                    (1)
+
+.fi
+.sp
+This method is its own inverse, i.e. pplication to its result returns
+the original input, i.e.
+.nf
+
+    [transpose [transpose $K]] == $K
+
+.fi
 .TP
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 This method accepts the same sub-methods and arguments as are accepted
@@ -1062,7 +1111,7 @@ Note how the function is the \fBidentity\fR for values under the
 threshold, and the \fBinverse\fR for values at and above it.
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, blending, channels, composite blending, composition, const expansion, cyclic wrap expansion, dimensions, expansion, extend expansion, flip, gamma correction, histogram, image, inversion, matrix, mirror expansion, photo, pixel mapping, projective transform, remapping, replicate edge expansion, sabatier effect, solarization, toroidal wrap expansion, transform, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, blending, channels, composite blending, composition, const expansion, convolution, cyclic wrap expansion, dimensions, expansion, extend expansion, flip, gamma correction, histogram, image, inversion, matrix, mirror expansion, photo, pixel mapping, projective transform, remapping, replicate edge expansion, sabatier effect, solarization, toroidal wrap expansion, transform, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

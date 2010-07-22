@@ -1,0 +1,76 @@
+convolve_rgba
+Tcl_Obj* imageObj
+Tcl_Obj* kernelImageObj
+int scale
+
+/*
+ * Generic convolution operator. The kernel to convole with is specified as a
+ * grey8 image together with a scaling factor. This way we do not need a
+ * separate matrix Tcl_ObjType, nor floating point math.
+ *
+ * This convolver should be used only for small kernels, as it uses direct
+ * convolution. For larger kernels it is planned to provide an FFT based
+ * convolver.
+ */
+
+crimp_image*     result;
+crimp_image*     image;
+crimp_image*     kernel;
+int              xo, yo, xi, yi, xk, yk, dx, dy, kw, kh;
+
+crimp_input (imageObj,         image,    rgba);
+crimp_input (kernelImageObj,   kernel,   grey8);
+
+if (((kernel->w % 2) == 0) ||
+    ((kernel->h % 2) == 0)) {
+    Tcl_SetResult(interp, "bad kernel dimensions, expected odd size", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+kw = kernel->w/2;
+kh = kernel->h/2;
+
+result = crimp_new (image->itype, image->w - 2*kw, image->h - 2*kh);
+
+for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
+    for (xo = 0, xi = kw; xo < result->w; xo++, xi++) {
+
+	/*
+	 * We convolve all channels with the same kernel, but otherwise
+	 * identically
+	 */
+
+	int sumr = 0;
+	int sumg = 0;
+	int sumb = 0;
+	int suma = 0;
+
+	for (yk = 0, dy = -kh; yk < kernel->h; yk++, dy++) {
+	    for (xk = 0, dx = -kw; xk < kernel->w; xk++, dx++) {
+
+		sumr += GREY8 (kernel, xk, yk) * R (image, xi-dx, yi-dy);
+		sumg += GREY8 (kernel, xk, yk) * G (image, xi-dx, yi-dy);
+		sumb += GREY8 (kernel, xk, yk) * B (image, xi-dx, yi-dy);
+		suma += GREY8 (kernel, xk, yk) * A (image, xi-dx, yi-dy);
+	    }
+	}
+
+	R (result, xo, yo) = sumr / scale;
+	G (result, xo, yo) = sumg / scale;
+	B (result, xo, yo) = sumb / scale;
+	A (result, xo, yo) = suma / scale;
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

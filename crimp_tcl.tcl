@@ -30,6 +30,74 @@ proc ::crimp::P {fqn} {
     return [lrange [::split [namespace tail $fqn] _] 1 end]
 }
 
+proc ::crimp::BORDER {imagetype spec} {
+    set values [lassign $spec bordertype]
+
+    if {![llength [List expand_*_$bordertype]]} {
+	# TODO :: Compute/memoize available border types.
+	return -code error "Unknown border type \"$bordertype\", expected one of ..."
+    }
+
+    set f expand_${imagetype}_$bordertype
+    if {![Has $f]} {
+	return -code error "Unable to expand images of type \"$type\" by border \"$bordertype\""
+    }
+
+    # Process type specific arguments.
+    switch -- $bordertype {
+	const {
+	    # TODO :: Introspect number of color channels from image
+	    # type, then extend or reduce the values accordingly.
+	    #
+	    # FOR NOW :: Hardwired map.
+	    # SEE ALSO :: remap, blank.
+	    # TODO :: Unify using some higher-order code.
+
+	    switch -- $imagetype {
+		hsv - rgb {
+		    if {![llength $values]} {
+			set values {0 0 0}
+		    }
+		    while {[llength $values] < 3} {
+			lappend values [lindex $values end]
+		    }
+		    if {[llength $values] > 3} {
+			set values [lrange $values 0 2]
+		    }
+		}
+		rgba {
+		    if {![llength $values]} {
+			set values {0 0 0 255}
+		    }
+		    while {[llength $values] < 3} {
+			lappend values [lindex $values end]
+		    }
+		    if {[llength $values] < 4} {
+			lappend values 255
+		    }
+		    if {[llength $values] > 4} {
+			set values [lrange $values 0 3]
+		    }
+		}
+		grey8 {
+		    if {![llength $values]} {
+			set values {0}
+		    } elseif {[llength $values] > 1} {
+			set values [lrange $values 0 0]
+		    }
+		}
+	    }
+	}
+	default {
+	    if {[llength $values]} {
+		return -code error "wrong\#args: no values accepted by \"$bordertype\" borders"
+	    }
+	}
+    }
+
+    return [list $f $values]
+}
+
 # # ## ### ##### ######## #############
 ## Read is done via sub methods, one per format to read from.
 #
@@ -183,14 +251,7 @@ proc ::crimp::blank {type args} {
     # by setting to them to BLACK or TRANSPARENT, respectively.
 
     switch -- $type {
-	rgb {
-	    if {[llength $args]} {
-		while {[llength $args] < 3} {
-		    lappend args 0
-		}
-	    }
-	}
-	hsv {
+	hsv - rgb {
 	    if {[llength $args]} {
 		while {[llength $args] < 3} {
 		    lappend args 0
@@ -218,73 +279,11 @@ proc ::crimp::expand {bordertype image ww hn we hs args} {
     # args = ?type-specific arguments?
     # currently only for bordertype 'const'. Default to (0 0 0 255).
 
-    if {![llength [List expand_*_$bordertype]]} {
-	# TODO :: Compute/memoize available border types.
-	return -code error "Unknown border type \"$bordertype\", expected one of ..."
-    }
+    set type [TypeOf $image]
 
-    # Process type specific arguments.
-    switch -- $bordertype {
-	const {
-	    # TODO :: Introspect number of color channels from image
-	    # type, then extend or reduce the args accordingly.
-	    #
-	    # FOR NOW :: Hardwired map.
-	    # SEE ALSO :: remap.
-	    # TODO :: Unify using some higher-order code.
+    lassign [BORDER $type [list $bordertype {*}$args]] f values
 
-	    set type [TypeOf $image]
-
-	    switch -- $type {
-		hsv - rgb {
-		    if {![llength $args]} {
-			set args {0 0 0}
-		    }
-		    while {[llength $args] < 3} {
-			lappend args [lindex $args end]
-		    }
-		    if {[llength $args] > 3} {
-			set args [lrange $args 0 2]
-		    }
-		}
-		rgba {
-		    if {![llength $args]} {
-			set args {0 0 0 255}
-		    }
-		    while {[llength $args] < 3} {
-			lappend args [lindex $args end]
-		    }
-		    if {[llength $args] < 4} {
-			lappend args 255
-		    }
-		    if {[llength $args] > 4} {
-			set args [lrange $args 0 3]
-		    }
-		}
-		grey8 {
-		    if {![llength $args]} {
-			set args {0}
-		    } elseif {[llength $args] > 1} {
-			set args [lrange $args 0 0]
-		    }
-		}
-	    }
-	}
-	default {
-	    if {[llength $args]} {
-		return -code error "wrong\#args: expand $bordertype image ww hn we hs"
-	    }
-
-	    set type [TypeOf $image]
-	}
-    }
-
-    set f expand_${type}_$bordertype
-    if {![Has $f]} {
-	return -code error "Unable to extend images of type \"$type\" by border \"$bordertype\""
-    }
-
-    return [$f $image $ww $hn $we $hs {*}$args]
+    return [$f $image $ww $hn $we $hs {*}$values]
 }
 
 # # ## ### ##### ######## #############
@@ -456,30 +455,86 @@ proc ::crimp::screen {a b} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::kernel {kernelmatrix {scale {}}} {
+proc ::crimp::convolve {image args} {
+    # args = ?-border spec? kernel...
+
+    set type [TypeOf $image]
+    set fc convolve_${type}
+    if {![Has $fc]} {
+	return -code error "Convolution is not supported for image type \"$type\""
+    }
+
+    # Default settings for border expansion.
+    lassign [BORDER $type const] fe values
+
+    set at 0
+    while {1} {
+	set opt [lindex $args $at]
+	if {![string match -* $opt]} break
+	incr at
+	switch -- $opt {
+	    -border {
+		set value [lindex $at $args]
+		lassign [BORDER $type $value] fe values
+		incr at
+	    }
+	    default {
+		return -code error "Unknown  option \"$opt\", expected -border"
+	    }
+	}
+    }
+    set args [lrange $args $at end]
+    if {![llength $args]} {
+	return -code error "wrong#args: expected image ?-border spec? kernel..."
+    }
+
+    # kernel = list (kw kh kernelimage scale)
+    # Kernel x in [-kw ... kw], 2*kw+1 values
+    # Kernel y in [-kh ... kh], 2*kh+1 values
+    # Shrinkage by 2*kw, 2*kh. Compensate using
+
+    foreach kernel $args {
+	lassign $kernel kw kh K scale
+	set image [$fc [$fe $image $kw $kh $kw $kh {*}$values] $K $scale]
+    }
+
+    return $image
+}
+
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::kernel {
+    namespace export *
+    namespace ensemble create
+}
+
+proc ::crimp::kernel::make {kernelmatrix {scale {}}} {
     # auto-scale, if needed
     if {[llength [info level 0]] < 3} {
 	set scale 0
 	foreach r $kernelmatrix { foreach v $r { incr scale $v } }
     }
 
-    return [list [crimp read tcl $kernelmatrix] $scale]
-}
+    set kernel [crimp read tcl $kernelmatrix]
 
-proc ::crimp::tkernel {kernel} {
-    lassign $kernel K scale
-    return [list [crimp flip transpose $K] $scale]
-}
+    lassign [crimp::dimensions $kernel] w h
 
-proc ::crimp::convolve {image kernel} {
-    set type [TypeOf $image]
-
-    set f convolve_${type}_const
-    if {![Has $f]} {
-	return -code error "Convolve is not supported for image type \"$type\""
+    if {!($w % 2) || !($h % 2)} {
+	# Keep in sync with the convolve primitives.
+	# FUTURE :: Have an API to set the messages used by the primitives.
+	return -code error "bad kernel dimensions, expected odd size"
     }
 
-    return [$f $image {*}$kernel]
+    set kw [expr {$w/2}]
+    set kh [expr {$h/2}]
+
+    return [list $kw $kh $kernel $scale]
+}
+
+proc ::crimp::kernel::transpose {kernel} {
+    lassign $kernel w h K scale
+    set Kt [crimp flip transpose $K]
+    return [list $h $w $Kt $scale]
 }
 
 # # ## ### ##### ######## #############
@@ -614,7 +669,7 @@ namespace eval ::crimp {
     namespace export wavy psychedelia matrix blend over blank
     namespace export setalpha histogram max min screen add
     namespace export subtract difference multiply convolve
-    namespace export kernel tkernel expand
+    namespace export kernel expand
     #
     namespace ensemble create
 }

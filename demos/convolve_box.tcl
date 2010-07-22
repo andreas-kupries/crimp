@@ -1,7 +1,7 @@
 def op_convolve_box {
-    label {Box Blur}
+    label {Blur Box}
     setup {
-	variable K [crimp kernel {
+	variable K [crimp kernel make {
 	    {1 1 1 1 1}
 	    {1 1 1 1 1}
 	    {1 1 1 1 1}
@@ -9,14 +9,14 @@ def op_convolve_box {
 	    {1 1 1 1 1}}]
 
 	# Separable kernel, compute the horizontal and vertical kernels.
-	variable Kx [crimp kernel {{1 1 1 1 1}}]
-	variable Ky [crimp tkernel $Kx]
+	variable Kx [crimp kernel make {{1 1 1 1 1}}]
+	variable Ky [crimp kernel transpose $Kx]
     }
     setup_image {
-	#show_image [crimp convolve [base] $K]
+	# show_image [crimp convolve [base] $K]
 	# Separable kernel, convolve x and y separately. Same result
-	# as above, faster.
-	show_image [crimp convolve [crimp convolve [base] $Kx] $Ky]
+	# as for the combined kernel, but faster.
+	show_image [crimp convolve [base] $Kx $Ky]
 
 	# Convolution times (butterfly 800x600), regular and separated by x/y.
 	#             seconds  u-seconds/pixel
@@ -28,9 +28,7 @@ def op_convolve_box {
 	# Setup Image 1.640612 3.4179416666666667
 	# -----       -------- ---------------------
 
-	#show_image [crimp difference \
-			[crimp convolve [base] $K] \
-			[crimp convolve [crimp convolve [base] $Kx] $Ky] \
-		       ]
+	# Show that the two applications generate the same result.
+	#show_image [crimp difference [crimp convolve [base] $K] [crimp convolve [base] $Kx $Ky]]
     }
 }

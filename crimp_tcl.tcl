@@ -191,6 +191,14 @@ proc ::crimp::solarize {image n} {
     remap $image [map solarize $n]
 }
 
+proc ::crimp::threshold-le {image n} {
+    remap $image [map threshold-le $n]
+}
+
+proc ::crimp::threshold-ge {image n} {
+    remap $image [map threshold-ge $n]
+}
+
 proc ::crimp::gamma {image y} {
     remap $image [map gamma $y]
 }
@@ -702,6 +710,34 @@ proc ::crimp::table::gainw {gain {bias 0}} {
     return $table
 }
 
+proc ::crimp::table::threshold-le {threshold} {
+    for {set x 0} {$x < 256} {incr x} {
+	lappend table [expr {($x <= $threshold) ? 0 : 255}]
+    }
+    return $table
+}
+
+proc ::crimp::table::threshold-ge {threshold} {
+    for {set x 0} {$x < 256} {incr x} {
+	lappend table [expr {($x >= $threshold) ? 0 : 255}]
+    }
+    return $table
+}
+
+proc ::crimp::table::gauss {sigma} {
+    # Sampled gaussian.
+    # For the discrete gaussian I need 'modified bessel functions of
+    # integer order'. Check if tcllib/math contains them.
+
+    # a*e^(-(((x-b)^2)/(2c^2)))
+    # a = 255, b = 127.5, c = sigma
+
+    for {set x 0} {$x < 256} {incr x} {
+	lappend table [expr {round(255*exp(-(($x-127.5)**2/(2*$sigma**2))))}]
+    }
+    return $table
+}
+
 # # ## ### ##### ######## #############
 
 proc ::crimp::table::CLAMP {x} {
@@ -736,7 +772,7 @@ namespace eval ::crimp {
     namespace export setalpha histogram max min screen add
     namespace export subtract difference multiply convolve
     namespace export downsample upsample decimate interpolate
-    namespace export kernel expand
+    namespace export kernel expand threshold-le threshold-ge
     #
     namespace ensemble create
 }

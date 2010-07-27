@@ -612,6 +612,45 @@ proc ::crimp::kernel::transpose {kernel} {
 }
 
 # # ## ### ##### ######## #############
+## Image pyramids
+
+namespace eval ::crimp::pyramid {
+    namespace export *
+    namespace ensemble create
+}
+
+proc crimp::pyramid::run {image steps stepfun} {
+    set     res {}
+    lappend res $image
+
+    set iter $image
+    while {$steps > 0} {
+	lassign [{*}$stepfun $iter] result iter
+	lappend res $result
+	incr steps -1
+    }
+    lappend res $iter
+
+    return $result
+}
+
+proc crimp::pyramid::gauss {image steps} {
+    lrange [run $image $steps [list ::apply {{kernel image} {
+	set low [crimp decimate $image 2 $kernel]
+	return [list $low $low]
+    }} [crimp kernel make {{1 4 6 4 1}}]]] 0 end-1
+}
+
+proc crimp::pyramid::laplace {image steps} {
+    run $image $steps [list ::apply {{kerneld kerneli image} {
+	set low  [crimp decimate $image 2 $kerneld]
+	set high [crimp subtract $image [crimp interpolate $low 2 $kerneli]]
+	return [list $high $low]
+    }} [crimp kernel make {{1 4 6 4 1}}] \
+       [crimp kernel make {{1 4 6 4 1}} 8]]
+}
+
+# # ## ### ##### ######## #############
 ## Tables and maps.
 ## For performance we should memoize results.
 ## This is not needed to just get things working howver.
@@ -773,6 +812,7 @@ namespace eval ::crimp {
     namespace export subtract difference multiply convolve
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge
+    namespace export pyramid
     #
     namespace ensemble create
 }

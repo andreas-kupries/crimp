@@ -232,6 +232,72 @@ proc ::crimp::remap {image args} {
     return [map_$type $image {*}$args]
 }
 
+proc ::crimp::downsample {image factor} {
+    set type [TypeOf $image]
+    set f downsample_$type
+    if {![Has $f]} {
+	return -code error "Unable to downsample images of type \"$type\""
+    }
+
+    return [$f $image $factor]
+}
+
+proc ::crimp::upsample {image factor} {
+    set type [TypeOf $image]
+    set f upsample_$type
+    if {![Has $f]} {
+	return -code error "Unable to upsample images of type \"$type\""
+    }
+
+    return [$f $image $factor]
+}
+
+proc ::crimp::decimate {image factor kernel} {
+    # Combines downsampling with a pre-processing step applying a
+    # low-pass filter to avoid aliasing of higher image frequencies.
+
+    # We assume that the low-pass filter is separable, and the kernel
+    # is the 1-D horizontal form of it. We compute the vertical form
+    # on our own, transposing the kernel.
+
+    # NOTE: This implementation, while easy conceptually, is not very
+    # efficient, because it does the filtering on the input image,
+    # before downsampling.
+
+    # FUTURE: Write C level primitive integrating filter and sampler,
+    # computing the filter only for the pixels which go into the
+    # result.
+
+    return [downsample \
+		[convolve $image $kernel [kernel transpose $kernel]] \
+		$factor]
+}
+
+proc ::crimp::interpolate {image factor kernel} {
+    # Combines upsampling with a post-processing step applying a
+    # low-pass filter to copies of the image at higher image
+    # frequencies.
+
+    # We assume that the low-pass filter is separable, and the kernel
+    # is the 1-D horizontal form of it. We compute the vertical form
+    # on our own, transposing the kernel.
+
+    # NOTE: This implementation, while easy conceptually, is not very
+    # efficient, because it does the filtering on the full output image,
+    # after upsampling.
+
+    # FUTURE: Write C level primitive integrating filter and sampler,
+    # computing the filter only for the actually new pixels, and use
+    # polyphase restructuring.
+
+    # DANGER: This assumes that the filter, applied to the original
+    # pixels leaves them untouched. I.e. scaled center weight is 1.
+    # The easy implementation here does not have this assumption.
+
+    return [convolve [upsample $image $factor] \
+		$kernel [kernel transpose $kernel]]
+}
+
 proc ::crimp::split {image} {
     set type [TypeOf $image]
     if {![Has split_$type]} {
@@ -669,6 +735,7 @@ namespace eval ::crimp {
     namespace export wavy psychedelia matrix blend over blank
     namespace export setalpha histogram max min screen add
     namespace export subtract difference multiply convolve
+    namespace export downsample upsample decimate interpolate
     namespace export kernel expand
     #
     namespace ensemble create

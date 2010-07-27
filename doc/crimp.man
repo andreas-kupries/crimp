@@ -553,6 +553,34 @@ This method supports all image types supported by the method
 [method remap].
 
 
+[call [cmd ::crimp] [method threshold-ge] [arg image] [arg threshold]]
+[keywords thresholding binarization]
+
+This method takes an image, runs it through the [fun threshold-ge]
+function with parameter [arg threshold], and returns the modified
+image as it result.
+
+This is an application of method [method remap], using the mapping
+returned by "[method {map threshold-ge}] [arg threshold]".
+
+This method supports all image types supported by the method
+[method remap].
+
+
+[call [cmd ::crimp] [method threshold-le] [arg image] [arg threshold]]
+[keywords thresholding binarization]
+
+This method takes an image, runs it through the [fun threshold-le]
+function with parameter [arg threshold], and returns the modified
+image as it result.
+
+This is an application of method [method remap], using the mapping
+returned by "[method {map threshold-le}] [arg threshold]".
+
+This method supports all image types supported by the method
+[method remap].
+
+
 [call [cmd ::crimp] [method wavy] [arg image] [arg offset] [arg adj1] [arg adjb]]
 
 This method processes the input [arg image] according to an algorithm
@@ -780,6 +808,17 @@ definition used to be
 [para][image scaled_gamma]
 
 
+[call [cmd ::crimp] [method {table gauss}] [arg sigma]]
+
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the [fun {sampled gauss}] function with
+parameter [arg sigma].
+
+This function is defined as:
+
+[para][image gauss][para]
+
+
 [call [cmd ::crimp] [method {table identity}]]
 
 This method returns a list of 256 values, the result of running the
@@ -807,6 +846,26 @@ values 0 to 255 through the [fun solarize] function, with parameter
 
 Note how the function is the [fun identity] for values under the
 threshold, and the [fun inverse] for values at and above it.
+
+
+[call [cmd ::crimp] [method {table threshold-ge}] [arg threshold]]
+
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a [fun thresholding] function, with parameter
+[arg threshold]. The function is defined as:
+
+[para][image threshold-ge]
+[para]
+
+
+[call [cmd ::crimp] [method {table threshold-le}] [arg threshold]]
+
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a [fun thresholding] function, with parameter
+[arg threshold]. The function is defined as:
+
+[para][image threshold-le]
+[para]
 
 [list_end]
 

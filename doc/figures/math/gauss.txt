@@ -1,0 +1,1 @@
+gauss_\sigma (x) = [255 e^{-\frac{x-127.5}{2\sigma^2}}]

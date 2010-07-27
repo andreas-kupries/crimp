@@ -296,6 +296,10 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBsolarize\fR \fIimage\fR \fIthreshold\fR
 .sp
+\fB::crimp\fR \fBthreshold-ge\fR \fIimage\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBthreshold-le\fR \fIimage\fR \fIthreshold\fR
+.sp
 \fB::crimp\fR \fBwavy\fR \fIimage\fR \fIoffset\fR \fIadj1\fR \fIadjb\fR
 .sp
 \fB::crimp\fR \fBflip horizontal\fR \fIimage\fR
@@ -342,11 +346,17 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBtable gamma\fR \fIy\fR
 .sp
+\fB::crimp\fR \fBtable gauss\fR \fIsigma\fR
+.sp
 \fB::crimp\fR \fBtable identity\fR
 .sp
 \fB::crimp\fR \fBtable invers\fR
 .sp
 \fB::crimp\fR \fBtable solarize\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBtable threshold-ge\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBtable threshold-le\fR \fIthreshold\fR
 .sp
 .BE
 .SH DESCRIPTION
@@ -851,6 +861,24 @@ returned by "\fBmap solarize\fR \fIthreshold\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
 .TP
+\fB::crimp\fR \fBthreshold-ge\fR \fIimage\fR \fIthreshold\fR
+This method takes an image, runs it through the \fBthreshold-ge\fR
+function with parameter \fIthreshold\fR, and returns the modified
+image as it result.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap threshold-ge\fR \fIthreshold\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBthreshold-le\fR \fIimage\fR \fIthreshold\fR
+This method takes an image, runs it through the \fBthreshold-le\fR
+function with parameter \fIthreshold\fR, and returns the modified
+image as it result.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap threshold-le\fR \fIthreshold\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
 \fB::crimp\fR \fBwavy\fR \fIimage\fR \fIoffset\fR \fIadj1\fR \fIadjb\fR
 This method processes the input \fIimage\fR according to an algorithm
 devised by Andrew M. Goth, according to the three parameters
@@ -978,7 +1006,7 @@ For example
 
 .fi
 .sp
-This method is its own inverse, i.e. pplication to its result returns
+This method is its own inverse, i.e. application to its result returns
 the original input, i.e.
 .nf
 
@@ -1068,6 +1096,20 @@ gamma_y (x) = [ 255 (\\frac{x}{255})^y ]
 .fi
 .PE
 .TP
+\fB::crimp\fR \fBtable gauss\fR \fIsigma\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBsampled gauss\fR function with
+parameter \fIsigma\fR.
+This function is defined as:
+.sp
+.PS
+.nf
+gauss_\\sigma (x) = [255 e^{-\\frac{x-127.5}{2\\sigma^2}}]
+
+.fi
+.PE
+.sp
+.TP
 \fB::crimp\fR \fBtable identity\fR
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through the \fBidentity\fR function, defined as
@@ -1102,16 +1144,50 @@ x       & x < threshold \\\\
 255 - x & x \\ge threshold \\\\
 \\end{eqnarray}\\right
 
-
-
 .fi
 .PE
 .sp
 Note how the function is the \fBidentity\fR for values under the
 threshold, and the \fBinverse\fR for values at and above it.
+.TP
+\fB::crimp\fR \fBtable threshold-ge\fR \fIthreshold\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a \fBthresholding\fR function, with parameter
+\fIthreshold\fR. The function is defined as:
+.sp
+.PS
+.nf
+threshold_{threshold} (x) = \\left\\{\\begin{eqnarray}
+0   & x \\ge threshold \\\\
+255 & x < threshold \\\\
+\\end{eqnarray}\\right
+
+
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable threshold-le\fR \fIthreshold\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a \fBthresholding\fR function, with parameter
+\fIthreshold\fR. The function is defined as:
+.sp
+.PS
+.nf
+threshold_{threshold} (x) = \\left\\{\\begin{eqnarray}
+0   & x \\le threshold \\\\
+255 & x > threshold \\\\
+\\end{eqnarray}\\right
+
+
+
+.fi
+.PE
+.sp
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, blending, channels, composite blending, composition, const expansion, convolution, cyclic wrap expansion, dimensions, expansion, extend expansion, flip, gamma correction, histogram, image, inversion, matrix, mirror expansion, photo, pixel mapping, projective transform, remapping, replicate edge expansion, sabatier effect, solarization, toroidal wrap expansion, transform, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution, cyclic wrap expansion, dimensions, expansion, extend expansion, flip, gamma correction, histogram, image, inversion, matrix, mirror expansion, photo, pixel mapping, projective transform, remapping, replicate edge expansion, sabatier effect, solarization, thresholding, toroidal wrap expansion, transform, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

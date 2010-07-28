@@ -476,6 +476,72 @@ series of such images as animation provides an effect similar to a
 lava lamp or hallucination.
 
 
+[call [cmd ::crimp] [method {pyramid run}] [arg image] [arg steps] [arg stepcmd]]
+
+This method provides the core functionality for the generation of image
+pyramids. The command prefix [arg stepcmd] is run [arg steps] times,
+first on the [arg image], then on the result of the previous step.
+
+[para] The assumed signature of [arg stepcmd] is
+[list_begin definitions]
+[call [cmd <stepcmd>] [arg image]]
+
+which is expected to return a list of two elements. The first element
+([term result]) is added to the pyramid in building, whereas the second
+element ([term iter]) is used in the next step as the input of the step
+command.
+
+[list_end]
+
+[para] The final result of the method is a list containing the input
+[arg image] as its first element, followed by the results of the step
+function, followed by the [term iter] element returned by the last step,
+"[arg steps]+2" images in total.
+
+[para][image pyramid]
+
+
+[call [cmd ::crimp] [method {pyramid gauss}] [arg image] [arg steps]]
+
+This method generates a gaussian image pyramid [arg steps] levels deep and
+returns it as a list of images.
+
+[para] The first image in the result is the input, followed by [arg steps]
+successively smaller images, each [method decimate]d by a factor two
+compared to its predecessor, for a total length of "[arg steps]+1" images.
+
+[para] The convolution part of the decimation uses
+
+[example { 1/16 [1 4 6 4 1] }]
+
+as its kernel.
+
+[para][image pyramid_gauss]
+
+
+[call [cmd ::crimp] [method {pyramid laplace}] [arg image] [arg steps]]
+
+This method generates a laplacian image pyramid [arg steps] levels deep and
+returns it as a list of images.
+
+[para] The first image in the result is the input, followed by [arg steps]
+band pass images (differences of gaussians). The first band pass has the same
+size as the input image, and each successor is [method decimate]d by two. This
+is followed by one more image, the gaussian of the last step. This image has
+the same dimensions as the preceding bandpass image. In total the result
+contains "[arg steps]+2" images.
+
+[para] The convolution part of the decimation uses
+
+[example { 1/16 [1 4 6 4 1] }]
+
+as its kernel. The internal interpolation used to generate the band pass
+images (resynthesis) doubles the weights of this kernel for its convolution
+step.
+
+[para][image pyramid_laplace]
+
+
 [call [cmd ::crimp] [method remap] [arg image] [arg map]...]
 [keywords {pixel mapping} remapping]
 

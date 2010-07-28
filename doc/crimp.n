@@ -290,6 +290,14 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBpsychedelia\fR \fIwidth\fR \fIheight\fR \fIframes\fR
 .sp
+\fB::crimp\fR \fBpyramid run\fR \fIimage\fR \fIsteps\fR \fIstepcmd\fR
+.sp
+\fB<stepcmd>\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBpyramid gauss\fR \fIimage\fR \fIsteps\fR
+.sp
+\fB::crimp\fR \fBpyramid laplace\fR \fIimage\fR \fIsteps\fR
+.sp
 \fB::crimp\fR \fBremap\fR \fIimage\fR \fImap\fR...
 .sp
 \fB::crimp\fR \fBsetalpha\fR \fIimage\fR \fImask\fR
@@ -804,6 +812,65 @@ argument specifies how many images are in the series.
 ensuring that each call returns a slightly different image. Showing a
 series of such images as animation provides an effect similar to a
 lava lamp or hallucination.
+.TP
+\fB::crimp\fR \fBpyramid run\fR \fIimage\fR \fIsteps\fR \fIstepcmd\fR
+This method provides the core functionality for the generation of image
+pyramids. The command prefix \fIstepcmd\fR is run \fIsteps\fR times,
+first on the \fIimage\fR, then on the result of the previous step.
+.sp
+The assumed signature of \fIstepcmd\fR is
+.RS
+.TP
+\fB<stepcmd>\fR \fIimage\fR
+which is expected to return a list of two elements. The first element
+(\fIresult\fR) is added to the pyramid in building, whereas the second
+element (\fIiter\fR) is used in the next step as the input of the step
+command.
+.RE
+.sp
+The final result of the method is a list containing the input
+\fIimage\fR as its first element, followed by the results of the step
+function, followed by the \fIiter\fR element returned by the last step,
+"\fIsteps\fR+2" images in total.
+.sp
+IMAGE: pyramid
+.TP
+\fB::crimp\fR \fBpyramid gauss\fR \fIimage\fR \fIsteps\fR
+This method generates a gaussian image pyramid \fIsteps\fR levels deep and
+returns it as a list of images.
+.sp
+The first image in the result is the input, followed by \fIsteps\fR
+successively smaller images, each \fBdecimate\fRd by a factor two
+compared to its predecessor, for a total length of "\fIsteps\fR+1" images.
+.sp
+The convolution part of the decimation uses
+.nf
+ 1/16 [1 4 6 4 1]
+.fi
+as its kernel.
+.sp
+IMAGE: pyramid_gauss
+.TP
+\fB::crimp\fR \fBpyramid laplace\fR \fIimage\fR \fIsteps\fR
+This method generates a laplacian image pyramid \fIsteps\fR levels deep and
+returns it as a list of images.
+.sp
+The first image in the result is the input, followed by \fIsteps\fR
+band pass images (differences of gaussians). The first band pass has the same
+size as the input image, and each successor is \fBdecimate\fRd by two. This
+is followed by one more image, the gaussian of the last step. This image has
+the same dimensions as the preceding bandpass image. In total the result
+contains "\fIsteps\fR+2" images.
+.sp
+The convolution part of the decimation uses
+.nf
+ 1/16 [1 4 6 4 1]
+.fi
+as its kernel. The internal interpolation used to generate the band pass
+images (resynthesis) doubles the weights of this kernel for its convolution
+step.
+.sp
+IMAGE: pyramid_laplace
 .TP
 \fB::crimp\fR \fBremap\fR \fIimage\fR \fImap\fR...
 This method is the core primitive for the per-pixel transformation of

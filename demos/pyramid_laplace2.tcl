@@ -1,15 +1,29 @@
-def op_pyramid_laplace {
-    label {Laplace pyramid}
+def op_pyramid_laplace2 {
+    label {Laplace pyramid (normalized)}
     setup_image {
 
 	# Create a laplacian image pyramid, aka difference of
-	# gaussians.
+	# gaussians. The results are scaled back to the original
+	# before cycling.
+
+	proc norm {image fac} {
+	    if {$fac == 1} { return $image }
+	    set kernel [crimp kernel make {{1 4 6 4 1}} 8]
+	    while {$fac > 1} {
+		set image [crimp interpolate $image 2 $kernel]
+		set fac [expr {$fac/2}]
+	    }
+	    return $image
+	}
 
 	variable images
-	set images [crimp pyramid laplace [base] 3]
+	variable scales
+	set images [crimp pyramid laplace [base] 6]
+	set scales {1 1 2 4 8 16 32 64}
 
 	set r {}
-	foreach i $images {
+	foreach i $images s $scales {
+	    set i [norm $i $s]
 	    lappend r [crimp setalpha $i [crimp blank grey8 {*}[crimp dimensions $i] 255]]
 	}
 	set images $r

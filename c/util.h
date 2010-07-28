@@ -29,6 +29,8 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define CLAMP(min, v, max) ((v) < (min) ? (min) : (v) < (max) ? (v) : (max))
 
+#define RANGEOK(i,n) ((0 <= (i)) && (i < (n)))
+
 /*
  * Assertions support in general, and asserting the proper range of an array
  * index especially.
@@ -40,7 +42,6 @@
 #ifdef CRIMP_DEBUG
 #define XSTR(x) #x
 #define STR(x) XSTR(x)
-#define RANGEOK(i,n) ((0 <= (i)) && (i < (n)))
 #define ASSERT(x,msg) if (!(x)) { Tcl_Panic (msg " (" #x "), in file " __FILE__ " @line " STR(__LINE__));}
 #define ASSERT_BOUNDS(i,n) ASSERT (RANGEOK(i,n),"array index out of bounds: " STR(i) " > " STR(n))
 #else

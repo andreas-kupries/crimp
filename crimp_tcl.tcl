@@ -630,8 +630,7 @@ proc crimp::pyramid::run {image steps stepfun} {
 	incr steps -1
     }
     lappend res $iter
-
-    return $result
+    return $res
 }
 
 proc crimp::pyramid::gauss {image steps} {
@@ -644,7 +643,20 @@ proc crimp::pyramid::gauss {image steps} {
 proc crimp::pyramid::laplace {image steps} {
     run $image $steps [list ::apply {{kerneld kerneli image} {
 	set low  [crimp decimate $image 2 $kerneld]
-	set high [crimp subtract $image [crimp interpolate $low 2 $kerneli]]
+	set up   [crimp interpolate $low 2 $kerneli]
+
+	# Handle problem with input image size not a multiple of
+	# two. Then the interpolated result is smaller by one pixel.
+	set dx [expr {[crimp width $image] - [crimp width $up]}]
+	if {$dx > 0} {
+	    set up [crimp expand const $up 0 0 $dx 0]
+	}
+	set dy [expr {[crimp height $image] - [crimp height $up]}]
+	if {$dy > 0} {
+	    set up [crimp expand const $up 0 0 0 $dy]
+	}
+
+	set high [crimp subtract $image $up]
 	return [list $high $low]
     }} [crimp kernel make {{1 4 6 4 1}}] \
        [crimp kernel make {{1 4 6 4 1}} 8]]

@@ -1,0 +1,32 @@
+# -*- tcl -*- tcl.tk//DSL diagram//EN//1.0
+
+set boxwidth [25 mm]
+set boxheight [1 cm]
+set movelength [5 mm]
+
+proc result {n} {
+    box fillcolor grey text "R($n)"
+}
+proc iter {n} {
+    box text "I($n)"
+}
+proc output {n} {
+    group { south ; arrow ; result $n }
+}
+proc stepfun {} {
+    ellipse "stepcmd"
+}
+
+box "image" ; output 0
+arrow
+stepfun ; output 1
+arrow
+iter 1
+move
+text text ...
+move
+iter steps-1
+arrow
+stepfun ; output steps
+arrow
+iter steps ; output steps+1

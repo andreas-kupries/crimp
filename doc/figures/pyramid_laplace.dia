@@ -1,0 +1,54 @@
+# -*- tcl -*- tcl.tk//DSL diagram//EN//1.0
+
+set boxwidth [25 mm]
+set boxheight [1 cm]
+set movelength [5 mm]
+
+proc result {n} {
+    box fillcolor grey text "R($n)"
+}
+proc iter {n} {
+    box text "I($n)"
+}
+proc output {n} {
+    group { south ; arrow ; result $n }
+}
+proc stepfun {} {
+    block {
+	east ; set W [line] ; line ; line ; ellipse "\u21932" width [1 cm] ; line ; set E [line]
+
+	south ; line from [$E start] ; line ; line
+
+	west ; arrow
+	ellipse "\u21912" width [1 cm]
+	arrow
+	ellipse text "\u2296" width [1 cm] ;#color ""
+	group {
+	    north
+	    arrow <-
+	    line
+	    circle radius 2 with center fillcolor black
+	}
+	group { south ; set S [line] }
+
+	circle radius 2 at [$E start] with center fillcolor black
+
+	set west  [$W start]
+	set east  [$E end]
+	set south [$S end]
+    }
+}
+
+box "image" ; output 0
+arrow
+stepfun ; output 1
+arrow
+iter 1
+move
+text text ...
+move
+iter steps-1
+arrow
+stepfun ; output steps
+arrow
+iter steps ; output steps+1

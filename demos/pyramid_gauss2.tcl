@@ -1,9 +1,19 @@
 def op_pyramid_gauss2 {
     label {Gauss pyramid (normalized)}
     setup_image {
-
 	# Create an image pyramid, and then scale the result back up
 	# to match the original one before cycling.
+
+	variable images
+	set images {}
+	foreach \
+	    i [crimp pyramid gauss [base] 6] \
+	    s {1 2 4 8 16 32 64} {
+	    lappend images [norm $i $s]
+	}
+    }
+    setup {
+	variable token
 
 	proc norm {image fac} {
 	    if {$fac == 1} { return $image }
@@ -15,27 +25,13 @@ def op_pyramid_gauss2 {
 	    return $image
 	}
 
-	variable images
-	variable scales
-
-	set images [crimp pyramid gauss [base] 6]
-	set scales {1 2 4 8 16 32 64}
-
-	set r {}
-	foreach i $images s $scales {
-	    lappend r [norm $i $s]
-	}
-	set images $r
-
 	proc cycle {lv} {
 	    upvar 1 $lv list
 	    set tail [lassign $list head]
 	    set list [list {*}$tail $head]
 	    return $head
 	}
-    }
-    setup {
-	variable token
+
 	proc next {} {
 	    variable token
 	    set token [after 1000 DEMO::next]

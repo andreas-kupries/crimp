@@ -1,4 +1,4 @@
-rof_grey8
+rof_hsv
 Tcl_Obj* imageObj
 int radius
 int percentile
@@ -18,10 +18,14 @@ crimp_image*     result;
 crimp_image*     image;
 crimp_image*     kernel;
 int              xo, yo, xi, yi, n;
-int              rowhistogram [256];
-int*             colhistogram;
+int              rowhistogramh [256];
+int              rowhistograms [256];
+int              rowhistogramv [256];
+int*             colhistogramh;
+int*             colhistograms;
+int*             colhistogramv;
 
-crimp_input (imageObj, image, grey8);
+crimp_input (imageObj, image, hsv);
 
 if ((percentile < 1) || (percentile > 10000)) {
     Tcl_SetResult(interp, "bad percentile, expected integer in (0..10000)", TCL_STATIC);
@@ -48,8 +52,9 @@ result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
  * yi = yo + radius, yo in (0...w-2*radius)
  */
 
-colhistogram = NALLOC (image->w * 256, int);
-memset (colhistogram,'\0', image->w * 256 * sizeof(int));
+colhistogramh = NALLOC (image->w * 256, int); memset (colhistogramh,'\0', image->w * 256 * sizeof(int));
+colhistograms = NALLOC (image->w * 256, int); memset (colhistograms,'\0', image->w * 256 * sizeof(int));
+colhistogramv = NALLOC (image->w * 256, int); memset (colhistogramh,'\0', image->w * 256 * sizeof(int));
 
 n = (2*radius+1);
 n = n * n;
@@ -69,13 +74,19 @@ n = n * n;
 #else
 #define CHINDEX(xi,value)   ((value) * image->w + (xi))
 #endif
-#define COLHIST(xi,value) colhistogram [CHINDEX (xi, value)]
+#define COLHISTH(xi,value) colhistogramh [CHINDEX (xi, value)]
+#define COLHISTS(xi,value) colhistograms [CHINDEX (xi, value)]
+#define COLHISTV(xi,value) colhistogramh [CHINDEX (xi, value)]
 
 /*
  * Basic operations on column histograms. Add/remove pixel values.
  */
-#define UP(xi,value)   COLHIST (xi, value)++
-#define DOWN(xi,value) COLHIST (xi, value)--
+#define UPH(xi,value)   COLHISTH (xi, value)++
+#define DOWNH(xi,value) COLHISTH (xi, value)--
+#define UPS(xi,value)   COLHISTS (xi, value)++
+#define DOWNS(xi,value) COLHISTS (xi, value)--
+#define UPV(xi,value)   COLHISTV (xi, value)++
+#define DOWNV(xi,value) COLHISTV (xi, value)--
 
 /*
  * Basic operations on the row histogram. Add and subtract column histograms
@@ -84,8 +95,12 @@ n = n * n;
  * xi = column index, in the input image coordinate system.
  */
 
-#define ADD(xi) { int value ; for (value=0;value<256;value++) { rowhistogram[value] += COLHIST (xi,value);}}
-#define SUB(xi) { int value ; for (value=0;value<256;value++) { rowhistogram[value] -= COLHIST (xi,value);}}
+#define ADDH(xi) { int value ; for (value=0;value<256;value++) { rowhistogramh[value] += COLHISTH (xi,value);}}
+#define SUBH(xi) { int value ; for (value=0;value<256;value++) { rowhistogramh[value] -= COLHISTH (xi,value);}}
+#define ADDS(xi) { int value ; for (value=0;value<256;value++) { rowhistograms[value] += COLHISTS (xi,value);}}
+#define SUBS(xi) { int value ; for (value=0;value<256;value++) { rowhistograms[value] -= COLHISTS (xi,value);}}
+#define ADDV(xi) { int value ; for (value=0;value<256;value++) { rowhistogramv[value] += COLHISTV (xi,value);}}
+#define SUBV(xi) { int value ; for (value=0;value<256;value++) { rowhistogramv[value] -= COLHISTV (xi,value);}}
 
 /*
  * Higher level of column histogram change. Move a column histogram down by
@@ -95,9 +110,14 @@ n = n * n;
  * xi = column index, in the input image coordinate system.
  */
 
-#define SHIFT_DOWN(xi,yi) {				     \
-	DOWN ((xi), GREY8 (image, (xi), (yi) - radius - 1)); \
-	UP   ((xi), GREY8 (image, (xi), (yi) + radius)); }
+#undef  SHIFT_DOWN
+#define SHIFT_DOWN(xi,yi) {			          \
+	DOWNH ((xi), H (image, (xi), (yi) - radius - 1)); \
+	UPH   ((xi), H (image, (xi), (yi) + radius));     \
+	DOWNS ((xi), S (image, (xi), (yi) - radius - 1)); \
+	UPS   ((xi), S (image, (xi), (yi) + radius));     \
+	DOWNV ((xi), V (image, (xi), (yi) - radius - 1)); \
+	UPV   ((xi), V (image, (xi), (yi) + radius));     }
 
 /*
  * Higher level of row histogram change. Move the row histogram right by one
@@ -105,7 +125,11 @@ n = n * n;
  * data for column xi-1. This is in the input image coordinate system.
  */
 
-#define SHIFT_RIGHT(xi) { SUB ((xi) - radius - 1); ADD ((xi) + radius); }
+#undef  SHIFT_RIGHT
+#define SHIFT_RIGHT(xi) { \
+	SUBH ((xi) - radius - 1); ADDH ((xi) + radius); \
+	SUBS ((xi) - radius - 1); ADDS ((xi) + radius); \
+	SUBV ((xi) - radius - 1); ADDV ((xi) + radius); }
 
 /*
  * ==
@@ -121,7 +145,9 @@ n = n * n;
 
 for (yi = 0; yi < 2*radius+1; yi++) {
     for (xi = 0; xi < image->w; xi++) {
-	UP (xi, GREY8 (image, xi, yi));
+	UPH (xi, R (image, xi, yi));
+	UPS (xi, G (image, xi, yi));
+	UPV (xi, B (image, xi, yi));
     }
 }
 
@@ -130,8 +156,9 @@ for (yi = 0; yi < 2*radius+1; yi++) {
  * Add the first 2*radius+1 column histogram into the initial row histogram.
  */
 
-memset (rowhistogram,'\0', 256 * sizeof(int));
-for (xi = 0 ; xi < 2*radius+1; xi++) { ADD (xi); }
+memset (rowhistogramh,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDH (xi); }
+memset (rowhistograms,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDS (xi); }
+memset (rowhistogramv,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDV (xi); }
 
 /*
  * Now we can start filtering. The initial histogram is already properly set
@@ -140,10 +167,14 @@ for (xi = 0 ; xi < 2*radius+1; xi++) { ADD (xi); }
  * down.
  */
 
-GREY8 (result, 0, 0) = crimp_rank (rowhistogram, percentile, n);
+H (result, 0, 0) = crimp_rank (rowhistogramh, percentile, n);
+S (result, 0, 0) = crimp_rank (rowhistograms, percentile, n);
+V (result, 0, 0) = crimp_rank (rowhistogramv, percentile, n);
 for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
     SHIFT_RIGHT (xi);
-    GREY8 (result, xo, 0) = crimp_rank (rowhistogram, percentile, n);
+    H (result, xo, 0) = crimp_rank (rowhistogramh, percentile, n);
+    S (result, xo, 0) = crimp_rank (rowhistograms, percentile, n);
+    V (result, xo, 0) = crimp_rank (rowhistogramv, percentile, n);
 }
 
 /*
@@ -153,17 +184,25 @@ for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
 for (yo = 1, yi = radius+1; yo < result->h; yo++, yi++) {
 
     /* Re-initialize the row histogram for the line */
-    memset (rowhistogram,'\0', 256 * sizeof(int));
+    memset (rowhistogramh,'\0', 256 * sizeof(int));
+    memset (rowhistograms,'\0', 256 * sizeof(int));
+    memset (rowhistogramv,'\0', 256 * sizeof(int));
     for (xi = 0 ; xi < 2*radius+1; xi++) {
 	SHIFT_DOWN (xi,yi);
-	ADD (xi);
+	ADDH (xi);
+	ADDS (xi);
+	ADDV (xi);
     }
 
-    GREY8 (result, 0, yo) = crimp_rank (rowhistogram, percentile, n);
+    H (result, 0, yo) = crimp_rank (rowhistogramh, percentile, n);
+    S (result, 0, yo) = crimp_rank (rowhistograms, percentile, n);
+    V (result, 0, yo) = crimp_rank (rowhistogramv, percentile, n);
     for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
 	SHIFT_DOWN  (xi+radius,yi);
 	SHIFT_RIGHT (xi);
-	GREY8 (result, xo, yo) = crimp_rank (rowhistogram, percentile, n);
+	H (result, xo, yo) = crimp_rank (rowhistogramh, percentile, n);
+	S (result, xo, yo) = crimp_rank (rowhistograms, percentile, n);
+	V (result, xo, yo) = crimp_rank (rowhistogramv, percentile, n);
     }
  }
 

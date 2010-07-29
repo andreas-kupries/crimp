@@ -1,7 +1,6 @@
 def op_pyramid_laplace {
     label {Laplace pyramid}
     setup_image {
-
 	# Create a laplacian image pyramid, aka difference of
 	# gaussians.
 
@@ -13,6 +12,9 @@ def op_pyramid_laplace {
 	    lappend r [crimp setalpha $i [crimp blank grey8 {*}[crimp dimensions $i] 255]]
 	}
 	set images $r
+    }
+    setup {
+	variable token
 
 	proc cycle {lv} {
 	    upvar 1 $lv list
@@ -20,9 +22,7 @@ def op_pyramid_laplace {
 	    set list [list {*}$tail $head]
 	    return $head
 	}
-    }
-    setup {
-	variable token
+
 	proc next {} {
 	    variable token
 	    set token [after 1000 DEMO::next]

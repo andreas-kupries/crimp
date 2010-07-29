@@ -1,16 +1,19 @@
 def op_rof_median {
     label {Median Filter}
     setup_image {
-
-	# Create series of median-filtered images from the base, with
-	# different kernel radii.
+	# Create a series of median-filtered images from the base,
+	# with different kernel radii.
 
 	variable images
 	set images {}
+
 	lappend images [base]
 	lappend images [crimp rankfilter [base]]
 	lappend images [crimp rankfilter [base] 10]
 	lappend images [crimp rankfilter [base] 20]
+    }
+    setup {
+	variable token
 
 	proc cycle {lv} {
 	    upvar 1 $lv list
@@ -18,9 +21,7 @@ def op_rof_median {
 	    set list [list {*}$tail $head]
 	    return $head
 	}
-    }
-    setup {
-	variable token
+
 	proc next {} {
 	    variable token
 	    set token [after 1000 DEMO::next]

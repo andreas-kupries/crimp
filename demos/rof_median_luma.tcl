@@ -1,9 +1,8 @@
 def op_rof_median_luma {
     label {Median Filter (Luma)}
     setup_image {
-
-	# Create series of median-filtered images on the luma of the
-	# base, with different kernel radii.
+	# Create a series of median-filtered images from the luma of
+	# the base, with different kernel radii.
 
 	variable images
 	set images {}
@@ -13,6 +12,9 @@ def op_rof_median_luma {
 	lappend images [crimp rankfilter $luma]
 	lappend images [crimp rankfilter $luma 10]
 	lappend images [crimp rankfilter $luma 20]
+    }
+    setup {
+	variable token
 
 	proc cycle {lv} {
 	    upvar 1 $lv list
@@ -20,9 +22,7 @@ def op_rof_median_luma {
 	    set list [list {*}$tail $head]
 	    return $head
 	}
-    }
-    setup {
-	variable token
+
 	proc next {} {
 	    variable token
 	    set token [after 1000 DEMO::next]

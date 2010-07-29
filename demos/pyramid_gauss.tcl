@@ -1,11 +1,13 @@
 def op_pyramid_gauss {
     label {Gauss pyramid}
     setup_image {
-
 	# Create a gaussian image pyramid.
 
 	variable images
 	set images [crimp pyramid gauss [base] 4]
+    }
+    setup {
+	variable token
 
 	proc cycle {lv} {
 	    upvar 1 $lv list
@@ -13,9 +15,7 @@ def op_pyramid_gauss {
 	    set list [list {*}$tail $head]
 	    return $head
 	}
-    }
-    setup {
-	variable token
+
 	proc next {} {
 	    variable token
 	    set token [after 1000 DEMO::next]

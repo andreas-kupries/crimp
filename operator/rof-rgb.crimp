@@ -1,4 +1,4 @@
-rof_rgba
+rof_rgb
 Tcl_Obj* imageObj
 int radius
 int percentile
@@ -21,13 +21,11 @@ int              xo, yo, xi, yi, n;
 int              rowhistogramr [256];
 int              rowhistogramg [256];
 int              rowhistogramb [256];
-int              rowhistograma [256];
 int*             colhistogramr;
 int*             colhistogramg;
 int*             colhistogramb;
-int*             colhistograma;
 
-crimp_input (imageObj, image, rgba);
+crimp_input (imageObj, image, rgb);
 
 if ((percentile < 1) || (percentile > 10000)) {
     Tcl_SetResult(interp, "bad percentile, expected integer in (0..10000)", TCL_STATIC);
@@ -57,7 +55,6 @@ result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
 colhistogramr = NALLOC (image->w * 256, int); memset (colhistogramr,'\0', image->w * 256 * sizeof(int));
 colhistogramg = NALLOC (image->w * 256, int); memset (colhistogramg,'\0', image->w * 256 * sizeof(int));
 colhistogramb = NALLOC (image->w * 256, int); memset (colhistogramb,'\0', image->w * 256 * sizeof(int));
-colhistograma = NALLOC (image->w * 256, int); memset (colhistograma,'\0', image->w * 256 * sizeof(int));
 
 n = (2*radius+1);
 n = n * n;
@@ -80,7 +77,6 @@ n = n * n;
 #define COLHISTR(xi,value) colhistogramr [CHINDEX (xi, value)]
 #define COLHISTG(xi,value) colhistogramg [CHINDEX (xi, value)]
 #define COLHISTB(xi,value) colhistogramb [CHINDEX (xi, value)]
-#define COLHISTA(xi,value) colhistograma [CHINDEX (xi, value)]
 
 /*
  * Basic operations on column histograms. Add/remove pixel values.
@@ -91,8 +87,6 @@ n = n * n;
 #define DOWNG(xi,value) COLHISTG (xi, value)--
 #define UPB(xi,value)   COLHISTB (xi, value)++
 #define DOWNB(xi,value) COLHISTB (xi, value)--
-#define UPA(xi,value)   COLHISTA (xi, value)++
-#define DOWNA(xi,value) COLHISTA (xi, value)--
 
 /*
  * Basic operations on the row histogram. Add and subtract column histograms
@@ -107,8 +101,6 @@ n = n * n;
 #define SUBG(xi) { int value ; for (value=0;value<256;value++) { rowhistogramg[value] -= COLHISTG (xi,value);}}
 #define ADDB(xi) { int value ; for (value=0;value<256;value++) { rowhistogramb[value] += COLHISTB (xi,value);}}
 #define SUBB(xi) { int value ; for (value=0;value<256;value++) { rowhistogramb[value] -= COLHISTB (xi,value);}}
-#define ADDA(xi) { int value ; for (value=0;value<256;value++) { rowhistograma[value] += COLHISTA (xi,value);}}
-#define SUBA(xi) { int value ; for (value=0;value<256;value++) { rowhistograma[value] -= COLHISTA (xi,value);}}
 
 /*
  * Higher level of column histogram change. Move a column histogram down by
@@ -125,9 +117,7 @@ n = n * n;
 	DOWNG ((xi), G (image, (xi), (yi) - radius - 1)); \
 	UPG   ((xi), G (image, (xi), (yi) + radius));     \
 	DOWNB ((xi), B (image, (xi), (yi) - radius - 1)); \
-	UPB   ((xi), B (image, (xi), (yi) + radius));     \
-	DOWNA ((xi), A (image, (xi), (yi) - radius - 1)); \
-	UPA   ((xi), A (image, (xi), (yi) + radius));     }
+	UPB   ((xi), B (image, (xi), (yi) + radius));     }
 
 /*
  * Higher level of row histogram change. Move the row histogram right by one
@@ -139,8 +129,7 @@ n = n * n;
 #define SHIFT_RIGHT(xi) { \
 	SUBR ((xi) - radius - 1); ADDR ((xi) + radius); \
 	SUBG ((xi) - radius - 1); ADDG ((xi) + radius); \
-	SUBB ((xi) - radius - 1); ADDB ((xi) + radius); \
-	SUBA ((xi) - radius - 1); ADDA ((xi) + radius); }
+	SUBB ((xi) - radius - 1); ADDB ((xi) + radius); }
 
 /*
  * ==
@@ -159,7 +148,6 @@ for (yi = 0; yi < 2*radius+1; yi++) {
 	UPR (xi, R (image, xi, yi));
 	UPG (xi, G (image, xi, yi));
 	UPB (xi, B (image, xi, yi));
-	UPA (xi, A (image, xi, yi));
     }
 }
 
@@ -171,7 +159,6 @@ for (yi = 0; yi < 2*radius+1; yi++) {
 memset (rowhistogramr,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDR (xi); }
 memset (rowhistogramg,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDG (xi); }
 memset (rowhistogramb,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDB (xi); }
-memset (rowhistograma,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDA (xi); }
 
 /*
  * Now we can start filtering. The initial histogram is already properly set
@@ -183,13 +170,11 @@ memset (rowhistograma,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; x
 R (result, 0, 0) = crimp_rank (rowhistogramr, percentile, n);
 G (result, 0, 0) = crimp_rank (rowhistogramg, percentile, n);
 B (result, 0, 0) = crimp_rank (rowhistogramb, percentile, n);
-A (result, 0, 0) = crimp_rank (rowhistograma, percentile, n);
 for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
     SHIFT_RIGHT (xi);
     R (result, xo, 0) = crimp_rank (rowhistogramr, percentile, n);
     G (result, xo, 0) = crimp_rank (rowhistogramg, percentile, n);
     B (result, xo, 0) = crimp_rank (rowhistogramb, percentile, n);
-    A (result, xo, 0) = crimp_rank (rowhistograma, percentile, n);
 }
 
 /*
@@ -202,26 +187,22 @@ for (yo = 1, yi = radius+1; yo < result->h; yo++, yi++) {
     memset (rowhistogramr,'\0', 256 * sizeof(int));
     memset (rowhistogramg,'\0', 256 * sizeof(int));
     memset (rowhistogramb,'\0', 256 * sizeof(int));
-    memset (rowhistograma,'\0', 256 * sizeof(int));
     for (xi = 0 ; xi < 2*radius+1; xi++) {
 	SHIFT_DOWN (xi,yi);
 	ADDR (xi);
 	ADDG (xi);
 	ADDB (xi);
-	ADDA (xi);
     }
 
     R (result, 0, yo) = crimp_rank (rowhistogramr, percentile, n);
     G (result, 0, yo) = crimp_rank (rowhistogramg, percentile, n);
     B (result, 0, yo) = crimp_rank (rowhistogramb, percentile, n);
-    A (result, 0, yo) = crimp_rank (rowhistograma, percentile, n);
     for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
 	SHIFT_DOWN  (xi+radius,yi);
 	SHIFT_RIGHT (xi);
 	R (result, xo, yo) = crimp_rank (rowhistogramr, percentile, n);
 	G (result, xo, yo) = crimp_rank (rowhistogramg, percentile, n);
 	B (result, xo, yo) = crimp_rank (rowhistogramb, percentile, n);
-	A (result, xo, yo) = crimp_rank (rowhistograma, percentile, n);
     }
  }
 

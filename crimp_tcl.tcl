@@ -553,7 +553,7 @@ proc ::crimp::convolve {image args} {
 		incr at
 	    }
 	    default {
-		return -code error "Unknown  option \"$opt\", expected -border"
+		return -code error "Unknown option \"$opt\", expected -border"
 	    }
 	}
     }
@@ -565,7 +565,7 @@ proc ::crimp::convolve {image args} {
     # kernel = list (kw kh kernelimage scale)
     # Kernel x in [-kw ... kw], 2*kw+1 values
     # Kernel y in [-kh ... kh], 2*kh+1 values
-    # Shrinkage by 2*kw, 2*kh. Compensate using
+    # Shrinkage by 2*kw, 2*kh. Compensate using the chosen border type.
 
     foreach kernel $args {
 	lassign $kernel kw kh K scale
@@ -573,6 +573,58 @@ proc ::crimp::convolve {image args} {
     }
 
     return $image
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::rankfilter {image args} {
+    # args = ?-border spec? ?radius ?percentile??
+
+    set type [TypeOf $image]
+    set fc rof_${type}
+    if {![Has $fc]} {
+	return -code error "Rank filtering is not supported for image type \"$type\""
+    }
+
+    # Default settings for border expansion.
+    lassign [BORDER $type const] fe values
+
+    set at 0
+    while {1} {
+	set opt [lindex $args $at]
+	if {![string match -* $opt]} break
+	incr at
+	switch -- $opt {
+	    -border {
+		set value [lindex $at $args]
+		lassign [BORDER $type $value] fe values
+		incr at
+	    }
+	    default {
+		return -code error "Unknown option \"$opt\", expected -border"
+	    }
+	}
+    }
+    set args [lrange $args $at end]
+    switch -- [llength $args] {
+	0 { set radius 3                ; set percentile 50 }
+	1 { set radius [lindex $args 0] ; set percentile 50 }
+	2 { lassign $args radius percentile }
+	default {
+	return -code error "wrong#args: expected image ?-border spec? ?radius ?percentile??"
+	}
+    }
+
+    # percentile is float. convert to integer, and constrain range.
+
+    set percentile [expr {round(100*$percentile)}]
+    if {$percentile < 0     } { set percentile     0 }
+    if {$percentile > 10000 } { set percentile 10000 }
+
+    # Shrinkage by 2*radius. Compensate using the chosen border type.
+
+    return [$fc [$fe $image $radius $radius $radius $radius {*}$values] \
+		$radius $percentile]
 }
 
 # # ## ### ##### ######## #############
@@ -824,7 +876,7 @@ namespace eval ::crimp {
     namespace export subtract difference multiply convolve
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge
-    namespace export pyramid
+    namespace export pyramid rankfilter
     #
     namespace ensemble create
 }

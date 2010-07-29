@@ -35,6 +35,7 @@ critcl::ccode {
     #include <string.h>
     #include <image_type.h>
     #include <image.h>
+    #include <rank.h>
     #include <color.h>
     #include <util.h>
 }

@@ -4,17 +4,17 @@ def op_pyramid_gauss2 {
 	# Create an image pyramid, and then scale the result back up
 	# to match the original one before cycling.
 
-	variable images
-	set images {}
-	foreach \
-	    i [crimp pyramid gauss [base] 6] \
-	    s {1 2 4 8 16 32 64} {
-	    lappend images [norm $i $s]
-	}
+	show_slides [apply {{images} {
+	    set res {}
+	    foreach \
+		i $images \
+		s {1 2 4 8 16 32 64} {
+		    lappend res [norm $i $s]
+		}
+	    return $res
+	} ::DEMO} [crimp pyramid gauss [base] 6]]
     }
     setup {
-	variable token
-
 	proc norm {image fac} {
 	    if {$fac == 1} { return $image }
 	    set kernel [crimp kernel make {{1 4 6 4 1}} 8]
@@ -24,28 +24,5 @@ def op_pyramid_gauss2 {
 	    }
 	    return $image
 	}
-
-	proc cycle {lv} {
-	    upvar 1 $lv list
-	    set tail [lassign $list head]
-	    set list [list {*}$tail $head]
-	    return $head
-	}
-
-	proc next {} {
-	    variable token
-	    set token [after 1000 DEMO::next]
-
-	    variable images
-	    if {![info exists images] || ![llength $images]} return
-
-	    show_image [cycle images]
-	    return
-	}
-
-	next
-    }
-    shutdown {
-	after cancel $token
     }
 }

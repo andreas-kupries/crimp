@@ -17,6 +17,7 @@ if {[catch {
 }
 package require widget::scrolledwindow
 package require widget::toolbar
+package require widget::arrowbutton
 
 # Self dir
 set dir [file dirname [file normalize [info script]]]
@@ -142,6 +143,7 @@ proc demo_setup {name} {
 
 proc demo_setup_image {} {
     global dcurrent demo times
+    catch { spause }
     demo_run_hook [dict get $demo($dcurrent) setup_image]
     puts "Times: $times"
     return
@@ -172,6 +174,7 @@ proc demo_close {} {
     show_image [base]
 
     if {$dcurrent eq {}} return
+    slide_stop
     reframe
 
     namespace eval   ::DEMO [dict get $demo($dcurrent) shutdown]
@@ -213,6 +216,17 @@ proc reframe {} {
     ttk::frame .top
     ttk::frame .right
     ttk::frame .bottom
+
+    grid .left   -row 2 -column 2               -sticky swen
+    grid .right  -row 2 -column 4               -sticky swen
+    grid .top    -row 1 -column 2 -columnspan 3 -sticky swen
+    grid .bottom -row 3 -column 2 -columnspan 3 -sticky swen
+    return
+}
+
+proc reframe_part {p} {
+    destroy    $p
+    ttk::frame $p
 
     grid .left   -row 2 -column 2               -sticky swen
     grid .right  -row 2 -column 4               -sticky swen
@@ -314,6 +328,170 @@ proc show_demo {} {
 }
 
 # # ## ### ##### ######## #############
+## Slide show display and control
+
+proc slide_gui {} {
+    if {[winfo exists .top.pc]} return
+
+    ttk::spinbox        .top.delay -textvariable ::delay -increment 1 -from 10 -to 5000
+
+    widget::arrowbutton .top.forw  -orientation right   -command slide_forw
+    widget::arrowbutton .top.backw -orientation left    -command slide_backw
+
+    ttk::button         .top.pc    -image ::play::pause -command slide_pc
+    ttk::button         .top.prev  -image ::play::prev  -command slide_step_prev
+    ttk::button         .top.next  -image ::play::next  -command slide_step_next
+
+    grid .top.backw -row 0 -column 0 -sticky swen
+    grid .top.forw  -row 0 -column 1 -sticky swen
+
+    grid .top.prev  -row 0 -column 2 -sticky swen
+    grid .top.pc    -row 0 -column 3 -sticky swen
+    grid .top.next  -row 0 -column 4 -sticky swen
+    grid .top.delay -row 0 -column 5 -sticky swen
+    return
+}
+
+proc slide_forw {} {
+    global direction slides
+    if {$direction > 0} return
+    set direction 1
+    set slides [lreverse $slides]
+    return
+}
+
+proc slide_backw {} {
+    global direction slides
+    if {$direction < 0} return
+    set direction -1
+    set slides [lreverse $slides]
+    return
+}
+
+proc slide_pc {} {
+    global running
+    if {$running} {
+	spause
+    } else {
+	scontinue
+    }
+    return
+}
+
+proc slide_step_next {} {
+    global direction
+    spause
+    if {$direction < 0 } { slide_forw ; snext }
+    snext
+    return
+}
+
+proc slide_step_prev {} {
+    global direction
+    spause
+    if {$direction > 0 } { slide_backw ; snext }
+    snext
+    return
+}
+
+proc spause {} {
+    .top.pc configure -image ::play::continue
+    update idletasks
+    slide_cycle_off
+    return
+}
+
+proc scontinue {} {
+    .top.pc configure -image ::play::pause
+    update idletasks
+    slide_cycle
+    return
+}
+
+proc snext {} {
+    global slides 
+    if {![info exists slides] || ![llength $slides]} return
+    display [cycle slides]
+    return
+}
+
+namespace eval ::play {}
+image create bitmap ::play::continue -data {
+    #define continue_width 11
+    #define continue_height 11
+    static char continue_bits = {
+	0x00, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x3c, 0x00, 0xfc, 0x00, 0xfc,
+	0x03, 0xfc, 0x00, 0x3c, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00
+    }
+}
+
+image create bitmap ::play::pause -data {
+    #define pause_width 11
+    #define pause_height 11
+    static char pause_bits = {
+	0x00, 0x00, 0x00, 0x00, 0x9c, 0x03, 0x9c, 0x03, 0x9c, 0x03, 0x9c,
+	0x03, 0x9c, 0x03, 0x9c, 0x03, 0x9c, 0x03, 0x00, 0x00, 0x00, 0x00
+    }
+}
+
+image create bitmap ::play::prev -data {
+    #define prev_width 11
+    #define prev_height 11
+    static char prev_bits = {
+	0x00, 0x00, 0x00, 0x00, 0x10, 0x01, 0x98, 0x01, 0xcc, 0x00, 0x66,
+	0x00, 0xcc, 0x00, 0x98, 0x01, 0x10, 0x01, 0x00, 0x00, 0x00, 0x00
+}
+}
+
+image create bitmap ::play::next -data {
+    #define next_width 11
+    #define next_height 11
+    static char next_bits = {
+	0x00, 0x00, 0x00, 0x00, 0x44, 0x00, 0xcc, 0x00, 0x98, 0x01, 0x30,
+	0x03, 0x98, 0x01, 0xcc, 0x00, 0x44, 0x00, 0x00, 0x00, 0x00, 0x00
+    }
+}
+
+proc slide_stop {} {
+    slide_cycle_off
+    reframe_part .top
+    return
+}
+
+global delay direction running
+set    delay 1000
+set    direction 1
+set    running 0
+
+proc slide_cycle {} {
+    global token delay running
+    set running 1
+
+    if {![string is integer $delay]|| ($delay < 1)} {
+	set delay 100
+    }
+
+    set token [after $delay ::slide_cycle]
+
+    snext
+    return
+}
+
+proc slide_cycle_off {} {
+    global token running
+    set running 0
+    catch { after cancel $token }
+    return
+}
+
+proc cycle {lv} {
+    upvar 1 $lv list
+    set tail [lassign $list head]
+    set list [list {*}$tail $head]
+    return $head
+}
+
+# # ## ### ##### ######## #############
 ## DEMO API
 ##
 ## base       = Returns the currently selected and loaded input image.
@@ -322,7 +500,26 @@ proc show_demo {} {
 ##              image display.  Multiple widgets can be had via a
 ##              frame.
 
+proc show_slides {images} {
+    global slides direction
+    if {$direction < 0} {
+	set slides [lreverse $images]
+    } else {
+	set slides $images
+    }
+
+    slide_gui
+    scontinue
+    return
+}
+
 proc show_image {image} {
+    slide_stop
+    display $image
+    return
+}
+
+proc display {image} {
     .c configure -scrollregion [list 0 0 {*}[crimp dimensions $image]]
     crimp write 2tk [.c itemcget photo -image] $image
     return

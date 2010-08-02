@@ -215,13 +215,15 @@ proc def {name dict} {
 # # ## ### ##### ######## #############
 
 proc reframe {} {
-    destroy .left .right .top .bottom
+    destroy .left .right .top .bottom .slide
 
+    ttk::frame .slide
     ttk::frame .left
     ttk::frame .top
     ttk::frame .right
     ttk::frame .bottom
 
+    grid .slide  -row 0 -column 2 -columnspan 3 -sticky swen
     grid .left   -row 2 -column 2               -sticky swen
     grid .right  -row 2 -column 4               -sticky swen
     grid .top    -row 1 -column 2 -columnspan 3 -sticky swen
@@ -229,14 +231,11 @@ proc reframe {} {
     return
 }
 
-proc reframe_part {p} {
-    destroy    $p
-    ttk::frame $p
+proc reframe_slide {} {
+    destroy    .slide
+    ttk::frame .slide
 
-    grid .left   -row 2 -column 2               -sticky swen
-    grid .right  -row 2 -column 4               -sticky swen
-    grid .top    -row 1 -column 2 -columnspan 3 -sticky swen
-    grid .bottom -row 3 -column 2 -columnspan 3 -sticky swen
+    grid .slide -row 0 -column 2 -columnspan 3 -sticky swen
     return
 }
 
@@ -336,24 +335,24 @@ proc show_demo {} {
 ## Slide show display and control
 
 proc slide_gui {} {
-    if {[winfo exists .top.pc]} return
+    if {[winfo exists .slide.pc]} return
 
-    ttk::spinbox        .top.delay -textvariable ::delay -increment 1 -from 10 -to 5000
+    ttk::spinbox        .slide.delay -textvariable ::delay -increment 1 -from 10 -to 5000
 
-    widget::arrowbutton .top.forw  -orientation right   -command slide_forw
-    widget::arrowbutton .top.backw -orientation left    -command slide_backw
+    widget::arrowbutton .slide.forw  -orientation right   -command slide_forw
+    widget::arrowbutton .slide.backw -orientation left    -command slide_backw
 
-    ttk::button         .top.pc    -image ::play::pause -command slide_pc
-    ttk::button         .top.prev  -image ::play::prev  -command slide_step_prev
-    ttk::button         .top.next  -image ::play::next  -command slide_step_next
+    ttk::button         .slide.pc    -image ::play::pause -command slide_pc
+    ttk::button         .slide.prev  -image ::play::prev  -command slide_step_prev
+    ttk::button         .slide.next  -image ::play::next  -command slide_step_next
 
-    grid .top.backw -row 0 -column 0 -sticky swen
-    grid .top.forw  -row 0 -column 1 -sticky swen
+    grid .slide.backw -row 0 -column 0 -sticky swen
+    grid .slide.forw  -row 0 -column 1 -sticky swen
 
-    grid .top.prev  -row 0 -column 2 -sticky swen
-    grid .top.pc    -row 0 -column 3 -sticky swen
-    grid .top.next  -row 0 -column 4 -sticky swen
-    grid .top.delay -row 0 -column 5 -sticky swen
+    grid .slide.prev  -row 0 -column 2 -sticky swen
+    grid .slide.pc    -row 0 -column 3 -sticky swen
+    grid .slide.next  -row 0 -column 4 -sticky swen
+    grid .slide.delay -row 0 -column 5 -sticky swen
     return
 }
 
@@ -400,14 +399,14 @@ proc slide_step_prev {} {
 }
 
 proc spause {} {
-    .top.pc configure -image ::play::continue
+    .slide.pc configure -image ::play::continue
     update idletasks
     slide_cycle_off
     return
 }
 
 proc scontinue {} {
-    .top.pc configure -image ::play::pause
+    .slide.pc configure -image ::play::pause
     update idletasks
     slide_cycle
     return
@@ -459,7 +458,7 @@ image create bitmap ::play::next -data {
 
 proc slide_stop {} {
     slide_cycle_off
-    reframe_part .top
+    reframe_slide
     return
 }
 

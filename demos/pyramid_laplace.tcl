@@ -7,7 +7,7 @@ def op_pyramid_laplace {
 	show_slides [apply {{images} {
 	    set res {}
 	    foreach i $images {
-		lappend res [crimp setalpha $i [crimp blank grey8 {*}[crimp dimensions $i] 255]]
+		lappend res [crimp alpha opaque $i]
 	    }
 	    return $res
 	}} [crimp pyramid laplace [base] 3]]

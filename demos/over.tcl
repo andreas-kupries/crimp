@@ -13,8 +13,8 @@ def op_alpha_over {
 	# against the canvas background color.
 
 	show_image [crimp convert 2rgb \
-			[crimp over \
-			     [crimp setalpha \
+			[crimp alpha over \
+			     [crimp alpha set \
 				  [base] \
 				  [crimp convert 2grey8 [base]]] \
 			     [base 1]]]

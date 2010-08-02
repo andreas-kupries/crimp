@@ -67,7 +67,7 @@ def effect_histogram {
 	    set s [crimp read tcl [list $fs]]
 	    set v [crimp read tcl [list $fv]]
 
-	    set new [crimp setalpha \
+	    set new [crimp alpha set \
 			 [crimp convert 2rgb \
 			      [crimp remap \
 				   [crimp convert 2hsv [base]] \

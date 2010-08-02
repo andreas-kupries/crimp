@@ -7,8 +7,6 @@ def op_difference {
 	  }
     }
     setup_image {
-	show_image [crimp setalpha \
-			[crimp difference [base 0] [base 1]] \
-			[crimp blank grey8 {*}[crimp dimensions [base]] 255]]
+	show_image [crimp alpha opaque [crimp difference [base 0] [base 1]]]
     }
 }

@@ -32,7 +32,7 @@ def op_alpha_blend_hsv {
 		    return
 		}
 
-		set theblend [crimp convert 2rgb [crimp blend $fore $back $thealpha]]
+		set theblend [crimp convert 2rgb [crimp alpha blend $fore $back $thealpha]]
 		set cache($thealpha) $theblend
 		show_image $theblend
 		return

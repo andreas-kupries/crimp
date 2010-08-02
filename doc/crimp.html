@@ -138,27 +138,27 @@
 <li><a href="#4"><b class="cmd">::crimp</b> <b class="method">histogram</b> <i class="arg">image</i></a></li>
 <li><a href="#5"><b class="cmd">::crimp</b> <b class="method">type</b> <i class="arg">image</i></a></li>
 <li><a href="#6"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></li>
-<li><a href="#7"><b class="cmd">::crimp</b> <b class="method">blank</b> <i class="arg">type</i> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">value</i>...</a></li>
-<li><a href="#8"><b class="cmd">::crimp</b> <b class="method">blend</b> <i class="arg">foreground</i> <i class="arg">background</i> <i class="arg">alpha</i></a></li>
-<li><a href="#9"><b class="cmd">::crimp</b> <b class="method">convolve</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <i class="arg">kernel</i>...</a></li>
-<li><a href="#10"><b class="cmd">::crimp</b> <b class="method">degamma</b> <i class="arg">image</i> <i class="arg">y</i></a></li>
-<li><a href="#11"><b class="cmd">::crimp</b> <b class="method">expand const</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></li>
-<li><a href="#12"><b class="cmd">::crimp</b> <b class="method">expand extend</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
-<li><a href="#13"><b class="cmd">::crimp</b> <b class="method">expand mirror</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
-<li><a href="#14"><b class="cmd">::crimp</b> <b class="method">expand replicate</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
-<li><a href="#15"><b class="cmd">::crimp</b> <b class="method">expand wrap</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
-<li><a href="#16"><b class="cmd">::crimp</b> <b class="method">gamma</b> <i class="arg">image</i> <i class="arg">y</i></a></li>
-<li><a href="#17"><b class="cmd">::crimp</b> <b class="method">invert</b> <i class="arg">image</i></a></li>
-<li><a href="#18"><b class="cmd">::crimp</b> <b class="method">matrix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></li>
-<li><a href="#19"><b class="cmd">::crimp</b> <b class="method">rankfilter</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <span class="opt">?<i class="arg">radius</i> <span class="opt">?<i class="arg">percentile</i>?</span>?</span></a></li>
-<li><a href="#20"><b class="cmd">::crimp</b> <b class="method">over</b> <i class="arg">foreground</i> <i class="arg">background</i></a></li>
-<li><a href="#21"><b class="cmd">::crimp</b> <b class="method">psychedelia</b> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">frames</i></a></li>
-<li><a href="#22"><b class="cmd">::crimp</b> <b class="method">pyramid run</b> <i class="arg">image</i> <i class="arg">steps</i> <i class="arg">stepcmd</i></a></li>
-<li><a href="#23"><b class="cmd">&lt;stepcmd&gt;</b> <i class="arg">image</i></a></li>
-<li><a href="#24"><b class="cmd">::crimp</b> <b class="method">pyramid gauss</b> <i class="arg">image</i> <i class="arg">steps</i></a></li>
-<li><a href="#25"><b class="cmd">::crimp</b> <b class="method">pyramid laplace</b> <i class="arg">image</i> <i class="arg">steps</i></a></li>
-<li><a href="#26"><b class="cmd">::crimp</b> <b class="method">remap</b> <i class="arg">image</i> <i class="arg">map</i>...</a></li>
-<li><a href="#27"><b class="cmd">::crimp</b> <b class="method">setalpha</b> <i class="arg">image</i> <i class="arg">mask</i></a></li>
+<li><a href="#7"><b class="cmd">::crimp</b> <b class="method">alpha blend</b> <i class="arg">foreground</i> <i class="arg">background</i> <i class="arg">alpha</i></a></li>
+<li><a href="#8"><b class="cmd">::crimp</b> <b class="method">alpha set</b> <i class="arg">image</i> <i class="arg">mask</i></a></li>
+<li><a href="#9"><b class="cmd">::crimp</b> <b class="method">alpha over</b> <i class="arg">foreground</i> <i class="arg">background</i></a></li>
+<li><a href="#10"><b class="cmd">::crimp</b> <b class="method">blank</b> <i class="arg">type</i> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">value</i>...</a></li>
+<li><a href="#11"><b class="cmd">::crimp</b> <b class="method">convolve</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <i class="arg">kernel</i>...</a></li>
+<li><a href="#12"><b class="cmd">::crimp</b> <b class="method">degamma</b> <i class="arg">image</i> <i class="arg">y</i></a></li>
+<li><a href="#13"><b class="cmd">::crimp</b> <b class="method">expand const</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></li>
+<li><a href="#14"><b class="cmd">::crimp</b> <b class="method">expand extend</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
+<li><a href="#15"><b class="cmd">::crimp</b> <b class="method">expand mirror</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
+<li><a href="#16"><b class="cmd">::crimp</b> <b class="method">expand replicate</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
+<li><a href="#17"><b class="cmd">::crimp</b> <b class="method">expand wrap</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></li>
+<li><a href="#18"><b class="cmd">::crimp</b> <b class="method">gamma</b> <i class="arg">image</i> <i class="arg">y</i></a></li>
+<li><a href="#19"><b class="cmd">::crimp</b> <b class="method">invert</b> <i class="arg">image</i></a></li>
+<li><a href="#20"><b class="cmd">::crimp</b> <b class="method">matrix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></li>
+<li><a href="#21"><b class="cmd">::crimp</b> <b class="method">rankfilter</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <span class="opt">?<i class="arg">radius</i> <span class="opt">?<i class="arg">percentile</i>?</span>?</span></a></li>
+<li><a href="#22"><b class="cmd">::crimp</b> <b class="method">psychedelia</b> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">frames</i></a></li>
+<li><a href="#23"><b class="cmd">::crimp</b> <b class="method">pyramid run</b> <i class="arg">image</i> <i class="arg">steps</i> <i class="arg">stepcmd</i></a></li>
+<li><a href="#24"><b class="cmd">&lt;stepcmd&gt;</b> <i class="arg">image</i></a></li>
+<li><a href="#25"><b class="cmd">::crimp</b> <b class="method">pyramid gauss</b> <i class="arg">image</i> <i class="arg">steps</i></a></li>
+<li><a href="#26"><b class="cmd">::crimp</b> <b class="method">pyramid laplace</b> <i class="arg">image</i> <i class="arg">steps</i></a></li>
+<li><a href="#27"><b class="cmd">::crimp</b> <b class="method">remap</b> <i class="arg">image</i> <i class="arg">map</i>...</a></li>
 <li><a href="#28"><b class="cmd">::crimp</b> <b class="method">solarize</b> <i class="arg">image</i> <i class="arg">threshold</i></a></li>
 <li><a href="#29"><b class="cmd">::crimp</b> <b class="method">threshold-ge</b> <i class="arg">image</i> <i class="arg">threshold</i></a></li>
 <li><a href="#30"><b class="cmd">::crimp</b> <b class="method">threshold-le</b> <i class="arg">image</i> <i class="arg">threshold</i></a></li>
@@ -402,13 +402,7 @@ object).</p></dd>
 </div>
 <div id="subsection2" class="subsection"><h3><a name="subsection2">Manipulators</a></h3>
 <dl class="definitions">
-<dt><a name="7"><b class="cmd">::crimp</b> <b class="method">blank</b> <i class="arg">type</i> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">value</i>...</a></dt>
-<dd><p>This method returns a blank image of the given image type and
-dimensions.  The <i class="arg">value</i>s after the dimensions are the pixel
-values to fill the pixels in the image's channels with, per its type.</p>
-<p>This method currently support only the types <b class="const">rgb</b>,
-<b class="const">rgba</b>, and <b class="const">grey8</b>.</p></dd>
-<dt><a name="8"><b class="cmd">::crimp</b> <b class="method">blend</b> <i class="arg">foreground</i> <i class="arg">background</i> <i class="arg">alpha</i></a></dt>
+<dt><a name="7"><b class="cmd">::crimp</b> <b class="method">alpha blend</b> <i class="arg">foreground</i> <i class="arg">background</i> <i class="arg">alpha</i></a></dt>
 <dd><p>This method takes two images of identical dimensions and a blending
 factor <i class="arg">alpha</i> and returns an image which is a mix of both, with
 each pixel blended per the formula</p>
@@ -437,9 +431,37 @@ supported:</p>
     ------   ---------- ----------
 </pre>
 </dd>
-<dt><a name="9"><b class="cmd">::crimp</b> <b class="method">convolve</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <i class="arg">kernel</i>...</a></dt>
+<dt><a name="8"><b class="cmd">::crimp</b> <b class="method">alpha set</b> <i class="arg">image</i> <i class="arg">mask</i></a></dt>
+<dd><p>This command takes two images, the input and a <i class="arg">mask</i>, and returns
+an image as result in which the mask is the alpha channel of the
+input.
+The result is therefore always of type <b class="const">rgba</b>, as the only type
+supporting an alpha channel.</p>
+<p>The input image can be of type <b class="const">rgb</b> or <b class="const">rgba</b>.  In
+case of the latter the existing alpha channel is replaced, in case of
+the former an alpha channel is added.</p>
+<p>For the mask images of type <b class="const">grey8</b> and <b class="const">rgba</b> are
+accepted.  In the case of the latter the mask's alpha channel is used
+as the new alpha channel, in case of the former the mask itself is
+used.</p></dd>
+<dt><a name="9"><b class="cmd">::crimp</b> <b class="method">alpha over</b> <i class="arg">foreground</i> <i class="arg">background</i></a></dt>
+<dd><p>This method is similar to <b class="method">blend</b> above, except that there is
+no global blending parameter. This information is taken from the
+&quot;alpha&quot; channel of the <i class="arg">foreground</i> image instead. The blending
+formula is the same, except that the alpha parameter is now a
+per-pixel value, and not constant across the image.</p>
+<p>Due to the need for an alpha channel the <i class="arg">foreground</i> has to be of
+type <b class="const">rgba</b>. For the <i class="arg">background</i> image the types
+<b class="const">rgb</b> and <b class="const">rgba</b> are supported.</p></dd>
+<dt><a name="10"><b class="cmd">::crimp</b> <b class="method">blank</b> <i class="arg">type</i> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">value</i>...</a></dt>
+<dd><p>This method returns a blank image of the given image type and
+dimensions.  The <i class="arg">value</i>s after the dimensions are the pixel
+values to fill the pixels in the image's channels with, per its type.</p>
+<p>This method currently support only the types <b class="const">rgb</b>,
+<b class="const">rgba</b>, and <b class="const">grey8</b>.</p></dd>
+<dt><a name="11"><b class="cmd">::crimp</b> <b class="method">convolve</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <i class="arg">kernel</i>...</a></dt>
 <dd></dd>
-<dt><a name="10"><b class="cmd">::crimp</b> <b class="method">degamma</b> <i class="arg">image</i> <i class="arg">y</i></a></dt>
+<dt><a name="12"><b class="cmd">::crimp</b> <b class="method">degamma</b> <i class="arg">image</i> <i class="arg">y</i></a></dt>
 <dd><p>This method takes an image, runs it through an
 <b class="function">inverse gamma correction</b> with parameter <i class="arg">y</i>, and returns
 the corrected image as it result.
@@ -447,15 +469,15 @@ This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map degamma</b> <i class="arg">y</i>&quot;.
 This method supports all image types supported by the method
 <b class="method">remap</b>.</p></dd>
-<dt><a name="11"><b class="cmd">::crimp</b> <b class="method">expand const</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></dt>
+<dt><a name="13"><b class="cmd">::crimp</b> <b class="method">expand const</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i> <span class="opt">?<i class="arg">value</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="12"><b class="cmd">::crimp</b> <b class="method">expand extend</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
+<dt><a name="14"><b class="cmd">::crimp</b> <b class="method">expand extend</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
 <dd></dd>
-<dt><a name="13"><b class="cmd">::crimp</b> <b class="method">expand mirror</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
+<dt><a name="15"><b class="cmd">::crimp</b> <b class="method">expand mirror</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
 <dd></dd>
-<dt><a name="14"><b class="cmd">::crimp</b> <b class="method">expand replicate</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
+<dt><a name="16"><b class="cmd">::crimp</b> <b class="method">expand replicate</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
 <dd></dd>
-<dt><a name="15"><b class="cmd">::crimp</b> <b class="method">expand wrap</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
+<dt><a name="17"><b class="cmd">::crimp</b> <b class="method">expand wrap</b> <i class="arg">image</i> <i class="arg">ww</i> <i class="arg">hn</i> <i class="arg">we</i> <i class="arg">hs</i></a></dt>
 <dd><p>This set of methods takes an image and expands it by adding a border.
 The size of this border is specified by the four arguments <i class="arg">ww</i>,
 <i class="arg">hn</i>, <i class="arg">we</i>, and <i class="arg">hs</i> which provide the number of pixels to
@@ -488,21 +510,21 @@ replicating them into the border.</p></dd>
 found by toroidial (cyclic) wrapping its coordinates along the
 relevant edges. This is also called tiling.</p></dd>
 </dl></dd>
-<dt><a name="16"><b class="cmd">::crimp</b> <b class="method">gamma</b> <i class="arg">image</i> <i class="arg">y</i></a></dt>
+<dt><a name="18"><b class="cmd">::crimp</b> <b class="method">gamma</b> <i class="arg">image</i> <i class="arg">y</i></a></dt>
 <dd><p>This method takes an image, runs it through a <b class="function">gamma correction</b>
 with parameter <i class="arg">y</i>, and returns the corrected image as it result.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map gamma</b> <i class="arg">y</i>&quot;.
 This method supports all image types supported by the method
 <b class="method">remap</b>.</p></dd>
-<dt><a name="17"><b class="cmd">::crimp</b> <b class="method">invert</b> <i class="arg">image</i></a></dt>
+<dt><a name="19"><b class="cmd">::crimp</b> <b class="method">invert</b> <i class="arg">image</i></a></dt>
 <dd><p>This method takes an image, runs it through the <b class="function">inverse</b>
 function, and returns the modified image as it result.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map inverse</b>&quot;.
 This method supports all image types supported by the method
 <b class="method">remap</b>.</p></dd>
-<dt><a name="18"><b class="cmd">::crimp</b> <b class="method">matrix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></dt>
+<dt><a name="20"><b class="cmd">::crimp</b> <b class="method">matrix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></dt>
 <dd><p>This method takes an image and a 3x3 matrix specified as nested Tcl
 list (row major order), applies the projective transform represented
 by the matrix to the image and returns the transformed image as its
@@ -515,7 +537,7 @@ input may be lost, and pixels in the output may be unset as their
 input would come from outside of the input.</p>
 <p>The operation supports only images of type <b class="const">rgba</b>, and returns
 images of the same type.</p></dd>
-<dt><a name="19"><b class="cmd">::crimp</b> <b class="method">rankfilter</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <span class="opt">?<i class="arg">radius</i> <span class="opt">?<i class="arg">percentile</i>?</span>?</span></a></dt>
+<dt><a name="21"><b class="cmd">::crimp</b> <b class="method">rankfilter</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <span class="opt">?<i class="arg">radius</i> <span class="opt">?<i class="arg">percentile</i>?</span>?</span></a></dt>
 <dd><p>This method runs a rank-filter over the input and returns the filtered
 result.
 The <i class="arg">radius</i> specifies the (square) region around each pixel which
@@ -527,16 +549,7 @@ is a square of dimensions &quot;2*<i class="arg">radius</i>+1&quot;, centered ar
 median-filters, for percentiles 0, 100, and 50, respectively.</p>
 <p>Note that percentiles outside of the range <b class="const">0</b>...<b class="const">100</b>
 make no sense and are clamped to this range.</p></dd>
-<dt><a name="20"><b class="cmd">::crimp</b> <b class="method">over</b> <i class="arg">foreground</i> <i class="arg">background</i></a></dt>
-<dd><p>This method is similar to <b class="method">blend</b> above, except that there is
-no global blending parameter. This information is taken from the
-&quot;alpha&quot; channel of the <i class="arg">foreground</i> image instead. The blending
-formula is the same, except that the alpha parameter is now a
-per-pixel value, and not constant across the image.</p>
-<p>Due to the need for an alpha channel the <i class="arg">foreground</i> has to be of
-type <b class="const">rgba</b>. For the <i class="arg">background</i> image the types
-<b class="const">rgb</b> and <b class="const">rgba</b> are supported.</p></dd>
-<dt><a name="21"><b class="cmd">::crimp</b> <b class="method">psychedelia</b> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">frames</i></a></dt>
+<dt><a name="22"><b class="cmd">::crimp</b> <b class="method">psychedelia</b> <i class="arg">width</i> <i class="arg">height</i> <i class="arg">frames</i></a></dt>
 <dd><p>This method creates an <b class="const">rgba</b> image of the specified dimensions
 according to an algorithm devised by Andrew M. Goth. The <i class="arg">frames</i>
 argument specifies how many images are in the series.</p>
@@ -544,13 +557,13 @@ argument specifies how many images are in the series.</p>
 ensuring that each call returns a slightly different image. Showing a
 series of such images as animation provides an effect similar to a
 lava lamp or hallucination.</p></dd>
-<dt><a name="22"><b class="cmd">::crimp</b> <b class="method">pyramid run</b> <i class="arg">image</i> <i class="arg">steps</i> <i class="arg">stepcmd</i></a></dt>
+<dt><a name="23"><b class="cmd">::crimp</b> <b class="method">pyramid run</b> <i class="arg">image</i> <i class="arg">steps</i> <i class="arg">stepcmd</i></a></dt>
 <dd><p>This method provides the core functionality for the generation of image
 pyramids. The command prefix <i class="arg">stepcmd</i> is run <i class="arg">steps</i> times,
 first on the <i class="arg">image</i>, then on the result of the previous step.</p>
 <p>The assumed signature of <i class="arg">stepcmd</i> is</p>
 <dl class="definitions">
-<dt><a name="23"><b class="cmd">&lt;stepcmd&gt;</b> <i class="arg">image</i></a></dt>
+<dt><a name="24"><b class="cmd">&lt;stepcmd&gt;</b> <i class="arg">image</i></a></dt>
 <dd><p>which is expected to return a list of two elements. The first element
 (<i class="term">result</i>) is added to the pyramid in building, whereas the second
 element (<i class="term">iter</i>) is used in the next step as the input of the step
@@ -561,7 +574,7 @@ command.</p></dd>
 function, followed by the <i class="term">iter</i> element returned by the last step,
 &quot;<i class="arg">steps</i>+2&quot; images in total.</p>
 <p><img alt="pyramid" src="./image/pyramid.png"></p></dd>
-<dt><a name="24"><b class="cmd">::crimp</b> <b class="method">pyramid gauss</b> <i class="arg">image</i> <i class="arg">steps</i></a></dt>
+<dt><a name="25"><b class="cmd">::crimp</b> <b class="method">pyramid gauss</b> <i class="arg">image</i> <i class="arg">steps</i></a></dt>
 <dd><p>This method generates a gaussian image pyramid <i class="arg">steps</i> levels deep and
 returns it as a list of images.</p>
 <p>The first image in the result is the input, followed by <i class="arg">steps</i>
@@ -571,7 +584,7 @@ compared to its predecessor, for a total length of &quot;<i class="arg">steps</i
 <pre class="example"> 1/16 [1 4 6 4 1] </pre>
 <p>as its kernel.</p>
 <p><img alt="pyramid_gauss" src="./image/pyramid_gauss.png"></p></dd>
-<dt><a name="25"><b class="cmd">::crimp</b> <b class="method">pyramid laplace</b> <i class="arg">image</i> <i class="arg">steps</i></a></dt>
+<dt><a name="26"><b class="cmd">::crimp</b> <b class="method">pyramid laplace</b> <i class="arg">image</i> <i class="arg">steps</i></a></dt>
 <dd><p>This method generates a laplacian image pyramid <i class="arg">steps</i> levels deep and
 returns it as a list of images.</p>
 <p>The first image in the result is the input, followed by <i class="arg">steps</i>
@@ -586,7 +599,7 @@ contains &quot;<i class="arg">steps</i>+2&quot; images.</p>
 images (resynthesis) doubles the weights of this kernel for its convolution
 step.</p>
 <p><img alt="pyramid_laplace" src="./image/pyramid_laplace.png"></p></dd>
-<dt><a name="26"><b class="cmd">::crimp</b> <b class="method">remap</b> <i class="arg">image</i> <i class="arg">map</i>...</a></dt>
+<dt><a name="27"><b class="cmd">::crimp</b> <b class="method">remap</b> <i class="arg">image</i> <i class="arg">map</i>...</a></dt>
 <dd><p>This method is the core primitive for the per-pixel transformation of
 images, with each pixel (and channels within, if any) handled
 independently of all others.
@@ -612,19 +625,6 @@ construction of maps from Tcl data structures, namely nested lists.</p>
 <p>This method supports all image types with one or more
 single-byte channels, i.e. all but <b class="const">grey16</b>, <b class="const">grey32</b>, and
 <b class="const">bw</b>.</p></dd>
-<dt><a name="27"><b class="cmd">::crimp</b> <b class="method">setalpha</b> <i class="arg">image</i> <i class="arg">mask</i></a></dt>
-<dd><p>This command takes two images, the input and a <i class="arg">mask</i>, and returns
-an image as result in which the mask is the alpha channel of the
-input.
-The result is therefore always of type <b class="const">rgba</b>, as the only type
-supporting an alpha channel.</p>
-<p>The input image can be of type <b class="const">rgb</b> or <b class="const">rgba</b>.  In
-case of the latter the existing alpha channel is replaced, in case of
-the former an alpha channel is added.</p>
-<p>For the mask images of type <b class="const">grey8</b> and <b class="const">rgba</b> are
-accepted.  In the case of the latter the mask's alpha channel is used
-as the new alpha channel, in case of the former the mask itself is
-used.</p></dd>
 <dt><a name="28"><b class="cmd">::crimp</b> <b class="method">solarize</b> <i class="arg">image</i> <i class="arg">threshold</i></a></dt>
 <dd><p>This method takes an image, runs it through the <b class="function">solarize</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified

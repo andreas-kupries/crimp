@@ -264,17 +264,7 @@ This method returns the width of the [arg image] (in pixels).
 
 [subsection Manipulators]
 [list_begin definitions]
-[call [cmd ::crimp] [method blank] [arg type] [arg width] [arg height] [arg value]...]
-
-This method returns a blank image of the given image type and
-dimensions.  The [arg value]s after the dimensions are the pixel
-values to fill the pixels in the image's channels with, per its type.
-
-[para] This method currently support only the types [const rgb],
-[const rgba], and [const grey8].
-
-
-[call [cmd ::crimp] [method blend] [arg foreground] [arg background] [arg alpha]]
+[call [cmd ::crimp] [method {alpha blend}] [arg foreground] [arg background] [arg alpha]]
 [keywords blending {alpha blending}]
 
 This method takes two images of identical dimensions and a blending
@@ -317,11 +307,59 @@ supported:
 }]
 
 
+[call [cmd ::crimp] [method {alpha set}] [arg image] [arg mask]]
+[keywords alpha {alpha channel}]
+
+This command takes two images, the input and a [arg mask], and returns
+an image as result in which the mask is the alpha channel of the
+input.
+
+The result is therefore always of type [const rgba], as the only type
+supporting an alpha channel.
+
+[para] The input image can be of type [const rgb] or [const rgba].  In
+case of the latter the existing alpha channel is replaced, in case of
+the former an alpha channel is added.
+
+[para] For the mask images of type [const grey8] and [const rgba] are
+accepted.  In the case of the latter the mask's alpha channel is used
+as the new alpha channel, in case of the former the mask itself is
+used.
+
+
+[call [cmd ::crimp] [method {alpha opaque}] [arg image]]
+
+A convenience method over [method {alpha set}], giving the [arg image]
+a mask which makes it fully opaque.
+
+
+[call [cmd ::crimp] [method {alpha over}] [arg foreground] [arg background]]
+[keywords composition {composite blending}]
+
+This method is similar to [method blend] above, except that there is
+no global blending parameter. This information is taken from the
+"alpha" channel of the [arg foreground] image instead. The blending
+formula is the same, except that the alpha parameter is now a
+per-pixel value, and not constant across the image.
+
+[para]
+
+Due to the need for an alpha channel the [arg foreground] has to be of
+type [const rgba]. For the [arg background] image the types
+[const rgb] and [const rgba] are supported.
+
+
+[call [cmd ::crimp] [method blank] [arg type] [arg width] [arg height] [arg value]...]
+
+This method returns a blank image of the given image type and
+dimensions.  The [arg value]s after the dimensions are the pixel
+values to fill the pixels in the image's channels with, per its type.
+
+[para] This method currently support only the types [const rgb],
+[const rgba], and [const grey8].
+
 [call [cmd ::crimp] [method convolve] [opt "[option -border] [arg spec]"] [arg kernel]...]
 [keywords convolution]
-
-
-
 
 
 [call [cmd ::crimp] [method degamma] [arg image] [arg y]]
@@ -463,22 +501,6 @@ median-filters, for percentiles 0, 100, and 50, respectively.
 make no sense and are clamped to this range.
 
 
-[call [cmd ::crimp] [method over] [arg foreground] [arg background]]
-[keywords composition {composite blending}]
-
-This method is similar to [method blend] above, except that there is
-no global blending parameter. This information is taken from the
-"alpha" channel of the [arg foreground] image instead. The blending
-formula is the same, except that the alpha parameter is now a
-per-pixel value, and not constant across the image.
-
-[para]
-
-Due to the need for an alpha channel the [arg foreground] has to be of
-type [const rgba]. For the [arg background] image the types
-[const rgb] and [const rgba] are supported.
-
-
 [call [cmd ::crimp] [method psychedelia] [arg width] [arg height] [arg frames]]
 
 This method creates an [const rgba] image of the specified dimensions
@@ -598,26 +620,6 @@ construction of maps from Tcl data structures, namely nested lists.
 [para] This method supports all image types with one or more
 single-byte channels, i.e. all but [const grey16], [const grey32], and
 [const bw].
-
-
-[call [cmd ::crimp] [method setalpha] [arg image] [arg mask]]
-[keywords alpha {alpha channel}]
-
-This command takes two images, the input and a [arg mask], and returns
-an image as result in which the mask is the alpha channel of the
-input.
-
-The result is therefore always of type [const rgba], as the only type
-supporting an alpha channel.
-
-[para] The input image can be of type [const rgb] or [const rgba].  In
-case of the latter the existing alpha channel is replaced, in case of
-the former an alpha channel is added.
-
-[para] For the mask images of type [const grey8] and [const rgba] are
-accepted.  In the case of the latter the mask's alpha channel is used
-as the new alpha channel, in case of the former the mask itself is
-used.
 
 
 [call [cmd ::crimp] [method solarize] [arg image] [arg threshold]]

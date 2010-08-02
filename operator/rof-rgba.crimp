@@ -29,7 +29,7 @@ int*             colhistograma;
 
 crimp_input (imageObj, image, rgba);
 
-if ((percentile < 1) || (percentile > 10000)) {
+if ((percentile < 0) || (percentile > 10000)) {
     Tcl_SetResult(interp, "bad percentile, expected integer in (0..10000)", TCL_STATIC);
     return TCL_ERROR;
 }

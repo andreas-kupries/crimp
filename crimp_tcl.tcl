@@ -316,7 +316,7 @@ proc ::crimp::split {image} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::blank {type args} {
+proc ::crimp::blank {type w h args} {
     if {![Has blank_$type]} {
 	return -code error "Unable to create blank images of type \"$type\""
     }
@@ -344,7 +344,7 @@ proc ::crimp::blank {type args} {
 	}
     }
 
-    return [blank_$type {*}$args]
+    return [blank_$type $w $h {*}$args]
 }
 
 # # ## ### ##### ######## #############
@@ -362,38 +362,54 @@ proc ::crimp::expand {bordertype image ww hn we hs args} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::setalpha {image mask} {
-    set itype [TypeOf $image]
-    set mtype [TypeOf $mask]
-    set f     setalpha_${itype}_$mtype
-    if {![Has $f]} {
+namespace eval ::crimp::alpha {
+    namespace export *
+    namespace ensemble create
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::alpha::set {image mask} {
+    ::set itype [crimp::TypeOf $image]
+    ::set mtype [crimp::TypeOf $mask]
+    ::set f     setalpha_${itype}_$mtype
+    if {![crimp::Has $f]} {
 	return -code error "Setting the alpha channel is not supported for images of type \"$itype\" and mask of type \"$mtype\""
     }
-    return [$f $image $mask]
+    return [crimp::$f $image $mask]
 }
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::blend {fore back alpha} {
-    set ftype [TypeOf $fore]
-    set btype [TypeOf $back]
+proc ::crimp::alpha::opaque {image} {
+    ::set itype [crimp::TypeOf $image]
+    if {$itype ne "rgba"} { return $image }
+    # alpha::set
+    return [set $image [crimp blank grey8 {*}[crimp dimensions $image] 255]]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::alpha::blend {fore back alpha} {
+    set ftype [crimp::TypeOf $fore]
+    set btype [crimp::TypeOf $back]
     set f     alpha_blend_${ftype}_$btype
-    if {![Has $f]} {
+    if {![crimp::Has $f]} {
 	return -code error "Blend is not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
-    return [$f $fore $back [table::CLAMP $alpha]]
+    return [crimp::$f $fore $back [table::CLAMP $alpha]]
 }
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::over {fore back} {
-    set ftype [TypeOf $fore]
-    set btype [TypeOf $back]
+proc ::crimp::alpha::over {fore back} {
+    set ftype [crimp::TypeOf $fore]
+    set btype [crimp::TypeOf $back]
     set f     alpha_over_${ftype}_$btype
-    if {![Has $f]} {
+    if {![crimp::Has $f]} {
 	return -code error "Over is not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
-    return [$f $fore $back]
+    return [crimp::$f $fore $back]
 }
 
 # # ## ### ##### ######## #############
@@ -871,8 +887,8 @@ namespace eval ::crimp {
     namespace export type width height dimensions channels
     namespace export read write convert join flip split table
     namespace export invert solarize gamma degamma remap map
-    namespace export wavy psychedelia matrix blend over blank
-    namespace export setalpha histogram max min screen add
+    namespace export wavy psychedelia matrix blank
+    namespace export alpha histogram max min screen add
     namespace export subtract difference multiply convolve
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge

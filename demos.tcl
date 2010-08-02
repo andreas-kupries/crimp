@@ -150,7 +150,12 @@ proc demo_setup_image {} {
 }
 
 proc demo_run_hook {script} {
-    namespace eval ::DEMO [list demo_time_hook $script]
+    if {[catch {
+	namespace eval ::DEMO [list demo_time_hook $script]
+    }]} {
+	set prefix "HOOK ERROR"
+	puts $prefix[join [split $::errorInfo \n] \n$prefix]
+    }
     return
 }
 

@@ -7,22 +7,17 @@ def op_add {
 	  }
     }
     setup_image {
-	variable mask [crimp blank grey8 {*}[crimp dimensions [base]] 255]
 	show
     }
     setup {
 	variable scale  1
 	variable offset 0
-	variable mask   {}
 
 	proc show {args} {
 	    variable scale
 	    variable offset
-	    variable mask
 
-	    show_image [crimp setalpha \
-			    [crimp add [base 0] [base 1] $scale $offset] \
-			    $mask]
+	    show_image [crimp alpha opaque [crimp add [base 0] [base 1] $scale $offset]]
 	    return
 	}
 

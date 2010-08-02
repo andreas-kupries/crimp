@@ -11,7 +11,7 @@ def op_pyramid_laplace2 {
 		i $images \
 		s {1 1 2 4 8 16 32 64} {
 		    set i [norm $i $s]
-		    lappend res [crimp setalpha $i [crimp blank grey8 {*}[crimp dimensions $i] 255]]
+		    lappend res [crimp alpha opaque $i]
 		}
 	    return $res
 	} ::DEMO} [crimp pyramid laplace [base] 6]]

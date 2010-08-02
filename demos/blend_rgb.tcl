@@ -28,7 +28,7 @@ def op_alpha_blend_rgb {
 		    return
 		}
 
-		set theblend [crimp blend [base 0] [base 1] $thealpha]
+		set theblend [crimp alpha blend [base 0] [base 1] $thealpha]
 		set cache($thealpha) $theblend
 		show_image $theblend
 		return

@@ -5,10 +5,7 @@ def op_decint2 {
 	set KI [crimp kernel make {{1 2 1}} 2]
     }
     setup_image {
-	set n [crimp interpolate \
-		   [crimp decimate [base] 2 $KD] \
-		   2 $KI]
-	set m [crimp blank grey8 {*}[crimp dimensions $n] 255]
-	show_image [crimp setalpha $n $m]
+	show_image [crimp alpha opaque \
+			[crimp interpolate [crimp decimate [base] 2 $KD] 2 $KI]]
     }
 }

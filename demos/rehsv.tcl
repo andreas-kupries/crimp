@@ -43,7 +43,7 @@ def effect_rehsv {
 	    variable hsvbase
 	    variable mask
 
-	    show_image [crimp setalpha \
+	    show_image [crimp alpha set \
 			    [crimp convert 2rgb [crimp remap $hsvbase $mh $ms $mv]] \
 			    $mask]
 	    return

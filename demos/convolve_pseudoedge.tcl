@@ -13,7 +13,7 @@ def op_convolve_pseudoedges {
 	variable Ky [crimp kernel transpose $Kx]
     }
     setup_image {
-	# show_image [crimp convolve [base] $K]
+	# show_image [crimp filter convolve [base] $K]
 	# Separable kernel, convolve x and y separately. Same result
 	# as for the combined kernel, but faster.
 	show_image [crimp alpha opaque \
@@ -21,6 +21,6 @@ def op_convolve_pseudoedges {
 			     [base] \
 			     [crimp difference \
 				  [base] \
-				  [crimp convolve [base] $Kx $Ky]]]]
+				  [crimp filter convolve [base] $Kx $Ky]]]]
     }
 }

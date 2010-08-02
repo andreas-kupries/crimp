@@ -545,17 +545,24 @@ proc ::crimp::screen {a b} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::convolve {image args} {
+namespace eval ::crimp::filter {
+    namespace export *
+    namespace ensemble create
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::filter::convolve {image args} {
     # args = ?-border spec? kernel...
 
-    set type [TypeOf $image]
+    set type [crimp::TypeOf $image]
     set fc convolve_${type}
-    if {![Has $fc]} {
+    if {![crimp::Has $fc]} {
 	return -code error "Convolution is not supported for image type \"$type\""
     }
 
     # Default settings for border expansion.
-    lassign [BORDER $type const] fe values
+    lassign [crimp::BORDER $type const] fe values
 
     set at 0
     while {1} {
@@ -565,7 +572,7 @@ proc ::crimp::convolve {image args} {
 	switch -- $opt {
 	    -border {
 		set value [lindex $at $args]
-		lassign [BORDER $type $value] fe values
+		lassign [crimp::BORDER $type $value] fe values
 		incr at
 	    }
 	    default {
@@ -585,7 +592,7 @@ proc ::crimp::convolve {image args} {
 
     foreach kernel $args {
 	lassign $kernel kw kh K scale
-	set image [$fc [$fe $image $kw $kh $kw $kh {*}$values] $K $scale]
+	set image [crimp::$fc [crimp::$fe $image $kw $kh $kw $kh {*}$values] $K $scale]
     }
 
     return $image
@@ -593,17 +600,17 @@ proc ::crimp::convolve {image args} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::rankfilter {image args} {
+proc ::crimp::filter::rank {image args} {
     # args = ?-border spec? ?radius ?percentile??
 
-    set type [TypeOf $image]
+    set type [crimp::TypeOf $image]
     set fc rof_${type}
-    if {![Has $fc]} {
+    if {![crimp::Has $fc]} {
 	return -code error "Rank filtering is not supported for image type \"$type\""
     }
 
     # Default settings for border expansion.
-    lassign [BORDER $type const] fe values
+    lassign [crimp::BORDER $type const] fe values
 
     set at 0
     while {1} {
@@ -613,7 +620,7 @@ proc ::crimp::rankfilter {image args} {
 	switch -- $opt {
 	    -border {
 		set value [lindex $at $args]
-		lassign [BORDER $type $value] fe values
+		lassign [crimp::BORDER $type $value] fe values
 		incr at
 	    }
 	    default {
@@ -627,7 +634,7 @@ proc ::crimp::rankfilter {image args} {
 	1 { set radius [lindex $args 0] ; set percentile 50 }
 	2 { lassign $args radius percentile }
 	default {
-	return -code error "wrong#args: expected image ?-border spec? ?radius ?percentile??"
+	    return -code error "wrong#args: expected image ?-border spec? ?radius ?percentile??"
 	}
     }
 
@@ -639,7 +646,7 @@ proc ::crimp::rankfilter {image args} {
 
     # Shrinkage by 2*radius. Compensate using the chosen border type.
 
-    return [$fc [$fe $image $radius $radius $radius $radius {*}$values] \
+    return [crimp::$fc [crimp::$fe $image $radius $radius $radius $radius {*}$values] \
 		$radius $percentile]
 }
 
@@ -887,12 +894,11 @@ namespace eval ::crimp {
     namespace export type width height dimensions channels
     namespace export read write convert join flip split table
     namespace export invert solarize gamma degamma remap map
-    namespace export wavy psychedelia matrix blank
+    namespace export wavy psychedelia matrix blank filter
     namespace export alpha histogram max min screen add
-    namespace export subtract difference multiply convolve
+    namespace export subtract difference multiply pyramid
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge
-    namespace export pyramid rankfilter
     #
     namespace ensemble create
 }

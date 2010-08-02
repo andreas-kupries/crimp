@@ -266,11 +266,11 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBalpha set\fR \fIimage\fR \fImask\fR
 .sp
+\fB::crimp\fR \fBalpha opaque\fR \fIimage\fR
+.sp
 \fB::crimp\fR \fBalpha over\fR \fIforeground\fR \fIbackground\fR
 .sp
 \fB::crimp\fR \fBblank\fR \fItype\fR \fIwidth\fR \fIheight\fR \fIvalue\fR...
-.sp
-\fB::crimp\fR \fBconvolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
 .sp
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
 .sp
@@ -284,13 +284,15 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBexpand wrap\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
 .sp
+\fB::crimp\fR \fBfilter convolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+.sp
+\fB::crimp\fR \fBfilter rank\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
+.sp
 \fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
 .sp
 \fB::crimp\fR \fBinvert\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBmatrix\fR \fIimage\fR \fImatrix\fR
-.sp
-\fB::crimp\fR \fBrankfilter\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
 .sp
 \fB::crimp\fR \fBpsychedelia\fR \fIwidth\fR \fIheight\fR \fIframes\fR
 .sp
@@ -687,6 +689,10 @@ accepted.  In the case of the latter the mask's alpha channel is used
 as the new alpha channel, in case of the former the mask itself is
 used.
 .TP
+\fB::crimp\fR \fBalpha opaque\fR \fIimage\fR
+A convenience method over \fBalpha set\fR, giving the \fIimage\fR
+a mask which makes it fully opaque.
+.TP
 \fB::crimp\fR \fBalpha over\fR \fIforeground\fR \fIbackground\fR
 This method is similar to \fBblend\fR above, except that there is
 no global blending parameter. This information is taken from the
@@ -705,8 +711,6 @@ values to fill the pixels in the image's channels with, per its type.
 .sp
 This method currently support only the types \fBrgb\fR,
 \fBrgba\fR, and \fBgrey8\fR.
-.TP
-\fB::crimp\fR \fBconvolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
 .TP
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
 This method takes an image, runs it through an
@@ -786,6 +790,24 @@ found by toroidial (cyclic) wrapping its coordinates along the
 relevant edges. This is also called tiling.
 .RE
 .TP
+\fB::crimp\fR \fBfilter convolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+.TP
+\fB::crimp\fR \fBfilter rank\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
+This method runs a rank-filter over the input and returns the filtered
+result.
+The \fIradius\fR specifies the (square) region around each pixel which
+is taken into account by the filter, with the pixel value selected
+according to the \fIpercentile\fR. The filter region of each pixel
+is a square of dimensions "2*\fIradius\fR+1", centered around the pixel.
+.sp
+These two values default to \fB3\fR and \fB50\fR, respectively.
+.sp
+Typical applications of rank-filters are min-, max-, and
+median-filters, for percentiles 0, 100, and 50, respectively.
+.sp
+Note that percentiles outside of the range \fB0\fR...\fB100\fR
+make no sense and are clamped to this range.
+.TP
 \fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
 This method takes an image, runs it through a \fBgamma correction\fR
 with parameter \fIy\fR, and returns the corrected image as it result.
@@ -817,22 +839,6 @@ input would come from outside of the input.
 .sp
 The operation supports only images of type \fBrgba\fR, and returns
 images of the same type.
-.TP
-\fB::crimp\fR \fBrankfilter\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
-This method runs a rank-filter over the input and returns the filtered
-result.
-The \fIradius\fR specifies the (square) region around each pixel which
-is taken into account by the filter, with the pixel value selected
-according to the \fIpercentile\fR. The filter region of each pixel
-is a square of dimensions "2*\fIradius\fR+1", centered around the pixel.
-.sp
-These two values default to \fB3\fR and \fB50\fR, respectively.
-.sp
-Typical applications of rank-filters are min-, max-, and
-median-filters, for percentiles 0, 100, and 50, respectively.
-.sp
-Note that percentiles outside of the range \fB0\fR...\fB100\fR
-make no sense and are clamped to this range.
 .TP
 \fB::crimp\fR \fBpsychedelia\fR \fIwidth\fR \fIheight\fR \fIframes\fR
 This method creates an \fBrgba\fR image of the specified dimensions

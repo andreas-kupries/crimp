@@ -8,9 +8,9 @@ def op_rof_median_luma {
 	    set base [crimp convert 2grey8 $base]
 	    return [list \
 			$base \
-			[crimp rankfilter $base] \
-			[crimp rankfilter $base 10] \
-			[crimp rankfilter $base 20]]
+			[crimp filter rank $base] \
+			[crimp filter rank $base 10] \
+			[crimp filter rank $base 20]]
 	}} [base]]
     }
 }

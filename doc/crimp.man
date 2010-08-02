@@ -358,9 +358,6 @@ values to fill the pixels in the image's channels with, per its type.
 [para] This method currently support only the types [const rgb],
 [const rgba], and [const grey8].
 
-[call [cmd ::crimp] [method convolve] [opt "[option -border] [arg spec]"] [arg kernel]...]
-[keywords convolution]
-
 
 [call [cmd ::crimp] [method degamma] [arg image] [arg y]]
 [keywords {gamma correction}]
@@ -433,6 +430,30 @@ relevant edges. This is also called tiling.
 [list_end]
 
 
+[call [cmd ::crimp] [method {filter convolve}] [opt "[option -border] [arg spec]"] [arg kernel]...]
+[keywords convolution]
+
+
+[call [cmd ::crimp] [method {filter rank}] [opt "[option -border] [arg spec]"] [opt "[arg radius] [opt [arg percentile]]"]]
+[keywords {rank-order filter} {max-filter} {min-filter} {median-filter}]
+
+This method runs a rank-filter over the input and returns the filtered
+result.
+
+The [arg radius] specifies the (square) region around each pixel which
+is taken into account by the filter, with the pixel value selected
+according to the [arg percentile]. The filter region of each pixel
+is a square of dimensions "2*[arg radius]+1", centered around the pixel.
+
+[para] These two values default to [const 3] and [const 50], respectively.
+
+[para] Typical applications of rank-filters are min-, max-, and
+median-filters, for percentiles 0, 100, and 50, respectively.
+
+[para] Note that percentiles outside of the range [const 0]...[const 100]
+make no sense and are clamped to this range.
+
+
 [call [cmd ::crimp] [method gamma] [arg image] [arg y]]
 
 This method takes an image, runs it through a [fun {gamma correction}]
@@ -479,26 +500,6 @@ input would come from outside of the input.
 
 The operation supports only images of type [const rgba], and returns
 images of the same type.
-
-
-[call [cmd ::crimp] [method rankfilter] [opt "[option -border] [arg spec]"] [opt "[arg radius] [opt [arg percentile]]"]]
-[keywords {rank-order filter} {max-filter} {min-filter} {median-filter}]
-
-This method runs a rank-filter over the input and returns the filtered
-result.
-
-The [arg radius] specifies the (square) region around each pixel which
-is taken into account by the filter, with the pixel value selected
-according to the [arg percentile]. The filter region of each pixel
-is a square of dimensions "2*[arg radius]+1", centered around the pixel.
-
-[para] These two values default to [const 3] and [const 50], respectively.
-
-[para] Typical applications of rank-filters are min-, max-, and
-median-filters, for percentiles 0, 100, and 50, respectively.
-
-[para] Note that percentiles outside of the range [const 0]...[const 100]
-make no sense and are clamped to this range.
 
 
 [call [cmd ::crimp] [method psychedelia] [arg width] [arg height] [arg frames]]

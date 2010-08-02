@@ -6,8 +6,8 @@ def op_rof_median {
 
 	show_slides [list \
 			 [base] \
-			 [crimp rankfilter [base]] \
-			 [crimp rankfilter [base] 10] \
-			 [crimp rankfilter [base] 20]]
+			 [crimp filter rank [base]] \
+			 [crimp filter rank [base] 10] \
+			 [crimp filter rank [base] 20]]
     }
 }

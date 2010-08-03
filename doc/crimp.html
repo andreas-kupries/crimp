@@ -514,7 +514,9 @@ relevant edges. This is also called tiling.</p></dd>
 </dl></dd>
 <dt><a name="18"><b class="cmd">::crimp</b> <b class="method">filter convolve</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <i class="arg">kernel</i>...</a></dt>
 <dd><p>This method runs the series of filters specified by the convolution
-<i class="arg">kernel</i>s over the input and returns the filtered result.</p>
+<i class="arg">kernel</i>s over the input and returns the filtered result. See the
+method <b class="method">kernel</b> and its sub-methods for commands to create and
+manipulate suitable kernels.</p>
 <p>The border specification determines how the input image is
 expanded (see method <b class="method">expand</b>) to compensate for the shrinkage
 introduced by the filter itself. The <i class="arg">spec</i> argument is a list

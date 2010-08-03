@@ -791,14 +791,38 @@ relevant edges. This is also called tiling.
 .RE
 .TP
 \fB::crimp\fR \fBfilter convolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+This method runs the series of filters specified by the convolution
+\fIkernel\fRs over the input and returns the filtered result.
+.sp
+The border specification determines how the input image is
+expanded (see method \fBexpand\fR) to compensate for the shrinkage
+introduced by the filter itself. The \fIspec\fR argument is a list
+containing the name of the sub-method of \fBexpand\fR to use, plus
+any additional arguments this method may need, except for the size of
+the expansion.
+.sp
+By default a black frame is used as the border, i.e.
+"\fIspec\fR == {const 0}".
 .TP
 \fB::crimp\fR \fBfilter rank\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
 This method runs a rank-filter over the input and returns the filtered
 result.
-The \fIradius\fR specifies the (square) region around each pixel which
-is taken into account by the filter, with the pixel value selected
-according to the \fIpercentile\fR. The filter region of each pixel
-is a square of dimensions "2*\fIradius\fR+1", centered around the pixel.
+.sp
+The border specification determines how the input image is
+expanded (see method \fBexpand\fR) to compensate for the shrinkage
+introduced by the filter itself. The \fIspec\fR argument is a list
+containing the name of the sub-method of \fBexpand\fR to use, plus
+any additional arguments this method may need, except for the size of
+the expansion.
+.sp
+By default a black frame is used as the border, i.e.
+"\fIspec\fR == {const 0}".
+.sp
+The \fIradius\fR specifies the (square) region around each
+pixel which is taken into account by the filter, with the pixel value
+selected according to the \fIpercentile\fR. The filter region of each
+pixel is a square of dimensions "2*\fIradius\fR+1", centered around
+the pixel.
 .sp
 These two values default to \fB3\fR and \fB50\fR, respectively.
 .sp
@@ -1275,7 +1299,7 @@ threshold_{threshold} (x) = \\left\\{\\begin{eqnarray}
 .sp
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution, cyclic wrap expansion, dimensions, expansion, extend expansion, flip, gamma correction, histogram, image, inversion, matrix, max-filter, median-filter, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabatier effect, solarization, thresholding, toroidal wrap expansion, transform, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution filter, cyclic wrap expansion, dimensions, expansion, extend expansion, filter, flip, gamma correction, histogram, image, inversion, matrix, max-filter, median-filter, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabatier effect, solarization, thresholding, toroidal wrap expansion, transform, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

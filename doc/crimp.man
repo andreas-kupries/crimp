@@ -434,7 +434,9 @@ relevant edges. This is also called tiling.
 [keywords {convolution filter} filter]
 
 This method runs the series of filters specified by the convolution
-[arg kernel]s over the input and returns the filtered result.
+[arg kernel]s over the input and returns the filtered result. See the
+method [method kernel] and its sub-methods for commands to create and
+manipulate suitable kernels.
 
 [para] The border specification determines how the input image is
 expanded (see method [method expand]) to compensate for the shrinkage

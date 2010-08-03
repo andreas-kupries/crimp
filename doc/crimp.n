@@ -792,7 +792,9 @@ relevant edges. This is also called tiling.
 .TP
 \fB::crimp\fR \fBfilter convolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
 This method runs the series of filters specified by the convolution
-\fIkernel\fRs over the input and returns the filtered result.
+\fIkernel\fRs over the input and returns the filtered result. See the
+method \fBkernel\fR and its sub-methods for commands to create and
+manipulate suitable kernels.
 .sp
 The border specification determines how the input image is
 expanded (see method \fBexpand\fR) to compensate for the shrinkage

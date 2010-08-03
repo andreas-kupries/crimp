@@ -431,19 +431,43 @@ relevant edges. This is also called tiling.
 
 
 [call [cmd ::crimp] [method {filter convolve}] [opt "[option -border] [arg spec]"] [arg kernel]...]
-[keywords convolution]
+[keywords {convolution filter} filter]
+
+This method runs the series of filters specified by the convolution
+[arg kernel]s over the input and returns the filtered result.
+
+[para] The border specification determines how the input image is
+expanded (see method [method expand]) to compensate for the shrinkage
+introduced by the filter itself. The [arg spec] argument is a list
+containing the name of the sub-method of [method expand] to use, plus
+any additional arguments this method may need, except for the size of
+the expansion.
+
+[para] By default a black frame is used as the border, i.e.
+"[arg spec] == {const 0}".
 
 
 [call [cmd ::crimp] [method {filter rank}] [opt "[option -border] [arg spec]"] [opt "[arg radius] [opt [arg percentile]]"]]
-[keywords {rank-order filter} {max-filter} {min-filter} {median-filter}]
+[keywords filter {rank-order filter} {max-filter} {min-filter} {median-filter}]
 
 This method runs a rank-filter over the input and returns the filtered
 result.
 
-The [arg radius] specifies the (square) region around each pixel which
-is taken into account by the filter, with the pixel value selected
-according to the [arg percentile]. The filter region of each pixel
-is a square of dimensions "2*[arg radius]+1", centered around the pixel.
+[para] The border specification determines how the input image is
+expanded (see method [method expand]) to compensate for the shrinkage
+introduced by the filter itself. The [arg spec] argument is a list
+containing the name of the sub-method of [method expand] to use, plus
+any additional arguments this method may need, except for the size of
+the expansion.
+
+[para] By default a black frame is used as the border, i.e.
+"[arg spec] == {const 0}".
+
+[para] The [arg radius] specifies the (square) region around each
+pixel which is taken into account by the filter, with the pixel value
+selected according to the [arg percentile]. The filter region of each
+pixel is a square of dimensions "2*[arg radius]+1", centered around
+the pixel.
 
 [para] These two values default to [const 3] and [const 50], respectively.
 

@@ -513,14 +513,32 @@ found by toroidial (cyclic) wrapping its coordinates along the
 relevant edges. This is also called tiling.</p></dd>
 </dl></dd>
 <dt><a name="18"><b class="cmd">::crimp</b> <b class="method">filter convolve</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <i class="arg">kernel</i>...</a></dt>
-<dd></dd>
+<dd><p>This method runs the series of filters specified by the convolution
+<i class="arg">kernel</i>s over the input and returns the filtered result.</p>
+<p>The border specification determines how the input image is
+expanded (see method <b class="method">expand</b>) to compensate for the shrinkage
+introduced by the filter itself. The <i class="arg">spec</i> argument is a list
+containing the name of the sub-method of <b class="method">expand</b> to use, plus
+any additional arguments this method may need, except for the size of
+the expansion.</p>
+<p>By default a black frame is used as the border, i.e.
+&quot;<i class="arg">spec</i> == {const 0}&quot;.</p></dd>
 <dt><a name="19"><b class="cmd">::crimp</b> <b class="method">filter rank</b> <span class="opt">?<b class="option">-border</b> <i class="arg">spec</i>?</span> <span class="opt">?<i class="arg">radius</i> <span class="opt">?<i class="arg">percentile</i>?</span>?</span></a></dt>
 <dd><p>This method runs a rank-filter over the input and returns the filtered
-result.
-The <i class="arg">radius</i> specifies the (square) region around each pixel which
-is taken into account by the filter, with the pixel value selected
-according to the <i class="arg">percentile</i>. The filter region of each pixel
-is a square of dimensions &quot;2*<i class="arg">radius</i>+1&quot;, centered around the pixel.</p>
+result.</p>
+<p>The border specification determines how the input image is
+expanded (see method <b class="method">expand</b>) to compensate for the shrinkage
+introduced by the filter itself. The <i class="arg">spec</i> argument is a list
+containing the name of the sub-method of <b class="method">expand</b> to use, plus
+any additional arguments this method may need, except for the size of
+the expansion.</p>
+<p>By default a black frame is used as the border, i.e.
+&quot;<i class="arg">spec</i> == {const 0}&quot;.</p>
+<p>The <i class="arg">radius</i> specifies the (square) region around each
+pixel which is taken into account by the filter, with the pixel value
+selected according to the <i class="arg">percentile</i>. The filter region of each
+pixel is a square of dimensions &quot;2*<i class="arg">radius</i>+1&quot;, centered around
+the pixel.</p>
 <p>These two values default to <b class="const">3</b> and <b class="const">50</b>, respectively.</p>
 <p>Typical applications of rank-filters are min-, max-, and
 median-filters, for percentiles 0, 100, and 50, respectively.</p>
@@ -843,7 +861,7 @@ values 0 to 255 through a <b class="function">thresholding</b> function, with pa
 </div>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p>affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution, cyclic wrap expansion, dimensions, expansion, extend expansion, flip, gamma correction, histogram, image, inversion, matrix, max-filter, median-filter, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabatier effect, solarization, thresholding, toroidal wrap expansion, transform, wrap expansion</p>
+<p>affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution filter, cyclic wrap expansion, dimensions, expansion, extend expansion, filter, flip, gamma correction, histogram, image, inversion, matrix, max-filter, median-filter, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabatier effect, solarization, thresholding, toroidal wrap expansion, transform, wrap expansion</p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2010 Andreas Kupries<br>

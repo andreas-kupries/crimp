@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file 'crimp.man' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/trans/tim-ak/cr/dev/embedded/man/files/crimp.nroff' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -239,7 +239,7 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp" n 1.0.1 crimp "Image Manipulation"
+.TH "crimp" n 1.0.1 doc "Image Manipulation"
 .BS
 .SH NAME
 crimp \- Image Manipulation (not yet independent of Tk)

@@ -92,14 +92,18 @@
     }
 --></style>
 </head>
-<! -- Generated from file 'crimp.man' by tcllib/doctools with format 'html'
+<! -- Generated from file '/net/nas/data/andreask/trans/tim-ak/cr/dev/embedded/www/files/crimp.html' by tcllib/doctools with format 'html'
    -->
 <! -- Copyright &copy; 2010 Andreas Kupries   -- Copyright &copy; 2010 Documentation, Andreas Kupries
    -->
 <! -- CVS: $Id$ crimp.n
    -->
 <body><div class="doctools">
-<h1 class="title">crimp(n) 1.0.1 crimp &quot;Image Manipulation&quot;</h1>
+<hr> [
+  <a href="../toc.html">Table Of Contents</a>
+| <a href="../index.html">Keyword Index</a>
+] <hr>
+<h1 class="title">crimp(n) 1.0.1 doc &quot;Image Manipulation&quot;</h1>
 <div id="name" class="section"><h2><a name="name">Name</a></h2>
 <p>crimp - Image Manipulation (not yet independent of Tk)</p>
 </div>
@@ -407,9 +411,9 @@ object).</p></dd>
 <dd><p>This method takes two images of identical dimensions and a blending
 factor <i class="arg">alpha</i> and returns an image which is a mix of both, with
 each pixel blended per the formula</p>
-<p><img alt="blend" src="./image/blend.png"></p>
+<p><img alt="blend" src="../image/blend.png"></p>
 <p>or, alternatively written</p>
-<p><img alt="blend_alt" src="./image/blend_alt.png"></p>
+<p><img alt="blend_alt" src="../image/blend_alt.png"></p>
 <p>This means that the <i class="arg">foreground</i> is returned as is for
 &quot;<i class="arg">alpha</i> == 255&quot;, and the <i class="arg">background</i> for
 &quot;<i class="arg">alpha</i> == 0&quot;.
@@ -485,7 +489,7 @@ The size of this border is specified by the four arguments <i class="arg">ww</i>
 <i class="arg">hn</i>, <i class="arg">we</i>, and <i class="arg">hs</i> which provide the number of pixels to
 add at the named edge. See the image below for a graphical
 representation.</p>
-<p><img alt="border" src="./image/border.png"></p>
+<p><img alt="border" src="../image/border.png"></p>
 <p>The contents of the border's pixels are specified via the border type,
 the first argument after <b class="method">expand</b>, as per the list below.</p>
 <dl class="definitions">
@@ -597,7 +601,7 @@ command.</p></dd>
 <i class="arg">image</i> as its first element, followed by the results of the step
 function, followed by the <i class="term">iter</i> element returned by the last step,
 &quot;<i class="arg">steps</i>+2&quot; images in total.</p>
-<p><img alt="pyramid" src="./image/pyramid.png"></p></dd>
+<p><img alt="pyramid" src="../image/pyramid.png"></p></dd>
 <dt><a name="26"><b class="cmd">::crimp</b> <b class="method">pyramid gauss</b> <i class="arg">image</i> <i class="arg">steps</i></a></dt>
 <dd><p>This method generates a gaussian image pyramid <i class="arg">steps</i> levels deep and
 returns it as a list of images.</p>
@@ -607,7 +611,7 @@ compared to its predecessor, for a total length of &quot;<i class="arg">steps</i
 <p>The convolution part of the decimation uses</p>
 <pre class="example"> 1/16 [1 4 6 4 1] </pre>
 <p>as its kernel.</p>
-<p><img alt="pyramid_gauss" src="./image/pyramid_gauss.png"></p></dd>
+<p><img alt="pyramid_gauss" src="../image/pyramid_gauss.png"></p></dd>
 <dt><a name="27"><b class="cmd">::crimp</b> <b class="method">pyramid laplace</b> <i class="arg">image</i> <i class="arg">steps</i></a></dt>
 <dd><p>This method generates a laplacian image pyramid <i class="arg">steps</i> levels deep and
 returns it as a list of images.</p>
@@ -622,7 +626,7 @@ contains &quot;<i class="arg">steps</i>+2&quot; images.</p>
 <p>as its kernel. The internal interpolation used to generate the band pass
 images (resynthesis) doubles the weights of this kernel for its convolution
 step.</p>
-<p><img alt="pyramid_laplace" src="./image/pyramid_laplace.png"></p></dd>
+<p><img alt="pyramid_laplace" src="../image/pyramid_laplace.png"></p></dd>
 <dt><a name="28"><b class="cmd">::crimp</b> <b class="method">remap</b> <i class="arg">image</i> <i class="arg">map</i>...</a></dt>
 <dd><p>This method is the core primitive for the per-pixel transformation of
 images, with each pixel (and channels within, if any) handled
@@ -800,70 +804,70 @@ values 0 to 255 through the <b class="function">inverse gamma correction</b> wit
 parameter <i class="arg">y</i>.
 This inverse correction, defined in the domain of [0..1] for
 both argument and result, is defined as:</p>
-<p><img alt="gamma_inv" src="./image/gamma_inv.png"></p>
+<p><img alt="gamma_inv" src="../image/gamma_inv.png"></p>
 <p>Scaling of argument and result into the domain [0..255] of pixel
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
-<p><img alt="scaled_gamma_inv" src="./image/scaled_gamma_inv.png"></p></dd>
+<p><img alt="scaled_gamma_inv" src="../image/scaled_gamma_inv.png"></p></dd>
 <dt><a name="52"><b class="cmd">::crimp</b> <b class="method">table gainw</b> <i class="arg">gain</i> <i class="arg">bias</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a simple linear function with parameters
 <i class="arg">gain</i> and <i class="arg">bias</i>. The results are rounded to the nearest
 integer and forced into the domain [0..255] by wrapping them
 around (modulo), making the definition:</p>
-<p><img alt="linear_wrap" src="./image/linear_wrap.png"></p></dd>
+<p><img alt="linear_wrap" src="../image/linear_wrap.png"></p></dd>
 <dt><a name="53"><b class="cmd">::crimp</b> <b class="method">table gain</b> <i class="arg">gain</i> <i class="arg">bias</i></a></dt>
 <dd><p>This method is like <b class="method">gainw</b>, except that it deals with results
 out of the domain [0..255] by clamping them to 0 and 255
 respectively instead of wrapping around. I.e. its definition is</p>
-<p><img alt="linear_clamp" src="./image/linear_clamp.png"></p></dd>
+<p><img alt="linear_clamp" src="../image/linear_clamp.png"></p></dd>
 <dt><a name="54"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">gamma correction</b> with parameter
 <i class="arg">y</i>.
 This correction, defined in the domain of [0..1] for both
 argument and result, is defined as:</p>
-<p><img alt="gamma" src="./image/gamma.png"></p>
+<p><img alt="gamma" src="../image/gamma.png"></p>
 <p>Scaling of argument and result into the domain [0..255] of pixel
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
-<p><img alt="scaled_gamma" src="./image/scaled_gamma.png"></p></dd>
+<p><img alt="scaled_gamma" src="../image/scaled_gamma.png"></p></dd>
 <dt><a name="55"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">sampled gauss</b> function with
 parameter <i class="arg">sigma</i>.
 This function is defined as:</p>
-<p><img alt="gauss" src="./image/gauss.png"></p></dd>
+<p><img alt="gauss" src="../image/gauss.png"></p></dd>
 <dt><a name="56"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">identity</b> function, defined as</p>
-<p><img alt="identity" src="./image/identity.png"></p></dd>
+<p><img alt="identity" src="../image/identity.png"></p></dd>
 <dt><a name="57"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">inverse</b> function, defined as</p>
-<p><img alt="inverse" src="./image/inverse.png"></p></dd>
+<p><img alt="inverse" src="../image/inverse.png"></p></dd>
 <dt><a name="58"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">solarize</b> function, with parameter
 <i class="arg">threshold</i>. The function is defined as:</p>
-<p><img alt="solarize" src="./image/solarize.png"></p>
+<p><img alt="solarize" src="../image/solarize.png"></p>
 <p>Note how the function is the <b class="function">identity</b> for values under the
 threshold, and the <b class="function">inverse</b> for values at and above it.</p></dd>
 <dt><a name="59"><b class="cmd">::crimp</b> <b class="method">table threshold-ge</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a <b class="function">thresholding</b> function, with parameter
 <i class="arg">threshold</i>. The function is defined as:</p>
-<p><img alt="threshold-ge" src="./image/threshold-ge.png"></p></dd>
+<p><img alt="threshold-ge" src="../image/threshold-ge.png"></p></dd>
 <dt><a name="60"><b class="cmd">::crimp</b> <b class="method">table threshold-le</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a <b class="function">thresholding</b> function, with parameter
 <i class="arg">threshold</i>. The function is defined as:</p>
-<p><img alt="threshold-le" src="./image/threshold-le.png"></p></dd>
+<p><img alt="threshold-le" src="../image/threshold-le.png"></p></dd>
 </dl>
 </div>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p>affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution filter, cyclic wrap expansion, dimensions, expansion, extend expansion, filter, flip, gamma correction, histogram, image, inversion, matrix, max-filter, median-filter, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabatier effect, solarization, thresholding, toroidal wrap expansion, transform, wrap expansion</p>
+<p><a href="../index.html#key31">affine transform</a>, <a href="../index.html#key13">alpha</a>, <a href="../index.html#key1">alpha blending</a>, <a href="../index.html#key18">alpha channel</a>, <a href="../index.html#key2">binarization</a>, <a href="../index.html#key26">blending</a>, <a href="../index.html#key29">channels</a>, <a href="../index.html#key14">composite blending</a>, <a href="../index.html#key30">composition</a>, <a href="../index.html#key7">const expansion</a>, <a href="../index.html#key35">convolution filter</a>, <a href="../index.html#key36">cyclic wrap expansion</a>, <a href="../index.html#key22">dimensions</a>, <a href="../index.html#key33">expansion</a>, <a href="../index.html#key32">extend expansion</a>, <a href="../index.html#key34">filter</a>, <a href="../index.html#key4">flip</a>, <a href="../index.html#key27">gamma correction</a>, <a href="../index.html#key12">histogram</a>, <a href="../index.html#key3">image</a>, <a href="../index.html#key9">inversion</a>, <a href="../index.html#key8">matrix</a>, <a href="../index.html#key21">max-filter</a>, <a href="../index.html#key20">median-filter</a>, <a href="../index.html#key16">min-filter</a>, <a href="../index.html#key19">mirror expansion</a>, <a href="../index.html#key23">photo</a>, <a href="../index.html#key11">pixel mapping</a>, <a href="../index.html#key15">projective transform</a>, <a href="../index.html#key25">rank-order filter</a>, <a href="../index.html#key5">remapping</a>, <a href="../index.html#key6">replicate edge expansion</a>, <a href="../index.html#key0">sabatier effect</a>, <a href="../index.html#key37">solarization</a>, <a href="../index.html#key24">thresholding</a>, <a href="../index.html#key10">toroidal wrap expansion</a>, <a href="../index.html#key28">transform</a>, <a href="../index.html#key17">wrap expansion</a></p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2010 Andreas Kupries<br>

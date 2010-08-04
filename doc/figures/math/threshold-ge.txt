@@ -1,4 +1,4 @@
-threshold_{threshold} (x) = \left\{\begin{eqnarray}
+f_{threshold} (x) = \left\{\begin{eqnarray}
 0   & x \ge threshold \\
 255 & x < threshold \\
 \end{eqnarray}\right

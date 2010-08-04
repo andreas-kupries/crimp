@@ -656,7 +656,7 @@ single-byte channels, i.e. all but <b class="const">grey16</b>, <b class="const"
 <dt><a name="29"><b class="cmd">::crimp</b> <b class="method">solarize</b> <i class="arg">image</i> <i class="arg">threshold</i></a></dt>
 <dd><p>This method takes an image, runs it through the <b class="function">solarize</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
-image as it result.
+image as it result. This is also known as the <i class="term"><a href="../index.html#key27">sabattier effect</a></i>.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map solarize</b> <i class="arg">threshold</i>&quot;.
 This method supports all image types supported by the method
@@ -664,7 +664,8 @@ This method supports all image types supported by the method
 <dt><a name="30"><b class="cmd">::crimp</b> <b class="method">threshold-ge</b> <i class="arg">image</i> <i class="arg">threshold</i></a></dt>
 <dd><p>This method takes an image, runs it through the <b class="function">threshold-ge</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
-image as it result.
+image as it result. As the result only contains black and white,
+i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key1">binarization</a></i>.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold-ge</b> <i class="arg">threshold</i>&quot;.
 This method supports all image types supported by the method
@@ -672,7 +673,8 @@ This method supports all image types supported by the method
 <dt><a name="31"><b class="cmd">::crimp</b> <b class="method">threshold-le</b> <i class="arg">image</i> <i class="arg">threshold</i></a></dt>
 <dd><p>This method takes an image, runs it through the <b class="function">threshold-le</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
-image as it result.
+image as it result. As the result only contains black and white,
+i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key1">binarization</a></i>.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold-le</b> <i class="arg">threshold</i>&quot;.
 This method supports all image types supported by the method
@@ -840,34 +842,38 @@ This function is defined as:</p>
 <p><img alt="gauss" src="../image/gauss.png"></p></dd>
 <dt><a name="56"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through the <b class="function">identity</b> function, defined as</p>
+values 0 to 255 through the <b class="function">identity</b> function, which is defined
+as</p>
 <p><img alt="identity" src="../image/identity.png"></p></dd>
 <dt><a name="57"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through the <b class="function">inverse</b> function, defined as</p>
+values 0 to 255 through the <b class="function">inverse</b> function, which is defined
+as</p>
 <p><img alt="inverse" src="../image/inverse.png"></p></dd>
 <dt><a name="58"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">solarize</b> function, with parameter
-<i class="arg">threshold</i>. The function is defined as:</p>
+<i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="solarize" src="../image/solarize.png"></p>
 <p>Note how the function is the <b class="function">identity</b> for values under the
-threshold, and the <b class="function">inverse</b> for values at and above it.</p></dd>
+threshold, and the <b class="function">inverse</b> for values at and above it. Its
+application to an image produces what is known as either
+<i class="term"><a href="../index.html#key37">solarization</a></i> or <i class="term"><a href="../index.html#key27">sabattier effect</a></i>.</p></dd>
 <dt><a name="59"><b class="cmd">::crimp</b> <b class="method">table threshold-ge</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> function, with parameter
-<i class="arg">threshold</i>. The function is defined as:</p>
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key1">binarization</a></i>)
+function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-ge" src="../image/threshold-ge.png"></p></dd>
 <dt><a name="60"><b class="cmd">::crimp</b> <b class="method">table threshold-le</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> function, with parameter
-<i class="arg">threshold</i>. The function is defined as:</p>
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key1">binarization</a></i>)
+function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-le" src="../image/threshold-le.png"></p></dd>
 </dl>
 </div>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p><a href="../index.html#key31">affine transform</a>, <a href="../index.html#key13">alpha</a>, <a href="../index.html#key1">alpha blending</a>, <a href="../index.html#key18">alpha channel</a>, <a href="../index.html#key2">binarization</a>, <a href="../index.html#key26">blending</a>, <a href="../index.html#key29">channels</a>, <a href="../index.html#key14">composite blending</a>, <a href="../index.html#key30">composition</a>, <a href="../index.html#key7">const expansion</a>, <a href="../index.html#key35">convolution filter</a>, <a href="../index.html#key36">cyclic wrap expansion</a>, <a href="../index.html#key22">dimensions</a>, <a href="../index.html#key33">expansion</a>, <a href="../index.html#key32">extend expansion</a>, <a href="../index.html#key34">filter</a>, <a href="../index.html#key4">flip</a>, <a href="../index.html#key27">gamma correction</a>, <a href="../index.html#key12">histogram</a>, <a href="../index.html#key3">image</a>, <a href="../index.html#key9">inversion</a>, <a href="../index.html#key8">matrix</a>, <a href="../index.html#key21">max-filter</a>, <a href="../index.html#key20">median-filter</a>, <a href="../index.html#key16">min-filter</a>, <a href="../index.html#key19">mirror expansion</a>, <a href="../index.html#key23">photo</a>, <a href="../index.html#key11">pixel mapping</a>, <a href="../index.html#key15">projective transform</a>, <a href="../index.html#key25">rank-order filter</a>, <a href="../index.html#key5">remapping</a>, <a href="../index.html#key6">replicate edge expansion</a>, <a href="../index.html#key0">sabatier effect</a>, <a href="../index.html#key37">solarization</a>, <a href="../index.html#key24">thresholding</a>, <a href="../index.html#key10">toroidal wrap expansion</a>, <a href="../index.html#key28">transform</a>, <a href="../index.html#key17">wrap expansion</a></p>
+<p><a href="../index.html#key31">affine transform</a>, <a href="../index.html#key12">alpha</a>, <a href="../index.html#key0">alpha blending</a>, <a href="../index.html#key17">alpha channel</a>, <a href="../index.html#key1">binarization</a>, <a href="../index.html#key25">blending</a>, <a href="../index.html#key29">channels</a>, <a href="../index.html#key13">composite blending</a>, <a href="../index.html#key30">composition</a>, <a href="../index.html#key6">const expansion</a>, <a href="../index.html#key35">convolution filter</a>, <a href="../index.html#key36">cyclic wrap expansion</a>, <a href="../index.html#key21">dimensions</a>, <a href="../index.html#key33">expansion</a>, <a href="../index.html#key32">extend expansion</a>, <a href="../index.html#key34">filter</a>, <a href="../index.html#key3">flip</a>, <a href="../index.html#key26">gamma correction</a>, <a href="../index.html#key11">histogram</a>, <a href="../index.html#key2">image</a>, <a href="../index.html#key8">inversion</a>, <a href="../index.html#key7">matrix</a>, <a href="../index.html#key20">max-filter</a>, <a href="../index.html#key19">median-filter</a>, <a href="../index.html#key15">min-filter</a>, <a href="../index.html#key18">mirror expansion</a>, <a href="../index.html#key22">photo</a>, <a href="../index.html#key10">pixel mapping</a>, <a href="../index.html#key14">projective transform</a>, <a href="../index.html#key24">rank-order filter</a>, <a href="../index.html#key4">remapping</a>, <a href="../index.html#key5">replicate edge expansion</a>, <a href="../index.html#key27">sabattier effect</a>, <a href="../index.html#key37">solarization</a>, <a href="../index.html#key23">thresholding</a>, <a href="../index.html#key9">toroidal wrap expansion</a>, <a href="../index.html#key28">transform</a>, <a href="../index.html#key16">wrap expansion</a></p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2010 Andreas Kupries<br>

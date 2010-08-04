@@ -738,6 +738,87 @@ proc crimp::pyramid::laplace {image steps} {
 }
 
 # # ## ### ##### ######## #############
+
+proc ::crimp::statistics {image} {
+    array set stat {}
+
+    # Basics
+    set stat(channels)   [channels   $image]
+    set stat(dimensions) [dimensions $image]
+    set stat(height)     [height     $image]
+    set stat(width)      [width      $image]
+    set stat(type)       [TypeOf     $image]
+    set stat(pixels)     [set n [expr {$stat(width) * $stat(height)}]]
+
+    # Histogram and derived data, per channel.
+    foreach {c h} [histogram $image] {
+	#puts <$c>
+	set hf     [dict values $h]
+	#puts H|[llength $hf]||$hf
+	set cdf    [CUMULATE $hf]
+	#puts C|[llength $cdf]|$cdf
+	set cdf255 [FIT $cdf 255]
+
+	# Min, max, plus pre-processing for the mean
+	set min 255
+	set max 0
+	set sum 0
+	foreach {p count} $h {
+	    if {!$count} continue
+	    set min [tcl::mathfunc::min $min $p]
+	    set max [tcl::mathfunc::max $max $p]
+	    incr sum [expr {$p * $count}]
+	}
+
+	# Arithmetic mean
+	set mean [expr {double($sum) / $n}]
+
+	# Median
+	if {$min == $max} {
+	    set median $min
+	} else {
+	    set median 0
+	    foreach {p count} $h s $cdf255 {
+		if {$s <= 127} continue
+		set median $p
+		break
+	    }
+	}
+
+	# Variance
+	# http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant
+	set sum2 0
+	set sumc 0
+	foreach {p count} $h {
+	    if {!$count} continue
+	    set x [expr {$p - $mean}]
+	    set sum2 [expr {$sum2 + $count * $x * $x}]
+	    set sumc [expr {$sumc + $count * $x}]
+	}
+	set variance [expr {($sum2 - $sumc**2/$n)/($n - 1)}]
+	set stddev   [expr {sqrt($variance)}]
+
+	# Save the statistics
+	set key [list channel $c]
+	set stat($key) [dict create        \
+			    min       $min  \
+			    max       $max   \
+			    median    $median \
+			    mean      $mean    \
+			    stddev    $stddev   \
+			    variance  $variance \
+			    histogram $h       \
+			    hf        $hf     \
+			    cdf       $cdf    \
+			    cdf255    $cdf255 \
+			  ]
+	# geom mean, stddev
+    }
+
+    return [array get stat]
+}
+
+# # ## ### ##### ######## #############
 ## Tables and maps.
 ## For performance we should memoize results.
 ## This is not needed to just get things working howver.
@@ -881,6 +962,37 @@ proc ::crimp::table::WRAP {x} {
     }
     return $x
 }
+# series(int) --> series (int)
+proc ::crimp::CUMULATE {series} {
+    set res {}
+    set sum 0
+    foreach x $series {
+	incr sum $x
+	lappend res $sum
+    }
+    return $res
+}
+
+# series(int/float) --> series(int), all(x): x <= max
+proc ::crimp::FIT {series max} {
+    # Assumes that the input is a monotonically increasing
+    # series. The maximum value of the series is at the end.
+    set top [lindex $series end]
+
+    if {$top == 0} {
+	# The inputs fits regardless of maximum.
+	return $series
+    }
+
+    #puts /$top/
+    set f   [expr {double($max) / double($top)}]
+    set res {}
+    
+    foreach x $series {
+	lappend res [expr {round(double($x)*$f)}]
+    }
+    return $res
+}
 
 # # ## ### ##### ######## #############
 
@@ -899,6 +1011,7 @@ namespace eval ::crimp {
     namespace export subtract difference multiply pyramid
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge
+    namespace export statistics
     #
     namespace ensemble create
 }

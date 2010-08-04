@@ -650,11 +650,11 @@ single-byte channels, i.e. all but [const grey16], [const grey32], and
 
 
 [call [cmd ::crimp] [method solarize] [arg image] [arg threshold]]
-[keywords solarization {sabatier effect}]
+[keywords solarization {sabattier effect}]
 
 This method takes an image, runs it through the [fun solarize]
 function with parameter [arg threshold], and returns the modified
-image as it result.
+image as it result. This is also known as the [term {sabattier effect}].
 
 This is an application of method [method remap], using the mapping
 returned by "[method {map solarize}] [arg threshold]".
@@ -668,7 +668,8 @@ This method supports all image types supported by the method
 
 This method takes an image, runs it through the [fun threshold-ge]
 function with parameter [arg threshold], and returns the modified
-image as it result.
+image as it result. As the result only contains black and white,
+i.e. 2 colors, this process is also called [term binarization].
 
 This is an application of method [method remap], using the mapping
 returned by "[method {map threshold-ge}] [arg threshold]".
@@ -682,7 +683,8 @@ This method supports all image types supported by the method
 
 This method takes an image, runs it through the [fun threshold-le]
 function with parameter [arg threshold], and returns the modified
-image as it result.
+image as it result. As the result only contains black and white,
+i.e. 2 colors, this process is also called [term binarization].
 
 This is an application of method [method remap], using the mapping
 returned by "[method {map threshold-le}] [arg threshold]".
@@ -932,7 +934,8 @@ This function is defined as:
 [call [cmd ::crimp] [method {table identity}]]
 
 This method returns a list of 256 values, the result of running the
-values 0 to 255 through the [fun identity] function, defined as
+values 0 to 255 through the [fun identity] function, which is defined
+as
 
 [para][image identity]
 
@@ -940,7 +943,8 @@ values 0 to 255 through the [fun identity] function, defined as
 [call [cmd ::crimp] [method {table invers}]]
 
 This method returns a list of 256 values, the result of running the
-values 0 to 255 through the [fun inverse] function, defined as
+values 0 to 255 through the [fun inverse] function, which is defined
+as
 
 [para][image inverse]
 
@@ -949,20 +953,22 @@ values 0 to 255 through the [fun inverse] function, defined as
 
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through the [fun solarize] function, with parameter
-[arg threshold]. The function is defined as:
+[arg threshold]. This function is defined as:
 
 [para][image solarize]
 [para]
 
 Note how the function is the [fun identity] for values under the
-threshold, and the [fun inverse] for values at and above it.
+threshold, and the [fun inverse] for values at and above it. Its
+application to an image produces what is known as either
+[term solarization] or [term {sabattier effect}].
 
 
 [call [cmd ::crimp] [method {table threshold-ge}] [arg threshold]]
 
 This method returns a list of 256 values, the result of running the
-values 0 to 255 through a [fun thresholding] function, with parameter
-[arg threshold]. The function is defined as:
+values 0 to 255 through a [fun thresholding] (or [term binarization])
+function, with parameter [arg threshold]. This function is defined as:
 
 [para][image threshold-ge]
 [para]
@@ -971,8 +977,8 @@ values 0 to 255 through a [fun thresholding] function, with parameter
 [call [cmd ::crimp] [method {table threshold-le}] [arg threshold]]
 
 This method returns a list of 256 values, the result of running the
-values 0 to 255 through a [fun thresholding] function, with parameter
-[arg threshold]. The function is defined as:
+values 0 to 255 through a [fun thresholding] (or [term binarization])
+function, with parameter [arg threshold]. This function is defined as:
 
 [para][image threshold-le]
 [para]

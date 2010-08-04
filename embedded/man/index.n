@@ -433,7 +433,7 @@ replicate edge expansion
 \fBfiles/crimp.n\fR
 crimp
 .RE
-sabatier effect
+sabattier effect
 .RS
 .TP
 \fBfiles/crimp.n\fR

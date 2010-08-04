@@ -969,7 +969,7 @@ single-byte channels, i.e. all but \fBgrey16\fR, \fBgrey32\fR, and
 \fB::crimp\fR \fBsolarize\fR \fIimage\fR \fIthreshold\fR
 This method takes an image, runs it through the \fBsolarize\fR
 function with parameter \fIthreshold\fR, and returns the modified
-image as it result.
+image as it result. This is also known as the \fIsabattier effect\fR.
 This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap solarize\fR \fIthreshold\fR".
 This method supports all image types supported by the method
@@ -978,7 +978,8 @@ This method supports all image types supported by the method
 \fB::crimp\fR \fBthreshold-ge\fR \fIimage\fR \fIthreshold\fR
 This method takes an image, runs it through the \fBthreshold-ge\fR
 function with parameter \fIthreshold\fR, and returns the modified
-image as it result.
+image as it result. As the result only contains black and white,
+i.e. 2 colors, this process is also called \fIbinarization\fR.
 This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap threshold-ge\fR \fIthreshold\fR".
 This method supports all image types supported by the method
@@ -987,7 +988,8 @@ This method supports all image types supported by the method
 \fB::crimp\fR \fBthreshold-le\fR \fIimage\fR \fIthreshold\fR
 This method takes an image, runs it through the \fBthreshold-le\fR
 function with parameter \fIthreshold\fR, and returns the modified
-image as it result.
+image as it result. As the result only contains black and white,
+i.e. 2 colors, this process is also called \fIbinarization\fR.
 This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap threshold-le\fR \fIthreshold\fR".
 This method supports all image types supported by the method
@@ -1226,7 +1228,8 @@ gauss_\\sigma (x) = [255 e^{-\\frac{x-127.5}{2\\sigma^2}}]
 .TP
 \fB::crimp\fR \fBtable identity\fR
 This method returns a list of 256 values, the result of running the
-values 0 to 255 through the \fBidentity\fR function, defined as
+values 0 to 255 through the \fBidentity\fR function, which is defined
+as
 .sp
 .PS
 .nf
@@ -1237,7 +1240,8 @@ identity (x) = x
 .TP
 \fB::crimp\fR \fBtable invers\fR
 This method returns a list of 256 values, the result of running the
-values 0 to 255 through the \fBinverse\fR function, defined as
+values 0 to 255 through the \fBinverse\fR function, which is defined
+as
 .sp
 .PS
 .nf
@@ -1249,7 +1253,7 @@ inverse (x) = 255 - x
 \fB::crimp\fR \fBtable solarize\fR \fIthreshold\fR
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through the \fBsolarize\fR function, with parameter
-\fIthreshold\fR. The function is defined as:
+\fIthreshold\fR. This function is defined as:
 .sp
 .PS
 .nf
@@ -1262,16 +1266,18 @@ x       & x < threshold \\\\
 .PE
 .sp
 Note how the function is the \fBidentity\fR for values under the
-threshold, and the \fBinverse\fR for values at and above it.
+threshold, and the \fBinverse\fR for values at and above it. Its
+application to an image produces what is known as either
+\fIsolarization\fR or \fIsabattier effect\fR.
 .TP
 \fB::crimp\fR \fBtable threshold-ge\fR \fIthreshold\fR
 This method returns a list of 256 values, the result of running the
-values 0 to 255 through a \fBthresholding\fR function, with parameter
-\fIthreshold\fR. The function is defined as:
+values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
+function, with parameter \fIthreshold\fR. This function is defined as:
 .sp
 .PS
 .nf
-threshold_{threshold} (x) = \\left\\{\\begin{eqnarray}
+f_{threshold} (x) = \\left\\{\\begin{eqnarray}
 0   & x \\ge threshold \\\\
 255 & x < threshold \\\\
 \\end{eqnarray}\\right
@@ -1284,12 +1290,12 @@ threshold_{threshold} (x) = \\left\\{\\begin{eqnarray}
 .TP
 \fB::crimp\fR \fBtable threshold-le\fR \fIthreshold\fR
 This method returns a list of 256 values, the result of running the
-values 0 to 255 through a \fBthresholding\fR function, with parameter
-\fIthreshold\fR. The function is defined as:
+values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
+function, with parameter \fIthreshold\fR. This function is defined as:
 .sp
 .PS
 .nf
-threshold_{threshold} (x) = \\left\\{\\begin{eqnarray}
+f_{threshold} (x) = \\left\\{\\begin{eqnarray}
 0   & x \\le threshold \\\\
 255 & x > threshold \\\\
 \\end{eqnarray}\\right
@@ -1301,7 +1307,7 @@ threshold_{threshold} (x) = \\left\\{\\begin{eqnarray}
 .sp
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution filter, cyclic wrap expansion, dimensions, expansion, extend expansion, filter, flip, gamma correction, histogram, image, inversion, matrix, max-filter, median-filter, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabatier effect, solarization, thresholding, toroidal wrap expansion, transform, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution filter, cyclic wrap expansion, dimensions, expansion, extend expansion, filter, flip, gamma correction, histogram, image, inversion, matrix, max-filter, median-filter, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabattier effect, solarization, thresholding, toroidal wrap expansion, transform, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

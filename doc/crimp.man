@@ -246,6 +246,53 @@ and 96 GiByte in best case (all counter values shared in a single
 object).
 
 
+[call [cmd ::crimp] [method statistics] [arg image]]
+[keywords statistics min max median stddev variance]
+
+This method returns a nested dictionary as its result. The outer dictionary
+contains basic information about the image, see the list of keys below.
+The inner dictionaries hold data about each (color) channel in the image,
+namely histogram and derived data like minumum pixel value, maximum, etc.
+
+[list_begin definitions]
+[def [const channels]]   List of the names for the channels in the image.
+[def [const dimensions]] 2-element list holding image width and height, in
+                         this order.
+[def [const height]]     Image height as separate value.
+[def [const pixels]]     Number of pixels in the image, the product of
+                         its width and height.
+[def [const type]]       Type of the image.
+[def [const width]]      Image width as separate value.
+[def [const {channel *}]]
+                         Per channel named in key [const channels], where
+                         [const *] is the place holder for the channel name.
+                         A dictionary holding the statistics for that channel.
+[list_begin definitions]
+[def [const min]]        The minimal pixel value with a non-zero population.
+[def [const max]]        The maximal pixel value with a non-zero population.
+[def [const mean]]       The arithmetic mean of pixel values.
+[def [const median]]     The median pixel value.
+[def [const stddev]]     The standard deviation of pixel values.
+[def [const variance]]   The variance of pixel values, square of the standard
+                         deviation.
+[def [const histogram]]  A dictionary mapping pixel values to population counts.
+[def [const hf]]         The histogram reduced to the population counts, sorted
+                         by pixel value to direct indexing into the list by
+                         pixel values.
+[def [const cdf]]        The [term {cumulative density function}] of pixel
+                         values. The discrete integral of [const hf].
+[def [const cdf255]]     Same as [const cdf], except scaled down so that the
+                         last value in the series is 255.
+[list_end]
+[list_end]
+
+[para] The method supports all image types except "grey32".  Under the
+current system the result would contain internal dictionaries with 2^32 keys
+and values, taking up, roughly, 192 GiByte of memory in the worst case,
+and 96 GiByte in best case (all counter values shared in a single
+object).
+
+
 [call [cmd ::crimp] [method type] [arg image]]
 
 This method returns the type of the [arg image].

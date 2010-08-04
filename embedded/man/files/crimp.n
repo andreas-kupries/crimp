@@ -258,6 +258,8 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBhistogram\fR \fIimage\fR
 .sp
+\fB::crimp\fR \fBstatistics\fR \fIimage\fR
+.sp
 \fB::crimp\fR \fBtype\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBwidth\fR \fIimage\fR
@@ -612,6 +614,82 @@ associated values are the number of pixels with that value.
 The method supports all image types except "grey32".  Under the
 current system the result would be a dictionary with 2^32 keys and
 values, taking up, roughly, 192 GiByte of memory in the worst case,
+and 96 GiByte in best case (all counter values shared in a single
+object).
+.TP
+\fB::crimp\fR \fBstatistics\fR \fIimage\fR
+This method returns a nested dictionary as its result. The outer dictionary
+contains basic information about the image, see the list of keys below.
+The inner dictionaries hold data about each (color) channel in the image,
+namely histogram and derived data like minumum pixel value, maximum, etc.
+.RS
+.TP
+\fBchannels\fR
+List of the names for the channels in the image.
+.TP
+\fBdimensions\fR
+2-element list holding image width and height, in
+this order.
+.TP
+\fBheight\fR
+Image height as separate value.
+.TP
+\fBpixels\fR
+Number of pixels in the image, the product of
+its width and height.
+.TP
+\fBtype\fR
+Type of the image.
+.TP
+\fBwidth\fR
+Image width as separate value.
+.TP
+\fBchannel *\fR
+Per channel named in key \fBchannels\fR, where
+\fB*\fR is the place holder for the channel name.
+A dictionary holding the statistics for that channel.
+.RS
+.TP
+\fBmin\fR
+The minimal pixel value with a non-zero population.
+.TP
+\fBmax\fR
+The maximal pixel value with a non-zero population.
+.TP
+\fBmean\fR
+The arithmetic mean of pixel values.
+.TP
+\fBmedian\fR
+The median pixel value.
+.TP
+\fBstddev\fR
+The standard deviation of pixel values.
+.TP
+\fBvariance\fR
+The variance of pixel values, square of the standard
+deviation.
+.TP
+\fBhistogram\fR
+A dictionary mapping pixel values to population counts.
+.TP
+\fBhf\fR
+The histogram reduced to the population counts, sorted
+by pixel value to direct indexing into the list by
+pixel values.
+.TP
+\fBcdf\fR
+The \fIcumulative density function\fR of pixel
+values. The discrete integral of \fBhf\fR.
+.TP
+\fBcdf255\fR
+Same as \fBcdf\fR, except scaled down so that the
+last value in the series is 255.
+.RE
+.RE
+.sp
+The method supports all image types except "grey32".  Under the
+current system the result would contain internal dictionaries with 2^32 keys
+and values, taking up, roughly, 192 GiByte of memory in the worst case,
 and 96 GiByte in best case (all counter values shared in a single
 object).
 .TP
@@ -1307,7 +1385,7 @@ f_{threshold} (x) = \\left\\{\\begin{eqnarray}
 .sp
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution filter, cyclic wrap expansion, dimensions, expansion, extend expansion, filter, flip, gamma correction, histogram, image, inversion, matrix, max-filter, median-filter, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabattier effect, solarization, thresholding, toroidal wrap expansion, transform, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution filter, cyclic wrap expansion, dimensions, expansion, extend expansion, filter, flip, gamma correction, histogram, image, inversion, matrix, max, max-filter, median, median-filter, min, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabattier effect, solarization, statistics, stddev, thresholding, toroidal wrap expansion, transform, variance, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

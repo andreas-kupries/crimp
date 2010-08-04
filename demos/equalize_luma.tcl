@@ -53,8 +53,8 @@ def effect_equalize_luma {
 	    set res {}
 	    set sum 0
 	    foreach x $series {
-		lappend res $sum
 		incr sum $x
+		lappend res $sum
 	    }
 	    return $res
 	}

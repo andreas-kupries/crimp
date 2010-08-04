@@ -1,0 +1,121 @@
+def effect_equalize_hsv {
+    label {Equalize (HSV)}
+    setup_image {
+	variable mask [lindex [crimp split [base]] end]
+	PLAIN
+    }
+    setup {
+	variable TS {0 1}
+	variable TV {0 1}
+	variable TL {0 1}
+
+	variable mask
+
+	proc HISTO {image} {
+	    variable HL ; variable HH ; variable HS ; variable HV
+	    variable TL ;               variable TS ; variable TV 
+
+	    array set TMP [crimp histogram [crimp convert 2grey8 $image]]
+	    array set TMP [crimp histogram [crimp convert 2hsv   $image]]
+
+	    set HL [dict values $TMP(luma)]  ; set TL [CUMULATE $HL]
+	    set HH [dict values $TMP(hue)]
+	    set HS [dict values $TMP(saturation)] ; set TS [CUMULATE $HS]
+	    set HV [dict values $TMP(value)]      ; set TV [CUMULATE $HV]
+
+
+	    # For the sake of the display we cut out the pure white
+	    # and black, as they are likely outliers with an extreme
+	    # number of pixels using them.
+	    
+	    lset HL 0 0 ; lset HL 255 0
+	    lset HS 0 0 ; lset HS 255 0
+	    lset HV 0 0 ; lset HV 255 0
+	    return
+	}
+
+	proc PLAIN {} {
+	    HISTO      [base]
+	    show_image [base]
+	    return
+	}
+
+	proc EQUAL {} {
+	    HISTO [base]
+	    # H is not stretched. Does not make sense for HUE.
+	    variable HH ; variable HS ; variable HV
+	                  variable TS ; variable TV
+	    variable mask
+
+	    set fs [FIT $TS 255]
+	    set fv [FIT $TV 255]
+
+	    set h [crimp map identity]
+	    set s [crimp read tcl [list $fs]]
+	    set v [crimp read tcl [list $fv]]
+
+	    set new [crimp alpha set \
+			 [crimp convert 2rgb \
+			      [crimp remap \
+				   [crimp convert 2hsv [base]] \
+				   $h $s $v]] \
+			 $mask]
+
+	    show_image $new
+	    HISTO      $new
+	    return
+	}
+
+	# series(int) --> series (int)
+	proc CUMULATE {series} {
+	    set res {}
+	    set sum 0
+	    foreach x $series {
+		lappend res $sum
+		incr sum $x
+	    }
+	    return $res
+	}
+
+	# series(int/float) --> series(int), all(x): x <= max
+	proc FIT {series max} {
+	    # Assumes that the input is a monotonically increasing
+	    # series. The maximum value of the series is at the end.
+	    set top [lindex $series end]
+	    set f   [expr {double($max) / double($top)}]
+	    set res {}
+
+	    foreach x $series {
+		lappend res [expr {round(double($x)*$f)}]
+	    }
+	    return $res
+	}
+
+	HISTO [base]
+
+	plot  .left.hl   -variable ::DEMO::HL -locked 0 -title Luma
+	plot  .left.tl   -variable ::DEMO::TL -locked 0 -title {CDF Luma}
+	plot  .left.hh   -variable ::DEMO::HH -locked 0 -title Hue
+
+	plot  .bottom.hs -variable ::DEMO::HS -locked 0 -title Saturation
+	plot  .bottom.hv -variable ::DEMO::HV -locked 0 -title Value
+
+	plot  .bottom.ts -variable ::DEMO::TS -locked 0 -title {CDF Saturation}
+	plot  .bottom.tv -variable ::DEMO::TV -locked 0 -title {CDF Value}
+
+	ttk::button .top.equal -text Equalize -command ::DEMO::EQUAL
+	ttk::button .top.plain -text Plain    -command ::DEMO::PLAIN
+
+	grid .left.hl -row 0 -column 0 -sticky swen
+	grid .left.tl -row 1 -column 0 -sticky swen
+	grid .left.hh -row 2 -column 0 -sticky swen
+
+	grid .bottom.hs -row 0 -column 0 -sticky swen
+	grid .bottom.ts -row 0 -column 1 -sticky swen
+	grid .bottom.hv -row 0 -column 2 -sticky swen
+	grid .bottom.tv -row 0 -column 3 -sticky swen
+
+	grid .top.equal -row 0 -column 0 -sticky swen
+	grid .top.plain -row 0 -column 1 -sticky swen
+    }
+}

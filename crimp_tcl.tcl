@@ -947,6 +947,94 @@ proc ::crimp::table::gauss {sigma} {
 
 # # ## ### ##### ######## #############
 
+namespace eval ::crimp::table::quantize {
+    namespace export *
+    namespace ensemble create
+
+    variable  pmap
+    array set pmap {
+	low  0   down 0   min 0   median 50
+	high 100 up   100 max 100
+    }
+}
+
+proc ::crimp::table::quantize::histogram {n p h} {
+    # Get the histogram as function, integrate it, and scale to the
+    # standard range 0...255 before using it to compute a
+    # quantization.
+
+    return [crimp::table::QuantizeCore $n $p \
+		[crimp::FIT \
+		     [crimp::CUMULATE [dict values $h]] \
+		     255]]
+}
+
+proc ::crimp::table::QuantizeCore {n p cdf} {
+    variable pmap
+
+    if {$n < 2} {
+	return -code error "Unable to calculate 1-color quantization"
+    }
+
+    if {[info exists pmap($p)]} {
+	set p $pmap($p)
+    }
+
+    # First compute the quantization steps as the (255/n)'th
+    # percentiles in the histogram, and the associated high value in
+    # the range the final value is chosen from.
+
+    set res 0
+    set percentile [expr {255.0/$n}]
+    set threshold  $percentile
+
+    set step  {}
+    set color {}
+
+    foreach pv [crimp::table::identity] sum $cdf {
+	if {$sum <= $threshold} continue
+	lappend step   $pv
+	lappend color [expr {round($threshold)}]
+	set threshold [expr {$threshold + $percentile}]
+	if {[llength $step] == $n} break
+    }
+    lappend step  256
+    lappend color 255
+
+    #puts |$step|
+    #puts |$color|
+
+    # As the second and last step compute the remapping table from the
+    # steps and color ranges.
+    set at 0
+    set l  0
+
+    set threshold [lindex $step  $at]
+    set h         [lindex $color $at]
+    set c [expr {round($l + ($p/100.0)*($h - $l))}]
+    #puts =<$threshold|$l|$h|=$c
+
+    set table {}
+    for {set pix 0} {$pix < 256} {incr pix} {
+	while {$pix >= $threshold} {
+	    incr at
+	    set  l $h
+
+	    set threshold [lindex $step  $at]
+	    set h         [lindex $color $at]
+	    set c [expr {round($l + ($p/100.0)*($h - $l))}]
+	    #puts +<$threshold|$l|$h|=$c
+	}
+	# assert (c in (0...255))
+	lappend table $c
+    }
+
+    #puts [llength $table] (== 256 /assert)
+    return $table
+}
+
+# # ## ### ##### ######## #############
+
 proc ::crimp::table::CLAMP {x} {
     if {$x < 0  } { return 0   }
     if {$x > 255} { return 255 }

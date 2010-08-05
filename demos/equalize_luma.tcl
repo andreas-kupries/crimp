@@ -15,7 +15,7 @@ def effect_equalize_luma {
 	    array set TMP [crimp histogram $image]
 
 	    set HL [dict values $TMP(luma)]
-	    set TL [CUMULATE $HL]
+	    set TL [crimp::CUMULATE $HL]
 
 	    # For the sake of the display we cut out the pure white
 	    # and black, as they are likely outliers with an extreme
@@ -38,7 +38,7 @@ def effect_equalize_luma {
 	    variable HL
 	    variable TL
 
-	    set fl [FIT $TL 255]
+	    set fl [crimp::FIT $TL 255]
 	    set l  [crimp read tcl [list $fl]]
 
 	    set new [crimp remap $base $l]
@@ -47,33 +47,6 @@ def effect_equalize_luma {
 	    HISTO      $new
 	    return
 	}
-
-	# series(int) --> series (int)
-	proc CUMULATE {series} {
-	    set res {}
-	    set sum 0
-	    foreach x $series {
-		incr sum $x
-		lappend res $sum
-	    }
-	    return $res
-	}
-
-	# series(int/float) --> series(int), all(x): x <= max
-	proc FIT {series max} {
-	    # Assumes that the input is a monotonically increasing
-	    # series. The maximum value of the series is at the end.
-	    set top [lindex $series end]
-	    set f   [expr {double($max) / double($top)}]
-	    set res {}
-
-	    foreach x $series {
-		lappend res [expr {round(double($x)*$f)}]
-	    }
-	    return $res
-	}
-
-	#HISTO $base
 
 	plot  .left.hl   -variable ::DEMO::HL -locked 0 -title Luma
 	plot  .left.tl   -variable ::DEMO::TL -locked 0 -title {CDF Luma}

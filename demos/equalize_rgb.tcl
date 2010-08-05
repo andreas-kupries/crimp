@@ -16,10 +16,10 @@ def effect_equalize_rgb {
 	    array set TMP [crimp histogram [crimp convert 2grey8 $image]]
 	    array set TMP [crimp histogram $image]
 
-	    set HL [dict values $TMP(luma)]  ; set TL [CUMULATE $HL]
-	    set HR [dict values $TMP(red)]   ; set TR [CUMULATE $HR]
-	    set HG [dict values $TMP(green)] ; set TG [CUMULATE $HG]
-	    set HB [dict values $TMP(blue)]  ; set TB [CUMULATE $HB]
+	    set HL [dict values $TMP(luma)]  ; set TL [crimp::CUMULATE $HL]
+	    set HR [dict values $TMP(red)]   ; set TR [crimp::CUMULATE $HR]
+	    set HG [dict values $TMP(green)] ; set TG [crimp::CUMULATE $HG]
+	    set HB [dict values $TMP(blue)]  ; set TB [crimp::CUMULATE $HB]
 
 	    # For the sake of the display we cut out the pure white
 	    # and black, as they are likely outliers with an extreme
@@ -43,9 +43,9 @@ def effect_equalize_rgb {
 	    variable HR ; variable HG ; variable HB
 	    variable TR ; variable TG ; variable TB
 
-	    set fr [FIT $TR 255]
-	    set fg [FIT $TG 255]
-	    set fb [FIT $TB 255]
+	    set fr [crimp::FIT $TR 255]
+	    set fg [crimp::FIT $TG 255]
+	    set fb [crimp::FIT $TB 255]
 
 	    set r [crimp read tcl [list $fr]]
 	    set g [crimp read tcl [list $fg]]
@@ -56,31 +56,6 @@ def effect_equalize_rgb {
 	    show_image $new
 	    HISTO      $new
 	    return
-	}
-
-	# series(int) --> series (int)
-	proc CUMULATE {series} {
-	    set res {}
-	    set sum 0
-	    foreach x $series {
-		incr sum $x
-		lappend res $sum
-	    }
-	    return $res
-	}
-
-	# series(int/float) --> series(int), all(x): x <= max
-	proc FIT {series max} {
-	    # Assumes that the input is a monotonically increasing
-	    # series. The maximum value of the series is at the end.
-	    set top [lindex $series end]
-	    set f   [expr {double($max) / double($top)}]
-	    set res {}
-
-	    foreach x $series {
-		lappend res [expr {round(double($x)*$f)}]
-	    }
-	    return $res
 	}
 
 	HISTO [base]

@@ -18,10 +18,10 @@ def effect_equalize_hsv {
 	    array set TMP [crimp histogram [crimp convert 2grey8 $image]]
 	    array set TMP [crimp histogram [crimp convert 2hsv   $image]]
 
-	    set HL [dict values $TMP(luma)]  ; set TL [CUMULATE $HL]
+	    set HL [dict values $TMP(luma)]       ; set TL [crimp::CUMULATE $HL]
 	    set HH [dict values $TMP(hue)]
-	    set HS [dict values $TMP(saturation)] ; set TS [CUMULATE $HS]
-	    set HV [dict values $TMP(value)]      ; set TV [CUMULATE $HV]
+	    set HS [dict values $TMP(saturation)] ; set TS [crimp::CUMULATE $HS]
+	    set HV [dict values $TMP(value)]      ; set TV [crimp::CUMULATE $HV]
 
 
 	    # For the sake of the display we cut out the pure white
@@ -47,8 +47,8 @@ def effect_equalize_hsv {
 	                  variable TS ; variable TV
 	    variable mask
 
-	    set fs [FIT $TS 255]
-	    set fv [FIT $TV 255]
+	    set fs [crimp::FIT $TS 255]
+	    set fv [crimp::FIT $TV 255]
 
 	    set h [crimp map identity]
 	    set s [crimp read tcl [list $fs]]
@@ -64,31 +64,6 @@ def effect_equalize_hsv {
 	    show_image $new
 	    HISTO      $new
 	    return
-	}
-
-	# series(int) --> series (int)
-	proc CUMULATE {series} {
-	    set res {}
-	    set sum 0
-	    foreach x $series {
-		incr sum $x
-		lappend res $sum
-	    }
-	    return $res
-	}
-
-	# series(int/float) --> series(int), all(x): x <= max
-	proc FIT {series max} {
-	    # Assumes that the input is a monotonically increasing
-	    # series. The maximum value of the series is at the end.
-	    set top [lindex $series end]
-	    set f   [expr {double($max) / double($top)}]
-	    set res {}
-
-	    foreach x $series {
-		lappend res [expr {round(double($x)*$f)}]
-	    }
-	    return $res
 	}
 
 	HISTO [base]

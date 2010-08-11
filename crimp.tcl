@@ -23,6 +23,8 @@ critcl::config tk 1
 critcl::cheaders c/*.h cop/*.c
 critcl::csources c/*.c
 critcl::tsources crimp_tcl.tcl
+critcl::tsources reader/*.tcl  ;# image readers and writers implemented
+critcl::tsources writer/*.tcl  ;# as Tcl procedures.
 critcl::tsources plot.tcl
 
 critcl::cinit {

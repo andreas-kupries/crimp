@@ -108,19 +108,29 @@ proc ::crimp::BORDER {imagetype spec} {
 namespace eval ::crimp::read {
     namespace export *
     namespace ensemble create
-    variable fun
+}
+
+::apply {{dir} {
+    # Readers implemented as C primitives
     foreach fun [::crimp::List read_*] {
 	proc [::crimp::P $fun] {detail} [string map [list @ $fun] {
 	    @ $detail
 	}]
     }
-    unset fun
-}
+
+    # Readers implemented as Tcl procedures.
+    foreach file [glob -nocomplain -directory $dir/reader *.tcl] {
+	source $file
+    }
+} ::crimp::read} [file dirname [file normalize [info script]]]
 
 namespace eval ::crimp::write {
     namespace export *
     namespace ensemble create
-    variable fun
+}
+
+::apply {{dir} {
+    # Writers implemented as C primitives
     foreach fun [::crimp::List write_*] {
 	proc [lindex [::crimp::P $fun] 0] {dst image} \
 	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
@@ -131,8 +141,12 @@ namespace eval ::crimp::write {
 		return [::crimp::write_@_${type} $dst $image]
 	    }]
     }
-    unset fun
-}
+
+    # Writers implemented as Tcl procedures.
+    foreach file [glob -nocomplain -directory $dir/writer *.tcl] {
+	source $file
+    }
+} ::crimp::write} [file dirname [file normalize [info script]]]
 
 namespace eval ::crimp::convert {
     namespace export *

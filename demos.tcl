@@ -18,6 +18,7 @@ if {[catch {
 package require widget::scrolledwindow
 package require widget::toolbar
 package require widget::arrowbutton
+package require fileutil
 
 # Self dir
 set dir [file dirname [file normalize [info script]]]
@@ -62,7 +63,7 @@ puts "Starting up ..."
 
 proc images_init {} {
     global dir images
-    set images [glob -tails -directory $dir/images *]
+    set images [glob -tails -directory $dir/images *.png]
     return
 }
 

@@ -406,6 +406,29 @@ values to fill the pixels in the image's channels with, per its type.
 [const rgba], and [const grey8].
 
 
+[call [cmd ::crimp] [method crop] [arg image] [arg ww] [arg hn] [arg we] [arg hs]]
+[keywords cropping shrinking resize {edge shrinking}]
+
+This method is the counterpart to the [method expand] family of
+methods, shrinking an [arg image] by removing a border.
+
+The size of this border is specified by the four arguments [arg ww],
+[arg hn], [arg we], and [arg hs] which provide the number of pixels to
+remove from the named edge. See the image below for a graphical
+representation.
+
+[para][image border][para]
+
+
+[call [cmd ::crimp] [method cut] [arg image] [arg x] [arg y] [arg w] [arg h]]
+[keywords {cut region} {region cut} {rectangle cut} {rectangle extraction}]
+[keywords {extract rectangle} {extract region}]
+
+This method cuts the rectangular region specified throught its [arg x]/[arg y]
+position relative to the upper-left corner of the input [arg image] and its
+dimensions, and returns it as its own image.
+
+
 [call [cmd ::crimp] [method degamma] [arg image] [arg y]]
 [keywords {gamma correction}]
 

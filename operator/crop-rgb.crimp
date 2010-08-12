@@ -1,0 +1,50 @@
+crop_rgb
+Tcl_Obj* imageObj
+int ww
+int hn
+int we
+int hs
+
+/*
+ * Border cropping.
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          xo, yo, xi, yi;
+
+crimp_input (imageObj, image, rgb);
+
+if ((ww < 0) || (hn < 0) || (we < 0) || (hs < 0)) {
+    Tcl_SetResult(interp, "bad image border size, expected non-negative values", TCL_STATIC);
+    return TCL_ERROR;
+} else if (((ww + we) > image->w) || ((hn + hs) > image->h)) {
+    Tcl_SetResult(interp, "bad image border size, larger than image dimensions", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new (image->itype, image->w - ww - we, image->h - hn - hs);
+
+/*
+ * Copy the un-cropped part of the input image.
+ */
+
+for (yo = 0, yi = hn; yo < result->h; yo++, yi++) {
+    for (xo = 0, xi = ww; xo < result->w; xo++, xi++) {
+	R (result, xo, yo) = R (image, xi, yi);
+	G (result, xo, yo) = G (image, xi, yi);
+	B (result, xo, yo) = B (image, xi, yi);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

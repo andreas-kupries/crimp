@@ -274,6 +274,10 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBblank\fR \fItype\fR \fIwidth\fR \fIheight\fR \fIvalue\fR...
 .sp
+\fB::crimp\fR \fBcrop\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.sp
+\fB::crimp\fR \fBcut\fR \fIimage\fR \fIx\fR \fIy\fR \fIw\fR \fIh\fR
+.sp
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
 .sp
 \fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
@@ -789,6 +793,42 @@ values to fill the pixels in the image's channels with, per its type.
 .sp
 This method currently support only the types \fBrgb\fR,
 \fBrgba\fR, and \fBgrey8\fR.
+.TP
+\fB::crimp\fR \fBcrop\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+This method is the counterpart to the \fBexpand\fR family of
+methods, shrinking an \fIimage\fR by removing a border.
+The size of this border is specified by the four arguments \fIww\fR,
+\fIhn\fR, \fIwe\fR, and \fIhs\fR which provide the number of pixels to
+remove from the named edge. See the image below for a graphical
+representation.
+.sp
+.PS
+.nf
+   |< ww >|           |< we >|
+
+-  +------+-----------+------+
+^  |      |           |      |
+hn |      |           |      |
+V  |      |           |      |
+-  +------+-----------+------+
+   |      |           |      |
+   |      |           |      |
+   |      |           |      |
+   |      |           |      |
+-  +------+-----------+------+
+^  |      |           |      |
+hs |      |           |      |
+V  |      |           |      |
+-  +------+-----------+------+
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBcut\fR \fIimage\fR \fIx\fR \fIy\fR \fIw\fR \fIh\fR
+This method cuts the rectangular region specified throught its \fIx\fR/\fIy\fR
+position relative to the upper-left corner of the input \fIimage\fR and its
+dimensions, and returns it as its own image.
 .TP
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
 This method takes an image, runs it through an
@@ -1385,7 +1425,7 @@ f_{threshold} (x) = \\left\\{\\begin{eqnarray}
 .sp
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution filter, cyclic wrap expansion, dimensions, expansion, extend expansion, filter, flip, gamma correction, histogram, image, inversion, matrix, max, max-filter, median, median-filter, min, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, remapping, replicate edge expansion, sabattier effect, solarization, statistics, stddev, thresholding, toroidal wrap expansion, transform, variance, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, binarization, blending, channels, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dimensions, edge shrinking, expansion, extend expansion, extract rectangle, extract region, filter, flip, gamma correction, histogram, image, inversion, matrix, max, max-filter, median, median-filter, min, min-filter, mirror expansion, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, shrinking, solarization, statistics, stddev, thresholding, toroidal wrap expansion, transform, variance, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

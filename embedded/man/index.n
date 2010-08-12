@@ -307,6 +307,18 @@ convolution filter
 \fBfiles/crimp.n\fR
 crimp
 .RE
+cropping
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+cut region
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 cyclic wrap expansion
 .RS
 .TP
@@ -319,6 +331,12 @@ dimensions
 \fBfiles/crimp.n\fR
 crimp
 .RE
+edge shrinking
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 expansion
 .RS
 .TP
@@ -326,6 +344,18 @@ expansion
 crimp
 .RE
 extend expansion
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+extract rectangle
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+extract region
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -439,6 +469,24 @@ rank-order filter
 \fBfiles/crimp.n\fR
 crimp
 .RE
+rectangle cut
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+rectangle extraction
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+region cut
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 remapping
 .RS
 .TP
@@ -451,7 +499,19 @@ replicate edge expansion
 \fBfiles/crimp.n\fR
 crimp
 .RE
+resize
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 sabattier effect
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+shrinking
 .RS
 .TP
 \fBfiles/crimp.n\fR

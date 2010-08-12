@@ -376,6 +376,30 @@ proc ::crimp::expand {bordertype image ww hn we hs args} {
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::crop {image ww hn we hs} {
+    set type [TypeOf $image]
+    set f    crop_$type
+    if {![crimp::Has $f]} {
+	return -code error "Cropping is not supported for images of type \"$type\""
+    }
+    return [crimp::$f $image $ww $hn $we $hs]
+}
+
+proc ::crimp::cut {image x y w h} {
+    lassign [dimensions $image] iw ih
+
+    set south [expr {$y + $h}]
+    set east  [expr {$x + $w}]
+    if {$south > $ih} { set south $ih }
+    if {$east  > $iw} { set east  $iw }
+    set dw [expr {$iw - $east}]
+    set dh [expr {$ih - $south}]
+
+    return [crop $image $x $y $dw $dh]
+}
+
+# # ## ### ##### ######## #############
+
 namespace eval ::crimp::alpha {
     namespace export *
     namespace ensemble create
@@ -1105,10 +1129,10 @@ proc ::crimp::TypeOf {image} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp {
-    namespace export type width height dimensions channels
+    namespace export type width height dimensions channels cut
     namespace export read write convert join flip split table
     namespace export invert solarize gamma degamma remap map
-    namespace export wavy psychedelia matrix blank filter
+    namespace export wavy psychedelia matrix blank filter crop
     namespace export alpha histogram max min screen add
     namespace export subtract difference multiply pyramid
     namespace export downsample upsample decimate interpolate

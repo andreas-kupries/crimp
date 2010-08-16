@@ -1133,7 +1133,7 @@ namespace eval ::crimp {
     namespace export read write convert join flip split table
     namespace export invert solarize gamma degamma remap map
     namespace export wavy psychedelia matrix blank filter crop
-    namespace export alpha histogram max min screen add
+    namespace export alpha histogram max min screen add pixel
     namespace export subtract difference multiply pyramid
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge

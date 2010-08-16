@@ -151,7 +151,10 @@ namespace eval ::crimp::write {
 namespace eval ::crimp::convert {
     namespace export *
     namespace ensemble create
-    variable fun
+}
+
+::apply {{} {
+    # Converters implemented as C primitives
     foreach fun [::crimp::List convert_*] {
 	proc [lindex [::crimp::P $fun] 0] {image} \
 	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
@@ -162,25 +165,27 @@ namespace eval ::crimp::convert {
 		return [::crimp::convert_@_${type} $image]
 	    }]
     }
-    unset fun
-}
+} ::crimp::convert}
 
 namespace eval ::crimp::join {
     namespace export *
     namespace ensemble create
-    variable fun
+}
+
+::apply {{} {
     foreach fun [::crimp::List join_*] {
 	proc [::crimp::P $fun] {args} [string map [list @ $fun] {
 	    return [@ {*}$args]
 	}]
     }
-    unset fun
-}
+} ::crimp::join}
 
 namespace eval ::crimp::flip {
     namespace export *
     namespace ensemble create
-    variable fun
+}
+
+::apply {{} {
     foreach fun [::crimp::List flip_*] {
 	proc [lindex [::crimp::P $fun] 0] {image} \
 	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
@@ -191,9 +196,7 @@ namespace eval ::crimp::flip {
 		return [::crimp::flip_@_$type $image]
 	    }]
     }
-    unset fun
-}
-
+} ::crimp::flip}
 
 # # ## ### ##### ######## #############
 

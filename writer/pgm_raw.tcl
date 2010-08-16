@@ -5,7 +5,7 @@
 # See http://en.wikipedia.org/wiki/Netpbm_format
 
 namespace eval ::crimp::write {}
-proc ::crimp::write::2pgmraw_grey8 {path image} {
+proc ::crimp::write::2pgmraw {path image} {
 
     set type [crimp::TypeOf $image]
     if {$type ne "grey8"} {

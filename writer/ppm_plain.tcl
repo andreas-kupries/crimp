@@ -19,7 +19,7 @@ proc ::crimp::write::2ppmplain {path image} {
     # needed by the format, only conversion to ASCII is needed.
 
     set res "P3 [crimp dimensions $image] 255"
-    foreach c [split [crimp pixel $image]] {
+    foreach c [split [crimp pixel $image] {}] {
 	binary scan $c cu g
 	append res " " $g
     }

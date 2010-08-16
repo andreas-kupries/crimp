@@ -56,22 +56,32 @@ proc ::crimp::read::ppm {ppmdata} {
        return -code error "Not a PPM image"
    }
 
-   # Re-scale and -layout the pixels for use by 'read tcl' / XXX NYI.
-   set img {}
-   set row {}
+   # Re-scale and -layout the pixels for use by 'read tcl'. Note how
+   # we are placing the data in three separate planes. These become
+   # three separate greyscale images which are then joined into the
+   # final RGB.
+
+   set imgr {} ; set rowr {}
+   set imgg {} ; set rowg {}
+   set imgb {} ; set rowb {}
+
    foreach {r g b} $raster {
-       set r [expr {(255*$r)/$max}]
-       set g [expr {(255*$g)/$max}]
-       set b [expr {(255*$b)/$max}]
-       lappend row [list $r $g $b]
-       if {[llength $row] == $w} {
-	   lappend img $row
-	   set row {}
+       set r [expr {(255*$r)/$max}] ; lappend rowr $r
+       set g [expr {(255*$g)/$max}] ; lappend rowg $g
+       set b [expr {(255*$b)/$max}] ; lappend rowb $b
+
+       if {[llength $rowr] == $w} {
+	   lappend imgr $rowr ; set rowr {}
+	   lappend imgg $rowg ; set rowg {}
+	   lappend imgb $rowb ; set rowb {}
        }
    }
 
    # At last construct and return the crimp value.
-   return [tcl///NYI $img]
+   return [crimp join 2rgb \
+	       [tcl $imgr] \
+	       [tcl $imgg] \
+	       [tcl $imgb]]
 }
 
 # # ## ### ##### ######## #############

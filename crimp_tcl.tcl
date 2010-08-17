@@ -124,6 +124,8 @@ namespace eval ::crimp::read {
     }
 } ::crimp::read} [file dirname [file normalize [info script]]]
 
+# # ## ### ##### ######## #############
+
 namespace eval ::crimp::write {
     namespace export *
     namespace ensemble create
@@ -135,10 +137,11 @@ namespace eval ::crimp::write {
 	proc [lindex [::crimp::P $fun] 0] {dst image} \
 	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
 		set type [::crimp::TypeOf $image]
-		if {![::crimp::Has write_@_${type}]} {
+		set f    write_@_${type}
+		if {![::crimp::Has $f]} {
 		    return -code error "Unable to write images of type \"$type\" to \"@\""
 		}
-		return [::crimp::write_@_${type} $dst $image]
+		return [::crimp::$f $dst $image]
 	    }]
     }
 
@@ -147,6 +150,38 @@ namespace eval ::crimp::write {
 	source $file
     }
 } ::crimp::write} [file dirname [file normalize [info script]]]
+
+proc ::crimp::write::2file {format path image} {
+    set chan [open $path w]
+    fconfigure $chan -encoding binary
+    2chan $format $chan $image
+    close $chan
+    return
+}
+
+proc ::crimp::write::2chan {format chan image} {
+    set type [::crimp::TypeOf $image]
+    set f    writec_${format}_${type}
+
+    if {![::crimp::Has $f]} {
+	puts -nonewline $chan [2string $format $image]
+	return
+    }
+    ::crimp::$f $chan $image
+    return
+}
+
+proc ::crimp::write::2string {format image} {
+    set type [::crimp::TypeOf $image]
+    set f    writes_${format}_${type}
+
+    if {![::crimp::Has $f]} {
+	return -code error "Unable to write images of type \"$type\" to strings for \"$format\""
+    }
+    return [::crimp::$f $image]
+}
+
+# # ## ### ##### ######## #############
 
 namespace eval ::crimp::convert {
     namespace export *
@@ -159,10 +194,11 @@ namespace eval ::crimp::convert {
 	proc [lindex [::crimp::P $fun] 0] {image} \
 	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
 		set type [::crimp::TypeOf $image]
-		if {![::crimp::Has convert_@_${type}]} {
+		set f    convert_@_${type}
+		if {![::crimp::Has $f]} {
 		    return -code error "Unable to convert images of type \"$type\" to \"@\""
 		}
-		return [::crimp::convert_@_${type} $image]
+		return [::crimp::$f $image]
 	    }]
     }
 } ::crimp::convert}
@@ -190,10 +226,11 @@ namespace eval ::crimp::flip {
 	proc [lindex [::crimp::P $fun] 0] {image} \
 	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
 		set type [::crimp::TypeOf $image]
-		if {![::crimp::Has flip_@_$type]} {
+		set f    flip_@_$type
+		if {![::crimp::Has $f]} {
 		    return -code error "Unable to flip @ images of type \"$type\""
 		}
-		return [::crimp::flip_@_$type $image]
+		return [::crimp::$f $image]
 	    }]
     }
 } ::crimp::flip}

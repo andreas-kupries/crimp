@@ -857,6 +857,44 @@ above.
 
 [subsection {I/O commands}]
 [list_begin definitions]
+[call [cmd ::crimp] [method {read pgm}] [arg string]]
+
+This method returns an image of type [const grey8] containing the data
+of the portable grey map (PGM) stored in the [arg string]. The method
+recognizes images in both plain and raw sub-formats.
+
+
+[call [cmd ::crimp] [method {read ppm}] [arg string]]
+
+This method returns an image of type [const rgb] containing the data
+of the portable pix map (PPM) stored in the [arg string]. The method
+recognizes images in both plain and raw sub-formats.
+
+
+[call [cmd ::crimp] [method {read strimj}] [arg string] [opt [arg colormap]]]
+
+This method returns an image of type [const rgba] containing the data
+of the [term strimj] (string image) (See [uri http://wiki.tcl.tk/1846])
+stored in the [arg string].
+
+[para] The caller can override the standard mapping from pixel characters
+to colors by specifying a [arg colormap]. This argument is interpreted as
+dictionary mapping characters to triples of integers in the range
+[lb]0...255[rb], specifying the red, green, and blue intensities.
+
+[para] An example of a strimj is:
+[example {
+@...@.......@.@......
+@...@.......@.@......
+@...@..@@@..@.@..@@@.
+@@@@@.@...@.@.@.@...@
+@...@.@@@@@.@.@.@...@
+@...@.@.....@.@.@...@
+@...@.@...@.@.@.@...@
+@...@..@@@..@.@..@@@.
+}]
+
+
 [call [cmd ::crimp] [method {read tcl}] [arg pixelmatrix]]
 
 This method takes the [arg pixelmatrix], a list of rows, with each row
@@ -872,20 +910,6 @@ maximum length are padded with black pixels, i.e. a pixel value of
 
 This method returns an image of type [const rgba] containing the data
 from the specified Tk [arg photo] image.
-
-
-[call [cmd ::crimp] [method {read pgm}] [arg string]]
-
-This method returns an image of type [const grey8] containing the data
-of the portable grey map (PGM) stored in the [arg string]. The method
-recognizes images in both plain and raw sub-formats.
-
-
-[call [cmd ::crimp] [method {read ppm}] [arg string]]
-
-This method returns an image of type [const rgb] containing the data
-of the portable pix map (PPM) stored in the [arg string]. The method
-recognizes images in both plain and raw sub-formats.
 
 
 [call [cmd ::crimp] [method {write 2tk}] [arg photo] [arg image]]

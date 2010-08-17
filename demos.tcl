@@ -154,7 +154,7 @@ proc demo_run_hook {script} {
     if {[catch {
 	namespace eval ::DEMO [list demo_time_hook $script]
     }]} {
-	set prefix "HOOK ERROR"
+	set prefix "HOOK ERROR "
 	puts $prefix[join [split $::errorInfo \n] \n$prefix]
     }
     return

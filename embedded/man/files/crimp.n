@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/Devel/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/trans/tim-ak/cr/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -344,13 +344,15 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBsplit\fR \fIimage\fR
 .sp
-\fB::crimp\fR \fBread tcl\fR \fIpixelmatrix\fR
-.sp
-\fB::crimp\fR \fBread tk\fR \fIphoto\fR
-.sp
 \fB::crimp\fR \fBread pgm\fR \fIstring\fR
 .sp
 \fB::crimp\fR \fBread ppm\fR \fIstring\fR
+.sp
+\fB::crimp\fR \fBread strimj\fR \fIstring\fR ?\fIcolormap\fR?
+.sp
+\fB::crimp\fR \fBread tcl\fR \fIpixelmatrix\fR
+.sp
+\fB::crimp\fR \fBread tk\fR \fIphoto\fR
 .sp
 \fB::crimp\fR \fBwrite 2tk\fR \fIphoto\fR \fIimage\fR
 .sp
@@ -1198,6 +1200,40 @@ above.
 .PP
 .SS "I/O COMMANDS"
 .TP
+\fB::crimp\fR \fBread pgm\fR \fIstring\fR
+This method returns an image of type \fBgrey8\fR containing the data
+of the portable grey map (PGM) stored in the \fIstring\fR. The method
+recognizes images in both plain and raw sub-formats.
+.TP
+\fB::crimp\fR \fBread ppm\fR \fIstring\fR
+This method returns an image of type \fBrgb\fR containing the data
+of the portable pix map (PPM) stored in the \fIstring\fR. The method
+recognizes images in both plain and raw sub-formats.
+.TP
+\fB::crimp\fR \fBread strimj\fR \fIstring\fR ?\fIcolormap\fR?
+This method returns an image of type \fBrgba\fR containing the data
+of the \fIstrimj\fR (string image) (See \fIhttp://wiki.tcl.tk/1846\fR)
+stored in the \fIstring\fR.
+.sp
+The caller can override the standard mapping from pixel characters
+to colors by specifying a \fIcolormap\fR. This argument is interpreted as
+dictionary mapping characters to triples of integers in the range
+[0...255], specifying the red, green, and blue intensities.
+.sp
+An example of a strimj is:
+.nf
+
+@...@.......@.@......
+@...@.......@.@......
+@...@..@@@..@.@..@@@.
+@@@@@.@...@.@.@.@...@
+@...@.@@@@@.@.@.@...@
+@...@.@.....@.@.@...@
+@...@.@...@.@.@.@...@
+@...@..@@@..@.@..@@@.
+
+.fi
+.TP
 \fB::crimp\fR \fBread tcl\fR \fIpixelmatrix\fR
 This method takes the \fIpixelmatrix\fR, a list of rows, with each row
 a list of pixel values in the domain [0..255] and returns an
@@ -1210,16 +1246,6 @@ maximum length are padded with black pixels, i.e. a pixel value of
 \fB::crimp\fR \fBread tk\fR \fIphoto\fR
 This method returns an image of type \fBrgba\fR containing the data
 from the specified Tk \fIphoto\fR image.
-.TP
-\fB::crimp\fR \fBread pgm\fR \fIstring\fR
-This method returns an image of type \fBgrey8\fR containing the data
-of the portable grey map (PGM) stored in the \fIstring\fR. The method
-recognizes images in both plain and raw sub-formats.
-.TP
-\fB::crimp\fR \fBread ppm\fR \fIstring\fR
-This method returns an image of type \fBrgb\fR containing the data
-of the portable pix map (PPM) stored in the \fIstring\fR. The method
-recognizes images in both plain and raw sub-formats.
 .TP
 \fB::crimp\fR \fBwrite 2tk\fR \fIphoto\fR \fIimage\fR
 This method writes the input \fIimage\fR to the specified Tk

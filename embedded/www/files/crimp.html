@@ -92,7 +92,7 @@
     }
 --></style>
 </head>
-<! -- Generated from file '/net/nas/data/andreask/trans/tim-ak/cr/dev/embedded/www/files/crimp.html' by tcllib/doctools with format 'html'
+<! -- Generated from file '/home/aku/Projects/Tcl/Crimp/Devel/embedded/www/files/crimp.html' by tcllib/doctools with format 'html'
    -->
 <! -- Copyright &copy; 2010 Andreas Kupries   -- Copyright &copy; 2010 Documentation, Andreas Kupries
    -->
@@ -185,20 +185,25 @@
 <li><a href="#47"><b class="cmd">::crimp</b> <b class="method">split</b> <i class="arg">image</i></a></li>
 <li><a href="#48"><b class="cmd">::crimp</b> <b class="method">read tcl</b> <i class="arg">pixelmatrix</i></a></li>
 <li><a href="#49"><b class="cmd">::crimp</b> <b class="method">read tk</b> <i class="arg">photo</i></a></li>
-<li><a href="#50"><b class="cmd">::crimp</b> <b class="method">write 2tk</b> <i class="arg">photo</i> <i class="arg">image</i></a></li>
-<li><a href="#51"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span></a></li>
-<li><a href="#52"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></li>
-<li><a href="#53"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></li>
-<li><a href="#54"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></li>
-<li><a href="#55"><b class="cmd">::crimp</b> <b class="method">table gainw</b> <i class="arg">gain</i> <i class="arg">bias</i></a></li>
-<li><a href="#56"><b class="cmd">::crimp</b> <b class="method">table gain</b> <i class="arg">gain</i> <i class="arg">bias</i></a></li>
-<li><a href="#57"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></li>
-<li><a href="#58"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></li>
-<li><a href="#59"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></li>
-<li><a href="#60"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></li>
-<li><a href="#61"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></li>
-<li><a href="#62"><b class="cmd">::crimp</b> <b class="method">table threshold-ge</b> <i class="arg">threshold</i></a></li>
-<li><a href="#63"><b class="cmd">::crimp</b> <b class="method">table threshold-le</b> <i class="arg">threshold</i></a></li>
+<li><a href="#50"><b class="cmd">::crimp</b> <b class="method">read pgm</b> <i class="arg">string</i></a></li>
+<li><a href="#51"><b class="cmd">::crimp</b> <b class="method">read ppm</b> <i class="arg">string</i></a></li>
+<li><a href="#52"><b class="cmd">::crimp</b> <b class="method">write 2tk</b> <i class="arg">photo</i> <i class="arg">image</i></a></li>
+<li><a href="#53"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></li>
+<li><a href="#54"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></li>
+<li><a href="#55"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></li>
+<li><a href="#56"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span></a></li>
+<li><a href="#57"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></li>
+<li><a href="#58"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></li>
+<li><a href="#59"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></li>
+<li><a href="#60"><b class="cmd">::crimp</b> <b class="method">table gainw</b> <i class="arg">gain</i> <i class="arg">bias</i></a></li>
+<li><a href="#61"><b class="cmd">::crimp</b> <b class="method">table gain</b> <i class="arg">gain</i> <i class="arg">bias</i></a></li>
+<li><a href="#62"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></li>
+<li><a href="#63"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></li>
+<li><a href="#64"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></li>
+<li><a href="#65"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></li>
+<li><a href="#66"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></li>
+<li><a href="#67"><b class="cmd">::crimp</b> <b class="method">table threshold-ge</b> <i class="arg">threshold</i></a></li>
+<li><a href="#68"><b class="cmd">::crimp</b> <b class="method">table threshold-le</b> <i class="arg">threshold</i></a></li>
 </ul>
 </div>
 </div>
@@ -829,16 +834,57 @@ maximum length are padded with black pixels, i.e. a pixel value of
 <dt><a name="49"><b class="cmd">::crimp</b> <b class="method">read tk</b> <i class="arg">photo</i></a></dt>
 <dd><p>This method returns an image of type <b class="const">rgba</b> containing the data
 from the specified Tk <i class="arg">photo</i> image.</p></dd>
-<dt><a name="50"><b class="cmd">::crimp</b> <b class="method">write 2tk</b> <i class="arg">photo</i> <i class="arg">image</i></a></dt>
+<dt><a name="50"><b class="cmd">::crimp</b> <b class="method">read pgm</b> <i class="arg">string</i></a></dt>
+<dd><p>This method returns an image of type <b class="const">grey8</b> containing the data
+of the portable grey map (PGM) stored in the <i class="arg">string</i>. The method
+recognizes images in both plain and raw sub-formats.</p></dd>
+<dt><a name="51"><b class="cmd">::crimp</b> <b class="method">read ppm</b> <i class="arg">string</i></a></dt>
+<dd><p>This method returns an image of type <b class="const">rgb</b> containing the data
+of the portable pix map (PPM) stored in the <i class="arg">string</i>. The method
+recognizes images in both plain and raw sub-formats.</p></dd>
+<dt><a name="52"><b class="cmd">::crimp</b> <b class="method">write 2tk</b> <i class="arg">photo</i> <i class="arg">image</i></a></dt>
 <dd><p>This method writes the input <i class="arg">image</i> to the specified Tk
 <i class="arg">photo</i> image.</p>
-<p>The method supports the witing of <b class="const">rgb</b>, <b class="const">rgba</b>,
+<p>The method supports the writing of <b class="const">rgb</b>, <b class="const">rgba</b>,
 and <b class="const">grey8</b> images.</p></dd>
+<dt><a name="53"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="54"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="55"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></dt>
+<dd><p>This family of methods either returns the input <i class="arg">image</i> as a
+binary string in the specified <i class="arg">format</i>, or writes this string to
+the open channel <i class="arg">chan</i>, or the named file at <i class="arg">path</i>.</p>
+<p>The image types accepted for writing are <i class="arg">format</i>
+dependent, and listed below, with the supported formats.</p>
+<p>The currently supported formats are</p>
+<dl class="definitions">
+<dt><b class="const">pgm-plain</b></dt>
+<dd><p>The plain ASCII format of portable grey maps, as per
+<a href="http://en.wikipedia.org/wiki/Netpbm_format">http://en.wikipedia.org/wiki/Netpbm_format</a>.</p>
+<p>The methods support the writing of <b class="const">rgb</b>, <b class="const">rgba</b>,
+<b class="const">hsv</b>, and <b class="const">grey8</b> images.</p></dd>
+<dt><b class="const">pgm-raw</b></dt>
+<dd><p>The raw binary format of portable grey maps, as per
+<a href="http://en.wikipedia.org/wiki/Netpbm_format">http://en.wikipedia.org/wiki/Netpbm_format</a>.</p>
+<p>The methods support the writing of <b class="const">rgb</b>, <b class="const">rgba</b>,
+<b class="const">hsv</b>, and <b class="const">grey8</b> images.</p></dd>
+<dt><b class="const">ppm-plain</b></dt>
+<dd><p>The plain ASCII format of portable pix maps, as per
+<a href="http://en.wikipedia.org/wiki/Netpbm_format">http://en.wikipedia.org/wiki/Netpbm_format</a>.</p>
+<p>The methods support the writing of <b class="const">rgb</b>, <b class="const">rgba</b>,
+<b class="const">hsv</b>, and <b class="const">grey8</b> images.</p></dd>
+<dt><b class="const">ppm-raw</b></dt>
+<dd><p>The raw binary format of portable pix maps, as per
+<a href="http://en.wikipedia.org/wiki/Netpbm_format">http://en.wikipedia.org/wiki/Netpbm_format</a>.</p>
+<p>The methods support the writing of <b class="const">rgb</b>, <b class="const">rgba</b>,
+<b class="const">hsv</b>, and <b class="const">grey8</b> images.</p></dd>
+</dl></dd>
 </dl>
 </div>
 <div id="subsection5" class="subsection"><h3><a name="subsection5">Support</a></h3>
 <dl class="definitions">
-<dt><a name="51"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span></a></dt>
+<dt><a name="56"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span></a></dt>
 <dd><p>This method takes a <i class="arg">matrix</i> of weights and an optional
 <i class="arg">scale</i> factor and returns a structure containing the associated
 convolution kernel, ready for use by method <b class="method">convole</b>.</p>
@@ -849,7 +895,7 @@ matrix for method <b class="method">read tcl</b>, i.e. a list of lists (rows) of
 values, and is treated in the same way, i.e. the number of columns is
 the maxium length over the row lists, and shorter lists are padded
 with <b class="const">255</b>.</p></dd>
-<dt><a name="52"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></dt>
+<dt><a name="57"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></dt>
 <dd><p>This method takes a <i class="arg">kernel</i> as returned by the method
 <b class="method">kernel make</b> and returns a transposed kernel, i.e. one where
 the x- and y-axes are switched.
@@ -867,12 +913,12 @@ the original input, i.e.</p>
     [transpose [transpose $K]] == $K
 </pre>
 </dd>
-<dt><a name="53"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></dt>
+<dt><a name="58"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></dt>
 <dd><p>This method accepts the same sub-methods and arguments as are accepted
 by the <b class="method">table</b> method below. In contrast to <b class="method">table</b> the
 result is not a list of values, but a map image directly suitable as
 argument to the <b class="method">remap</b> method.</p></dd>
-<dt><a name="54"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></dt>
+<dt><a name="59"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">inverse gamma correction</b> with
 parameter <i class="arg">y</i>.
@@ -883,19 +929,19 @@ both argument and result, is defined as:</p>
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
 <p><img alt="scaled_gamma_inv" src="../image/scaled_gamma_inv.png"></p></dd>
-<dt><a name="55"><b class="cmd">::crimp</b> <b class="method">table gainw</b> <i class="arg">gain</i> <i class="arg">bias</i></a></dt>
+<dt><a name="60"><b class="cmd">::crimp</b> <b class="method">table gainw</b> <i class="arg">gain</i> <i class="arg">bias</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a simple linear function with parameters
 <i class="arg">gain</i> and <i class="arg">bias</i>. The results are rounded to the nearest
 integer and forced into the domain [0..255] by wrapping them
 around (modulo), making the definition:</p>
 <p><img alt="linear_wrap" src="../image/linear_wrap.png"></p></dd>
-<dt><a name="56"><b class="cmd">::crimp</b> <b class="method">table gain</b> <i class="arg">gain</i> <i class="arg">bias</i></a></dt>
+<dt><a name="61"><b class="cmd">::crimp</b> <b class="method">table gain</b> <i class="arg">gain</i> <i class="arg">bias</i></a></dt>
 <dd><p>This method is like <b class="method">gainw</b>, except that it deals with results
 out of the domain [0..255] by clamping them to 0 and 255
 respectively instead of wrapping around. I.e. its definition is</p>
 <p><img alt="linear_clamp" src="../image/linear_clamp.png"></p></dd>
-<dt><a name="57"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
+<dt><a name="62"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">gamma correction</b> with parameter
 <i class="arg">y</i>.
@@ -906,23 +952,23 @@ argument and result, is defined as:</p>
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
 <p><img alt="scaled_gamma" src="../image/scaled_gamma.png"></p></dd>
-<dt><a name="58"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></dt>
+<dt><a name="63"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">sampled gauss</b> function with
 parameter <i class="arg">sigma</i>.
 This function is defined as:</p>
 <p><img alt="gauss" src="../image/gauss.png"></p></dd>
-<dt><a name="59"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
+<dt><a name="64"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">identity</b> function, which is defined
 as</p>
 <p><img alt="identity" src="../image/identity.png"></p></dd>
-<dt><a name="60"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
+<dt><a name="65"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">inverse</b> function, which is defined
 as</p>
 <p><img alt="inverse" src="../image/inverse.png"></p></dd>
-<dt><a name="61"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="66"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">solarize</b> function, with parameter
 <i class="arg">threshold</i>. This function is defined as:</p>
@@ -931,12 +977,12 @@ values 0 to 255 through the <b class="function">solarize</b> function, with para
 threshold, and the <b class="function">inverse</b> for values at and above it. Its
 application to an image produces what is known as either
 <i class="term"><a href="../index.html#key46">solarization</a></i> or <i class="term"><a href="../index.html#key40">sabattier effect</a></i>.</p></dd>
-<dt><a name="62"><b class="cmd">::crimp</b> <b class="method">table threshold-ge</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="67"><b class="cmd">::crimp</b> <b class="method">table threshold-ge</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key48">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-ge" src="../image/threshold-ge.png"></p></dd>
-<dt><a name="63"><b class="cmd">::crimp</b> <b class="method">table threshold-le</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="68"><b class="cmd">::crimp</b> <b class="method">table threshold-le</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key48">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>

@@ -331,7 +331,7 @@ proc ::crimp::decimate {image factor kernel} {
     # result.
 
     return [downsample \
-		[convolve $image $kernel [kernel transpose $kernel]] \
+		[filter convolve $image $kernel [kernel transpose $kernel]] \
 		$factor]
 }
 
@@ -356,7 +356,7 @@ proc ::crimp::interpolate {image factor kernel} {
     # pixels leaves them untouched. I.e. scaled center weight is 1.
     # The easy implementation here does not have this assumption.
 
-    return [convolve [upsample $image $factor] \
+    return [filter convolve [upsample $image $factor] \
 		$kernel [kernel transpose $kernel]]
 }
 

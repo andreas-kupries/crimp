@@ -791,6 +791,17 @@ exchange width and height of the image in the output.
 [para] The methods currently support the image types [const rgb],
 [const rgba], [const hsv], and [const grey8].
 
+
+[call [cmd ::crimp] [method {rotate cw}]  [arg image]]
+[call [cmd ::crimp] [method {rotate ccw}] [arg image]]
+
+This set of methods rotates the image in steps of 90 degrees, either
+clockwise and counter to it.
+
+[call [cmd ::crimp] [method {rotate half}] [arg image]]
+
+This methods rotates the image a half-turn, i.e. 180 degrees.
+
 [list_end]
 
 

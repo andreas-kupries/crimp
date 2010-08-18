@@ -203,6 +203,8 @@ namespace eval ::crimp::convert {
     }
 } ::crimp::convert}
 
+# # ## ### ##### ######## #############
+
 namespace eval ::crimp::join {
     namespace export *
     namespace ensemble create
@@ -215,6 +217,8 @@ namespace eval ::crimp::join {
 	}]
     }
 } ::crimp::join}
+
+# # ## ### ##### ######## #############
 
 namespace eval ::crimp::flip {
     namespace export *
@@ -234,6 +238,25 @@ namespace eval ::crimp::flip {
 	    }]
     }
 } ::crimp::flip}
+
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::rotate {
+    namespace export *
+    namespace ensemble create
+}
+
+proc ::crimp::rotate::ccw {image} {
+    return [crimp flip vertical [crimp flip transpose $image]]
+}
+
+proc ::crimp::rotate::cw {image} {
+    return [crimp flip horizontal [crimp flip transpose $image]]
+}
+
+proc ::crimp::rotate::half {image} {
+    return [crimp flip horizontal [crimp flip vertical $image]]
+}
 
 # # ## ### ##### ######## #############
 
@@ -1177,7 +1200,7 @@ namespace eval ::crimp {
     namespace export subtract difference multiply pyramid
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge
-    namespace export statistics
+    namespace export statistics rotate
     #
     namespace ensemble create
 }

@@ -113,8 +113,8 @@ Operations done and under consideration
 
 		Z = TOP*(1-alpha(TOP))+BOTTOM*alpha(TOP) - alpha from top image.
 
-	[]	alpha_over_rgba_rgba
-	[]	alpha_over_rgba_rgb
+	[done]	alpha_over_rgba_rgba
+	[done]	alpha_over_rgba_rgb
 
 []	blend
 
@@ -153,17 +153,14 @@ Operations done and under consideration
 	[done]	setalpha_rgba_grey8
 	[done]	setalpha_rgba_rgba
 
-
-
-
 []
-	lighter	       Z = max(A,B)
-	darker	       Z = min(A,B)
-	difference     Z = |A-B|
-	multiply       Z = (A*B)/255
-	screen	       Z = 1-((1-A)*(1-B))
-	add	       Z = A+B
-	subtract       Z = A-B
+	[done]	lighter	       Z = max(A,B)
+	[done]	darker	       Z = min(A,B)
+	[done]	difference     Z = |A-B|
+	[done]	multiply       Z = (A*B)/255
+	[done]	screen	       Z = 1-((1-A)*(1-B))
+	[done]	add	       Z = A+B
+	[done]	subtract       Z = A-B
 
 	// The above is a group of composition/merge operations
 
@@ -172,13 +169,14 @@ Operations done and under consideration
 			       (blue/green screen techniques)
 		=> combination of setalpha, blend, and some blank image.
 
+[]	crop, cut, expand (various border types), solarize
+	flip/mirror v/h/, transpose, transverse
+
+	[done]
 
 
 --- leptonica - look for algorithms ---
 --- bit blit (block ops)
-
-
-## constant - blank with a specific value
 
 ## offset (x, y) - shift by (x,y) pixels [torus wrap around].
 
@@ -192,15 +190,9 @@ Operations done and under consideration
 
 ## colorize (grayscale, black-color, white-color) => image
 
-
-## crop (image, border=0) => image without border pixels all around.
-
 ## deform - see transform (as basis)
 ## equalize (image) of hist - non-linear map to create unform distribution of grayscale values.
-## expand (image, border=0,fill=0) - add border pixels all around (fill? color of border?)
-## flip/mirror (v/h)
 ## posterize (image,bits) - reduce colors to max bits.
-## solarize (threshold) - invert pixels above threshold
 
 ## cmyk and back, hsv revers
 

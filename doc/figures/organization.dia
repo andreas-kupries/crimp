@@ -1,0 +1,67 @@
+# -*- tcl -*- tcl.tk//DSL diagram//EN//1.0
+
+set boxheight [1 cm]
+
+proc tbox {args} {box fillcolor lightblue {*}$args }
+proc cbox {args} {box fillcolor orange    {*}$args }
+
+proc top {args} {
+    {*}$args \
+	with sw at [last nw] \
+	width [expr {[lindex [last ne] 1 0] -  [lindex [last nw] 1 0]}]
+}
+
+proc bottom {ref args} {
+    {*}$args \
+	with nw at [$ref sw] \
+	width [expr {[lindex [$ref se] 1 0] -  [lindex [$ref sw] 1 0]}]
+}
+
+proc right {ref args} {
+    {*}$args \
+	with nw at [$ref ne] \
+	height [expr {[lindex [$ref se] 1 1] -  [lindex [$ref ne] 1 1]}]
+}
+
+proc left {ref args} {
+    {*}$args \
+	with ne at [$ref nw] \
+	height [expr {[lindex [$ref sw] 1 1] -  [lindex [$ref nw] 1 1]}]
+}
+
+block {
+    block {
+	set ::I [block {
+	    block {
+		set ::R [box text Read]
+		set ::W [box text Write]
+	    }
+	    top box text I/O
+	}]
+	left last box text CRIMP
+	set ::C [right $::I box text Convert]
+	block {
+	    block {
+		set ::G [box text Geometry]
+		set ::P [box text Color]
+	    }
+	    top box text Manipulators
+	}
+	set ::A [right last box text Access]
+	set ::S [right last box text Support]
+    }
+    
+}
+
+set ::T [bottom $::R tbox]
+set ::X [bottom last cbox]
+
+bottom $::W tbox ; bottom last cbox
+bottom $::C tbox ; bottom last cbox
+bottom $::G tbox ; bottom last cbox
+bottom $::P tbox ; bottom last cbox
+bottom $::A tbox ; bottom last cbox
+bottom $::S tbox ; bottom last cbox
+
+left $::T tbox Tcl
+left $::X cbox C

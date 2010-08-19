@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/trans/tim-ak/cr/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/Devel/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -264,6 +264,8 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBwidth\fR \fIimage\fR
 .sp
+\fB::crimp\fR \fBadd\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
+.sp
 \fB::crimp\fR \fBalpha blend\fR \fIforeground\fR \fIbackground\fR \fIalpha\fR
 .sp
 \fB::crimp\fR \fBalpha set\fR \fIimage\fR \fImask\fR
@@ -279,6 +281,8 @@ package require \fBcrimp  ?1?\fR
 \fB::crimp\fR \fBcut\fR \fIimage\fR \fIx\fR \fIy\fR \fIw\fR \fIh\fR
 .sp
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
+.sp
+\fB::crimp\fR \fBdifference\fR \fIimage1\fR \fIimage2\fR
 .sp
 \fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
 .sp
@@ -300,6 +304,12 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBmatrix\fR \fIimage\fR \fImatrix\fR
 .sp
+\fB::crimp\fR \fBmax\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBmin\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBmultiply\fR \fIimage1\fR \fIimage2\fR
+.sp
 \fB::crimp\fR \fBpsychedelia\fR \fIwidth\fR \fIheight\fR \fIframes\fR
 .sp
 \fB::crimp\fR \fBpyramid run\fR \fIimage\fR \fIsteps\fR \fIstepcmd\fR
@@ -312,7 +322,11 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBremap\fR \fIimage\fR \fImap\fR...
 .sp
+\fB::crimp\fR \fBscreen\fR \fIimage1\fR \fIimage2\fR
+.sp
 \fB::crimp\fR \fBsolarize\fR \fIimage\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBsubtract\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
 .sp
 \fB::crimp\fR \fBthreshold-ge\fR \fIimage\fR \fIthreshold\fR
 .sp
@@ -721,6 +735,12 @@ The method supports all image types.
 .PP
 .SS MANIPULATORS
 .TP
+\fB::crimp\fR \fBadd\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
+This method combines the two input images into a result image by
+performing a pixelwise addition (image1 + image2) followed by division
+through \fIscale\fR and addition of the \fIoffset\fR. They default to
+\fB1\fR and \fB0\fR respectively, if they are not specified.
+.TP
 \fB::crimp\fR \fBalpha blend\fR \fIforeground\fR \fIbackground\fR \fIalpha\fR
 This method takes two images of identical dimensions and a blending
 factor \fIalpha\fR and returns an image which is a mix of both, with
@@ -850,6 +870,10 @@ This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap degamma\fR \fIy\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
+.TP
+\fB::crimp\fR \fBdifference\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+taking the pixelwise absolute difference (|image1 - image2|).
 .TP
 \fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
 .TP
@@ -996,6 +1020,20 @@ input would come from outside of the input.
 The operation supports only images of type \fBrgba\fR, and returns
 images of the same type.
 .TP
+\fB::crimp\fR \fBmax\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+taking the pixelwise maximum.
+.TP
+\fB::crimp\fR \fBmin\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+taking the pixelwise minimum.
+.TP
+\fB::crimp\fR \fBmultiply\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+performing a pixelwise multiplication. Note that the result of each
+multiplication is divided by \fB255\fR to scale it back into the
+range [0...255].
+.TP
 \fB::crimp\fR \fBpsychedelia\fR \fIwidth\fR \fIheight\fR \fIframes\fR
 This method creates an \fBrgba\fR image of the specified dimensions
 according to an algorithm devised by Andrew M. Goth. The \fIframes\fR
@@ -1096,6 +1134,11 @@ This method supports all image types with one or more
 single-byte channels, i.e. all but \fBgrey16\fR, \fBgrey32\fR, and
 \fBbw\fR.
 .TP
+\fB::crimp\fR \fBscreen\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images by inverting the
+multiplication of the inverted input images. I.e.
+Z = 1-((1-image1)*(1-image2))
+.TP
 \fB::crimp\fR \fBsolarize\fR \fIimage\fR \fIthreshold\fR
 This method takes an image, runs it through the \fBsolarize\fR
 function with parameter \fIthreshold\fR, and returns the modified
@@ -1104,6 +1147,13 @@ This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap solarize\fR \fIthreshold\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
+.TP
+\fB::crimp\fR \fBsubtract\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
+This method combines the two input images into a result image by
+performing a pixelwise subtraction (image1 - image2) followed by
+division through \fIscale\fR and addition of the \fIoffset\fR. They
+default to \fB1\fR and \fB0\fR respectively, if they are not
+specified.
 .TP
 \fB::crimp\fR \fBthreshold-ge\fR \fIimage\fR \fIthreshold\fR
 This method takes an image, runs it through the \fBthreshold-ge\fR

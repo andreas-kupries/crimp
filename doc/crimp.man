@@ -311,6 +311,16 @@ This method returns the width of the [arg image] (in pixels).
 
 [subsection Manipulators]
 [list_begin definitions]
+
+
+[call [cmd ::crimp] [method add] [arg image1] [arg image2] [opt [arg scale]] [opt [arg offset]]]
+
+This method combines the two input images into a result image by
+performing a pixelwise addition (image1 + image2) followed by division
+through [arg scale] and addition of the [arg offset]. They default to
+[const 1] and [const 0] respectively, if they are not specified.
+
+
 [call [cmd ::crimp] [method {alpha blend}] [arg foreground] [arg background] [arg alpha]]
 [keywords blending {alpha blending}]
 
@@ -441,6 +451,12 @@ returned by "[method {map degamma}] [arg y]".
 
 This method supports all image types supported by the method
 [method remap].
+
+
+[call [cmd ::crimp] [method difference] [arg image1] [arg image2]]
+
+This method combines the two input images into a result image by
+taking the pixelwise absolute difference (|image1 - image2|).
 
 
 [call [cmd ::crimp] [method {expand const}] [arg image] [arg ww] [arg hn] [arg we] [arg hs] [opt [arg value]...]]
@@ -598,6 +614,25 @@ The operation supports only images of type [const rgba], and returns
 images of the same type.
 
 
+[call [cmd ::crimp] [method max] [arg image1] [arg image2]]
+
+This method combines the two input images into a result image by
+taking the pixelwise maximum.
+
+[call [cmd ::crimp] [method min] [arg image1] [arg image2]]
+
+This method combines the two input images into a result image by
+taking the pixelwise minimum.
+
+
+[call [cmd ::crimp] [method multiply] [arg image1] [arg image2]]
+
+This method combines the two input images into a result image by
+performing a pixelwise multiplication. Note that the result of each
+multiplication is divided by [const 255] to scale it back into the
+range [lb]0...255[rb].
+
+
 [call [cmd ::crimp] [method psychedelia] [arg width] [arg height] [arg frames]]
 
 This method creates an [const rgba] image of the specified dimensions
@@ -719,6 +754,15 @@ single-byte channels, i.e. all but [const grey16], [const grey32], and
 [const bw].
 
 
+
+[call [cmd ::crimp] [method screen] [arg image1] [arg image2]]
+
+This method combines the two input images by inverting the
+multiplication of the inverted input images. I.e.
+
+Z = 1-((1-image1)*(1-image2))
+
+
 [call [cmd ::crimp] [method solarize] [arg image] [arg threshold]]
 [keywords solarization {sabattier effect}]
 
@@ -731,6 +775,15 @@ returned by "[method {map solarize}] [arg threshold]".
 
 This method supports all image types supported by the method
 [method remap].
+
+
+[call [cmd ::crimp] [method subtract] [arg image1] [arg image2] [opt [arg scale]] [opt [arg offset]]]
+
+This method combines the two input images into a result image by
+performing a pixelwise subtraction (image1 - image2) followed by
+division through [arg scale] and addition of the [arg offset]. They
+default to [const 1] and [const 0] respectively, if they are not
+specified.
 
 
 [call [cmd ::crimp] [method threshold-ge] [arg image] [arg threshold]]

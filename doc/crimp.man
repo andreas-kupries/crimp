@@ -44,12 +44,14 @@ shimmering forces us to convert twice.
 
 [para]
 
-Therefore, avoid this, use only the crimp commands to access the
-images. The only part of them you are not able to access through these
-is the pixel data. And requiring access to that in a Tcl script is,
-IMHO, highly unusual. In such a situation it is likely better and
-easier to simply become a developer and extend the C level parts of
-crimp with the operation which would have required that access.
+Therefore, to avoid this, use only the crimp commands to access the
+images. Even the raw pixel data is accessible in this manner. While
+access to that in a Tcl script is, IMHO, highly unusual, there are
+situations where it is beneficial. An example of such a situation are
+the commands exporting images to raw portable any-maps (PNMs). Our
+pixel data fits these formats exactly, and with access to it these
+commands could be written in Tcl instead of requiring C level primitives.
+
 
 [section {Image Types}]
 
@@ -134,7 +136,9 @@ image variable and writing back to it.
 
 [para]
 
-They fall, into five categories, namely:
+They fall into five categories, namely:
+
+[para][image organization]
 
 [list_begin definitions]
 [def Accessors]
@@ -154,7 +158,9 @@ in section [sectref Accessors].
 
 These take an image and transform its contents in some way, leaving
 the image type unchanged. Examples of commands in category are
-inversion, gamma conversion, etc.
+inversion, gamma conversion, etc. They fall into two sub-categories,
+manipulation of the image geometry, and of the intensity values or
+colors.
 
 [para]
 
@@ -244,6 +250,13 @@ current system the result would be a dictionary with 2^32 keys and
 values, taking up, roughly, 192 GiByte of memory in the worst case,
 and 96 GiByte in best case (all counter values shared in a single
 object).
+
+
+[call [cmd ::crimp] [method pixel] [arg image]]
+
+This method returns the raw pixels of the [arg image] as a Tcl ByteArray.
+
+[para] The method supports all image types.
 
 
 [call [cmd ::crimp] [method statistics] [arg image]]

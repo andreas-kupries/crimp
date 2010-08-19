@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/Devel/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/trans/tim-ak/cr/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -258,6 +258,8 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBhistogram\fR \fIimage\fR
 .sp
+\fB::crimp\fR \fBpixel\fR \fIimage\fR
+.sp
 \fB::crimp\fR \fBstatistics\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBtype\fR \fIimage\fR
@@ -341,6 +343,12 @@ package require \fBcrimp  ?1?\fR
 \fB::crimp\fR \fBflip transverse\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBflip vertical\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBrotate cw\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBrotate ccw\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBrotate half\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBconvert 2grey8\fR \fIimage\fR
 .sp
@@ -431,12 +439,13 @@ representation, thus forcing later a reconversion to the image's
 internal represention when it is used as image again. I.e. the
 shimmering forces us to convert twice.
 .PP
-Therefore, avoid this, use only the crimp commands to access the
-images. The only part of them you are not able to access through these
-is the pixel data. And requiring access to that in a Tcl script is,
-IMHO, highly unusual. In such a situation it is likely better and
-easier to simply become a developer and extend the C level parts of
-crimp with the operation which would have required that access.
+Therefore, to avoid this, use only the crimp commands to access the
+images. Even the raw pixel data is accessible in this manner. While
+access to that in a Tcl script is, IMHO, highly unusual, there are
+situations where it is beneficial. An example of such a situation are
+the commands exporting images to raw portable any-maps (PNMs). Our
+pixel data fits these formats exactly, and with access to it these
+commands could be written in Tcl instead of requiring C level primitives.
 .SH "IMAGE TYPES"
 Each image has a \fItype\fR, a string implicitly describing features
 like the colorspace the image is in, the number of (color) channels,
@@ -570,7 +579,30 @@ values, zero or more other arguments, and returning zero or more
 images or other values. None are operating in place, i.e. taking an
 image variable and writing back to it.
 .PP
-They fall, into five categories, namely:
+They fall into five categories, namely:
+.PP
+.PS
+.nf
++-----------------------+-----+---+
+| CRIMP                 | Tcl | C |
++-----------------------+-----+---+
+| I/O          Read     |     |   |
+|             ----------+-----+---+
+|              Write    |     |   |
++-----------------------+-----+---+
+| Converters            |     |   |
++-----------------------+-----+---+
+| Manipulators Geometry |     |   |
+|             ----------+-----+---+
+|              Color    |     |   |
++-----------------------+-----+---+
+| Accessors             |     |   |
++-----------------------+-----+---+
+| Support               |     |   |
++-----------------------+-----+---+
+
+.fi
+.PE
 .TP
 Accessors
 They take one or more images, extract information about them, and
@@ -584,7 +616,9 @@ in section \fBAccessors\fR.
 Manipulators
 These take an image and transform its contents in some way, leaving
 the image type unchanged. Examples of commands in category are
-inversion, gamma conversion, etc.
+inversion, gamma conversion, etc. They fall into two sub-categories,
+manipulation of the image geometry, and of the intensity values or
+colors.
 .sp
 The list of manipulators, their syntax, and detailed meaning can be
 found in section \fBManipulators\fR.
@@ -646,6 +680,11 @@ current system the result would be a dictionary with 2^32 keys and
 values, taking up, roughly, 192 GiByte of memory in the worst case,
 and 96 GiByte in best case (all counter values shared in a single
 object).
+.TP
+\fB::crimp\fR \fBpixel\fR \fIimage\fR
+This method returns the raw pixels of the \fIimage\fR as a Tcl ByteArray.
+.sp
+The method supports all image types.
 .TP
 \fB::crimp\fR \fBstatistics\fR \fIimage\fR
 This method returns a nested dictionary as its result. The outer dictionary
@@ -1199,6 +1238,15 @@ exchange width and height of the image in the output.
 .sp
 The methods currently support the image types \fBrgb\fR,
 \fBrgba\fR, \fBhsv\fR, and \fBgrey8\fR.
+.TP
+\fB::crimp\fR \fBrotate cw\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBrotate ccw\fR \fIimage\fR
+This set of methods rotates the image in steps of 90 degrees, either
+clockwise and counter to it.
+.TP
+\fB::crimp\fR \fBrotate half\fR \fIimage\fR
+This methods rotates the image a half-turn, i.e. 180 degrees.
 .PP
 .SS CONVERTERS
 .TP

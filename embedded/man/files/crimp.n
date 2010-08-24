@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/Devel/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/trans/tim-ak/cr/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -282,9 +282,13 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBcut\fR \fIimage\fR \fIx\fR \fIy\fR \fIw\fR \fIh\fR
 .sp
+\fB::crimp\fR \fBdecimate\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
 .sp
 \fB::crimp\fR \fBdifference\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBdownsample\fR \fIimage\fR \fIfactor\fR
 .sp
 \fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
 .sp
@@ -301,6 +305,8 @@ package require \fBcrimp  ?1?\fR
 \fB::crimp\fR \fBfilter rank\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
 .sp
 \fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
+.sp
+\fB::crimp\fR \fBinterpolate\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
 .sp
 \fB::crimp\fR \fBinvert\fR \fIimage\fR
 .sp
@@ -333,6 +339,8 @@ package require \fBcrimp  ?1?\fR
 \fB::crimp\fR \fBthreshold-ge\fR \fIimage\fR \fIthreshold\fR
 .sp
 \fB::crimp\fR \fBthreshold-le\fR \fIimage\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBupsample\fR \fIimage\fR \fIfactor\fR
 .sp
 \fB::crimp\fR \fBwavy\fR \fIimage\fR \fIoffset\fR \fIadj1\fR \fIadjb\fR
 .sp
@@ -901,6 +909,17 @@ This method cuts the rectangular region specified throught its \fIx\fR/\fIy\fR
 position relative to the upper-left corner of the input \fIimage\fR and its
 dimensions, and returns it as its own image.
 .TP
+\fB::crimp\fR \fBdecimate\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+This is a convenience method combining the two steps of filtering an image
+(via \fBfilter convolve\fR), followed by a \fBdownsample\fR step.
+See the method \fBinterpolate\fR for the complementary operation.
+.sp
+Note that while the \fIkernel\fR argument for \fBfilter convolve\fR
+is expected to be the 1D form of a separable low-pass filter no checks are made.
+The method simply applies both the kernel and its transposed form.
+.sp
+The method \fBpyramid gauss\fR is a user of this method.
+.TP
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
 This method takes an image, runs it through an
 \fBinverse gamma correction\fR with parameter \fIy\fR, and returns
@@ -913,6 +932,20 @@ This method supports all image types supported by the method
 \fB::crimp\fR \fBdifference\fR \fIimage1\fR \fIimage2\fR
 This method combines the two input images into a result image by
 taking the pixelwise absolute difference (|image1 - image2|).
+.TP
+\fB::crimp\fR \fBdownsample\fR \fIimage\fR \fIfactor\fR
+This method returns an image containing only every \fIfactor\fR pixel of the
+input \fIimage\fR (in both dimensions). The effect is that the input is
+shrunken by \fIfactor\fR. It is the complement of method \fBupsample\fR.
+.sp
+Using the method as is is not recommended because the simple subsampling
+will cause higher image frequencies to alias into the reduced spectrum, causing
+artifacts to appear in the result. This is normally avoided by running a
+low-pass filter over the image before doing downsampling, removing the
+problematic frequencies.
+.sp
+The \fBdecimate\fR method is a convenience method combining these
+two steps into one.
 .TP
 \fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
 .TP
@@ -1034,6 +1067,18 @@ This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap gamma\fR \fIy\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
+.TP
+\fB::crimp\fR \fBinterpolate\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+This is a convenience method combining the two steps of an \fBupsample\fR,
+followed by a filter step (via \fBfilter convolve\fR). See the method
+\fBdecimate\fR for the complementary operation.
+.sp
+Note that while the \fIkernel\fR argument for \fBfilter convolve\fR
+is expected to be 1D form of a separable low-pass filter no checks are made.
+The method simply applies both the kernel and its transposed form.
+.sp
+The methods \fBpyramid gauss\fR and \fBpyramid laplace\fR are
+users of this method.
 .TP
 \fB::crimp\fR \fBinvert\fR \fIimage\fR
 This method takes an image, runs it through the \fBinverse\fR
@@ -1176,7 +1221,14 @@ single-byte channels, i.e. all but \fBgrey16\fR, \fBgrey32\fR, and
 \fB::crimp\fR \fBscreen\fR \fIimage1\fR \fIimage2\fR
 This method combines the two input images by inverting the
 multiplication of the inverted input images. I.e.
-Z = 1-((1-image1)*(1-image2))
+.sp
+.PS
+.nf
+Z = 1-((1-A)(1-B)) = invert (multiply (invert (A), invert (B)))
+
+.fi
+.PE
+.sp
 .TP
 \fB::crimp\fR \fBsolarize\fR \fIimage\fR \fIthreshold\fR
 This method takes an image, runs it through the \fBsolarize\fR
@@ -1213,6 +1265,20 @@ This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap threshold-le\fR \fIthreshold\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
+.TP
+\fB::crimp\fR \fBupsample\fR \fIimage\fR \fIfactor\fR
+This method returns an image inserting \fIfactor\fR black pixels between
+each pixel of the input \fIimage\fR (in both dimensions). The effect is
+that the input is expanded by \fIfactor\fR. It is the complement of
+method \fBdownsample\fR.
+.sp
+Using the method as is is not recommended because this simple upsampling
+will cause copies of the image to appear at the higher image frequencies in the
+expanded spectrum. This is normally avoided by running a low-pass filter over
+the image after the upsampling, removing the problematic copies.
+.sp
+The \fBinterpolate\fR method is a convenience method combining these
+two steps into one.
 .TP
 \fB::crimp\fR \fBwavy\fR \fIimage\fR \fIoffset\fR \fIadj1\fR \fIadjb\fR
 This method processes the input \fIimage\fR according to an algorithm

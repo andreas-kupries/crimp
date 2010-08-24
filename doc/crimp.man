@@ -452,6 +452,19 @@ position relative to the upper-left corner of the input [arg image] and its
 dimensions, and returns it as its own image.
 
 
+[call [cmd ::crimp] [method decimate] [arg image] [arg factor] [arg kernel]]
+
+This is a convenience method combining the two steps of filtering an image
+(via [method {filter convolve}]), followed by a [method downsample] step.
+See the method [method interpolate] for the complementary operation.
+
+[para] Note that while the [arg kernel] argument for [method {filter convolve}]
+is expected to be the 1D form of a separable low-pass filter no checks are made.
+The method simply applies both the kernel and its transposed form.
+
+[para] The method [method {pyramid gauss}] is a user of this method.
+
+
 [call [cmd ::crimp] [method degamma] [arg image] [arg y]]
 [keywords {gamma correction}]
 
@@ -470,6 +483,22 @@ This method supports all image types supported by the method
 
 This method combines the two input images into a result image by
 taking the pixelwise absolute difference (|image1 - image2|).
+
+
+[call [cmd ::crimp] [method downsample] [arg image] [arg factor]]
+
+This method returns an image containing only every [arg factor] pixel of the
+input [arg image] (in both dimensions). The effect is that the input is
+shrunken by [arg factor]. It is the complement of method [method upsample].
+
+[para] Using the method as is is not recommended because the simple subsampling
+will cause higher image frequencies to alias into the reduced spectrum, causing
+artifacts to appear in the result. This is normally avoided by running a
+low-pass filter over the image before doing downsampling, removing the
+problematic frequencies.
+
+[para] The [method decimate] method is a convenience method combining these
+two steps into one.
 
 
 [call [cmd ::crimp] [method {expand const}] [arg image] [arg ww] [arg hn] [arg we] [arg hs] [opt [arg value]...]]
@@ -589,6 +618,20 @@ returned by "[method {map gamma}] [arg y]".
 
 This method supports all image types supported by the method
 [method remap].
+
+
+[call [cmd ::crimp] [method interpolate] [arg image] [arg factor] [arg kernel]]
+
+This is a convenience method combining the two steps of an [method upsample],
+followed by a filter step (via [method {filter convolve}]). See the method
+[method decimate] for the complementary operation.
+
+[para] Note that while the [arg kernel] argument for [method {filter convolve}]
+is expected to be 1D form of a separable low-pass filter no checks are made.
+The method simply applies both the kernel and its transposed form.
+
+[para] The methods [method {pyramid gauss}] and [method {pyramid laplace}] are
+users of this method.
 
 
 [call [cmd ::crimp] [method invert] [arg image]]
@@ -773,7 +816,7 @@ single-byte channels, i.e. all but [const grey16], [const grey32], and
 This method combines the two input images by inverting the
 multiplication of the inverted input images. I.e.
 
-Z = 1-((1-image1)*(1-image2))
+[para][image screen][para]
 
 
 [call [cmd ::crimp] [method solarize] [arg image] [arg threshold]]
@@ -827,6 +870,22 @@ returned by "[method {map threshold-le}] [arg threshold]".
 
 This method supports all image types supported by the method
 [method remap].
+
+
+[call [cmd ::crimp] [method upsample] [arg image] [arg factor]]
+
+This method returns an image inserting [arg factor] black pixels between
+each pixel of the input [arg image] (in both dimensions). The effect is
+that the input is expanded by [arg factor]. It is the complement of
+method [method downsample].
+
+[para] Using the method as is is not recommended because this simple upsampling
+will cause copies of the image to appear at the higher image frequencies in the
+expanded spectrum. This is normally avoided by running a low-pass filter over
+the image after the upsampling, removing the problematic copies.
+
+[para] The [method interpolate] method is a convenience method combining these
+two steps into one.
 
 
 [call [cmd ::crimp] [method wavy] [arg image] [arg offset] [arg adj1] [arg adjb]]

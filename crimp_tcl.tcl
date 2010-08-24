@@ -360,7 +360,7 @@ proc ::crimp::decimate {image factor kernel} {
 
 proc ::crimp::interpolate {image factor kernel} {
     # Combines upsampling with a post-processing step applying a
-    # low-pass filter to copies of the image at higher image
+    # low-pass filter to remove copies of the image at higher image
     # frequencies.
 
     # We assume that the low-pass filter is separable, and the kernel

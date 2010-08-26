@@ -928,9 +928,31 @@ proc ::crimp::map {args} {
     return [read tcl [list [table {*}$args]]]
 }
 
+proc ::crimp::mapof {table} {
+    return [read tcl [list $table]]
+}
+
 namespace eval ::crimp::table {
     namespace export *
     namespace ensemble create
+}
+
+# NOTE: From now on the use of the builtin 'eval' command in the table
+# namespace requires '::eval'.
+proc ::crimp::table::eval {cmdprefix} {
+    for {set i 0} {$i < 256} {incr i} {
+	lappend table [uplevel #0 [list {*}$cmdprefix $i]]
+    }
+    return $table
+}
+
+proc ::crimp::table::compose {f g} {
+    # f and g are tables! representing functions, not command
+    # prefixes.
+    return [eval [list apply {{f g x} {
+	# z = f(g(x))
+	return [lindex $f [lindex $g $x]]
+    }} $f $g]]
 }
 
 proc ::crimp::table::identity {} {
@@ -1197,7 +1219,7 @@ namespace eval ::crimp {
     namespace export invert solarize gamma degamma remap map
     namespace export wavy psychedelia matrix blank filter crop
     namespace export alpha histogram max min screen add pixel
-    namespace export subtract difference multiply pyramid
+    namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge
     namespace export statistics rotate

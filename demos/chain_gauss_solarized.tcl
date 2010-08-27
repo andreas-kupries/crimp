@@ -1,4 +1,4 @@
-def op_gauss_sol {
+def op_sol_gauus {
     label {(Solarize o Gauss) Map}
     setup {
 	variable sigma      42

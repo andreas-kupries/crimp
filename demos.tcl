@@ -63,7 +63,7 @@ puts "Starting up ..."
 
 proc images_init {} {
     global dir images
-    set images [glob -tails -directory $dir/images *.png]
+    set images [lsort -dict [glob -tails -directory $dir/images *.png]]
     return
 }
 

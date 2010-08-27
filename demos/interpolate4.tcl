@@ -1,4 +1,4 @@
-def op_interpolate4 {
+def op_up_interpolate4 {
     label Interpolate\u21914
     setup {
 	# Tent kernel.

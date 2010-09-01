@@ -71,6 +71,12 @@ typedef struct crimp_image {
 #define GREY32(iptr,x,y) *((unsigned long*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
 
 /*
+ * Pixel as 2-complement numbers (-128..127, instead of unsigned 0..255).
+ */
+
+#define SGREY8(iptr,x,y) *((signed char*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
+
+/*
  * Pixel Access Macros. HSV.
  */
 

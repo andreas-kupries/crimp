@@ -759,13 +759,29 @@ namespace eval ::crimp::kernel {
 }
 
 proc ::crimp::kernel::make {kernelmatrix {scale {}}} {
-    # auto-scale, if needed
-    if {[llength [info level 0]] < 3} {
-	set scale 0
-	foreach r $kernelmatrix { foreach v $r { incr scale $v } }
+    # The input matrix is signed -128...127. Convert this into the
+    # range 0..255, 2-complement notation.
+
+    set tmpmatrix {}
+    set tmpscale 0
+    foreach r $kernelmatrix {
+	set tmprow {}
+	foreach v $r {
+	    set v [crimp::table::CLAMPS $v]
+	    incr tmpscale $v ; # scale is computed before converting unsigned two-complement.
+	    set v [expr {($v >= 0) ? $v : (256+$v)}]
+	    lappend tmprow $v
+	}
+	lappend tmpmatrix $tmprow
     }
 
-    set kernel [crimp read tcl $kernelmatrix]
+    # auto-scale, if needed
+    if {[llength [info level 0]] < 3} {
+	if {$tmpscale == 0} { set tmpscale 1 }
+	set scale $tmpscale
+    }
+
+    set kernel [crimp read tcl $tmpmatrix]
 
     lassign [crimp::dimensions $kernel] w h
 
@@ -1157,6 +1173,12 @@ proc ::crimp::table::QuantizeCore {n p cdf} {
 }
 
 # # ## ### ##### ######## #############
+
+proc ::crimp::table::CLAMPS {x} {
+    if {$x < -128 } { return -128 }
+    if {$x >  127 } { return  127 }
+    return $x
+}
 
 proc ::crimp::table::CLAMP {x} {
     if {$x < 0  } { return 0   }

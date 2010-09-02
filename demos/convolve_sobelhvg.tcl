@@ -1,5 +1,5 @@
-def op_convolve_sobelhv {
-    label {Sobel H+V}
+def op_convolve_sobelhvg {
+    label {Sobel Grey/H+V}
     setup {
 	# http://wiki.tcl.tk/9521
 	variable Kv [crimp kernel make {
@@ -12,9 +12,9 @@ def op_convolve_sobelhv {
 	    {-1 -2 -1}}]
     }
     setup_image {
-	show_image [crimp alpha opaque \
-			[crimp add \
-			     [crimp filter convolve [base] $Kh] \
-			     [crimp filter convolve [base] $Kv]]]
+	set grey [crimp convert 2grey8 [base]]
+	show_image [crimp add \
+			     [crimp filter convolve $grey $Kh] \
+			     [crimp filter convolve $grey $Kv]]
     }
 }

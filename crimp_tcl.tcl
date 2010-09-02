@@ -692,8 +692,8 @@ proc ::crimp::filter::convolve {image args} {
     # Shrinkage by 2*kw, 2*kh. Compensate using the chosen border type.
 
     foreach kernel $args {
-	lassign $kernel kw kh K scale
-	set image [crimp::$fc [crimp::$fe $image $kw $kh $kw $kh {*}$values] $K $scale]
+	lassign $kernel kw kh K scale offset
+	set image [crimp::$fc [crimp::$fe $image $kw $kh $kw $kh {*}$values] $K $scale $offset]
     }
 
     return $image
@@ -758,7 +758,7 @@ namespace eval ::crimp::kernel {
     namespace ensemble create
 }
 
-proc ::crimp::kernel::make {kernelmatrix {scale {}}} {
+proc ::crimp::kernel::make {kernelmatrix {scale {}} {offset {}}} {
     # The input matrix is signed -128...127. Convert this into the
     # range 0..255, 2-complement notation.
 
@@ -776,9 +776,21 @@ proc ::crimp::kernel::make {kernelmatrix {scale {}}} {
     }
 
     # auto-scale, if needed
-    if {[llength [info level 0]] < 3} {
-	if {$tmpscale == 0} { set tmpscale 1 }
-	set scale $tmpscale
+    if {$scale eq {}} {
+	if {$tmpscale == 0} {
+	    set scale 1
+	} else {
+	    set scale $tmpscale
+	}
+    }
+
+    # auto-offset, if needed
+    if {$offset eq {}} {
+	if {$tmpscale == 0} {
+	    set offset 128
+	} else {
+	    set offset 0
+	}
     }
 
     set kernel [crimp read tcl $tmpmatrix]
@@ -794,7 +806,7 @@ proc ::crimp::kernel::make {kernelmatrix {scale {}}} {
     set kw [expr {$w/2}]
     set kh [expr {$h/2}]
 
-    return [list $kw $kh $kernel $scale]
+    return [list $kw $kh $kernel $scale $offset]
 }
 
 proc ::crimp::kernel::transpose {kernel} {

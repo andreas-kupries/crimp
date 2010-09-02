@@ -2,6 +2,7 @@ convolve_hsv
 Tcl_Obj* imageObj
 Tcl_Obj* kernelImageObj
 int scale
+int offset
 
 /*
  * Generic convolution operator. The kernel to convole with is specified as a
@@ -53,9 +54,9 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	    }
 	}
 
-	sumh /= scale; H (result, xo, yo) = CLAMP (0, sumh, 255);
-	sums /= scale; S (result, xo, yo) = CLAMP (0, sums, 255);
-	sumv /= scale; V (result, xo, yo) = CLAMP (0, sumv, 255);
+	sumh /= scale; sumh += offset; H (result, xo, yo) = CLAMP (0, sumh, 255);
+	sums /= scale; sums += offset; S (result, xo, yo) = CLAMP (0, sums, 255);
+	sumv /= scale; sumv += offset; V (result, xo, yo) = CLAMP (0, sumv, 255);
     }
 }
 

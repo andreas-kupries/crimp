@@ -2,6 +2,7 @@ convolve_rgba
 Tcl_Obj* imageObj
 Tcl_Obj* kernelImageObj
 int scale
+int offset
 
 /*
  * Generic convolution operator. The kernel to convole with is specified as a
@@ -55,10 +56,10 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	    }
 	}
 
-	sumr /= scale; R (result, xo, yo) = CLAMP (0, sumr, 255);
-	sumg /= scale; G (result, xo, yo) = CLAMP (0, sumg, 255);
-	sumb /= scale; B (result, xo, yo) = CLAMP (0, sumb, 255);
-	suma /= scale; A (result, xo, yo) = CLAMP (0, suma, 255);
+	sumr /= scale; sumr += offset; R (result, xo, yo) = CLAMP (0, sumr, 255);
+	sumg /= scale; sumg += offset; G (result, xo, yo) = CLAMP (0, sumg, 255);
+	sumb /= scale; sumb += offset; B (result, xo, yo) = CLAMP (0, sumb, 255);
+	suma /= scale; suma += offset; A (result, xo, yo) = CLAMP (0, suma, 255);
     }
 }
 

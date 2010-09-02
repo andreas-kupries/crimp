@@ -2,6 +2,7 @@ convolve_grey8
 Tcl_Obj* imageObj
 Tcl_Obj* kernelImageObj
 int scale
+int offset
 
 /*
  * Generic convolution operator. The kernel to convole with is specified as a
@@ -49,7 +50,7 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	    }
 	}
 
-	sum /= scale; GREY8 (result, xo, yo) = CLAMP (0, sum, 255);
+	sum /= scale; sum += offset; GREY8 (result, xo, yo) = CLAMP (0, sum, 255);
     }
 }
 

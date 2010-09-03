@@ -258,6 +258,89 @@ proc ::crimp::rotate::half {image} {
     return [crimp flip horizontal [crimp flip vertical $image]]
 }
 
+
+
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::montage {
+    namespace export *
+    namespace ensemble create
+}
+
+proc ::crimp::montage::horizontal {args} {
+    # option processing (expansion type, vertical alignment) ...
+
+    if {[llength $args] == 1} {
+	return [lindex $args 0]
+    } elseif {[llength $args] == 0} {
+	return -code error "No images to montage"
+    }
+
+    # Check type, and compute max height, for border expansion.
+    set type {}
+    set height 0
+    foreach image $args {
+	set itype [::crimp::TypeOf $image]
+	if {($type ne {}) && ($type ne $itype)} {
+	    return -code error "Type mismatch, unable to montage $type to $itype"
+	}
+	set type   $itype
+	set height [tcl::mathfunc::max $height [::crimp height $image]]
+    }	
+
+    set f montageh_${type}
+    if {![::crimp::Has $f]} {
+	return -code error "Unable to montage images of type \"$type\""
+    }
+
+    # todo: investigate ability of critcl to have typed var-args
+    # commands.
+    set remainder [lassign $args result]
+    # todo: expand to max height.
+    foreach image $remainder {
+	# todo: expand to max height.
+	set result [::crimp::$f $result $image]
+    }
+    return $result
+}
+
+proc ::crimp::montage::vertical {args} {
+    # option processing (expansion type, vertical alignment) ...
+
+    if {[llength $args] == 1} {
+	return [lindex $args 0]
+    } elseif {[llength $args] == 0} {
+	return -code error "No images to montage"
+    }
+
+    # Check type, and compute max height, for border expansion.
+    set type {}
+    set height 0
+    foreach image $args {
+	set itype [::crimp::TypeOf $image]
+	if {($type ne {}) && ($type ne $itype)} {
+	    return -code error "Type mismatch, unable to montage $type to $itype"
+	}
+	set type   $itype
+	set height [tcl::mathfunc::max $height [::crimp height $image]]
+    }	
+
+    set f montagev_${type}
+    if {![::crimp::Has $f]} {
+	return -code error "Unable to montage images of type \"$type\""
+    }
+
+    # todo: investigate ability of critcl to have typed var-args
+    # commands.
+    set remainder [lassign $args result]
+    # todo: expand to max height.
+    foreach image $remainder {
+	# todo: expand to max height.
+	set result [::crimp::$f $result $image]
+    }
+    return $result
+}
+
 # # ## ### ##### ######## #############
 
 proc ::crimp::invert {image} {
@@ -1258,7 +1341,7 @@ namespace eval ::crimp {
     namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge
-    namespace export statistics rotate
+    namespace export statistics rotate montage
     #
     namespace ensemble create
 }

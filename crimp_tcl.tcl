@@ -812,9 +812,9 @@ proc ::crimp::kernel::make {kernelmatrix {scale {}} {offset {}}} {
 }
 
 proc ::crimp::kernel::transpose {kernel} {
-    lassign $kernel w h K scale
+    lassign $kernel w h K scale offset
     set Kt [crimp flip transpose $K]
-    return [list $h $w $Kt $scale]
+    return [list $h $w $Kt $scale $offset]
 }
 
 # # ## ### ##### ######## #############

@@ -151,6 +151,9 @@ extern int      crimp_get_image_from_obj (Tcl_Interp*   interp,
 #define crimp_eq_height(imagea,imageb) \
     ((imagea)->h == (imageb)->h)
 
+#define crimp_eq_width(imagea,imageb) \
+    ((imagea)->w == (imageb)->w)
+
 #define crimp_require_dim(image,rw,rh)					\
     (((image)->w == (rw)) && ((image)->h == (rh)))
 

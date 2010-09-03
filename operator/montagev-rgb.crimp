@@ -1,0 +1,53 @@
+montagev_rgb
+Tcl_Obj* imageTopObj
+Tcl_Obj* imageBottomObj
+
+/*
+ * Place the two images adjacent to each other in the result, from top to
+ * bottom. The images have to have the same width.
+ */
+
+crimp_image*     result;
+crimp_image*     imageTop;
+crimp_image*     imageBottom;
+int x, y;
+
+crimp_input (imageTopObj,    imageTop,    rgb);
+crimp_input (imageBottomObj, imageBottom, rgb);
+
+if (!crimp_eq_width (imageTop, imageBottom)) {
+    Tcl_SetResult(interp, "image widths do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_rgb (imageTop->w, imageTop->h + imageBottom->h);
+
+for (y = 0; y < imageTop->h; y++) {
+    for (x = 0; x < result->w; x++) {
+
+	R (result, x, y) = R (imageTop, x, y);
+	G (result, x, y) = G (imageTop, x, y);
+	B (result, x, y) = B (imageTop, x, y);
+    }
+}
+
+for (y = 0; y < imageBottom->h; y++) {
+    for (x = 0; x < result->w; x++) {
+
+	R (result, x, imageTop->h + y) = R (imageBottom, x, y);
+	G (result, x, imageTop->h + y) = G (imageBottom, x, y);
+	B (result, x, imageTop->h + y) = B (imageBottom, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

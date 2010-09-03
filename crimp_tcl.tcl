@@ -469,6 +469,8 @@ namespace eval ::crimp::alpha {
 }
 
 # # ## ### ##### ######## #############
+# NOTE: The use of the builtin 'set' command in the alpha namespace
+# requires '::set'.
 
 proc ::crimp::alpha::set {image mask} {
     ::set itype [crimp::TypeOf $image]
@@ -492,21 +494,21 @@ proc ::crimp::alpha::opaque {image} {
 # # ## ### ##### ######## #############
 
 proc ::crimp::alpha::blend {fore back alpha} {
-    set ftype [crimp::TypeOf $fore]
-    set btype [crimp::TypeOf $back]
-    set f     alpha_blend_${ftype}_$btype
+    ::set ftype [crimp::TypeOf $fore]
+    ::set btype [crimp::TypeOf $back]
+    ::set f     alpha_blend_${ftype}_$btype
     if {![crimp::Has $f]} {
 	return -code error "Blend is not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
-    return [crimp::$f $fore $back [table::CLAMP $alpha]]
+    return [crimp::$f $fore $back [::crimp::table::CLAMP $alpha]]
 }
 
 # # ## ### ##### ######## #############
 
 proc ::crimp::alpha::over {fore back} {
-    set ftype [crimp::TypeOf $fore]
-    set btype [crimp::TypeOf $back]
-    set f     alpha_over_${ftype}_$btype
+    ::set ftype [crimp::TypeOf $fore]
+    ::set btype [crimp::TypeOf $back]
+    ::set f     alpha_over_${ftype}_$btype
     if {![crimp::Has $f]} {
 	return -code error "Over is not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
@@ -767,7 +769,7 @@ proc ::crimp::kernel::make {kernelmatrix {scale {}} {offset {}}} {
     foreach r $kernelmatrix {
 	set tmprow {}
 	foreach v $r {
-	    set v [crimp::table::CLAMPS $v]
+	    set v [::crimp::table::CLAMPS $v]
 	    incr tmpscale $v ; # scale is computed before converting unsigned two-complement.
 	    set v [expr {($v >= 0) ? $v : (256+$v)}]
 	    lappend tmprow $v

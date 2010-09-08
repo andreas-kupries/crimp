@@ -258,7 +258,50 @@ proc ::crimp::rotate::half {image} {
     return [crimp flip horizontal [crimp flip vertical $image]]
 }
 
+# # ## ### ##### ######## #############
+## All morphology operations are currently based on a single
+## structuring element, the flat 3x3 brick.
 
+namespace eval ::crimp::morph {
+    namespace export *
+    namespace ensemble create
+}
+
+proc ::crimp::morph::erode {image} {
+    return [crimp filter rank $image 1 99.99]
+}
+
+proc ::crimp::morph::dilate {image} {
+    return [crimp filter rank $image 1 0]
+}
+
+proc ::crimp::morph::open {image} {
+    return [dilate [erode $image]]
+}
+
+proc ::crimp::morph::close {image} {
+    return [erode [dilate $image]]
+}
+
+proc ::crimp::morph::gradient {image} {
+    return [::crimp subtract [dilate $image] [erode $image]]
+}
+
+proc ::crimp::morph::igradient {image} {
+    return [::crimp subtract $image [erode $image]]
+}
+
+proc ::crimp::morph::egradient {image} {
+    return [::crimp subtract [dilate $image] $image]
+}
+
+proc ::crimp::morph::tophatw {image} {
+    return [::crimp subtract $image [open $image]]
+}
+
+proc ::crimp::morph::tophatb {image} {
+    return [::crimp subtract [close $image] $image]
+}
 
 # # ## ### ##### ######## #############
 
@@ -1341,7 +1384,7 @@ namespace eval ::crimp {
     namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold-le threshold-ge
-    namespace export statistics rotate montage
+    namespace export statistics rotate montage morph
     #
     namespace ensemble create
 }

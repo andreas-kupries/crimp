@@ -6,8 +6,8 @@ def op_rof_max {
 
 	show_slides [list \
 			 [base] \
-			 [crimp filter rank [base]  3 100] \
-			 [crimp filter rank [base] 10 100] \
-			 [crimp filter rank [base] 20 100]]
+			 [crimp filter rank [base]  3 99.99] \
+			 [crimp filter rank [base] 10 99.99] \
+			 [crimp filter rank [base] 20 99.99]]
     }
 }

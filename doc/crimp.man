@@ -671,14 +671,110 @@ images of the same type.
 
 
 [call [cmd ::crimp] [method max] [arg image1] [arg image2]]
+[keywords max]
 
 This method combines the two input images into a result image by
 taking the pixelwise maximum.
 
+
 [call [cmd ::crimp] [method min] [arg image1] [arg image2]]
+[keywords min]
 
 This method combines the two input images into a result image by
 taking the pixelwise minimum.
+
+
+[call [cmd ::crimp] [method {montage horizontal}] [arg image]...]
+[call [cmd ::crimp] [method {montage vertical}] [arg image]...]
+[keywords montage]
+
+The result of these methods is an image where the input images have
+been placed adjacent to each from left to right (horizontal), or top
+to bottom (vertical). The input images have to have the same type,
+and the same height, or width, respectively.
+
+[comment {TODO: Add options to allow auto-expansion to a common height/width}]
+
+
+[call [cmd ::crimp] [method {morph dilate}] [arg image]]
+[call [cmd ::crimp] [method {morph erode}] [arg image]]
+[keywords morphology erosion dilation]
+
+These two methods implement the basic set of morphology operations,
+[term erosion], and [term dilation] using a flat 3x3 brick as their
+structuring element. For grayscale, which we have here, these are,
+mathematically, max and min rank-order filters, i.e.
+
+[example {
+    dilate = filter rank 1  0.00 (min)
+    erode  = filter rank 1 99.99 (max)
+}]
+
+
+[call [cmd ::crimp] [method {morph close}] [arg image]]
+[call [cmd ::crimp] [method {morph open}] [arg image]]
+[keywords morphology opening closing]
+
+These two methods add to the basic set of morphology operations,
+[term opening] and [term closing]. In terms of erosion and dilation:
+
+[example {
+    close = erode o dilate 
+    open  = dilate o erode
+}]
+
+
+[call [cmd ::crimp] [method {morph gradient}] [arg image]]
+[keywords morphology gradient]
+
+The morphological [term gradient] is defined as
+
+[example {
+    [dilate $image] - [erode $image]
+}]
+
+This can also be expressed as the sum of the external and
+internal gradients, see below.
+
+
+[call [cmd ::crimp] [method {morph igradient}] [arg image]]
+[keywords morphology {internal gradient}]
+
+The morphological [term {internal gradient}] is defined as
+
+[example {
+    $image - [erode image]
+}]
+
+
+[call [cmd ::crimp] [method {morph egradient}] [arg image]]
+[keywords morphology {external gradient}]
+
+The morphological [term {external gradient}] is defined as
+
+[example {
+    [dilate $image] - $image
+}]
+
+
+[call [cmd ::crimp] [method {morph tophatw}] [arg image]]
+[keywords morphology tophat {white tophat}]
+
+The [term {white tophat}] transformation is defined as
+
+[example {
+    $image - [open $image]
+}]
+
+
+[call [cmd ::crimp] [method {morph tophatb}] [arg image]]
+[keywords morphology tophat {black tophat}]
+
+The [term {black tophat}] transformation is defined as
+
+[example {
+    [close $image] - $image
+}]
 
 
 [call [cmd ::crimp] [method multiply] [arg image1] [arg image2]]

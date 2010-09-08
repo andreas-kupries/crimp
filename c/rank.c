@@ -22,7 +22,7 @@ crimp_rank (int histogram [256], int percentile, int max)
 
     for (k = 0, sum = 0; k < 256; k++) {
 	sum += histogram [k];
-	if (sum >= cut) { return k; }
+	if (sum > cut) { return k; }
     }
     return 255;
 }

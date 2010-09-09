@@ -6,7 +6,7 @@ def op_threshold_luma_le {
 
 	proc show {thethreshold} {
 	    variable table [crimp table threshold-le  $thethreshold]
-	    show_image     [crimp threshold-le [crimp convert 2grey8 [base]] $thethreshold]
+	    show_image     [crimp threshold global le [crimp convert 2grey8 [base]] $thethreshold]
 	    return
 	}
 

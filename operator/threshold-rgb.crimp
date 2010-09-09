@@ -1,0 +1,41 @@
+threshold_rgb
+Tcl_Obj* imageObj
+Tcl_Obj* thresholdRObj
+Tcl_Obj* thresholdGObj
+Tcl_Obj* thresholdBObj
+
+crimp_image* image;
+crimp_image* thresholdr;
+crimp_image* thresholdg;
+crimp_image* thresholdb;
+crimp_image* result;
+int          x, y;
+
+crimp_input (imageObj,      image,      rgb);
+crimp_input (thresholdRObj, thresholdr, grey8);
+crimp_input (thresholdGObj, thresholdg, grey8);
+crimp_input (thresholdBObj, thresholdb, grey8);
+
+result = crimp_new_like (image);
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+	R (result, x, y) = R (image, x, y) >= GREY8 (thresholdr, x, y) ? BLACK : WHITE;
+	G (result, x, y) = G (image, x, y) >= GREY8 (thresholdg, x, y) ? BLACK : WHITE;
+	B (result, x, y) = B (image, x, y) >= GREY8 (thresholdb, x, y) ? BLACK : WHITE;
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

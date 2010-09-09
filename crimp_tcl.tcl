@@ -399,13 +399,62 @@ proc ::crimp::solarize {image n} {
     remap $image [map solarize $n]
 }
 
-proc ::crimp::threshold-le {image n} {
-    remap $image [map threshold-le $n]
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::threshold {
+    namespace export *
+    namespace ensemble create
+    namespace eval global {
+	namespace export *
+	namespace ensemble create
+    }
 }
 
-proc ::crimp::threshold-ge {image n} {
-    remap $image [map threshold-ge $n]
+proc ::crimp::threshold::global::le {image n} {
+    ::crimp remap $image [::crimp map threshold-le $n]
 }
+
+proc ::crimp::threshold::global::ge {image n} {
+    ::crimp remap $image [::crimp map threshold-ge $n]
+}
+
+proc ::crimp::threshold::local {image args} {
+    set type [::crimp::TypeOf $image]
+    set f threshold_$type
+    if {![::crimp::Has $f]} {
+	return -code error "Unable to locally threshold images of type \"$type\""
+    }
+
+    # Shrink or extend the set of thresholding maps if too many or not
+    # enough were specified, the latter by replicating the last map.
+
+    switch -- $type {
+	hsv - rgb {
+	    if {[llength $args]} {
+		while {[llength $args] < 3} {
+		    lappend args [lindex $args end]
+		}
+	    }
+	    if {[llength $args] > 3} {
+		set args [lrange $args 0 2]
+	    }
+	}
+	rgba {
+	    if {[llength $args]} {
+		while {[llength $args] < 4} {
+		    lappend args [lindex $args end]
+		}
+	    }
+	    if {[llength $args] > 4} {
+		set args [lrange $args 0 3]
+	    }
+	}
+    }
+
+    return [::crimp::$f $image {*}$args]
+}
+
+# # ## ### ##### ######## #############
 
 proc ::crimp::gamma {image y} {
     remap $image [map gamma $y]
@@ -1388,7 +1437,7 @@ namespace eval ::crimp {
     namespace export alpha histogram max min screen add pixel
     namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate
-    namespace export kernel expand threshold-le threshold-ge
+    namespace export kernel expand threshold
     namespace export statistics rotate montage morph
     #
     namespace ensemble create

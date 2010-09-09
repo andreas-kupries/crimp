@@ -938,13 +938,14 @@ default to [const 1] and [const 0] respectively, if they are not
 specified.
 
 
-[call [cmd ::crimp] [method threshold-ge] [arg image] [arg threshold]]
+[call [cmd ::crimp] [method {threshold global ge}] [arg image] [arg threshold]]
 [keywords thresholding binarization]
 
 This method takes an image, runs it through the [fun threshold-ge]
 function with parameter [arg threshold], and returns the modified
 image as it result. As the result only contains black and white,
-i.e. 2 colors, this process is also called [term binarization].
+i.e. 2 colors, this process is also called [term binarization] or
+foreground/background segmentation.
 
 This is an application of method [method remap], using the mapping
 returned by "[method {map threshold-ge}] [arg threshold]".
@@ -953,19 +954,39 @@ This method supports all image types supported by the method
 [method remap].
 
 
-[call [cmd ::crimp] [method threshold-le] [arg image] [arg threshold]]
+[call [cmd ::crimp] [method {threshold global le}] [arg image] [arg threshold]]
 [keywords thresholding binarization]
 
 This method takes an image, runs it through the [fun threshold-le]
 function with parameter [arg threshold], and returns the modified
 image as it result. As the result only contains black and white,
-i.e. 2 colors, this process is also called [term binarization].
+i.e. 2 colors, this process is also called [term binarization], or
+foreground/background segmentation.
 
 This is an application of method [method remap], using the mapping
 returned by "[method {map threshold-le}] [arg threshold]".
 
 This method supports all image types supported by the method
 [method remap].
+
+
+[call [cmd ::crimp] [method {threshold local}] [arg image] [arg threshold]...]
+[keywords thresholding binarization]
+
+This method takes an [arg image] and one or more [arg threshold] maps
+and returns an image where all pixels of the input which were larger
+or equal to the corresponding pixel in the map are set to black. All
+other pixels are set to white. Each map is applied to one color
+channel of the input image. If there are too many maps the remainder
+is ignored. If there are not enough maps the last map is replicated.
+
+[para] This is the core for all methods of non-global
+[term binarization], i.e. foreground/background segmentation. Their
+differences are just in the calculation of the maps.
+
+[para] This method supports all image types with one or more
+single-byte channels, i.e. all but [const grey16], [const grey32], and
+[const bw].
 
 
 [call [cmd ::crimp] [method upsample] [arg image] [arg factor]]

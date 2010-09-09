@@ -6,7 +6,7 @@ def op_threshold_le {
 
 	proc show {thethreshold} {
 	    variable table [crimp table threshold-le  $thethreshold]
-	    show_image     [crimp threshold-le [base] $thethreshold]
+	    show_image     [crimp threshold global le [base] $thethreshold]
 	    return
 	}
 

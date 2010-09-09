@@ -271,6 +271,12 @@ binarization
 \fBfiles/crimp.n\fR
 crimp
 .RE
+black tophat
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 blending
 .RS
 .TP
@@ -278,6 +284,12 @@ blending
 crimp
 .RE
 channels
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+closing
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -325,6 +337,12 @@ cyclic wrap expansion
 \fBfiles/crimp.n\fR
 crimp
 .RE
+dilation
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 dimensions
 .RS
 .TP
@@ -337,6 +355,12 @@ edge shrinking
 \fBfiles/crimp.n\fR
 crimp
 .RE
+erosion
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 expansion
 .RS
 .TP
@@ -344,6 +368,12 @@ expansion
 crimp
 .RE
 extend expansion
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+external gradient
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -379,6 +409,12 @@ gamma correction
 \fBfiles/crimp.n\fR
 crimp
 .RE
+gradient
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 histogram
 .RS
 .TP
@@ -386,6 +422,12 @@ histogram
 crimp
 .RE
 image
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+internal gradient
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -440,6 +482,24 @@ min-filter
 crimp
 .RE
 mirror expansion
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+montage
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+morphology
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+opening
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -541,6 +601,12 @@ thresholding
 \fBfiles/crimp.n\fR
 crimp
 .RE
+tophat
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 toroidal wrap expansion
 .RS
 .TP
@@ -554,6 +620,12 @@ transform
 crimp
 .RE
 variance
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+white tophat
 .RS
 .TP
 \fBfiles/crimp.n\fR

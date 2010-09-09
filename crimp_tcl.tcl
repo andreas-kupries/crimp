@@ -194,6 +194,11 @@ namespace eval ::crimp::convert {
 	proc [lindex [::crimp::P $fun] 0] {image} \
 	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
 		set type [::crimp::TypeOf $image]
+		# Pass through unchanged if the image is already of
+		# the requested type.
+		if {"2$type" eq "@"} {
+		    return $image
+		}
 		set f    convert_@_${type}
 		if {![::crimp::Has $f]} {
 		    return -code error "Unable to convert images of type \"$type\" to \"@\""

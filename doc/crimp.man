@@ -690,8 +690,8 @@ taking the pixelwise minimum.
 
 The result of these methods is an image where the input images have
 been placed adjacent to each from left to right (horizontal), or top
-to bottom (vertical). The input images have to have the same type,
-and the same height, or width, respectively.
+to bottom (vertical). The input images have to have the same type, and
+the same height, or width, respectively.
 
 [comment {TODO: Add options to allow auto-expansion to a common height/width}]
 
@@ -733,8 +733,8 @@ The morphological [term gradient] is defined as
     [dilate $image] - [erode $image]
 }]
 
-This can also be expressed as the sum of the external and
-internal gradients, see below.
+This can also be expressed as the sum of the external and internal
+gradients, see below.
 
 
 [call [cmd ::crimp] [method {morph igradient}] [arg image]]
@@ -1034,7 +1034,9 @@ This methods rotates the image a half-turn, i.e. 180 degrees.
 [call [cmd ::crimp] [method {convert 2rgb}] [arg image]]
 
 This set of methods all convert their input [arg image] to the
-specified type and returns it as their result.
+specified type and returns it as their result. All converters accept
+an image of the destination type as input and will pass it through
+unchanged.
 
 [para]
 

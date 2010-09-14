@@ -52,12 +52,17 @@ if {![file exists $dir/lib] ||
     lappend auto_path [file join $dir critcl.vfs lib]
 
     # Direct access to the crimp package
-    source [file join $dir crimp.tcl]
+    source         [file join $dir crimp.tcl]
+    # Force compilation and load of the C-level primitives.
+    critcl::cbuild [file join $dir crimp.tcl]
 
     puts "Using dynamically compiled crimp package"
 }
 
 puts "Starting up ..."
+
+#puts %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n[join [info loaded] \n]
+#puts %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # # ## ### ##### ######## #############
 
@@ -163,7 +168,10 @@ proc demo_run_hook {script} {
 proc demo_time_hook {script} {
     global  times
     set     x  [lindex [uplevel 1 [list time $script 1]] 0]
-    lappend times [expr {double($x)/1E6}] [expr {double($x)/([crimp width [base]]*[crimp height [base]])}]
+
+    lappend times [expr {double($x)/1E6}]
+    if {![bases]} return
+    lappend times [expr {double($x)/([crimp width [base]]*[crimp height [base]])}]/pixel
     return
 }
 
@@ -546,6 +554,8 @@ proc main {} {
     images_init
     demo_init
     gui
+    after 100 {event generate .l <<ListboxSelect>>}
+    return
     after 100 {
 	.l selection set 0
 	event generate .l <<ListboxSelect>>

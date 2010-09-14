@@ -1,5 +1,8 @@
 def effect_psychedelia {
     label Psychedelia
+    active {
+	expr {[bases] == 0}
+    }
     setup {
 	variable token
 
@@ -13,6 +16,6 @@ def effect_psychedelia {
 	next
     }
     shutdown {
-	after cancel $token
+	catch {after cancel $token}
     }
 }

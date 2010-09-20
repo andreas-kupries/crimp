@@ -132,9 +132,12 @@ proc demo_label {name} {
 }
 
 proc demo_use {name} {
-    global times
-    set times {}
     demo_setup $name
+    demo_setup_image
+    return
+}
+
+proc demo_use_image {} {
     demo_setup_image
     return
 }
@@ -143,35 +146,40 @@ proc demo_setup {name} {
     global demo dcurrent
     demo_close
     set dcurrent $name
-    demo_run_hook [dict get $demo($name) setup]
+    demo_run_hook "setup $name" [dict get $demo($name) setup]
     return
 }
 
 proc demo_setup_image {} {
-    global dcurrent demo times
+    global dcurrent demo
     catch { spause }
-    demo_run_hook [dict get $demo($dcurrent) setup_image]
-    puts "Times: $times"
+    demo_run_hook image [dict get $demo($dcurrent) setup_image]
     return
 }
 
-proc demo_run_hook {script} {
+proc demo_run_hook {label script} {
+    global times
+    set    times {}
     if {[catch {
-	namespace eval ::DEMO [list demo_time_hook $script]
+	namespace eval ::DEMO [list demo_time_hook $label $script]
     }]} {
 	set prefix "HOOK ERROR "
 	puts $prefix[join [split $::errorInfo \n] \n$prefix]
     }
+    puts "Times: [join $times { }]"
     return
 }
 
-proc demo_time_hook {script} {
+proc demo_time_hook {label script} {
     global  times
     set     x  [lindex [uplevel 1 [list time $script 1]] 0]
 
-    lappend times [expr {double($x)/1E6}]
+    lappend times /$label
+    lappend times "[expr {double($x)/1E6}] sec"
     if {![bases]} return
-    lappend times [expr {double($x)/([crimp width [base]]*[crimp height [base]])}]/pixel
+    set n [expr {[crimp width [base]]*[crimp height [base]]}]
+    lappend times "$n pixels"
+    lappend times "[expr {double($x)/$n}] usec/pixel"
     return
 }
 
@@ -310,7 +318,7 @@ proc show_selection {} {
     show $selection
     demo_usable
     if {[demo_isactive]} {
-	demo_setup_image
+	demo_use_image
     } else {
 	demo_close
     }

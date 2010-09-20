@@ -1,5 +1,5 @@
-def effect_equalize_hsv {
-    label {Equalize (HSV)}
+def effect_equalize_value {
+    label {Equalize (HSV - Value)}
     setup_image {
 	variable mask [lindex [crimp split [base]] end]
 	PLAIN
@@ -43,23 +43,21 @@ def effect_equalize_hsv {
 	proc EQUAL {} {
 	    demo_time_hook equalize {
 		HISTO [base]
-		# H is not stretched. Does not make sense for HUE.
-		variable HH ; variable HS ; variable HV
-		              variable TS ; variable TV
+		# H & S are not stretched. Does not make sense for HUE, and not good for Saturation.
+		variable HH ; variable HV
+		              variable TV
 		variable mask
 
-		set fs [crimp::FIT $TS 255]
 		set fv [crimp::FIT $TV 255]
 
-		set h [crimp map identity]
-		set s [crimp read tcl [list $fs]]
+		set i [crimp map identity]
 		set v [crimp read tcl [list $fv]]
 
 		set new [crimp alpha set \
 			     [crimp convert 2rgb \
 				  [crimp remap \
 				       [crimp convert 2hsv [base]] \
-				       $h $s $v]] \
+				       $i $i $v]] \
 			     $mask]
 	    }
 

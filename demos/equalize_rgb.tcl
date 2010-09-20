@@ -39,19 +39,21 @@ def effect_equalize_rgb {
 	}
 
 	proc EQUAL {} {
-	    HISTO [base]
-	    variable HR ; variable HG ; variable HB
-	    variable TR ; variable TG ; variable TB
+	    demo_time_hook equalize {
+		HISTO [base]
+		variable HR ; variable HG ; variable HB
+		variable TR ; variable TG ; variable TB
 
-	    set fr [crimp::FIT $TR 255]
-	    set fg [crimp::FIT $TG 255]
-	    set fb [crimp::FIT $TB 255]
+		set fr [crimp::FIT $TR 255]
+		set fg [crimp::FIT $TG 255]
+		set fb [crimp::FIT $TB 255]
 
-	    set r [crimp read tcl [list $fr]]
-	    set g [crimp read tcl [list $fg]]
-	    set b [crimp read tcl [list $fb]]
+		set r [crimp read tcl [list $fr]]
+		set g [crimp read tcl [list $fg]]
+		set b [crimp read tcl [list $fb]]
 
-	    set new [crimp remap [base] $r $g $b]
+		set new [crimp remap [base] $r $g $b]
+	    }
 
 	    show_image $new
 	    HISTO      $new

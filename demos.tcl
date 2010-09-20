@@ -146,7 +146,7 @@ proc demo_setup {name} {
     global demo dcurrent
     demo_close
     set dcurrent $name
-    demo_run_hook "setup $name" [dict get $demo($name) setup]
+    demo_run_hook "\nsetup $name" [dict get $demo($name) setup]
     return
 }
 
@@ -158,28 +158,23 @@ proc demo_setup_image {} {
 }
 
 proc demo_run_hook {label script} {
-    global times
-    set    times {}
     if {[catch {
 	namespace eval ::DEMO [list demo_time_hook $label $script]
     }]} {
 	set prefix "HOOK ERROR "
-	puts $prefix[join [split $::errorInfo \n] \n$prefix]
+	log $prefix[join [split $::errorInfo \n] \n$prefix] error
     }
-    puts "Times: [join $times { }]"
     return
 }
 
 proc demo_time_hook {label script} {
-    global  times
-    set     x  [lindex [uplevel 1 [list time $script 1]] 0]
+    set x [lindex [uplevel 1 [list time $script 1]] 0]
 
-    lappend times /$label
-    lappend times "[expr {double($x)/1E6}] sec"
+    log "$label = [expr {double($x)/1E6}] seconds"
     if {![bases]} return
     set n [expr {[crimp width [base]]*[crimp height [base]]}]
-    lappend times "$n pixels"
-    lappend times "[expr {double($x)/$n}] usec/pixel"
+    log "\t$n pixels"
+    log "\t[expr {double($x)/$n}] uSeconds/pixel"
     return
 }
 
@@ -231,6 +226,22 @@ proc def {name dict} {
 
 # # ## ### ##### ######## #############
 
+proc log {msg {tags {}}} {
+    log* $msg\n $tags
+    return
+}
+
+proc log* {msg {tags {}}} {
+    .log configure -state normal
+    .log insert end $msg $tags
+    .log see end
+    .log configure -state disabled
+    update
+    return
+}
+
+# # ## ### ##### ######## #############
+
 proc reframe {} {
     destroy .left .right .top .bottom .slide
 
@@ -241,10 +252,10 @@ proc reframe {} {
     ttk::frame .bottom
 
     grid .slide  -row 0 -column 2 -columnspan 3 -sticky swen
-    grid .left   -row 2 -column 2               -sticky swen
-    grid .right  -row 2 -column 4               -sticky swen
     grid .top    -row 1 -column 2 -columnspan 3 -sticky swen
-    grid .bottom -row 3 -column 2 -columnspan 3 -sticky swen
+    grid .left   -row 2 -column 2 -rowspan 3    -sticky swen
+    grid .right  -row 2 -column 4 -rowspan 3    -sticky swen
+    grid .bottom -row 5 -column 2 -columnspan 3 -sticky swen
     return
 }
 
@@ -256,35 +267,53 @@ proc reframe_slide {} {
     return
 }
 
+proc tags {tw} {
+    $tw tag configure error   -background #EE5555
+    $tw tag configure warning -background yellow
+    $tw tag configure note \
+	-background lightyellow  \
+	-borderwidth 1 -relief sunken
+    return
+}
+
 proc gui {} {
     widget::toolbar .t
 
     .t add button exit -text Exit -command ::exit -separator 1
 
-    widget::scrolledwindow .sc -borderwidth 1 -relief sunken
     widget::scrolledwindow .sl -borderwidth 1 -relief sunken
+    widget::scrolledwindow .sc -borderwidth 1 -relief sunken
+    widget::scrolledwindow .si -borderwidth 1 -relief sunken
     widget::scrolledwindow .sd -borderwidth 1 -relief sunken
-    #canvas                 .c -width 800 -height 600 -scrollregion {-4000 -4000 4000 4000}
-    canvas                 .c -scrollregion {-4000 -4000 4000 4000}
-    listbox                .l -width 40 -selectmode extended -listvariable images
-    listbox                .d -width 40 -selectmode single   -listvariable activedemos
+
+    text .log -height 5
+    tags .log
+
+    canvas   .c -scrollregion {-4000 -4000 4000 4000}
+    listbox  .li -width 40 -selectmode extended -listvariable images
+    listbox  .ld -width 40 -selectmode single   -listvariable activedemos
 
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
 
-    .sl setwidget .l
-    .sd setwidget .d
+    .sl setwidget .log
+    .si setwidget .li
+    .sd setwidget .ld
     .sc setwidget .c
 
-    grid .t  -row 0 -column 0 -columnspan 4 -sticky swen
-    grid .sl -row 1 -column 0 -rowspan 3    -sticky swen
-    grid .sd -row 1 -column 1 -rowspan 3    -sticky swen
-    grid .sc -row 2 -column 3               -sticky swen
+    grid .t  -row 0 -column 0 -columnspan 2 -sticky swen
+    grid .sl -row 1 -column 0 -columnspan 2 -rowspan 2 -sticky swen
+
+    grid .sc -row 2 -column 3 -rowspan 3    -sticky swen
+    grid .si -row 3 -column 0 -rowspan 3    -sticky swen
+    grid .sd -row 3 -column 1 -rowspan 3    -sticky swen
 
     grid rowconfigure    . 0 -weight 0
     grid rowconfigure    . 1 -weight 0
     grid rowconfigure    . 2 -weight 1
-    grid rowconfigure    . 3 -weight 0
+    grid rowconfigure    . 3 -weight 1
+    grid rowconfigure    . 4 -weight 1
+    grid rowconfigure    . 5 -weight 0
 
     grid columnconfigure . 0 -weight 0
     grid columnconfigure . 1 -weight 0
@@ -294,8 +323,8 @@ proc gui {} {
 
     reframe
 
-    bind .l <<ListboxSelect>> show_selection
-    bind .d <<ListboxSelect>> show_demo
+    bind .li <<ListboxSelect>> show_selection
+    bind .ld <<ListboxSelect>> show_demo
 
     # Panning via mouse
     bind .c <ButtonPress-2> {%W scan mark   %x %y}
@@ -313,7 +342,7 @@ proc gui {} {
 # # ## ### ##### ######## #############
 
 proc show_selection {} {
-    set selection [.l curselection]
+    set selection [.li curselection]
     #if {![llength $selection]} return
     show $selection
     demo_usable
@@ -336,7 +365,7 @@ proc show {indices} {
 
 proc show_demo {} {
     global demo_map activedemos
-    set selection [.d curselection]
+    set selection [.ld curselection]
     if {![llength $selection]} return
     set index [lindex $selection 0]
 
@@ -562,14 +591,14 @@ proc main {} {
     images_init
     demo_init
     gui
-    after 100 {event generate .l <<ListboxSelect>>}
+    after 100 {event generate .li <<ListboxSelect>>}
     return
     after 100 {
-	.l selection set 0
-	event generate .l <<ListboxSelect>>
+	.li selection set 0
+	event generate .li <<ListboxSelect>>
 	after 100 {
-	    .d selection set 0
-	    event generate .d <<ListboxSelect>>
+	    .ld selection set 0
+	    event generate .ld <<ListboxSelect>>
 	}
     }
     return

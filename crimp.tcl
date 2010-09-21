@@ -29,7 +29,7 @@ critcl::tsources crimp_tcl.tcl
     # as Tcl procedures.
     foreach f [glob -directory $here/reader *.tcl] { critcl::tsources $f }
     foreach f [glob -directory $here/writer *.tcl] { critcl::tsources $f }
-}} [file dirname [info script]]
+}} [file dirname [file normalize [info script]]]
 
 critcl::tsources plot.tcl
 
@@ -51,23 +51,25 @@ critcl::ccode {
 # # ## ### ##### ######## #############
 ## Read and execute all .crimp files in the current directory.
 
-foreach filename [lsort [glob -nocomplain -directory [file join [file dirname [file normalize [info script]]] operator] *.crimp]] {
-    set chan [open $filename]
-    set name [gets $chan]
-    set params "Tcl_Interp* interp"
-    set number 2
-    while {1} {
-        incr number
-        set line [gets $chan]
-        if {$line eq ""} {
-            break
-        }
-        append params " $line"
+::apply {{here} {
+    foreach filename [lsort [glob -nocomplain -directory [file join $here operator] *.crimp]] {
+	set chan [open $filename]
+	set name [gets $chan]
+	set params "Tcl_Interp* interp"
+	set number 2
+	while {1} {
+	    incr number
+	    set line [gets $chan]
+	    if {$line eq ""} {
+		break
+	    }
+	    append params " $line"
+	}
+	set body "\n#line $number \"[file tail $filename]\"\n[read $chan]"
+	close $chan
+	namespace eval ::crimp [list ::critcl::cproc $name $params ok $body]
     }
-    set body "\n#line $number \"[file tail $filename]\"\n[read $chan]"
-    close $chan
-    namespace eval ::crimp [list ::critcl::cproc $name $params ok $body]
-}
+}} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
 ## Pull in the Tcl layer aggregating the C primitives into useful

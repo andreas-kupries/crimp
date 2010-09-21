@@ -1,9 +1,9 @@
 pixel
 Tcl_Obj* imageObj
 
-crimp_image* image;
-char* bytes;
-int   length;
+crimp_image*   image;
+unsigned char* bytes;
+int            length;
 
 if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
     return TCL_ERROR;

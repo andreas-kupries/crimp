@@ -30,6 +30,8 @@ def op_quantize {
 
 	proc show {n p} {
 	    variable hist
+	    if {![info exists hist]} return
+
 	    variable base
 	    variable table [crimp table quantize histogram $n $p $hist]
 	    set      map     [crimp map quantize histogram $n $p $hist]

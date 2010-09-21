@@ -1,4 +1,4 @@
-# -*- tcl -*-
+# -*- tcl -*- 
 # # ## ### ##### ######## #############
 # Writing images in the PGM format (Portable Grey Map).
 # See http://en.wikipedia.org/wiki/Netpbm_format

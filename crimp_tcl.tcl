@@ -119,6 +119,11 @@ namespace eval ::crimp::read {
     }
 
     # Readers implemented as Tcl procedures.
+    #
+    # Note: This is for the case of crimp getting dynamically
+    # compiled.  In the prebuild case no files will match, and the
+    # relevant files are sources as part of the package index.
+
     foreach file [glob -nocomplain -directory $dir/reader *.tcl] {
 	source $file
     }
@@ -146,6 +151,11 @@ namespace eval ::crimp::write {
     }
 
     # Writers implemented as Tcl procedures.
+    #
+    # Note: This is for the case of crimp getting dynamically
+    # compiled.  In the prebuild case no files will match, and the
+    # relevant files are sources as part of the package index.
+
     foreach file [glob -nocomplain -directory $dir/writer *.tcl] {
 	source $file
     }

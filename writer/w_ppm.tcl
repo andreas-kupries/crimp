@@ -1,4 +1,4 @@
-# -*- tcl -*-
+# -*- tcl -*- 
 # # ## ### ##### ######## #############
 # Writing images in the PPM format (Portable Pix Map).
 # See http://en.wikipedia.org/wiki/Netpbm_format

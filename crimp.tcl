@@ -23,8 +23,14 @@ critcl::config tk 1
 critcl::cheaders c/*.h cop/*.c
 critcl::csources c/*.c
 critcl::tsources crimp_tcl.tcl
-critcl::tsources reader/*.tcl  ;# image readers and writers implemented
-critcl::tsources writer/*.tcl  ;# as Tcl procedures.
+
+::apply {{here} {
+    # image readers and writers implemented
+    # as Tcl procedures.
+    foreach f [glob -directory $here/reader *.tcl] { critcl::tsources $f }
+    foreach f [glob -directory $here/writer *.tcl] { critcl::tsources $f }
+}} [file dirname [info script]]
+
 critcl::tsources plot.tcl
 
 critcl::cinit {

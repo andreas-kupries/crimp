@@ -1,4 +1,4 @@
-# -*- tcl -*-
+# -*- tcl -*- 
 # # ## ### ##### ######## #############
 # Reader for strimj formatted images.
 # See http://wiki.tcl.tk/_//search?S=strimj

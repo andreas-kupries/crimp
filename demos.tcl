@@ -290,8 +290,8 @@ proc gui {} {
     tags .log
 
     canvas   .c -scrollregion {-4000 -4000 4000 4000}
-    listbox  .li -width 40 -selectmode extended -listvariable images
-    listbox  .ld -width 40 -selectmode single   -listvariable activedemos
+    listbox  .li -width 10 -selectmode extended -listvariable images
+    listbox  .ld -width 20 -selectmode single   -listvariable activedemos
 
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]

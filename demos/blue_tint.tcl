@@ -1,4 +1,4 @@
-def rgba_blue {
+def rgba_blue_tint {
     label Blue/Tint
     setup_image {
 	set c [lindex [crimp split [base]] 2]

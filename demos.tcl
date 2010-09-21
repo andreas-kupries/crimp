@@ -236,7 +236,7 @@ proc log* {msg {tags {}}} {
     .log insert end $msg $tags
     .log see end
     .log configure -state disabled
-    update
+    #update
     return
 }
 

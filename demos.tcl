@@ -3,18 +3,25 @@
 # The next line restarts with tclsh.\
 exec tclsh "$0" ${1+"$@"}
 
+puts "CRIMP demos"
+
 if {[catch {
+    puts "Trying Tcl/Tk 8.6"
+
     package require Tcl 8.6
     package require Tk  8.6
 
-    puts "Using Tcl/Tk 8.6"
+    puts "Using  Tcl/Tk 8.6"
 }]} {
+    puts "Trying Tcl/Tk 8.5 + img::png"
+
     package require Tcl 8.5
     package require Tk  8.5
     package require img::png
 
-    puts "Using Tcl/Tk 8.5 + img::png"
+    puts "Using  Tcl/Tk 8.5 + img::png"
 }
+
 package require widget::scrolledwindow
 package require widget::toolbar
 package require widget::arrowbutton
@@ -48,12 +55,21 @@ if {![file exists $dir/lib] ||
 
     puts "Trying dynamically compiled crimp package"
 
-    # Access to critcl library from a local unwrapped critcl app.
-    lappend auto_path [file join $dir critcl.vfs lib]
+    set cp [file join [file dirname $dir] lib critcl.vfs lib]
 
-    # Direct access to the crimp package
+    puts "Looking for critcl in $cp"
+
+    # Access to critcl library from a local unwrapped critcl app.
+    lappend auto_path $cp
+    package require critcl 2
+
+    puts "Got:           [package ifneeded critcl [package present critcl]]"
+
+    # Directly access the crimp package
     source         [file join $dir crimp.tcl]
-    # Force compilation and load of the C-level primitives.
+
+    # and then force the compilation and loading of the C-level
+    # primitives, instead of defering until use.
     critcl::cbuild [file join $dir crimp.tcl]
 
     puts "Using dynamically compiled crimp package"
@@ -286,12 +302,12 @@ proc gui {} {
     widget::scrolledwindow .si -borderwidth 1 -relief sunken
     widget::scrolledwindow .sd -borderwidth 1 -relief sunken
 
-    text .log -height 5
+    text .log -height 5 -width 10
     tags .log
 
     canvas   .c -scrollregion {-4000 -4000 4000 4000}
-    listbox  .li -width 10 -selectmode extended -listvariable images
-    listbox  .ld -width 20 -selectmode single   -listvariable activedemos
+    listbox  .li -width 15 -selectmode extended -listvariable images
+    listbox  .ld -width 30 -selectmode single   -listvariable activedemos
 
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
@@ -311,7 +327,7 @@ proc gui {} {
     grid rowconfigure    . 0 -weight 0
     grid rowconfigure    . 1 -weight 0
     grid rowconfigure    . 2 -weight 1
-    grid rowconfigure    . 3 -weight 1
+    grid rowconfigure    . 3 -weight 3
     grid rowconfigure    . 4 -weight 1
     grid rowconfigure    . 5 -weight 0
 

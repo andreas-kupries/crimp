@@ -6,6 +6,8 @@ def op_gauss_luma {
 
 	proc show {thesigma} {
 	    variable L
+	    if {![info exists L]} return
+
 	    variable table [crimp table gauss  $thesigma]
 	    show_image     [crimp remap $L [crimp map gauss $thesigma]]
 	    return
@@ -27,7 +29,7 @@ def op_gauss_luma {
 	grid .left.p -row 1 -column 0 -sticky swen
     }
     setup_image {
-	set L [crimp convert 2grey8 [base]]
+	variable L [crimp convert 2grey8 [base]]
 	showit
     }
 }

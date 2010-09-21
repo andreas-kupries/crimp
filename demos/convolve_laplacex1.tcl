@@ -1,11 +1,11 @@
-def op_convolve_laplace9 {
-    label {Laplace 8+1}
+def op_convolve_laplacex1 {
+    label {Laplace X-1}
     setup {
 	# http://wiki.tcl.tk/9521
 	variable K [crimp kernel make {
-	    {-1  -1 -1}
-	    {-1   9 -1}
-	    {-1  -1 -1}}]
+	    { 1  -2  1}
+	    {-2   4 -2}
+	    { 1  -2  1}}]
     }
     setup_image {
 	show_image [crimp alpha opaque [crimp filter convolve [base] $K]]

@@ -1,0 +1,7 @@
+f_{min,max} (x) = \left\{\begin{eqnarray}
+0   & x \le min \\
+255 & min < x < max \\
+0   & max \le x \\
+\end{eqnarray}\right
+
+

@@ -5,8 +5,13 @@ def op_threshold_luma_le {
 	variable table     {}
 
 	proc show {thethreshold} {
-	    variable table [crimp table threshold-le  $thethreshold]
-	    show_image     [crimp threshold global le [crimp convert 2grey8 [base]] $thethreshold]
+	    # (x < threshold) ==> black, else white
+	    #
+	    # (threshold == -1)  ==> all white
+	    # (threshold == 256) ==> all black
+
+	    variable table [crimp table threshold below  $thethreshold]
+	    show_image     [crimp threshold global below [crimp convert 2grey8 [base]] $thethreshold]
 	    return
 	}
 
@@ -18,7 +23,7 @@ def op_threshold_luma_le {
 
 	plot  .left.p -variable ::DEMO::table -title Threshold
 	scale .left.s -variable ::DEMO::threshold \
-	    -from 0 -to 256 \
+	    -from -1 -to 256 \
 	    -orient horizontal \
 	    -command ::DEMO::show
 

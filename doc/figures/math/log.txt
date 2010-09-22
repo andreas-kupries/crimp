@@ -1,0 +1,1 @@
+logcompress_{max} (x) = max(255, \frac{255}{ln(1+max)} ln(1+x))

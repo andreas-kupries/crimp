@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/Devel/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -358,9 +358,13 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBsubtract\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
 .sp
-\fB::crimp\fR \fBthreshold global ge\fR \fIimage\fR \fIthreshold\fR
+\fB::crimp\fR \fBthreshold global above\fR \fIimage\fR \fIthreshold\fR
 .sp
-\fB::crimp\fR \fBthreshold global le\fR \fIimage\fR \fIthreshold\fR
+\fB::crimp\fR \fBthreshold global below\fR \fIimage\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBthreshold global inside\fR \fIimage\fR \fImin\fR \fImax\fR
+.sp
+\fB::crimp\fR \fBthreshold global outside\fR \fIimage\fR \fImin\fR \fImax\fR
 .sp
 \fB::crimp\fR \fBthreshold local\fR \fIimage\fR \fIthreshold\fR...
 .sp
@@ -422,11 +426,15 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 .sp
+\fB::crimp\fR \fBmapof\fR \fItable\fR
+.sp
+\fB::crimp\fR \fBtable compose\fR \fIf\fR \fIg\fR
+.sp
+\fB::crimp\fR \fBtable eval\fR ?\fB-wrap\fR? \fIcmd\fR
+.sp
+\fB<cmd>\fR \fIx\fR
+.sp
 \fB::crimp\fR \fBtable degamma\fR \fIy\fR
-.sp
-\fB::crimp\fR \fBtable gainw\fR \fIgain\fR \fIbias\fR
-.sp
-\fB::crimp\fR \fBtable gain\fR \fIgain\fR \fIbias\fR
 .sp
 \fB::crimp\fR \fBtable gamma\fR \fIy\fR
 .sp
@@ -436,11 +444,23 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBtable invers\fR
 .sp
+\fB::crimp\fR \fBtable linear\fR ?\fB-wrap\fR? \fIgain\fR \fIoffset\fR
+.sp
+\fB::crimp\fR \fBtable log\fR ?\fImax\fR?
+.sp
 \fB::crimp\fR \fBtable solarize\fR \fIthreshold\fR
 .sp
-\fB::crimp\fR \fBtable threshold-ge\fR \fIthreshold\fR
+\fB::crimp\fR \fBtable sqrt\fR ?\fImax\fR?
 .sp
-\fB::crimp\fR \fBtable threshold-le\fR \fIthreshold\fR
+\fB::crimp\fR \fBtable stretch\fR \fImin\fR \fImax\fR
+.sp
+\fB::crimp\fR \fBtable threshold above\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBtable threshold below\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBtable threshold inside\fR \fImin\fR \fImax\fR
+.sp
+\fB::crimp\fR \fBtable threshold outside\fR \fImin\fR \fImax\fR
 .sp
 .BE
 .SH DESCRIPTION
@@ -1346,25 +1366,47 @@ division through \fIscale\fR and addition of the \fIoffset\fR. They
 default to \fB1\fR and \fB0\fR respectively, if they are not
 specified.
 .TP
-\fB::crimp\fR \fBthreshold global ge\fR \fIimage\fR \fIthreshold\fR
-This method takes an image, runs it through the \fBthreshold-ge\fR
+\fB::crimp\fR \fBthreshold global above\fR \fIimage\fR \fIthreshold\fR
+This method takes an image, runs it through the \fBthreshold above\fR
 function with parameter \fIthreshold\fR, and returns the modified
 image as it result. As the result only contains black and white,
 i.e. 2 colors, this process is also called \fIbinarization\fR or
 foreground/background segmentation.
 This is an application of method \fBremap\fR, using the mapping
-returned by "\fBmap threshold-ge\fR \fIthreshold\fR".
+returned by "\fBmap threshold above\fR \fIthreshold\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
 .TP
-\fB::crimp\fR \fBthreshold global le\fR \fIimage\fR \fIthreshold\fR
-This method takes an image, runs it through the \fBthreshold-le\fR
+\fB::crimp\fR \fBthreshold global below\fR \fIimage\fR \fIthreshold\fR
+This method takes an image, runs it through the \fBthreshold below\fR
 function with parameter \fIthreshold\fR, and returns the modified
 image as it result. As the result only contains black and white,
 i.e. 2 colors, this process is also called \fIbinarization\fR, or
 foreground/background segmentation.
 This is an application of method \fBremap\fR, using the mapping
-returned by "\fBmap threshold-le\fR \fIthreshold\fR".
+returned by "\fBmap threshold below\fR \fIthreshold\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBthreshold global inside\fR \fIimage\fR \fImin\fR \fImax\fR
+This method takes an image, runs it through the \fBthreshold inside\fR
+function with parameters \fImin\fR and \fImax\fR, and returns the
+modified image as it result. As the result only contains black and
+white, i.e. 2 colors, this process is also called \fIbinarization\fR
+or foreground/background segmentation.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap threshold above\fR \fIthreshold\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBthreshold global outside\fR \fIimage\fR \fImin\fR \fImax\fR
+This method takes an image, runs it through the \fBthreshold outside\fR
+function with parameters \fImin\fR and \fImax\fR, and returns the
+modified image as it result. As the result only contains black and
+white, i.e. 2 colors, this process is also called \fIbinarization\fR,
+or foreground/background segmentation.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap threshold below\fR \fIthreshold\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
 .TP
@@ -1628,6 +1670,37 @@ by the \fBtable\fR method below. In contrast to \fBtable\fR the
 result is not a list of values, but a map image directly suitable as
 argument to the \fBremap\fR method.
 .TP
+\fB::crimp\fR \fBmapof\fR \fItable\fR
+This method accepts a list of 256 values, constructs a map image
+directly suitable as argument to the \fBremap\fR method, and
+returns this map image as its result.
+.TP
+\fB::crimp\fR \fBtable compose\fR \fIf\fR \fIg\fR
+This accepts two lookup tables (aka functions) specified as lists of
+256 values, constructs the composite function f(g(x)), and then
+returns this new function as its result.
+.TP
+\fB::crimp\fR \fBtable eval\fR ?\fB-wrap\fR? \fIcmd\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the function specified by the command prefix
+\fIcmd\fR.
+The results returned by the command prefix are rounded to the nearest
+integer and then forced into the domain [0..255] by either
+wrapping them around (modulo 256), or clamping them to the appropriate
+border, i.e 0, and 255 respectively. This is controlled by the
+presence of the option \fB-wrap\fR. When present the values are
+wrapped, otherwise (default) they are clamped.
+.sp
+The signature of the command prefix is
+.RS
+.TP
+\fB<cmd>\fR \fIx\fR
+which is expected to return a number in the range
+[0..255]. While the result should be an integer number it is
+allowed to be a float, the caller takes care to round the result to
+the nearest integer.
+.RE
+.TP
 \fB::crimp\fR \fBtable degamma\fR \fIy\fR
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through the \fBinverse gamma correction\fR with
@@ -1649,32 +1722,6 @@ definition used to be
 .PS
 .nf
 gamma^{-1}_y (x) = [ 255 (\\frac{x}{255})^{\\frac{1}{y}} ]
-
-.fi
-.PE
-.TP
-\fB::crimp\fR \fBtable gainw\fR \fIgain\fR \fIbias\fR
-This method returns a list of 256 values, the result of running the
-values 0 to 255 through a simple linear function with parameters
-\fIgain\fR and \fIbias\fR. The results are rounded to the nearest
-integer and forced into the domain [0..255] by wrapping them
-around (modulo), making the definition:
-.sp
-.PS
-.nf
-f^{wrap}_{gain,bias} (x) = [ gain x + bias ] \\oplus_{256} 0
-
-.fi
-.PE
-.TP
-\fB::crimp\fR \fBtable gain\fR \fIgain\fR \fIbias\fR
-This method is like \fBgainw\fR, except that it deals with results
-out of the domain [0..255] by clamping them to 0 and 255
-respectively instead of wrapping around. I.e. its definition is
-.sp
-.PS
-.nf
-f^{clamp}_{gain,bias} (x) = min (0, max (255, [ gain x + bias ]))
 
 .fi
 .PE
@@ -1742,6 +1789,48 @@ inverse (x) = 255 - x
 .fi
 .PE
 .TP
+\fB::crimp\fR \fBtable linear\fR ?\fB-wrap\fR? \fIgain\fR \fIoffset\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a simple linear function with parameters
+\fIgain\fR (the slope) and \fIoffset\fR. The results are rounded to
+the nearest integer and then forced into the domain [0..255] by
+either wrapping them around (modulo 256), or clamping them to the
+appropriate border, i.e 0, and 255 respectively. This is controlled by
+the presence of the option \fB-wrap\fR. When present the values are
+wrapped, otherwise (default) they are clamped.
+Thus the relevant definitions are
+.sp
+.PS
+.nf
+linear^{wrap}_{gain,offset} (x) = [ gain x + offset ] \\oplus_{256} 0
+
+.fi
+.PE
+for the wrapped case, and
+.sp
+.PS
+.nf
+linear^{clamp}_{gain,offset} (x) = min (0, max (255, [ gain x + offset ]))
+
+.fi
+.PE
+when clamping.
+.TP
+\fB::crimp\fR \fBtable log\fR ?\fImax\fR?
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBlog-compression\fR function with
+parameter \fImax\fR. This parameter is the maximum pixel value the
+function is for, this value, and all larger will be mapped to 255.
+This function is defined as:
+.sp
+.PS
+.nf
+logcompress_{max} (x) = max(255, \\frac{255}{ln(1+max)} ln(1+x))
+
+.fi
+.PE
+.sp
+.TP
 \fB::crimp\fR \fBtable solarize\fR \fIthreshold\fR
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through the \fBsolarize\fR function, with parameter
@@ -1762,7 +1851,28 @@ threshold, and the \fBinverse\fR for values at and above it. Its
 application to an image produces what is known as either
 \fIsolarization\fR or \fIsabattier effect\fR.
 .TP
-\fB::crimp\fR \fBtable threshold-ge\fR \fIthreshold\fR
+\fB::crimp\fR \fBtable sqrt\fR ?\fImax\fR?
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBsqrt-compression\fR function with
+parameter \fImax\fR. This parameter is the maximum pixel value the
+function is for, this value, and all larger will be mapped to 255.
+This function is defined as:
+.sp
+.PS
+.nf
+sqrtcompress_{max} (x) = max(255, \\frac{255}{\\sqrt{max}} \\sqrt{x})
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable stretch\fR \fImin\fR \fImax\fR
+This is a convenience method around \fBtable linear\fR which maps
+\fImin\fR to 0, and \fImax\fR to 255, with linear interpolation in
+between. Values below \fImin\fR and above \fImax\fR are clamped to 0
+and 255 respectively.
+.TP
+\fB::crimp\fR \fBtable threshold above\fR \fIthreshold\fR
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
 function, with parameter \fIthreshold\fR. This function is defined as:
@@ -1780,7 +1890,7 @@ f_{threshold} (x) = \\left\\{\\begin{eqnarray}
 .PE
 .sp
 .TP
-\fB::crimp\fR \fBtable threshold-le\fR \fIthreshold\fR
+\fB::crimp\fR \fBtable threshold below\fR \fIthreshold\fR
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
 function, with parameter \fIthreshold\fR. This function is defined as:
@@ -1788,8 +1898,48 @@ function, with parameter \fIthreshold\fR. This function is defined as:
 .PS
 .nf
 f_{threshold} (x) = \\left\\{\\begin{eqnarray}
-0   & x \\le threshold \\\\
-255 & x > threshold \\\\
+0   & x < threshold \\\\
+255 & x \\ge threshold \\\\
+\\end{eqnarray}\\right
+
+
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable threshold inside\fR \fImin\fR \fImax\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
+function, with parameters \fImin\fR and \fImax\fR. This function is
+defined as:
+.sp
+.PS
+.nf
+f_{min,max} (x) = \\left\\{\\begin{eqnarray}
+255 & x \\le min \\\\
+0   & min < x < max \\\\
+255 & max \\le x \\\\
+\\end{eqnarray}\\right
+
+
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable threshold outside\fR \fImin\fR \fImax\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
+function, with parameters \fImin\fR and \fImax\fR. This function is
+defined as:
+.sp
+.PS
+.nf
+f_{min,max} (x) = \\left\\{\\begin{eqnarray}
+0   & x \\le min \\\\
+255 & min < x < max \\\\
+0   & max \\le x \\\\
 \\end{eqnarray}\\right
 
 
@@ -1799,7 +1949,7 @@ f_{threshold} (x) = \\left\\{\\begin{eqnarray}
 .sp
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, binarization, black tophat, blending, channels, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, filter, flip, gamma correction, gradient, histogram, image, internal gradient, inversion, matrix, max, max-filter, median, median-filter, min, min-filter, mirror expansion, montage, morphology, opening, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, shrinking, solarization, statistics, stddev, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, binarization, black tophat, blending, channels, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, filter, flip, gamma correction, gradient, histogram, image, internal gradient, inversion, log-compression, matrix, max, max-filter, median, median-filter, min, min-filter, mirror expansion, montage, morphology, opening, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, shrinking, solarization, sqrt-compression, statistics, stddev, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

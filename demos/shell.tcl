@@ -14,7 +14,11 @@ def effect_a_shell {
 	    variable cmd
 	    if {$cmd eq {}} return
 	    .top.cmd configure -state disabled ; update ; # coroutine?!
-	    show_image [namespace eval ::DEMO::EVAL $cmd]
+	    if {[catch {
+		show_image [namespace eval ::DEMO::EVAL $cmd]
+	    } msg]} {
+		after 0 [list bgerror $msg]
+	    }
 	    .top.cmd configure -state normal ; update
 	}
 

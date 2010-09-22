@@ -5,8 +5,13 @@ def op_threshold_ge {
 	variable table     {}
 
 	proc show {thethreshold} {
-	    variable table [crimp table threshold-ge  $thethreshold]
-	    show_image     [crimp threshold global ge [base] $thethreshold]
+	    # (x >= threshold) ==> black, else white
+	    #
+	    # (threshold == 0)   ==> all black
+	    # (threshold == 256) ==> all white
+
+	    variable table [crimp table threshold above  $thethreshold]
+	    show_image     [crimp threshold global above [base] $thethreshold]
 	    return
 	}
 

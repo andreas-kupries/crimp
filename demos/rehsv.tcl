@@ -7,32 +7,31 @@ def effect_rehsv {
 	variable ghg 1 ; variable gsg 1 ; variable gvg 1
 	variable ghb 0 ; variable gsb 0 ; variable gvb 0
 
-	variable th [crimp table gainw $ghg $ghb] ; variable mh [crimp map gainw $ghg $ghb]
-	variable ts [crimp table gain  $gsg $gsb] ; variable ms [crimp map gain  $gsg $gsb]
-	variable tv [crimp table gain  $gvg $gvb] ; variable mv [crimp map gain  $gvg $gvb]
-
+	variable th [crimp table linear -wrap -- $ghg $ghb] ; variable mh [crimp map linear -wrap -- $ghg $ghb]
+	variable ts [crimp table linear       -- $gsg $gsb] ; variable ms [crimp map linear       -- $gsg $gsb]
+	variable tv [crimp table linear       -- $gvg $gvb] ; variable mv [crimp map linear       -- $gvg $gvb]
 
 	proc H {args} {
 	    variable ghb
 	    variable ghg
-	    variable th [crimp table gainw $ghg $ghb]
-	    variable mh [crimp map   gainw $ghg $ghb]
+	    variable th [crimp table linear -wrap $ghg $ghb]
+	    variable mh [crimp map   linear -wrap $ghg $ghb]
 	    UPDATE
 	    return
 	}
 	proc S {args} {
 	    variable gsb
 	    variable gsg
-	    variable ts [crimp table gain $gsg $gsb]
-	    variable ms [crimp map   gain $gsg $gsb]
+	    variable ts [crimp table linear -- $gsg $gsb]
+	    variable ms [crimp map   linear -- $gsg $gsb]
 	    UPDATE
 	    return
 	}
 	proc V {args} {
 	    variable gvb
 	    variable gvg
-	    variable tv [crimp table gain $gvg $gvb]
-	    variable mv [crimp map   gain $gvg $gvb]
+	    variable tv [crimp table linear -- $gvg $gvb]
+	    variable mv [crimp map   linear -- $gvg $gvb]
 	    UPDATE
 	    return
 	}
@@ -42,6 +41,7 @@ def effect_rehsv {
 	    variable mv
 	    variable hsvbase
 	    variable mask
+	    if {![info exists hsvbase]} return
 
 	    show_image [crimp alpha set \
 			    [crimp convert 2rgb [crimp remap $hsvbase $mh $ms $mv]] \

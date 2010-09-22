@@ -1,6 +1,6 @@
 f_{threshold} (x) = \left\{\begin{eqnarray}
-0   & x \le threshold \\
-255 & x > threshold \\
+0   & x < threshold \\
+255 & x \ge threshold \\
 \end{eqnarray}\right
 
 

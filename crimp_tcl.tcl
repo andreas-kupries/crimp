@@ -420,12 +420,23 @@ namespace eval ::crimp::threshold {
     }
 }
 
-proc ::crimp::threshold::global::le {image n} {
-    ::crimp remap $image [::crimp map threshold-le $n]
+# TODO :: auto-create from the methods of 'table threshold'.
+# TODO :: introspect the threshold ensemble !
+
+proc ::crimp::threshold::global::below {image n} {
+    return [::crimp remap $image [::crimp map threshold below $n]]
 }
 
-proc ::crimp::threshold::global::ge {image n} {
-    ::crimp remap $image [::crimp map threshold-ge $n]
+proc ::crimp::threshold::global::above {image n} {
+    return [::crimp remap $image [::crimp map threshold above $n]]
+}
+
+proc ::crimp::threshold::global::inside {image min max} {
+    return [::crimp remap $image [::crimp map threshold inside $min $max]]
+}
+
+proc ::crimp::threshold::global::outside {image min max} {
+    return [::crimp remap $image [::crimp map threshold outside $min $max]]
 }
 
 proc ::crimp::threshold::local {image args} {
@@ -1153,15 +1164,42 @@ proc ::crimp::mapof {table} {
 }
 
 namespace eval ::crimp::table {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
 # NOTE: From now on the use of the builtin 'eval' command in the table
 # namespace requires '::eval'.
-proc ::crimp::table::eval {cmdprefix} {
+proc ::crimp::table::eval {args} {
+    lassign [ProcessWrap args 1 cmdprefix] wrap cmdprefix
+    if {$wrap} {
+	return [EvalWrap $cmdprefix]
+    } else {
+	return [EvalSaturate $cmdprefix]
+    }
+}
+
+proc ::crimp::table::ProcessWrap {argv n usage} {
+    upvar 1 $argv args
+    array set opt [cmdline::getoptions args {
+	{wrap 0 {}}
+    }]
+    if {[llength $args] != $n} {
+	return -code error "wrong#args: Expected ?-wrap bool? $usage"
+    }
+    return [list $opt(wrap) {*}$args]
+}
+
+proc ::crimp::table::EvalWrap {cmdprefix} {
     for {set i 0} {$i < 256} {incr i} {
-	lappend table [uplevel #0 [list {*}$cmdprefix $i]]
+	lappend table [WRAP [expr {round([uplevel #0 [list {*}$cmdprefix $i]])}]]
+    }
+    return $table
+}
+
+proc ::crimp::table::EvalSaturate {cmdprefix} {
+    for {set i 0} {$i < 256} {incr i} {
+	lappend table [CLAMP [expr {round([uplevel #0 [list {*}$cmdprefix $i]])}]]
     }
     return $table
 }
@@ -1230,6 +1268,9 @@ proc ::crimp::table::solarize {n} {
 proc ::crimp::table::gamma {y} {
     # Note: gamma operates in range [0..1], our data is [0..255]. We
     # have to scale down before applying the gamma, then scale back.
+
+    #EvalSaturate [list ::apply {{y i} {expr {(($i/255.0) ** $y)*255.0}}} $y]
+
     for {set i 0} {$i < 256} {incr i} {
 	lappend table [CLAMP [expr {round ((($i/255.0) ** $y)*255.0)}]]
     }
@@ -1239,37 +1280,109 @@ proc ::crimp::table::gamma {y} {
 proc ::crimp::table::degamma {y} {
     # Note: gamma operates in range [0..1], our data is [0..255]. We
     # have to scale down before applying the gamma, then scale back.
+
     set dy [expr {1.0/$y}]
+    #EvalSaturate [list ::apply {{dy i} {expr {(($i/255.0) ** $dy)*255.0}}} $dy]
+
     for {set i 0} {$i < 256} {incr i} {
 	lappend table [CLAMP [expr {round ((($i/255.0) ** $dy)*255.0)}]]
     }
     return $table
 }
 
-proc ::crimp::table::gain {gain {bias 0}} {
-    for {set x 0} {$x < 256} {incr x} {
-	lappend table [CLAMP [expr {round(double($gain) * $x + double($bias))}]]
+proc ::crimp::table::sqrt {{max 255}} {
+    # y = r*sqrt(x)
+    # ==> 255 = r*sqrt(max)
+    # <=> r = 255/sqrt(max)
+    # (r == 1) <=> (sqrt(max) == 255)
+
+    set r [expr {255.0/sqrt($max)}]
+    #EvalSaturate [list ::apply {{r i} {expr {$r*sqrt($i)}}} $r]
+
+    for {set i 0} {$i < 256} {incr i} {
+	lappend table [CLAMP [expr {round ($r*sqrt($i))}]]
     }
     return $table
 }
 
-proc ::crimp::table::gainw {gain {bias 0}} {
-    for {set x 0} {$x < 256} {incr x} {
-	lappend table [WRAP [expr {round(double($gain) * $x + double($bias))}]]
+proc ::crimp::table::log {{max 255}} {
+    #       y = c*log(1+x)
+    # ==> 255 = c*log(1+max)
+    # <=> c = 255/log(1+max)
+    # (c == 1) <=> (log(1+max) == 255)
+
+    set c [expr {255.0/log(1.0+$max)}]
+    #EvalSaturate [list ::apply {{c i} {expr {$c*log(1+$i)}}} $r]
+
+    # i = 1..256 instead of 0..255 i.e. 1+x is implied by the change
+    # in the iteration range.
+    for {set i 1} {$i < 257} {incr i} {
+	lappend table [CLAMP [expr {round($c*log($i))}]]
     }
     return $table
 }
 
-proc ::crimp::table::threshold-le {threshold} {
+proc ::crimp::table::linear {args} {
+    lassign [ProcessWrap args 2 {gain offset}] wrap gain offset
+    set cmdprefix [list ::apply {{gain offset i} {
+	expr {double($gain) * $i + double($offset)}
+    }} $gain $offset]
+    if {$wrap} {
+	return [EvalWrap $cmdprefix]
+    } else {
+	return [EvalSaturate $cmdprefix]
+    }
+}
+
+proc ::crimp::table::stretch {min max} {
+    # min => 0, max => 255, linear interpolation between them.
+    #
+    #     gain*max+offs = 255
+    #     gain*min+offs = 0        <=> gain*min = 0-offs
+    # <=> gain(max-min) = 255-0  | <=> offs = -gain*min
+    # <=> GAIN = 255/(max-min)
+    # 
+
+    set gain [expr {255.0*($max - $min)}]
+    set offs [expr {- ($min * $gain)}]
+    return [linear $gain $offs]
+}
+
+namespace eval ::crimp::table::threshold {
+    namespace export *
+    namespace ensemble create
+}
+
+# [below T] <=> (x < T) <=> [invert [above T]]
+# [above T] <=> (x >= T)
+
+proc ::crimp::table::threshold::below {threshold} {
     for {set x 0} {$x < 256} {incr x} {
-	lappend table [expr {($x <= $threshold) ? 0 : 255}]
+	lappend table [expr {($x < $threshold) ? 0 : 255}]
     }
     return $table
 }
 
-proc ::crimp::table::threshold-ge {threshold} {
+proc ::crimp::table::threshold::above {threshold} {
     for {set x 0} {$x < 256} {incr x} {
-	lappend table [expr {($x >= $threshold) ? 0 : 255}]
+	lappend table [expr {($x < $threshold) ? 255 : 0}]
+    }
+    return $table
+}
+
+# [inside  Tmin Tmax] <=> (Tmin < x)  && (x < Tmax) <=> [invert [outside Tmin Tmax]],
+# [outside Tmin Tmax] <=> (x <= Tmin) || (x >= Tmax)
+
+proc ::crimp::table::threshold::inside {min max} {
+    for {set x 0} {$x < 256} {incr x} {
+	lappend table [expr {($min < $x) && ($x < $max) ? 0 : 255}]
+    }
+    return $table
+}
+
+proc ::crimp::table::threshold::outside {min max} {
+    for {set x 0} {$x < 256} {incr x} {
+	lappend table [expr {($min < $x) && ($x < $max) ? 255 : 0}]
     }
     return $table
 }

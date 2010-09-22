@@ -439,6 +439,12 @@ inversion
 \fBfiles/crimp.n\fR
 crimp
 .RE
+log-compression
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 matrix
 .RS
 .TP
@@ -578,6 +584,12 @@ shrinking
 crimp
 .RE
 solarization
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+sqrt-compression
 .RS
 .TP
 \fBfiles/crimp.n\fR

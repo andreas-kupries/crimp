@@ -1,0 +1,1 @@
+sqrtcompress_{max} (x) = max(255, \frac{255}{\sqrt{max}} \sqrt{x})

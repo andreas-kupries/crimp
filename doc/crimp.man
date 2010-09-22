@@ -938,33 +938,65 @@ default to [const 1] and [const 0] respectively, if they are not
 specified.
 
 
-[call [cmd ::crimp] [method {threshold global ge}] [arg image] [arg threshold]]
+[call [cmd ::crimp] [method {threshold global above}] [arg image] [arg threshold]]
 [keywords thresholding binarization]
 
-This method takes an image, runs it through the [fun threshold-ge]
+This method takes an image, runs it through the [fun {threshold above}]
 function with parameter [arg threshold], and returns the modified
 image as it result. As the result only contains black and white,
 i.e. 2 colors, this process is also called [term binarization] or
 foreground/background segmentation.
 
 This is an application of method [method remap], using the mapping
-returned by "[method {map threshold-ge}] [arg threshold]".
+returned by "[method {map threshold above}] [arg threshold]".
 
 This method supports all image types supported by the method
 [method remap].
 
 
-[call [cmd ::crimp] [method {threshold global le}] [arg image] [arg threshold]]
+[call [cmd ::crimp] [method {threshold global below}] [arg image] [arg threshold]]
 [keywords thresholding binarization]
 
-This method takes an image, runs it through the [fun threshold-le]
+This method takes an image, runs it through the [fun {threshold below}]
 function with parameter [arg threshold], and returns the modified
 image as it result. As the result only contains black and white,
 i.e. 2 colors, this process is also called [term binarization], or
 foreground/background segmentation.
 
 This is an application of method [method remap], using the mapping
-returned by "[method {map threshold-le}] [arg threshold]".
+returned by "[method {map threshold below}] [arg threshold]".
+
+This method supports all image types supported by the method
+[method remap].
+
+
+[call [cmd ::crimp] [method {threshold global inside}] [arg image] [arg min] [arg max]]
+[keywords thresholding binarization]
+
+This method takes an image, runs it through the [fun {threshold inside}]
+function with parameters [arg min] and [arg max], and returns the
+modified image as it result. As the result only contains black and
+white, i.e. 2 colors, this process is also called [term binarization]
+or foreground/background segmentation.
+
+This is an application of method [method remap], using the mapping
+returned by "[method {map threshold above}] [arg threshold]".
+
+This method supports all image types supported by the method
+[method remap].
+
+
+[call [cmd ::crimp] [method {threshold global outside}] [arg image] [arg min] [arg max]]
+[keywords thresholding binarization]
+
+This method takes an image, runs it through the [fun {threshold outside}]
+function with parameters [arg min] and [arg max], and returns the
+modified image as it result. As the result only contains black and
+white, i.e. 2 colors, this process is also called [term binarization],
+or foreground/background segmentation.
+
+This is an application of method [method remap], using the mapping
+returned by "[method {map threshold below}] [arg threshold]".
 
 This method supports all image types supported by the method
 [method remap].
@@ -1273,6 +1305,47 @@ result is not a list of values, but a map image directly suitable as
 argument to the [method remap] method.
 
 
+[call [cmd ::crimp] [method mapof] [arg table]]
+
+This method accepts a list of 256 values, constructs a map image
+directly suitable as argument to the [method remap] method, and
+returns this map image as its result.
+
+
+[call [cmd ::crimp] [method {table compose}] [arg f] [arg g]]
+
+This accepts two lookup tables (aka functions) specified as lists of
+256 values, constructs the composite function f(g(x)), and then
+returns this new function as its result.
+
+
+[call [cmd ::crimp] [method {table eval}] [opt [option -wrap]] [arg cmd]]
+
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the function specified by the command prefix
+[arg cmd].
+
+The results returned by the command prefix are rounded to the nearest
+integer and then forced into the domain [lb]0..255[rb] by either
+wrapping them around (modulo 256), or clamping them to the appropriate
+border, i.e 0, and 255 respectively. This is controlled by the
+presence of the option [option -wrap]. When present the values are
+wrapped, otherwise (default) they are clamped.
+
+[para]
+
+The signature of the command prefix is
+[list_begin definitions]
+[call [cmd <cmd>] [arg x]]
+
+which is expected to return a number in the range
+[lb]0..255[rb]. While the result should be an integer number it is
+allowed to be a float, the caller takes care to round the result to
+the nearest integer.
+
+[list_end]
+
+
 [call [cmd ::crimp] [method {table degamma}] [arg y]]
 
 This method returns a list of 256 values, the result of running the
@@ -1289,26 +1362,6 @@ values, and rounding results to the nearest integer, causes the actual
 definition used to be
 
 [para][image scaled_gamma_inv]
-
-
-[call [cmd ::crimp] [method {table gainw}] [arg gain] [arg bias]]
-
-This method returns a list of 256 values, the result of running the
-values 0 to 255 through a simple linear function with parameters
-[arg gain] and [arg bias]. The results are rounded to the nearest
-integer and forced into the domain [lb]0..255[rb] by wrapping them
-around (modulo), making the definition:
-
-[para][image linear_wrap]
-
-
-[call [cmd ::crimp] [method {table gain}] [arg gain] [arg bias]]
-
-This method is like [method gainw], except that it deals with results
-out of the domain [lb]0..255[rb] by clamping them to 0 and 255
-respectively instead of wrapping around. I.e. its definition is
-
-[para][image linear_clamp]
 
 
 [call [cmd ::crimp] [method {table gamma}] [arg y]]
@@ -1358,6 +1411,42 @@ as
 [para][image inverse]
 
 
+[call [cmd ::crimp] [method {table linear}] [opt [option -wrap]] [arg gain] [arg offset]]
+
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a simple linear function with parameters
+
+[arg gain] (the slope) and [arg offset]. The results are rounded to
+the nearest integer and then forced into the domain [lb]0..255[rb] by
+either wrapping them around (modulo 256), or clamping them to the
+appropriate border, i.e 0, and 255 respectively. This is controlled by
+the presence of the option [option -wrap]. When present the values are
+wrapped, otherwise (default) they are clamped.
+
+Thus the relevant definitions are
+
+[para][image linear_wrap]
+
+for the wrapped case, and 
+
+[para][image linear_clamp]
+
+when clamping.
+
+
+[call [cmd ::crimp] [method {table log}] [opt [arg max]]]
+[keywords log-compression]
+
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the [fun {log-compression}] function with
+parameter [arg max]. This parameter is the maximum pixel value the
+function is for, this value, and all larger will be mapped to 255.
+
+This function is defined as:
+
+[para][image log][para]
+
+
 [call [cmd ::crimp] [method {table solarize}] [arg threshold]]
 
 This method returns a list of 256 values, the result of running the
@@ -1373,7 +1462,28 @@ application to an image produces what is known as either
 [term solarization] or [term {sabattier effect}].
 
 
-[call [cmd ::crimp] [method {table threshold-ge}] [arg threshold]]
+[call [cmd ::crimp] [method {table sqrt}] [opt [arg max]]]
+[keywords sqrt-compression]
+
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the [fun {sqrt-compression}] function with
+parameter [arg max]. This parameter is the maximum pixel value the
+function is for, this value, and all larger will be mapped to 255.
+
+This function is defined as:
+
+[para][image sqrt][para]
+
+
+[call [cmd ::crimp] [method {table stretch}] [arg min] [arg max]]
+
+This is a convenience method around [method {table linear}] which maps
+[arg min] to 0, and [arg max] to 255, with linear interpolation in
+between. Values below [arg min] and above [arg max] are clamped to 0
+and 255 respectively.
+
+
+[call [cmd ::crimp] [method {table threshold above}] [arg threshold]]
 
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through a [fun thresholding] (or [term binarization])
@@ -1383,7 +1493,7 @@ function, with parameter [arg threshold]. This function is defined as:
 [para]
 
 
-[call [cmd ::crimp] [method {table threshold-le}] [arg threshold]]
+[call [cmd ::crimp] [method {table threshold below}] [arg threshold]]
 
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through a [fun thresholding] (or [term binarization])
@@ -1391,6 +1501,30 @@ function, with parameter [arg threshold]. This function is defined as:
 
 [para][image threshold-le]
 [para]
+
+
+[call [cmd ::crimp] [method {table threshold inside}] [arg min] [arg max]]
+
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a [fun thresholding] (or [term binarization])
+function, with parameters [arg min] and [arg max]. This function is
+defined as:
+
+[para][image threshold-inside]
+[para]
+
+
+[call [cmd ::crimp] [method {table threshold outside}] [arg min] [arg max]]
+
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a [fun thresholding] (or [term binarization])
+function, with parameters [arg min] and [arg max]. This function is
+defined as:
+
+[para][image threshold-outside]
+[para]
+
+
 
 [list_end]
 

@@ -113,9 +113,21 @@ namespace eval ::crimp::read {
 ::apply {{dir} {
     # Readers implemented as C primitives
     foreach fun [::crimp::List read_*] {
+	# Ignore the read_tcl_ primitives. They have their own setup
+	# in a moment.
+	if {[string match *::read_tcl_* $fun]} continue
+
 	proc [::crimp::P $fun] {detail} [string map [list @ $fun] {
 	    @ $detail
 	}]
+    }
+
+    proc tcl {format detail} {
+	set f read_tcl_$format
+	if {![::crimp::Has $f]} {
+	    return -code error "Unable to generate images of type \"$format\" from Tcl values"
+	}
+	return [::crimp::$f $detail]
     }
 
     # Readers implemented as Tcl procedures.
@@ -996,7 +1008,7 @@ proc ::crimp::kernel::make {kernelmatrix {scale {}} {offset {}}} {
 	}
     }
 
-    set kernel [crimp read tcl $tmpmatrix]
+    set kernel [crimp read tcl grey8 $tmpmatrix]
 
     lassign [crimp::dimensions $kernel] w h
 
@@ -1156,11 +1168,11 @@ proc ::crimp::statistics {image} {
 ## This is not needed to just get things working howver.
 
 proc ::crimp::map {args} {
-    return [read tcl [list [table {*}$args]]]
+    return [read tcl grey8 [list [table {*}$args]]]
 }
 
 proc ::crimp::mapof {table} {
-    return [read tcl [list $table]]
+    return [read tcl grey8 [list $table]]
 }
 
 namespace eval ::crimp::table {

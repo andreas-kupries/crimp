@@ -71,6 +71,9 @@ crimp_imagetype_init (void)
     static const char*     bw_cname [] = {"bw"};
     static crimp_imagetype bw = { "crimp::image::bw", 1, 1, &bw_cname };
 
+    static const char*     fp_cname [] = {"value"};
+    static crimp_imagetype fp = { "crimp::image::float", sizeof(float), 1, &fp_cname };
+
     static initialized = 0;
 
     if (initialized) return;
@@ -82,8 +85,10 @@ crimp_imagetype_init (void)
      */
 
     crimp_imagetype_def (&bw);
-    crimp_imagetype_def (&grey8);
+    crimp_imagetype_def (&grey32);
     crimp_imagetype_def (&grey16);
+    crimp_imagetype_def (&fp);
+    crimp_imagetype_def (&grey8);
     crimp_imagetype_def (&hsv);
     crimp_imagetype_def (&rgb);
     crimp_imagetype_def (&rgba);

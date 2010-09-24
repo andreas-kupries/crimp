@@ -33,12 +33,11 @@ typedef struct crimp_image {
 
 /*
  * Manually optimized, factored the pixelsize out of the summands. It
- * is not sure if this is faster (easier to optimize), or if we were
- * to precompute the pitch (w*pixelsize), and have the pixel size mult
+ * is not sure if this is faster (easier to optimize), or if we should
+ * precompute the pitch (w*pixelsize), and have the pixel size mult
  * in each x ... As the pixel size is mostly 1, 2, 4, i.e. redundant
  * removed unity, or a power of 2, i.e handled as shift this should be
- * good enough. The only not so sure case is RGB, with pixel size of
- * 3.
+ * good enough. The only not so sure case is RGB, with pixel size of 3.
  */
 
 #define SZ(iptr) ((iptr)->itype->size)
@@ -62,6 +61,9 @@ typedef struct crimp_image {
 
 /*
  * Pixel Access Macros. GREY8, GREY16, GREY32.
+ *
+ * NOTE: The casts should use standard types where we we know the size in
+ *       bytes exactly, by definition.
  */
 
 #define INDEX(iptr,x,y) (((x)*SZ (iptr)) + ((y)*SZ (iptr)*(iptr)->w))
@@ -69,6 +71,7 @@ typedef struct crimp_image {
 #define GREY8(iptr,x,y)                        (iptr)->pixel [INDEX (iptr,x,y)]
 #define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [INDEX (iptr,x,y)]))
 #define GREY32(iptr,x,y) *((unsigned long*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
+#define FLOATP(iptr,x,y) *((float*)          &((iptr)->pixel [INDEX (iptr,x,y)]))
 
 /*
  * Pixel as 2-complement numbers (-128..127, instead of unsigned 0..255).

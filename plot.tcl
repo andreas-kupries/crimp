@@ -52,15 +52,22 @@ snit::widget plot {
 	if {![info exists series]} return
 
 	if {!$options(-locked)} {
-	    set scale [::Plotchart::determineScaleFromList $series]
-	    lset scale 0 0
+	    set  yscale [::Plotchart::determineScaleFromList $series]
+	    lset yscale 0 0
 	} else {
-	    set scale {0 255 64}
+	    set yscale {0 255 64}
+	}
+
+	if {!$options(-xlocked)} {
+	    set  xscale [::Plotchart::determineScaleFromList [list 0 [llength $series]]]
+	    lset xscale 0 0
+	} else {
+	    set xscale {0 255 64}
 	}
 
 	$win.c delete all
 
-	set myplot [Plotchart::createXYPlot $win.c {0 255 64} $scale]
+	set myplot [Plotchart::createXYPlot $win.c $xscale $yscale]
 	$myplot title $options(-title)
 	$myplot dataconfig series -color $options(-color)
 	$myplot xconfig -format %d
@@ -101,6 +108,8 @@ snit::widget plot {
 	$self Refresh
 	return
     }
+
+    option -xlocked -default 1 -configuremethod C-locked
 
     # # ## ### ##### ######## ############# #####################
 

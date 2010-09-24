@@ -39,7 +39,7 @@ def effect_equalize_luma {
 	    variable TL
 
 	    set fl [crimp::FIT $TL 255]
-	    set l  [crimp read tcl [list $fl]]
+	    set l  [crimp mapof $fl]
 
 	    set new [crimp remap $base $l]
 

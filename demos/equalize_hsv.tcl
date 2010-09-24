@@ -52,8 +52,8 @@ def effect_equalize_hsv {
 		set fv [crimp::FIT $TV 255]
 
 		set h [crimp map identity]
-		set s [crimp read tcl [list $fs]]
-		set v [crimp read tcl [list $fv]]
+		set s [crimp mapof $fs]
+		set v [crimp mapof $fv]
 
 		set new [crimp alpha set \
 			     [crimp convert 2rgb \

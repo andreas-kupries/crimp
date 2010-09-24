@@ -121,10 +121,14 @@ extern crimp_image* crimp_new (const crimp_imagetype* type, int w, int h);
 extern crimp_image* crimp_dup (crimp_image* image);
 extern void         crimp_del (crimp_image* image);
 
-#define crimp_new_hsv(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),   (w), (h)))
-#define crimp_new_rgba(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),  (w), (h)))
-#define crimp_new_rgb(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),   (w), (h)))
-#define crimp_new_grey8(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::grey8"), (w), (h)))
+#define crimp_new_hsv(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),    (w), (h)))
+#define crimp_new_rgba(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),   (w), (h)))
+#define crimp_new_rgb(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),    (w), (h)))
+#define crimp_new_grey8(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::grey8"),  (w), (h)))
+#define crimp_new_grey16(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::grey16"), (w), (h)))
+#define crimp_new_grey32(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::grey32"), (w), (h)))
+#define crimp_new_float(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::float"),  (w), (h)))
+
 #define crimp_new_like(image) (crimp_new ((image)->itype, (image)->w, (image)->h))
 #define crimp_new_like_transpose(image) (crimp_new ((image)->itype, (image)->h, (image)->w))
 

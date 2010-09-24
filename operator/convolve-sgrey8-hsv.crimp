@@ -1,4 +1,4 @@
-convolve_hsv
+convolve_grey8_hsv
 Tcl_Obj* imageObj
 Tcl_Obj* kernelImageObj
 int scale

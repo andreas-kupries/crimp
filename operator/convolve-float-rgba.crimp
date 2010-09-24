@@ -1,4 +1,4 @@
-convolve_grey8_rgba
+convolve_float_rgba
 Tcl_Obj* imageObj
 Tcl_Obj* kernelImageObj
 int scale
@@ -6,7 +6,7 @@ int offset
 
 /*
  * Generic convolution operator. The kernel to convole with is specified as a
- * grey8 image together with a scaling factor. This way we do not need a
+ * floating-point image together with a scaling factor. This way we do not need a
  * separate matrix Tcl_ObjType, nor floating point math.
  *
  * This convolver should be used only for small kernels, as it uses direct
@@ -20,7 +20,7 @@ crimp_image*     kernel;
 int              xo, yo, xi, yi, xk, yk, dx, dy, kw, kh;
 
 crimp_input (imageObj,         image,    rgba);
-crimp_input (kernelImageObj,   kernel,   grey8);
+crimp_input (kernelImageObj,   kernel,   float);
 
 if (((kernel->w % 2) == 0) ||
     ((kernel->h % 2) == 0)) {
@@ -49,10 +49,10 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	for (yk = 0, dy = -kh; yk < kernel->h; yk++, dy++) {
 	    for (xk = 0, dx = -kw; xk < kernel->w; xk++, dx++) {
 
-		sumr += SGREY8 (kernel, xk, yk) * R (image, xi-dx, yi-dy);
-		sumg += SGREY8 (kernel, xk, yk) * G (image, xi-dx, yi-dy);
-		sumb += SGREY8 (kernel, xk, yk) * B (image, xi-dx, yi-dy);
-		suma += SGREY8 (kernel, xk, yk) * A (image, xi-dx, yi-dy);
+		sumr += FLOATP (kernel, xk, yk) * R (image, xi-dx, yi-dy);
+		sumg += FLOATP (kernel, xk, yk) * G (image, xi-dx, yi-dy);
+		sumb += FLOATP (kernel, xk, yk) * B (image, xi-dx, yi-dy);
+		suma += FLOATP (kernel, xk, yk) * A (image, xi-dx, yi-dy);
 	    }
 	}
 

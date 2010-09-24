@@ -48,9 +48,9 @@ def effect_equalize_rgb {
 		set fg [crimp::FIT $TG 255]
 		set fb [crimp::FIT $TB 255]
 
-		set r [crimp read tcl [list $fr]]
-		set g [crimp read tcl [list $fg]]
-		set b [crimp read tcl [list $fb]]
+		set r [crimp mapof $fr]
+		set g [crimp mapof $fg]
+		set b [crimp mapof $fb]
 
 		set new [crimp remap [base] $r $g $b]
 	    }

@@ -51,7 +51,7 @@ def effect_equalize_value {
 		set fv [crimp::FIT $TV 255]
 
 		set i [crimp map identity]
-		set v [crimp read tcl [list $fv]]
+		set v [crimp mapof $fv]
 
 		set new [crimp alpha set \
 			     [crimp convert 2rgb \

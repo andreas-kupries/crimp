@@ -56,10 +56,10 @@ proc ::crimp::read::ppm {ppmdata} {
        return -code error "Not a PPM image"
    }
 
-   # Re-scale and -layout the pixels for use by 'read tcl'. Note how
-   # we are placing the data in three separate planes. These become
-   # three separate greyscale images which are then joined into the
-   # final RGB.
+   # Re-scale and -layout the pixels for use by 'read tcl grey8'. Note
+   # how we are placing the data in three separate planes. These
+   # become three separate greyscale images which are then joined into
+   # the final RGB.
 
    set imgr {} ; set rowr {}
    set imgg {} ; set rowg {}
@@ -79,9 +79,9 @@ proc ::crimp::read::ppm {ppmdata} {
 
    # At last construct and return the crimp value.
    return [crimp join 2rgb \
-	       [tcl $imgr] \
-	       [tcl $imgg] \
-	       [tcl $imgb]]
+	       [tcl grey8 $imgr] \
+	       [tcl grey8 $imgg] \
+	       [tcl grey8 $imgb]]
 }
 
 # # ## ### ##### ######## #############

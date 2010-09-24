@@ -45,10 +45,10 @@ proc ::crimp::read::strimj {text {colormap {}}} {
     }
 
    return [crimp join 2rgba \
-	       [tcl $ri] \
-	       [tcl $gi] \
-	       [tcl $bi] \
-	       [tcl $ai]]
+	       [tcl grey8 $ri] \
+	       [tcl grey8 $gi] \
+	       [tcl grey8 $bi] \
+	       [tcl grey8 $ai]]
 }
 
 # # ## ### ##### ######## #############

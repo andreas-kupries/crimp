@@ -56,7 +56,7 @@ proc ::crimp::read::pgm {pgmdata} {
        return -code error "Not a PGM image"
    }
 
-   # Re-scale and -layout the pixels for use by 'read tcl'.
+   # Re-scale and -layout the pixels for use by 'read tcl grey8'.
    set img {}
    set row {}
    foreach p $raster {
@@ -68,7 +68,7 @@ proc ::crimp::read::pgm {pgmdata} {
    }
 
    # At last construct and return the crimp value.
-   return [tcl $img]
+   return [tcl grey8 $img]
 }
 
 # # ## ### ##### ######## #############

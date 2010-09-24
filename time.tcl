@@ -63,7 +63,7 @@ puts "Starting up ..."
 lassign [::apply {{kernel} {
     set scale 0
     foreach r $kernel { foreach v $r { incr scale $v } }
-    return [list [crimp read tcl $kernel] $scale]
+    return [list [crimp read tcl grey8 $kernel] $scale]
 }}  {
     {2  4  5  4 2}
     {4  9 12  9 4}
@@ -75,7 +75,7 @@ lassign [::apply {{kernel} {
 lassign [::apply {{kernel} {
     set scale 0
     foreach r $kernel { foreach v $r { incr scale $v } }
-    return [list [crimp read tcl $kernel] $scale]
+    return [list [crimp read tcl grey8 $kernel] $scale]
 }}  {
     {1 1 1 1 1}
     {1 1 1 1 1}
@@ -87,7 +87,7 @@ lassign [::apply {{kernel} {
 lassign [::apply {{kernel} {
     set scale 0
     foreach r $kernel { foreach v $r { incr scale $v } }
-    return [list [crimp read tcl $kernel] $scale]
+    return [list [crimp read tcl grey8 $kernel] $scale]
 }}  {
     {1 1 1 1 1}
 }] Bh scalebx

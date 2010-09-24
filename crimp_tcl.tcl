@@ -872,8 +872,8 @@ proc ::crimp::filter::convolve {image args} {
     # args = ?-border spec? kernel...
 
     set type [crimp::TypeOf $image]
-    set fc convolve_${type}
-    if {![crimp::Has $fc]} {
+    set fc convolve_*_${type}
+    if {![llength [crimp::List $fc]]} {
 	return -code error "Convolution is not supported for image type \"$type\""
     }
 
@@ -901,13 +901,20 @@ proc ::crimp::filter::convolve {image args} {
 	return -code error "wrong#args: expected image ?-border spec? kernel..."
     }
 
-    # kernel = list (kw kh kernelimage scale)
+    # kernel = list (kw kh kernel-image scale)
     # Kernel x in [-kw ... kw], 2*kw+1 values
     # Kernel y in [-kh ... kh], 2*kh+1 values
     # Shrinkage by 2*kw, 2*kh. Compensate using the chosen border type.
 
     foreach kernel $args {
 	lassign $kernel kw kh K scale offset
+
+	set ktype [crimp::TypeOf $K]
+	set fc convolve_${ktype}_${type}
+	if {![crimp::Has $fc]} {
+	    return -code error "Convolution kernel type \"$ktype\" is not supported for image type \"$type\""
+	}
+
 	set image [crimp::$fc [crimp::$fe $image $kw $kh $kw $kh {*}$values] $K $scale $offset]
     }
 
@@ -1023,6 +1030,43 @@ proc ::crimp::kernel::make {kernelmatrix {scale {}} {offset {}}} {
 
     return [list $kw $kh $kernel $scale $offset]
 }
+
+proc ::crimp::kernel::fpmake {kernelmatrix {offset {}}} {
+    set matsum 0
+    foreach row $kernelmatrix {
+	foreach v $row {
+	    set matsum [expr {$matsum + $v}]
+	}
+    }
+
+    # auto-offset, if needed
+    if {$offset eq {}} {
+	# TODO :: Check against a suitable epsilon instead of exact zero.
+	if {$matsum == 0} {
+	    set offset 128
+	} else {
+	    set offset 0
+	}
+    }
+
+    set kernel [crimp read tcl float $kernelmatrix]
+
+    lassign [crimp::dimensions $kernel] w h
+
+    if {!($w % 2) || !($h % 2)} {
+	# Keep in sync with the convolve primitives.
+	# FUTURE :: Have an API to set the messages used by the primitives.
+	return -code error "bad kernel dimensions, expected odd size"
+    }
+
+    set kw [expr {$w/2}]
+    set kh [expr {$h/2}]
+
+    # The scale is fixed at 1, fp-kernels are assumed to have any
+    # scaling built in.
+    return [list $kw $kh $kernel 1 $offset]
+}
+
 
 proc ::crimp::kernel::transpose {kernel} {
     lassign $kernel w h K scale offset

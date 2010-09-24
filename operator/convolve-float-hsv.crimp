@@ -1,4 +1,4 @@
-convolve_grey8_rgba
+convolve_float_hsv
 Tcl_Obj* imageObj
 Tcl_Obj* kernelImageObj
 int scale
@@ -6,8 +6,8 @@ int offset
 
 /*
  * Generic convolution operator. The kernel to convole with is specified as a
- * grey8 image together with a scaling factor. This way we do not need a
- * separate matrix Tcl_ObjType, nor floating point math.
+ * floating-point image together with a scaling factor. This way we do not
+ * need a separate matrix Tcl_ObjType.
  *
  * This convolver should be used only for small kernels, as it uses direct
  * convolution. For larger kernels it is planned to provide an FFT based
@@ -19,8 +19,8 @@ crimp_image*     image;
 crimp_image*     kernel;
 int              xo, yo, xi, yi, xk, yk, dx, dy, kw, kh;
 
-crimp_input (imageObj,         image,    rgba);
-crimp_input (kernelImageObj,   kernel,   grey8);
+crimp_input (imageObj,         image,    hsv);
+crimp_input (kernelImageObj,   kernel,   float);
 
 if (((kernel->w % 2) == 0) ||
     ((kernel->h % 2) == 0)) {
@@ -41,25 +41,22 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	 * identically
 	 */
 
-	int sumr = 0;
-	int sumg = 0;
-	int sumb = 0;
-	int suma = 0;
+	int sumh = 0;
+	int sums = 0;
+	int sumv = 0;
 
 	for (yk = 0, dy = -kh; yk < kernel->h; yk++, dy++) {
 	    for (xk = 0, dx = -kw; xk < kernel->w; xk++, dx++) {
 
-		sumr += SGREY8 (kernel, xk, yk) * R (image, xi-dx, yi-dy);
-		sumg += SGREY8 (kernel, xk, yk) * G (image, xi-dx, yi-dy);
-		sumb += SGREY8 (kernel, xk, yk) * B (image, xi-dx, yi-dy);
-		suma += SGREY8 (kernel, xk, yk) * A (image, xi-dx, yi-dy);
+		sumh += FLOATP (kernel, xk, yk) * H (image, xi-dx, yi-dy);
+		sums += FLOATP (kernel, xk, yk) * S (image, xi-dx, yi-dy);
+		sumv += FLOATP (kernel, xk, yk) * V (image, xi-dx, yi-dy);
 	    }
 	}
 
-	sumr /= scale; sumr += offset; R (result, xo, yo) = CLAMP (0, sumr, 255);
-	sumg /= scale; sumg += offset; G (result, xo, yo) = CLAMP (0, sumg, 255);
-	sumb /= scale; sumb += offset; B (result, xo, yo) = CLAMP (0, sumb, 255);
-	suma /= scale; suma += offset; A (result, xo, yo) = CLAMP (0, suma, 255);
+	sumh /= scale; sumh += offset; H (result, xo, yo) = CLAMP (0, sumh, 255);
+	sums /= scale; sums += offset; S (result, xo, yo) = CLAMP (0, sums, 255);
+	sumv /= scale; sumv += offset; V (result, xo, yo) = CLAMP (0, sumv, 255);
     }
 }
 

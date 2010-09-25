@@ -8,7 +8,8 @@ def effect_psychedelia {
 
 	proc next {} {
 	    variable token
-	    show_image [crimp psychedelia 320 240 100]
+	    #show_image [crimp psychedelia 320 240 100]
+	    show_image [crimp psychedelia 800 600 100]
 	    set token [after 100 DEMO::next]
 	    return
 	}

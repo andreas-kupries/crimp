@@ -99,6 +99,17 @@ proc ::crimp::BORDER {imagetype spec} {
 }
 
 # # ## ### ##### ######## #############
+
+proc ::crimp::meta {image {meta {}}} {
+
+    if {[llength [info level 0]] == 3} {
+	return [meta_set [K $image [unset image]] $meta]
+    } else {
+	return [meta_get $image]
+    }
+}
+
+# # ## ### ##### ######## #############
 ## Read is done via sub methods, one per format to read from.
 #
 ## Ditto write, convert, and join, one per destination format. Note
@@ -1604,6 +1615,10 @@ proc ::crimp::FIT {series max} {
 
 proc ::crimp::TypeOf {image} {
     return [namespace tail [type $image]]
+}
+
+proc ::crimp::K {x y} {
+    return $x
 }
 
 # # ## ### ##### ######## #############

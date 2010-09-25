@@ -17,6 +17,7 @@ typedef struct crimp_image {
     const crimp_imagetype* itype;    /* Reference to type descriptor */
     int                    w;        /* Image dimension, width  */
     int                    h;        /* Image dimension, height */
+    Tcl_Obj*               meta;     /* Tcl level client data */
     unsigned char          pixel[4]; /* Integrated pixel storage */
 } crimp_image;
 
@@ -118,6 +119,7 @@ typedef struct crimp_image {
  */
 
 extern crimp_image* crimp_new (const crimp_imagetype* type, int w, int h);
+extern crimp_image* crimp_newm (const crimp_imagetype* type, int w, int h, Tcl_Obj* meta);
 extern crimp_image* crimp_dup (crimp_image* image);
 extern void         crimp_del (crimp_image* image);
 
@@ -129,8 +131,8 @@ extern void         crimp_del (crimp_image* image);
 #define crimp_new_grey32(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::grey32"), (w), (h)))
 #define crimp_new_float(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::float"),  (w), (h)))
 
-#define crimp_new_like(image) (crimp_new ((image)->itype, (image)->w, (image)->h))
-#define crimp_new_like_transpose(image) (crimp_new ((image)->itype, (image)->h, (image)->w))
+#define crimp_new_like(image)           (crimp_newm ((image)->itype, (image)->w, (image)->h, (image)->meta))
+#define crimp_new_like_transpose(image) (crimp_newm ((image)->itype, (image)->h, (image)->w, (image)->meta))
 
 /*
  * API :: Tcl. Manage Tcl_Obj's of images.

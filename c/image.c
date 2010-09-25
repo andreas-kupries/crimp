@@ -49,6 +49,29 @@ crimp_new (const crimp_imagetype* itype, int w, int h)
     image->itype = itype;
     image->w     = w;
     image->h     = h;
+    image->meta  = NULL;
+
+    return image;
+}
+
+crimp_image*
+crimp_newm (const crimp_imagetype* itype, int w, int h, Tcl_Obj* meta)
+{
+    /*
+     * Note: Pixel storage and header describing it are allocated together.
+     */
+
+    int          size  = sizeof (crimp_image) + w * h * itype->size;
+    crimp_image* image = (crimp_image*) ckalloc (size);
+
+    image->itype = itype;
+    image->w     = w;
+    image->h     = h;
+    image->meta  = meta;
+
+    if (meta) {
+	Tcl_IncrRefCount (meta);
+    }
 
     return image;
 }
@@ -65,6 +88,10 @@ crimp_dup (crimp_image* image)
      */
 
     memcpy (new_image, image, size);
+    if (image->meta) {
+	Tcl_IncrRefCount (image->meta);
+    }
+
     return new_image;
 }
 
@@ -76,6 +103,9 @@ crimp_del (crimp_image* image)
      * Pixel storage and header are a single block.
      */
 
+    if (image->meta) {
+	Tcl_DecrRefCount (image->meta);
+    }
     ckfree ((char*) image);
 }
 
@@ -151,6 +181,13 @@ StringOfImage (Tcl_Obj* imgObjPtr)
 	char hstring [20];
 	sprintf (hstring, "%u", ci->h);
 	Tcl_DStringAppendElement (&ds, hstring);
+    }
+
+    /* image client data */
+    if (ci->meta) {
+	Tcl_DStringAppendElement (&ds, Tcl_GetString (ci->meta));
+    } else {
+	Tcl_DStringAppendElement (&ds, "");
     }
 
     /* image pixels */
@@ -234,12 +271,13 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
     crimp_pixel_array pixel;
     crimp_image* ci;
     crimp_imagetype* ct;
+    Tcl_Obj* meta;
 
     if (Tcl_ListObjGetElements(interp, imgObjPtr, &objc, &objv) != TCL_OK) {
 	return TCL_ERROR;
     }
 
-    if (objc != 4) {
+    if (objc != 5) {
     invalid:
 	Tcl_SetResult(interp, "invalid image format", TCL_STATIC);
 	return TCL_ERROR;
@@ -251,11 +289,13 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
 	(w < 0) || (h < 0))
 	goto invalid;
 
-    pixel = Tcl_GetByteArrayFromObj (objv[3], &length);
+    pixel = Tcl_GetByteArrayFromObj (objv[4], &length);
     if (length != (ct->size * w * h))
 	goto invalid;
 
-    ci = crimp_new (ct, w, h);
+    meta = objv[3];
+
+    ci = crimp_newm (ct, w, h, meta);
     memcpy(ci->pixel, pixel, length);
 
     /*

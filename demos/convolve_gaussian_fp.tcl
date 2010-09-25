@@ -86,23 +86,36 @@ def op_convolve_gaussian_fp {
 	    return
 	}
 
-	proc shows {} {
-	    variable Kxs
-	    variable Kys
+	proc showp {} {
+	    demo_time_hook g/plain {
+		show_image [base]
+	    }
+	    return
+	}
 
-	    show_image [crimp filter convolve [base] $Kxs $Kys]
+	proc shows {} {
+	    demo_time_hook g/sample {
+		variable Kxs
+		variable Kys
+
+		show_image [crimp filter convolve [base] $Kxs $Kys]
+	    }
 	    return
 	}
 
 	proc showd {} {
-	    variable Kxd
-	    variable Kyd
+	    demo_time_hook g/discrete {
+		variable Kxd
+		variable Kyd
 
-	    show_image [crimp filter convolve [base] $Kxd $Kyd]
+		show_image [crimp filter convolve [base] $Kxd $Kyd]
+	    }
 	    return
 	}
 
 	TABLE $sigma
+
+	ttk::button .left.pl -text Plain -command ::DEMO::showp
 
 	scale       .left.s -variable ::DEMO::sigma \
 	    -from 0 -to 10 -resolution 0.1 \
@@ -115,13 +128,12 @@ def op_convolve_gaussian_fp {
 	plot        .left.pd -variable ::DEMO::tabled -title {Kernel Discrete} -locked 0 -xlocked 0
 	ttk::button .left.ad -text Apply -command ::DEMO::showd
 
-	grid .left.s  -row 0 -column 0 -sticky swen
-
-	grid .left.ps -row 1 -column 0 -sticky swen
-	grid .left.as -row 2 -column 0 -sticky nw
-
-	grid .left.pd -row 3 -column 0 -sticky swen
-	grid .left.ad -row 4 -column 0 -sticky nw
+	grid .left.pl -row 0 -column 0 -sticky swen
+	grid .left.s  -row 1 -column 0 -sticky swen
+	grid .left.ps -row 2 -column 0 -sticky swen
+	grid .left.as -row 3 -column 0 -sticky nw
+	grid .left.pd -row 4 -column 0 -sticky swen
+	grid .left.ad -row 5 -column 0 -sticky nw
     }
     setup_image {
 	shows

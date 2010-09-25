@@ -27,6 +27,8 @@ box  <w> width [10 mm]
 gap
 box  <h> width [10 mm]
 gap
+box  <meta> width [20 mm]
+gap
 box  <pixeldata> width [25 mm]
 gap
 text "\}"
@@ -45,7 +47,8 @@ set IT [block {
 
 arrow from [2nd box s] ; set WT [text Integer]
 arrow from [3rd box s] ; set HT [text Integer]
-arrow from [4th box s] ; text ByteArray
+arrow from [4th box s] ; text Dictionary
+arrow from [5th box s] ; text ByteArray
 harrow dashed color red ; move south [5 mm]
 block {
     box wid [4 cm] ht [4 cm]

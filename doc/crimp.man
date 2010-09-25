@@ -119,6 +119,13 @@ The package currently knows the following types:
 	[def Bit-depth]		1 bit/channel.
 	[def Pixel-size]	1 byte. I.e. 7 bits/channel are wasted.
 	[list_end]
+[def [const float]]
+	[list_begin definitions]
+	[def Colorspace]	N.A / Floating Point.
+	[def Channels]		1, named "value".
+	[def Bit-depth]		4 byte/channel.
+	[def Pixel-size]	4 byte.
+	[list_end]
 [list_end]
 
 Support for the various types varies by operation. The exact image
@@ -898,12 +905,12 @@ height).
 [para]
 
 The [method {crimp map ...}] methods are sources for a number of
-predefined maps.  And the [method {read tcl}] method allows the
-construction of maps from Tcl data structures, namely nested lists.
+predefined maps, whereas the [method mapof] method allows the
+construction of maps from Tcl data structures, namely lists of values.
 
 [para] This method supports all image types with one or more
-single-byte channels, i.e. all but [const grey16], [const grey32], and
-[const bw].
+single-byte channels, i.e. all but [const grey16], [const grey32],
+[const float], and [const bw].
 
 
 
@@ -1182,7 +1189,7 @@ dictionary mapping characters to triples of integers in the range
 }]
 
 
-[call [cmd ::crimp] [method {read tcl}] [arg pixelmatrix]]
+[call [cmd ::crimp] [method {read tcl grey8}] [arg pixelmatrix]]
 
 This method takes the [arg pixelmatrix], a list of rows, with each row
 a list of pixel values in the domain [lb]0..255[rb] and returns an
@@ -1191,6 +1198,16 @@ the length of the outer list, and whose width is the maximum length
 found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
 [const 255].
+
+
+[call [cmd ::crimp] [method {read tcl float}] [arg pixelmatrix]]
+
+This method takes the [arg pixelmatrix], a list of rows, with each row
+a list of floating point values for pixel values and returns an image
+of type [const float] whose height is the number of rows, i.e.  the
+length of the outer list, and whose width is the maximum length found
+among the inner lists. Rows whose inner list is shorter than the
+maximum length are padded with a pixel value of [const 255].
 
 
 [call [cmd ::crimp] [method {read tk}] [arg photo]]
@@ -1260,20 +1277,41 @@ The raw binary format of portable pix maps, as per
 [subsection Support]
 [list_begin definitions]
 
-[call [cmd ::crimp] [method {kernel make}] [arg matrix] [opt [arg scale]]]
+[call [cmd ::crimp] [method {kernel make}] [arg matrix] [opt [arg scale]] [opt [arg offset]]]
 
 This method takes a [arg matrix] of weights and an optional
 [arg scale] factor and returns a structure containing the associated
-convolution kernel, ready for use by method [method convole].
+convolution kernel, ready for use by method [method {filter convolve}].
 
 [para] If [arg scale] is left unspecified it defaults to the sum of
 all weights in the matrix.
 
+[para] If [arg offset] is left unspecified it defaults to 128 if the
+sum of weights is 0, and 0 else. In effect zero-sum kernels, like the
+basic edge-detectors, are shifted so that results in the range
+-128..127 correspond to 0..255.
+
 [para] The [arg matrix] has the same general format as the pixel
-matrix for method [method {read tcl}], i.e. a list of lists (rows) of
-values, and is treated in the same way, i.e. the number of columns is
-the maxium length over the row lists, and shorter lists are padded
-with [const 255].
+matrix for method [method {read tcl grey8}], i.e. a list of lists
+(rows) of values, and is treated in the same way, i.e. the number of
+columns is the maxium length over the row lists, and shorter lists are
+padded with [const 128]. The values are expected to be integer numbers
+in the range -128..127.
+
+
+[call [cmd ::crimp] [method {kernel fpmake}] [arg matrix] [opt [arg offset]]]
+
+This method is like [method {kernel make}] except that the generated
+kernel is based on floating-point values. Because of this it is not
+accpeting a scale argument either, it is expected that the kernel
+weights already have the proper sum.
+
+[para] The [arg matrix] has the same general format as the pixel
+matrix for method [method {read tcl float}], i.e. a list of lists
+(rows) of values, and is treated in the same way, i.e. the number of
+columns is the maxium length over the row lists, and shorter lists are
+padded with [const 255].  The values are expected to be floating-point
+numbers.
 
 
 [call [cmd ::crimp] [method {kernel transpose}] [arg kernel]]

@@ -408,7 +408,9 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBread strimj\fR \fIstring\fR ?\fIcolormap\fR?
 .sp
-\fB::crimp\fR \fBread tcl\fR \fIpixelmatrix\fR
+\fB::crimp\fR \fBread tcl grey8\fR \fIpixelmatrix\fR
+.sp
+\fB::crimp\fR \fBread tcl float\fR \fIpixelmatrix\fR
 .sp
 \fB::crimp\fR \fBread tk\fR \fIphoto\fR
 .sp
@@ -420,7 +422,9 @@ package require \fBcrimp  ?1?\fR
 .sp
 \fB::crimp\fR \fBwrite 2file\fR \fIformat\fR \fIpath\fR \fIimage\fR
 .sp
-\fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR?
+\fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR? ?\fIoffset\fR?
+.sp
+\fB::crimp\fR \fBkernel fpmake\fR \fImatrix\fR ?\fIoffset\fR?
 .sp
 \fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
 .sp
@@ -619,6 +623,22 @@ Bit-depth
 .TP
 Pixel-size
 1 byte. I.e. 7 bits/channel are wasted.
+.RE
+.TP
+\fBfloat\fR
+.RS
+.TP
+Colorspace
+N.A / Floating Point.
+.TP
+Channels
+1, named "value".
+.TP
+Bit-depth
+4 byte/channel.
+.TP
+Pixel-size
+4 byte.
 .RE
 .PP
 Support for the various types varies by operation. The exact image
@@ -1331,12 +1351,12 @@ have to be of type \fBgrey8\fR, and be of dimension 256x1 (width by
 height).
 .sp
 The \fBcrimp map ...\fR methods are sources for a number of
-predefined maps.  And the \fBread tcl\fR method allows the
-construction of maps from Tcl data structures, namely nested lists.
+predefined maps, whereas the \fBmapof\fR method allows the
+construction of maps from Tcl data structures, namely lists of values.
 .sp
 This method supports all image types with one or more
-single-byte channels, i.e. all but \fBgrey16\fR, \fBgrey32\fR, and
-\fBbw\fR.
+single-byte channels, i.e. all but \fBgrey16\fR, \fBgrey32\fR,
+\fBfloat\fR, and \fBbw\fR.
 .TP
 \fB::crimp\fR \fBscreen\fR \fIimage1\fR \fIimage2\fR
 This method combines the two input images by inverting the
@@ -1560,7 +1580,7 @@ An example of a strimj is:
 
 .fi
 .TP
-\fB::crimp\fR \fBread tcl\fR \fIpixelmatrix\fR
+\fB::crimp\fR \fBread tcl grey8\fR \fIpixelmatrix\fR
 This method takes the \fIpixelmatrix\fR, a list of rows, with each row
 a list of pixel values in the domain [0..255] and returns an
 image of type \fBgrey8\fR whose height is the number of rows, i.e.
@@ -1568,6 +1588,14 @@ the length of the outer list, and whose width is the maximum length
 found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
 \fB255\fR.
+.TP
+\fB::crimp\fR \fBread tcl float\fR \fIpixelmatrix\fR
+This method takes the \fIpixelmatrix\fR, a list of rows, with each row
+a list of floating point values for pixel values and returns an image
+of type \fBfloat\fR whose height is the number of rows, i.e.  the
+length of the outer list, and whose width is the maximum length found
+among the inner lists. Rows whose inner list is shorter than the
+maximum length are padded with a pixel value of \fB255\fR.
 .TP
 \fB::crimp\fR \fBread tk\fR \fIphoto\fR
 This method returns an image of type \fBrgba\fR containing the data
@@ -1626,19 +1654,38 @@ The methods support the writing of \fBrgb\fR, \fBrgba\fR,
 .PP
 .SS SUPPORT
 .TP
-\fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR?
+\fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR? ?\fIoffset\fR?
 This method takes a \fImatrix\fR of weights and an optional
 \fIscale\fR factor and returns a structure containing the associated
-convolution kernel, ready for use by method \fBconvole\fR.
+convolution kernel, ready for use by method \fBfilter convolve\fR.
 .sp
 If \fIscale\fR is left unspecified it defaults to the sum of
 all weights in the matrix.
 .sp
+If \fIoffset\fR is left unspecified it defaults to 128 if the
+sum of weights is 0, and 0 else. In effect zero-sum kernels, like the
+basic edge-detectors, are shifted so that results in the range
+-128..127 correspond to 0..255.
+.sp
 The \fImatrix\fR has the same general format as the pixel
-matrix for method \fBread tcl\fR, i.e. a list of lists (rows) of
-values, and is treated in the same way, i.e. the number of columns is
-the maxium length over the row lists, and shorter lists are padded
-with \fB255\fR.
+matrix for method \fBread tcl grey8\fR, i.e. a list of lists
+(rows) of values, and is treated in the same way, i.e. the number of
+columns is the maxium length over the row lists, and shorter lists are
+padded with \fB128\fR. The values are expected to be integer numbers
+in the range -128..127.
+.TP
+\fB::crimp\fR \fBkernel fpmake\fR \fImatrix\fR ?\fIoffset\fR?
+This method is like \fBkernel make\fR except that the generated
+kernel is based on floating-point values. Because of this it is not
+accpeting a scale argument either, it is expected that the kernel
+weights already have the proper sum.
+.sp
+The \fImatrix\fR has the same general format as the pixel
+matrix for method \fBread tcl float\fR, i.e. a list of lists
+(rows) of values, and is treated in the same way, i.e. the number of
+columns is the maxium length over the row lists, and shorter lists are
+padded with \fB255\fR.  The values are expected to be floating-point
+numbers.
 .TP
 \fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
 This method takes a \fIkernel\fR as returned by the method

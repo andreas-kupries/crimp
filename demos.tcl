@@ -203,7 +203,16 @@ proc demo_isactive {} {
 proc demo_close {} {
     global demo dcurrent
 
-    if {![bases]} return
+    if {![bases]} {
+
+	if {$dcurrent eq {}} return
+	namespace eval   ::DEMO [dict get $demo($dcurrent) shutdown]
+	namespace delete ::DEMO
+	set dcurrent {}
+
+	return
+    }
+
     show_image [base]
 
     if {$dcurrent eq {}} return

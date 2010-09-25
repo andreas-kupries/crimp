@@ -590,6 +590,8 @@ proc show_slides {images} {
 
 proc show_image {image} {
     slide_stop
+    #display [crimp gamma $image 2.2]
+    #display [crimp degamma $image 2.2]
     display $image
     return
 }
@@ -603,6 +605,8 @@ proc display {image} {
 proc base {{i 0}} {
     global base
     return [lindex $base $i]
+    #return [crimp degamma [lindex $base $i] 2.2]
+    #return [crimp gamma [lindex $base $i] 2.2]
 }
 
 proc bases {} {

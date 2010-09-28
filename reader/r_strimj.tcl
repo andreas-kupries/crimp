@@ -29,7 +29,7 @@ proc ::crimp::read::strimj {text {colormap {}}} {
     set br {} ; set bi {}
     set ar {} ; set ai {}
 
-    foreach line [split $text \n] {
+    foreach line [split [string trimright $text \n] \n] {
 	foreach pixel [split $line {}] {
 	    lassign $map($pixel) r g b a
 	    lappend rr $r

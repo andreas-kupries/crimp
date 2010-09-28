@@ -208,6 +208,7 @@ proc demo_close {} {
 	if {$dcurrent eq {}} return
 	namespace eval   ::DEMO [dict get $demo($dcurrent) shutdown]
 	namespace delete ::DEMO
+	reframe
 	set dcurrent {}
 
 	return

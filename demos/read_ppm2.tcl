@@ -1,5 +1,5 @@
-def read_pgm {
-    label {Read (PGM)}
+def read_ppm2 {
+    label {Read (PPM 2)}
     active {
 	expr {[bases] == 0}
     }
@@ -9,6 +9,6 @@ def read_pgm {
 	    variable K
 	    return [crimp interpolate [crimp interpolate [crimp interpolate $image 2 $K] 2 $K] 2 $K]
 	}
-	show_image [8x [8x [crimp read pgm [fileutil::cat $dir/images/feep.pgm]]]]
+	show_image [8x [8x [crimp read ppm [fileutil::cat $dir/images/colors.ppm]]]]
     }
 }

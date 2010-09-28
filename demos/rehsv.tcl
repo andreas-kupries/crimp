@@ -14,8 +14,8 @@ def effect_rehsv {
 	proc H {args} {
 	    variable ghb
 	    variable ghg
-	    variable th [crimp table linear -wrap $ghg $ghb]
-	    variable mh [crimp map   linear -wrap $ghg $ghb]
+	    variable th [crimp table linear -wrap -- $ghg $ghb]
+	    variable mh [crimp map   linear -wrap -- $ghg $ghb]
 	    UPDATE
 	    return
 	}

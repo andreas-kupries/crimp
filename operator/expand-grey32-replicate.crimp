@@ -1,0 +1,48 @@
+expand_grey32_replicate
+Tcl_Obj* imageObj
+int ww
+int hn
+int we
+int hs
+
+/*
+ * Border expansion by extending the edges, i.e. replicating the border
+ * pixels.
+ */
+
+crimp_image* image;
+crimp_input (imageObj, image, grey32);
+
+/*
+ * This is the simple definition. Might be better to generate macros
+ * specialized to each quadrant. Except, even they have to perform modulo
+ * arithmetic, as the border may be larger than image's width or height,
+ * causing muliple wrapping.
+ */
+
+#define FILL(xo,yo) {					\
+	int xi = xo - ww;				\
+	int yi = yo - hn;				\
+	if      (xi < 0)         { xi = 0;            } \
+	else if (xi >= image->w) { xi = (image->w-1); } \
+							\
+	if      (yi < 0)         { yi = 0;            } \
+	else if (yi >= image->h) { yi = (image->h-1); } \
+							\
+	GREY32 (result, xo, yo) = GREY32 (image, xi, yi);	\
+    }
+
+#define COPY(xo,yo,xi,yi) {				\
+	GREY32 (result, xo, yo) = GREY32 (image, xi, yi); \
+    }
+
+#include <expand_op.c>
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

@@ -1,0 +1,51 @@
+convert_2hsv_grey8
+Tcl_Obj* imageObj
+Tcl_Obj* colorObj
+
+crimp_image* image;
+crimp_image* color;
+crimp_image* result;
+int          x, y, value;
+
+/*
+ * This conversion from greyscale to color (HSV) is a general false-color
+ * transformation, mapping each pixel value to an arbitrary color, through
+ * a lookup table.
+ *
+ * Important: For the sake of convenience the color map is not provided as a
+ * (Tcl) list (of values), or array, but as an _image_ itself, a 256x1 (WxH)
+ * hsv. We will have constructors for such images.
+ */
+
+crimp_input (imageObj, image, grey8);
+crimp_input (colorObj, color, hsv);
+
+if (!crimp_require_dim (map, 256, 1)) {
+    Tcl_SetResult(interp, "bad image dimension for color map, expected 256x1", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_hsv (image->w, image->h);
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+	value = GREY8 (input, x, y);
+	H (result, x, y) = H (color, value, 0);
+	S (result, x, y) = S (color, value, 0);
+	V (result, x, y) = V (color, value, 0);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

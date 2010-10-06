@@ -248,7 +248,7 @@ package require \fBTcl  8.5\fR
 .sp
 package require \fBTk  8.5\fR
 .sp
-package require \fBcrimp  ?1?\fR
+package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBchannels\fR \fIimage\fR
 .sp

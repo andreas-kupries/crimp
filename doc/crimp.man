@@ -6,7 +6,7 @@
 [titledesc {Image Manipulation (not yet independent of Tk)}]
 [require Tcl 8.5]
 [require Tk 8.5]
-[require crimp [opt 1]]
+[require crimp [opt 0]]
 [description]
 
 This package provides image manipulation commands which are mostly

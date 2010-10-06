@@ -1567,6 +1567,14 @@ defined as:
 [list_end]
 
 
+[section References]
+[list_begin enumerated]
+
+[enum] Simon Perreault and Patrick Hebert, "Median Filtering in Constant Time", 2007
+       [uri http://nomis80.org/ctmf.html]
+
+[list_end]
+
 [keywords photo image]
 [manpage_end]
 

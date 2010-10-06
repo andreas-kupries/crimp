@@ -20,7 +20,7 @@ int          x, y, value;
 crimp_input (imageObj, image, grey8);
 crimp_input (colorObj, color, hsv);
 
-if (!crimp_require_dim (map, 256, 1)) {
+if (!crimp_require_dim (color, 256, 1)) {
     Tcl_SetResult(interp, "bad image dimension for color map, expected 256x1", TCL_STATIC);
     return TCL_ERROR;
 }
@@ -30,7 +30,7 @@ result = crimp_new_hsv (image->w, image->h);
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
 
-	value = GREY8 (input, x, y);
+	value = GREY8 (image, x, y);
 	H (result, x, y) = H (color, value, 0);
 	S (result, x, y) = S (color, value, 0);
 	V (result, x, y) = V (color, value, 0);

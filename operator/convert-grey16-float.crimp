@@ -12,7 +12,7 @@ result = crimp_new_float (image->w, image->h);
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
 
-	FLOATP (result, x, y) = GREY16 (input, x, y);
+	FLOATP (result, x, y) = GREY16 (image, x, y);
     }
 }
 

@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/fc/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -1994,6 +1994,11 @@ f_{min,max} (x) = \\left\\{\\begin{eqnarray}
 .fi
 .PE
 .sp
+.PP
+.SH REFERENCES
+.IP [1]
+Simon Perreault and Patrick Hebert, "Median Filtering in Constant Time", 2007
+\fIhttp://nomis80.org/ctmf.html\fR
 .PP
 .SH KEYWORDS
 affine transform, alpha, alpha blending, alpha channel, binarization, black tophat, blending, channels, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, filter, flip, gamma correction, gradient, histogram, image, internal gradient, inversion, log-compression, matrix, max, max-filter, median, median-filter, min, min-filter, mirror expansion, montage, morphology, opening, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, shrinking, solarization, sqrt-compression, statistics, stddev, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion

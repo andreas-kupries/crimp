@@ -1218,6 +1218,90 @@ proc ::crimp::statistics {image} {
 }
 
 # # ## ### ##### ######## #############
+
+namespace eval ::crimp::gradient {
+    namespace export {[a-z]*}
+    namespace ensemble create
+}
+
+# TODO :: Force/check proper input ranges for pixel values.
+
+proc crimp::gradient::grey8 {s e size} {
+    if {$size < 2} {
+	return -code error "Minimum size is 2"
+    }
+
+    set steps [expr {$size - 1}]
+
+    set d [expr {($e - $s)/double($steps)}]
+
+    for {set t 0} {$steps >= 0} {
+	incr steps -1
+	incr t
+    } {
+	lappend pixels [expr {round($s + $t * $d)}]
+    }
+
+    return [crimp read tcl grey8 [list $pixels]]
+}
+
+proc crimp::gradient::rgb {s e size} {
+    if {$size < 2} {
+	return -code error "Minimum size is 2"
+    }
+
+    set steps [expr {$size - 1}]
+    lassign $s sr sg sb
+    lassign $e er eg eb
+
+    set dr [expr {($er - $sr)/double($steps)}]
+    set dg [expr {($eg - $sg)/double($steps)}]
+    set db [expr {($eb - $sb)/double($steps)}]
+
+    for {set t 0} {$steps >= 0} {
+	incr steps -1
+	incr t
+    } {
+	lappend r [expr {round($sr + $t * $dr)}]
+	lappend g [expr {round($sg + $t * $dg)}]
+	lappend b [expr {round($sb + $t * $db)}]
+    }
+
+    return [crimp join 2rgb \
+		[crimp read tcl grey8 [list $r]] \
+		[crimp read tcl grey8 [list $g]] \
+		[crimp read tcl grey8 [list $b]]]
+}
+
+proc crimp::gradient::hsv {s e steps} {
+    if {$size < 2} {
+	return -code error "Minimum size is 2"
+    }
+
+    set steps [expr {$size - 1}]
+    lassign $s sh ss sv
+    lassign $e eh es ev
+
+    set dh [expr {($eh - $sh)/double($steps)}]
+    set ds [expr {($es - $ss)/double($steps)}]
+    set dv [expr {($ev - $sv)/double($steps)}]
+
+    for {set t 0} {$steps >= 0} {
+	incr steps -1
+	incr t
+    } {
+	lappend h [expr {round($sh + $t * $dh)}]
+	lappend s [expr {round($ss + $t * $ds)}]
+	lappend v [expr {round($sv + $t * $dv)}]
+    }
+
+    return [crimp join 2hsv \
+		[crimp read tcl grey8 [list $h]] \
+		[crimp read tcl grey8 [list $s]] \
+		[crimp read tcl grey8 [list $v]]]
+}
+
+# # ## ### ##### ######## #############
 ## Tables and maps.
 ## For performance we should memoize results.
 ## This is not needed to just get things working howver.
@@ -1631,7 +1715,7 @@ namespace eval ::crimp {
     namespace export alpha histogram max min screen add pixel
     namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate
-    namespace export kernel expand threshold
+    namespace export kernel expand threshold gradient
     namespace export statistics rotate montage morph
     #
     namespace ensemble create

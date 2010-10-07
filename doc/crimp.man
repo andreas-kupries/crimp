@@ -1334,6 +1334,26 @@ the original input, i.e. [example {
     [transpose [transpose $K]] == $K
 }]
 
+[call [cmd ::crimp] [method {gradient grey8}] [arg from] [arg to] [arg size]]
+[call [cmd ::crimp] [method {gradient rgb}] [arg from] [arg to] [arg size]]
+[call [cmd ::crimp] [method {gradient hsv}] [arg from] [arg to] [arg size]]
+
+This set of methods takes two "color" (pixel value) arguments and
+returns an image of height 1 and width [arg size] containing a
+gradient interpolating between these two colors, with [arg from] in
+the pixel at the left (x == 0) and [arg to] at the right
+(x == [arg size]-1).
+
+[para] [arg size] has to be greater than or equal to [const 2]. An
+error is thrown if that restriction is not met.
+
+[para] The resulting image has the type indicated in the method name.
+This also specifies what is expected as the contents of the arguments
+[arg from] and [arg to]. For [method grey8] these are simple pixel
+values in the range 0...255 whereas for the types [method rgb] and
+[method hsv] the arguments are triples (3-element lists) specifying
+the R, G, and B (and H, S, and V respectively) values.
+
 
 [call [cmd ::crimp] [method map] [arg arg]...]
 

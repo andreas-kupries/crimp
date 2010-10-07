@@ -428,6 +428,12 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
 .sp
+\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 .sp
 \fB::crimp\fR \fBmapof\fR \fItable\fR
@@ -1710,6 +1716,27 @@ the original input, i.e.
     [transpose [transpose $K]] == $K
 
 .fi
+.TP
+\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
+This set of methods takes two "color" (pixel value) arguments and
+returns an image of height 1 and width \fIsize\fR containing a
+gradient interpolating between these two colors, with \fIfrom\fR in
+the pixel at the left (x == 0) and \fIto\fR at the right
+(x == \fIsize\fR-1).
+.sp
+\fIsize\fR has to be greater than or equal to \fB2\fR. An
+error is thrown if that restriction is not met.
+.sp
+The resulting image has the type indicated in the method name.
+This also specifies what is expected as the contents of the arguments
+\fIfrom\fR and \fIto\fR. For \fBgrey8\fR these are simple pixel
+values in the range 0...255 whereas for the types \fBrgb\fR and
+\fBhsv\fR the arguments are triples (3-element lists) specifying
+the R, G, and B (and H, S, and V respectively) values.
 .TP
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 This method accepts the same sub-methods and arguments as are accepted

@@ -226,25 +226,28 @@
 <li><a href="#87"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span> <span class="opt">?<i class="arg">offset</i>?</span></a></li>
 <li><a href="#88"><b class="cmd">::crimp</b> <b class="method">kernel fpmake</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">offset</i>?</span></a></li>
 <li><a href="#89"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></li>
-<li><a href="#90"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></li>
-<li><a href="#91"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></li>
-<li><a href="#92"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></li>
-<li><a href="#93"><b class="cmd">::crimp</b> <b class="method">table eval</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">cmd</i></a></li>
-<li><a href="#94"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></li>
-<li><a href="#95"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></li>
-<li><a href="#96"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></li>
-<li><a href="#97"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></li>
-<li><a href="#98"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></li>
-<li><a href="#99"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></li>
-<li><a href="#100"><b class="cmd">::crimp</b> <b class="method">table linear</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">gain</i> <i class="arg">offset</i></a></li>
-<li><a href="#101"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
-<li><a href="#102"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></li>
-<li><a href="#103"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
-<li><a href="#104"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
-<li><a href="#105"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></li>
-<li><a href="#106"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></li>
-<li><a href="#107"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
-<li><a href="#108"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#90"><b class="cmd">::crimp</b> <b class="method">gradient grey8</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
+<li><a href="#91"><b class="cmd">::crimp</b> <b class="method">gradient rgb</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
+<li><a href="#92"><b class="cmd">::crimp</b> <b class="method">gradient hsv</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
+<li><a href="#93"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></li>
+<li><a href="#94"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></li>
+<li><a href="#95"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></li>
+<li><a href="#96"><b class="cmd">::crimp</b> <b class="method">table eval</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">cmd</i></a></li>
+<li><a href="#97"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></li>
+<li><a href="#98"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></li>
+<li><a href="#99"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></li>
+<li><a href="#100"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></li>
+<li><a href="#101"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></li>
+<li><a href="#102"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></li>
+<li><a href="#103"><b class="cmd">::crimp</b> <b class="method">table linear</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">gain</i> <i class="arg">offset</i></a></li>
+<li><a href="#104"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
+<li><a href="#105"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></li>
+<li><a href="#106"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
+<li><a href="#107"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#108"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></li>
+<li><a href="#109"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></li>
+<li><a href="#110"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#111"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
 </ul>
 </div>
 </div>
@@ -1188,20 +1191,38 @@ the original input, i.e.</p>
     [transpose [transpose $K]] == $K
 </pre>
 </dd>
-<dt><a name="90"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></dt>
+<dt><a name="90"><b class="cmd">::crimp</b> <b class="method">gradient grey8</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
+<dd></dd>
+<dt><a name="91"><b class="cmd">::crimp</b> <b class="method">gradient rgb</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
+<dd></dd>
+<dt><a name="92"><b class="cmd">::crimp</b> <b class="method">gradient hsv</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
+<dd><p>This set of methods takes two &quot;color&quot; (pixel value) arguments and
+returns an image of height 1 and width <i class="arg">size</i> containing a
+gradient interpolating between these two colors, with <i class="arg">from</i> in
+the pixel at the left (x == 0) and <i class="arg">to</i> at the right
+(x == <i class="arg">size</i>-1).</p>
+<p><i class="arg">size</i> has to be greater than or equal to <b class="const">2</b>. An
+error is thrown if that restriction is not met.</p>
+<p>The resulting image has the type indicated in the method name.
+This also specifies what is expected as the contents of the arguments
+<i class="arg">from</i> and <i class="arg">to</i>. For <b class="method">grey8</b> these are simple pixel
+values in the range 0...255 whereas for the types <b class="method">rgb</b> and
+<b class="method">hsv</b> the arguments are triples (3-element lists) specifying
+the R, G, and B (and H, S, and V respectively) values.</p></dd>
+<dt><a name="93"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></dt>
 <dd><p>This method accepts the same sub-methods and arguments as are accepted
 by the <b class="method">table</b> method below. In contrast to <b class="method">table</b> the
 result is not a list of values, but a map image directly suitable as
 argument to the <b class="method">remap</b> method.</p></dd>
-<dt><a name="91"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></dt>
+<dt><a name="94"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></dt>
 <dd><p>This method accepts a list of 256 values, constructs a map image
 directly suitable as argument to the <b class="method">remap</b> method, and
 returns this map image as its result.</p></dd>
-<dt><a name="92"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></dt>
+<dt><a name="95"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></dt>
 <dd><p>This accepts two lookup tables (aka functions) specified as lists of
 256 values, constructs the composite function f(g(x)), and then
 returns this new function as its result.</p></dd>
-<dt><a name="93"><b class="cmd">::crimp</b> <b class="method">table eval</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">cmd</i></a></dt>
+<dt><a name="96"><b class="cmd">::crimp</b> <b class="method">table eval</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">cmd</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the function specified by the command prefix
 <i class="arg">cmd</i>.
@@ -1213,13 +1234,13 @@ presence of the option <b class="option">-wrap</b>. When present the values are
 wrapped, otherwise (default) they are clamped.</p>
 <p>The signature of the command prefix is</p>
 <dl class="definitions">
-<dt><a name="94"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></dt>
+<dt><a name="97"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></dt>
 <dd><p>which is expected to return a number in the range
 [0..255]. While the result should be an integer number it is
 allowed to be a float, the caller takes care to round the result to
 the nearest integer.</p></dd>
 </dl></dd>
-<dt><a name="95"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></dt>
+<dt><a name="98"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">inverse gamma correction</b> with
 parameter <i class="arg">y</i>.
@@ -1230,7 +1251,7 @@ both argument and result, is defined as:</p>
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
 <p><img alt="scaled_gamma_inv" src="../image/scaled_gamma_inv.png"></p></dd>
-<dt><a name="96"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
+<dt><a name="99"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">gamma correction</b> with parameter
 <i class="arg">y</i>.
@@ -1241,23 +1262,23 @@ argument and result, is defined as:</p>
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
 <p><img alt="scaled_gamma" src="../image/scaled_gamma.png"></p></dd>
-<dt><a name="97"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></dt>
+<dt><a name="100"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">sampled gauss</b> function with
 parameter <i class="arg">sigma</i>.
 This function is defined as:</p>
 <p><img alt="gauss" src="../image/gauss.png"></p></dd>
-<dt><a name="98"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
+<dt><a name="101"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">identity</b> function, which is defined
 as</p>
 <p><img alt="identity" src="../image/identity.png"></p></dd>
-<dt><a name="99"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
+<dt><a name="102"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">inverse</b> function, which is defined
 as</p>
 <p><img alt="inverse" src="../image/inverse.png"></p></dd>
-<dt><a name="100"><b class="cmd">::crimp</b> <b class="method">table linear</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">gain</i> <i class="arg">offset</i></a></dt>
+<dt><a name="103"><b class="cmd">::crimp</b> <b class="method">table linear</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">gain</i> <i class="arg">offset</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a simple linear function with parameters
 <i class="arg">gain</i> (the slope) and <i class="arg">offset</i>. The results are rounded to
@@ -1271,14 +1292,14 @@ Thus the relevant definitions are</p>
 for the wrapped case, and</p>
 <p><img alt="linear_clamp" src="../image/linear_clamp.png">
 when clamping.</p></dd>
-<dt><a name="101"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
+<dt><a name="104"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">log-compression</b> function with
 parameter <i class="arg">max</i>. This parameter is the maximum pixel value the
 function is for, this value, and all larger will be mapped to 255.
 This function is defined as:</p>
 <p><img alt="log" src="../image/log.png"></p></dd>
-<dt><a name="102"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="105"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">solarize</b> function, with parameter
 <i class="arg">threshold</i>. This function is defined as:</p>
@@ -1287,35 +1308,35 @@ values 0 to 255 through the <b class="function">solarize</b> function, with para
 threshold, and the <b class="function">inverse</b> for values at and above it. Its
 application to an image produces what is known as either
 <i class="term"><a href="../index.html#key56">solarization</a></i> or <i class="term"><a href="../index.html#key51">sabattier effect</a></i>.</p></dd>
-<dt><a name="103"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
+<dt><a name="106"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">sqrt-compression</b> function with
 parameter <i class="arg">max</i>. This parameter is the maximum pixel value the
 function is for, this value, and all larger will be mapped to 255.
 This function is defined as:</p>
 <p><img alt="sqrt" src="../image/sqrt.png"></p></dd>
-<dt><a name="104"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
+<dt><a name="107"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This is a convenience method around <b class="method">table linear</b> which maps
 <i class="arg">min</i> to 0, and <i class="arg">max</i> to 255, with linear interpolation in
 between. Values below <i class="arg">min</i> and above <i class="arg">max</i> are clamped to 0
 and 255 respectively.</p></dd>
-<dt><a name="105"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="108"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key61">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-ge" src="../image/threshold-ge.png"></p></dd>
-<dt><a name="106"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="109"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key61">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-le" src="../image/threshold-le.png"></p></dd>
-<dt><a name="107"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
+<dt><a name="110"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key61">binarization</a></i>)
 function, with parameters <i class="arg">min</i> and <i class="arg">max</i>. This function is
 defined as:</p>
 <p><img alt="threshold-inside" src="../image/threshold-inside.png"></p></dd>
-<dt><a name="108"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
+<dt><a name="111"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key61">binarization</a></i>)
 function, with parameters <i class="arg">min</i> and <i class="arg">max</i>. This function is

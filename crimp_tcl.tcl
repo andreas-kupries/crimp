@@ -934,6 +934,51 @@ proc ::crimp::filter::convolve {image args} {
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::filter::ahe {image args} {
+    # args = ?-border spec? ?radius?
+
+    set type [crimp::TypeOf $image]
+    set fc ahe_${type}
+    if {![crimp::Has $fc]} {
+	return -code error "AHE filtering is not supported for image type \"$type\""
+    }
+
+    # Default settings for border expansion.
+    lassign [crimp::BORDER $type const] fe values
+
+    set at 0
+    while {1} {
+	set opt [lindex $args $at]
+	if {![string match -* $opt]} break
+	incr at
+	switch -- $opt {
+	    -border {
+		set value [lindex $at $args]
+		lassign [crimp::BORDER $type $value] fe values
+		incr at
+	    }
+	    default {
+		return -code error "Unknown option \"$opt\", expected -border"
+	    }
+	}
+    }
+    set args [lrange $args $at end]
+    switch -- [llength $args] {
+	0 { set radius 3                }
+	1 { set radius [lindex $args 0] }
+	default {
+	    return -code error "wrong#args: expected image ?-border spec? ?radius?"
+	}
+    }
+
+    # Shrinkage by 2*radius. Compensate using the chosen border type.
+
+    return [crimp::$fc [crimp::$fe $image $radius $radius $radius $radius {*}$values] \
+		$radius]
+}
+
+# # ## ### ##### ######## #############
+
 proc ::crimp::filter::rank {image args} {
     # args = ?-border spec? ?radius ?percentile??
 

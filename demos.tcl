@@ -615,6 +615,11 @@ proc bases {} {
     return [llength $base]
 }
 
+proc thebases {} {
+    global base
+    return $base
+}
+
 # # ## ### ##### ######## #############
 
 proc main {} {

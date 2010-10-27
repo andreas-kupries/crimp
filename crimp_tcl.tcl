@@ -30,6 +30,55 @@ proc ::crimp::P {fqn} {
     return [lrange [::split [namespace tail $fqn] _] 1 end]
 }
 
+proc ::crimp::ALIGN {image size where fe values} {
+    # Do nothing if the image is at the requested size.
+
+    switch -exact -- $where {
+	top - center - bottom {
+	    set delta [expr {$size - [height $image]}]
+	    if {!$delta} { return $image }
+	}
+	left - middle - right {
+	    set delta [expr {$size - [width $image]}]
+	    if {!$delta} { return $image }
+	}
+    }
+
+    # Expand the image to the requested size, with the alignment
+    # specifying which border(s) to expand.
+
+    set n 0
+    set s 0
+    set e 0
+    set w 0
+
+    switch -exact -- $where {
+	top    { set s $delta }
+	bottom { set n $delta }
+	left   { set e $delta }
+	right  { set w $delta }
+	center {
+	    # In the centerline. If an even split is not possible move
+	    # it one pixel down.
+	    set d [expr {$delta/2}]
+	    set n $d
+	    set s $d
+	    if {$delta % 2 == 1} { incr n }
+	}
+	middle {
+	    # In the middle. If an even split is not possible move it
+	    # one pixel to the right.
+	    set d [expr {$delta/2}]
+	    set w $d
+	    set e $d
+	    if {$delta % 2 == 1} { incr w }
+	}
+    }
+
+    # Run the expansion.
+    return [crimp::$fe $image $w $n $e $s {*}$values]
+}
+
 proc ::crimp::BORDER {imagetype spec} {
     set values [lassign $spec bordertype]
 
@@ -351,8 +400,41 @@ namespace eval ::crimp::montage {
 proc ::crimp::montage::horizontal {args} {
     # option processing (expansion type, vertical alignment) ...
 
+    # Default settings for border expansion in alignment.
+    set border    const
+    set alignment center
+
+    set at 0
+    while {1} {
+	set opt [lindex $args $at]
+	if {![string match -* $opt]} break
+	incr at
+	switch -- $opt {
+	    -align {
+		set alignment [lindex $at $args]
+		if {$alignment ni {top center bottom}} {
+		    return -code error "Illegal vertical alignment \"$alignment\", expected bottom, center, or top"
+		}
+		incr at
+	    }
+	    -border {
+		set border [lindex $at $args]
+		incr at
+	    }
+	    default {
+		return -code error "Unknown option \"$opt\", expected -align, or -border"
+	    }
+	}
+    }
+    set args [lrange $args $at end]
+
     if {[llength $args] == 1} {
-	return [lindex $args 0]
+	# Check border settings. While irrelevant for the single image
+	# case we don't wish to accept something bogus even so.
+
+	set image [lindex $args 0]
+	crimp::BORDER [::crimp::TypeOf $image] $border
+	return $image
     } elseif {[llength $args] == 0} {
 	return -code error "No images to montage"
     }
@@ -368,6 +450,8 @@ proc ::crimp::montage::horizontal {args} {
 	set type   $itype
 	set height [tcl::mathfunc::max $height [::crimp height $image]]
     }	
+
+    lassign [crimp::BORDER $type $border] fe values
 
     set f montageh_${type}
     if {![::crimp::Has $f]} {
@@ -377,9 +461,9 @@ proc ::crimp::montage::horizontal {args} {
     # todo: investigate ability of critcl to have typed var-args
     # commands.
     set remainder [lassign $args result]
-    # todo: expand to max height.
+    set result    [crimp::ALIGN $result $height $alignment $fe $values]
     foreach image $remainder {
-	# todo: expand to max height.
+	set image [crimp::ALIGN $image $height $alignment $fe $values]
 	set result [::crimp::$f $result $image]
     }
     return $result
@@ -388,23 +472,58 @@ proc ::crimp::montage::horizontal {args} {
 proc ::crimp::montage::vertical {args} {
     # option processing (expansion type, vertical alignment) ...
 
+    # Default settings for border expansion in alignment.
+    set border    const
+    set alignment middle
+
+    set at 0
+    while {1} {
+	set opt [lindex $args $at]
+	if {![string match -* $opt]} break
+	incr at
+	switch -- $opt {
+	    -align {
+		set alignment [lindex $at $args]
+		if {$alignment ni {left middle right}} {
+		    return -code error "Illegal horizontal alignment \"$alignment\", expected left, middle, or right"
+		}
+		incr at
+	    }
+	    -border {
+		set border [lindex $at $args]
+		incr at
+	    }
+	    default {
+		return -code error "Unknown option \"$opt\", expected -align, or -border"
+	    }
+	}
+    }
+    set args [lrange $args $at end]
+
     if {[llength $args] == 1} {
-	return [lindex $args 0]
+	# Check border settings. While irrelevant for the single image
+	# case we don't wish to accept something bogus even so.
+
+	set image [lindex $args 0]
+	crimp::BORDER [::crimp::TypeOf $image] $border
+	return $image
     } elseif {[llength $args] == 0} {
 	return -code error "No images to montage"
     }
 
-    # Check type, and compute max height, for border expansion.
+    # Check type, and compute max width, for border expansion.
     set type {}
-    set height 0
+    set width 0
     foreach image $args {
 	set itype [::crimp::TypeOf $image]
 	if {($type ne {}) && ($type ne $itype)} {
 	    return -code error "Type mismatch, unable to montage $type to $itype"
 	}
 	set type   $itype
-	set height [tcl::mathfunc::max $height [::crimp height $image]]
+	set width [tcl::mathfunc::max $width [::crimp width $image]]
     }	
+
+    lassign [crimp::BORDER $type $border] fe values
 
     set f montagev_${type}
     if {![::crimp::Has $f]} {
@@ -414,9 +533,9 @@ proc ::crimp::montage::vertical {args} {
     # todo: investigate ability of critcl to have typed var-args
     # commands.
     set remainder [lassign $args result]
-    # todo: expand to max height.
+    set result    [crimp::ALIGN $result $width $alignment $fe $values]
     foreach image $remainder {
-	# todo: expand to max height.
+	set image [crimp::ALIGN $image $width $alignment $fe $values]
 	set result [::crimp::$f $result $image]
     }
     return $result

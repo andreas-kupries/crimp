@@ -565,7 +565,7 @@ relevant edges. This is also called tiling.
 [list_end]
 
 
-[call [cmd ::crimp] [method {filter convolve}] [opt "[option -border] [arg spec]"] [arg kernel]...]
+[call [cmd ::crimp] [method {filter convolve}] [arg image] [opt "[option -border] [arg spec]"] [arg kernel]...]
 [keywords {convolution filter} filter]
 
 This method runs the series of filters specified by the convolution
@@ -584,7 +584,7 @@ the expansion.
 "[arg spec] == {const 0}".
 
 
-[call [cmd ::crimp] [method {filter rank}] [opt "[option -border] [arg spec]"] [opt "[arg radius] [opt [arg percentile]]"]]
+[call [cmd ::crimp] [method {filter rank}] [arg image] [opt "[option -border] [arg spec]"] [opt "[arg radius] [opt [arg percentile]]"]]
 [keywords filter {rank-order filter} {max-filter} {min-filter} {median-filter}]
 
 This method runs a rank-filter over the input and returns the filtered

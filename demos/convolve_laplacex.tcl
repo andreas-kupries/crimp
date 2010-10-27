@@ -1,5 +1,5 @@
-def op_convolve_laplacex {
-    label {Laplace X}
+def op_convolve_laplacex1 {
+    label {Laplace X+1}
     setup {
 	# http://wiki.tcl.tk/9521
 	variable K [crimp kernel make {

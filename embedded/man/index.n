@@ -289,6 +289,12 @@ channels
 \fBfiles/crimp.n\fR
 crimp
 .RE
+charcoal
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 closing
 .RS
 .TP
@@ -350,6 +356,18 @@ dimensions
 crimp
 .RE
 edge shrinking
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+effect
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+emboss
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -572,6 +590,12 @@ resize
 crimp
 .RE
 sabattier effect
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+sharpen
 .RS
 .TP
 \fBfiles/crimp.n\fR

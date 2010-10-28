@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/fc/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -289,6 +289,12 @@ package require \fBcrimp  ?0?\fR
 \fB::crimp\fR \fBdifference\fR \fIimage1\fR \fIimage2\fR
 .sp
 \fB::crimp\fR \fBdownsample\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBeffect charcoal\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBeffect emboss\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBeffect sharpen\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
 .sp
@@ -1016,6 +1022,20 @@ problematic frequencies.
 .sp
 The \fBdecimate\fR method is a convenience method combining these
 two steps into one.
+.TP
+\fB::crimp\fR \fBeffect charcoal\fR \fIimage\fR
+This method applies a charcoal effect to the image, i.e. it returns a
+\fBgrey8\fR image showing the input as if it had been drawn with a
+charcoal pencil.
+.TP
+\fB::crimp\fR \fBeffect emboss\fR \fIimage\fR
+This method applies an embossing effect to the image, i.e. it returns
+an image of the same type as the input showing the input as if it had
+been embossed into a metal plate with a stencil of some kind.
+.TP
+\fB::crimp\fR \fBeffect sharpen\fR \fIimage\fR
+This method sharpens the input image, i.e. returns an image of the
+same type as the input in which the input's edges are emphasized.
 .TP
 \fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
 .TP
@@ -2044,7 +2064,7 @@ Simon Perreault and Patrick Hebert, "Median Filtering in Constant Time", 2007
 \fIhttp://nomis80.org/ctmf.html\fR
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, binarization, black tophat, blending, channels, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, filter, flip, gamma correction, gradient, histogram, image, internal gradient, inversion, log-compression, matrix, max, max-filter, median, median-filter, min, min-filter, mirror expansion, montage, morphology, opening, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, shrinking, solarization, sqrt-compression, statistics, stddev, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, binarization, black tophat, blending, channels, charcoal, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, filter, flip, gamma correction, gradient, histogram, image, internal gradient, inversion, log-compression, matrix, max, max-filter, median, median-filter, min, min-filter, mirror expansion, montage, morphology, opening, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, sharpen, shrinking, solarization, sqrt-compression, statistics, stddev, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

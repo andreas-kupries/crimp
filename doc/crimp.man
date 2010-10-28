@@ -508,6 +508,29 @@ problematic frequencies.
 two steps into one.
 
 
+[call [cmd ::crimp] [method {effect charcoal}] [arg image]]
+[keywords effect charcoal]
+
+This method applies a charcoal effect to the image, i.e. it returns a
+[const grey8] image showing the input as if it had been drawn with a
+charcoal pencil.
+
+
+[call [cmd ::crimp] [method {effect emboss}] [arg image]]
+[keywords effect emboss]
+
+This method applies an embossing effect to the image, i.e. it returns
+an image of the same type as the input showing the input as if it had
+been embossed into a metal plate with a stencil of some kind.
+
+
+[call [cmd ::crimp] [method {effect sharpen}] [arg image]]
+[keywords effect sharpen]
+
+This method sharpens the input image, i.e. returns an image of the
+same type as the input in which the input's edges are emphasized.
+
+
 [call [cmd ::crimp] [method {expand const}] [arg image] [arg ww] [arg hn] [arg we] [arg hs] [opt [arg value]...]]
 [call [cmd ::crimp] [method {expand extend}] [arg image] [arg ww] [arg hn] [arg we] [arg hs]]
 [call [cmd ::crimp] [method {expand mirror}] [arg image] [arg ww] [arg hn] [arg we] [arg hs]]

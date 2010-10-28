@@ -553,6 +553,35 @@ proc ::crimp::solarize {image n} {
 
 # # ## ### ##### ######## #############
 
+namespace eval ::crimp::effect {
+    namespace export *
+    namespace ensemble create
+}
+
+proc ::crimp::effect::sharpen {image} {
+    # http://wiki.tcl.tk/9521
+    return [crimp filter convolve $image \
+		[crimp kernel make {
+		    { 0  -1  0}
+		    {-1   5 -1}
+		    { 0  -1  0}} 1]]
+}
+
+proc ::crimp::effect::emboss {image} {
+    # http://wiki.tcl.tk/9521 (Suchenwirth)
+    return [crimp filter convolve $image \
+		[crimp kernel make {
+		    {2  0  0}
+		    {0 -1  0}
+		    {0  0 -1}}]]
+}
+
+proc ::crimp::effect::charcoal {image} {
+    return [crimp morph gradient [crimp convert 2grey8 $image]]
+}
+
+# # ## ### ##### ######## #############
+
 namespace eval ::crimp::threshold {
     namespace export *
     namespace ensemble create
@@ -1879,7 +1908,7 @@ namespace eval ::crimp {
     namespace export alpha histogram max min screen add pixel
     namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate
-    namespace export kernel expand threshold gradient
+    namespace export kernel expand threshold gradient effect
     namespace export statistics rotate montage morph
     #
     namespace ensemble create

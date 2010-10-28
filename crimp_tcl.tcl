@@ -411,14 +411,14 @@ proc ::crimp::montage::horizontal {args} {
 	incr at
 	switch -- $opt {
 	    -align {
-		set alignment [lindex $at $args]
+		set alignment [lindex $args $at]
 		if {$alignment ni {top center bottom}} {
 		    return -code error "Illegal vertical alignment \"$alignment\", expected bottom, center, or top"
 		}
 		incr at
 	    }
 	    -border {
-		set border [lindex $at $args]
+		set border [lindex $args $at]
 		incr at
 	    }
 	    default {
@@ -483,14 +483,14 @@ proc ::crimp::montage::vertical {args} {
 	incr at
 	switch -- $opt {
 	    -align {
-		set alignment [lindex $at $args]
+		set alignment [lindex $args $at]
 		if {$alignment ni {left middle right}} {
 		    return -code error "Illegal horizontal alignment \"$alignment\", expected left, middle, or right"
 		}
 		incr at
 	    }
 	    -border {
-		set border [lindex $at $args]
+		set border [lindex $args $at]
 		incr at
 	    }
 	    default {
@@ -1046,7 +1046,7 @@ proc ::crimp::filter::convolve {image args} {
 	incr at
 	switch -- $opt {
 	    -border {
-		set value [lindex $at $args]
+		set value [lindex $args $at]
 		lassign [crimp::BORDER $type $value] fe values
 		incr at
 	    }
@@ -1101,7 +1101,7 @@ proc ::crimp::filter::ahe {image args} {
 	incr at
 	switch -- $opt {
 	    -border {
-		set value [lindex $at $args]
+		set value [lindex $args $at]
 		lassign [crimp::BORDER $type $value] fe values
 		incr at
 	    }
@@ -1146,7 +1146,7 @@ proc ::crimp::filter::rank {image args} {
 	incr at
 	switch -- $opt {
 	    -border {
-		set value [lindex $at $args]
+		set value [lindex $args $at]
 		lassign [crimp::BORDER $type $value] fe values
 		incr at
 	    }

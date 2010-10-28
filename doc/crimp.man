@@ -691,16 +691,33 @@ This method combines the two input images into a result image by
 taking the pixelwise minimum.
 
 
-[call [cmd ::crimp] [method {montage horizontal}] [arg image]...]
-[call [cmd ::crimp] [method {montage vertical}] [arg image]...]
+[call [cmd ::crimp] [method {montage horizontal}] [opt "[option -align] [const top]|[const center]|[const bottom]"] [opt "[option -border] [arg spec]"] [arg image]...]
+[call [cmd ::crimp] [method {montage vertical}]   [opt "[option -align] [const left]|[const middle]|[const right]"] [opt "[option -border] [arg spec]"] [arg image]...]
 [keywords montage]
 
 The result of these methods is an image where the input images have
 been placed adjacent to each from left to right (horizontal), or top
-to bottom (vertical). The input images have to have the same type, and
-the same height, or width, respectively.
+to bottom (vertical). The input images have to have the same type.
 
-[comment {TODO: Add options to allow auto-expansion to a common height/width}]
+[para]
+There is no need however for them to have the same height, or width,
+respectively. When images of different height (width) are used the
+command will expand them to their common height (width), which is the
+maximum of all heights (widths). The expansion process is further
+governed by the values of the [option -align] and [option -border]
+options, with the latter specifying the form of the expansion (see
+method [method expand] for details), and the first specifying how the
+image is aligned within the expanded space.
+
+[para]
+The [arg spec] argument of [option -border] is a list containing the
+name of the sub-method of [method expand] to use, plus any additional
+arguments this method may need, except for the size of the expansion.
+
+[para]
+The default values for [option -align] are [const center] and
+[const middle], centering the image in the space. The default for the
+[option -border] is a black frame, i.e. "[arg spec] == {const 0}".
 
 
 [call [cmd ::crimp] [method {morph dilate}] [arg image]]

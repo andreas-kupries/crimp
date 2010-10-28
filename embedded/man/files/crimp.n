@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/fc/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -300,9 +300,9 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBexpand wrap\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
 .sp
-\fB::crimp\fR \fBfilter convolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+\fB::crimp\fR \fBfilter convolve\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
 .sp
-\fB::crimp\fR \fBfilter rank\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
+\fB::crimp\fR \fBfilter rank\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
 .sp
 \fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
 .sp
@@ -316,9 +316,9 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBmin\fR \fIimage1\fR \fIimage2\fR
 .sp
-\fB::crimp\fR \fBmontage horizontal\fR \fIimage\fR...
+\fB::crimp\fR \fBmontage horizontal\fR ?\fB-align\fR \fBtop\fR|\fBcenter\fR|\fBbottom\fR? ?\fB-border\fR \fIspec\fR? \fIimage\fR...
 .sp
-\fB::crimp\fR \fBmontage vertical\fR \fIimage\fR...
+\fB::crimp\fR \fBmontage vertical\fR ?\fB-align\fR \fBleft\fR|\fBmiddle\fR|\fBright\fR? ?\fB-border\fR \fIspec\fR? \fIimage\fR...
 .sp
 \fB::crimp\fR \fBmorph dilate\fR \fIimage\fR
 .sp
@@ -1086,7 +1086,7 @@ found by toroidial (cyclic) wrapping its coordinates along the
 relevant edges. This is also called tiling.
 .RE
 .TP
-\fB::crimp\fR \fBfilter convolve\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+\fB::crimp\fR \fBfilter convolve\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
 This method runs the series of filters specified by the convolution
 \fIkernel\fRs over the input and returns the filtered result. See the
 method \fBkernel\fR and its sub-methods for commands to create and
@@ -1102,7 +1102,7 @@ the expansion.
 By default a black frame is used as the border, i.e.
 "\fIspec\fR == {const 0}".
 .TP
-\fB::crimp\fR \fBfilter rank\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
+\fB::crimp\fR \fBfilter rank\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
 This method runs a rank-filter over the input and returns the filtered
 result.
 .sp
@@ -1182,13 +1182,29 @@ taking the pixelwise maximum.
 This method combines the two input images into a result image by
 taking the pixelwise minimum.
 .TP
-\fB::crimp\fR \fBmontage horizontal\fR \fIimage\fR...
+\fB::crimp\fR \fBmontage horizontal\fR ?\fB-align\fR \fBtop\fR|\fBcenter\fR|\fBbottom\fR? ?\fB-border\fR \fIspec\fR? \fIimage\fR...
 .TP
-\fB::crimp\fR \fBmontage vertical\fR \fIimage\fR...
+\fB::crimp\fR \fBmontage vertical\fR ?\fB-align\fR \fBleft\fR|\fBmiddle\fR|\fBright\fR? ?\fB-border\fR \fIspec\fR? \fIimage\fR...
 The result of these methods is an image where the input images have
 been placed adjacent to each from left to right (horizontal), or top
-to bottom (vertical). The input images have to have the same type, and
-the same height, or width, respectively.
+to bottom (vertical). The input images have to have the same type.
+.sp
+There is no need however for them to have the same height, or width,
+respectively. When images of different height (width) are used the
+command will expand them to their common height (width), which is the
+maximum of all heights (widths). The expansion process is further
+governed by the values of the \fB-align\fR and \fB-border\fR
+options, with the latter specifying the form of the expansion (see
+method \fBexpand\fR for details), and the first specifying how the
+image is aligned within the expanded space.
+.sp
+The \fIspec\fR argument of \fB-border\fR is a list containing the
+name of the sub-method of \fBexpand\fR to use, plus any additional
+arguments this method may need, except for the size of the expansion.
+.sp
+The default values for \fB-align\fR are \fBcenter\fR and
+\fBmiddle\fR, centering the image in the space. The default for the
+\fB-border\fR is a black frame, i.e. "\fIspec\fR == {const 0}".
 .TP
 \fB::crimp\fR \fBmorph dilate\fR \fIimage\fR
 .TP

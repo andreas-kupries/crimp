@@ -266,8 +266,8 @@ This method returns the raw pixels of the [arg image] as a Tcl ByteArray.
 [para] The method supports all image types.
 
 
-[call [cmd ::crimp] [method statistics] [arg image]]
-[keywords statistics min max median stddev variance]
+[call [cmd ::crimp] [method {statistics basic}] [arg image]]
+[keywords statistics min max median mean average middle stddev variance]
 
 This method returns a nested dictionary as its result. The outer dictionary
 contains basic information about the image, see the list of keys below.
@@ -275,7 +275,6 @@ The inner dictionaries hold data about each (color) channel in the image,
 namely histogram and derived data like minumum pixel value, maximum, etc.
 
 [list_begin definitions]
-[def [const channels]]   List of the names for the channels in the image.
 [def [const dimensions]] 2-element list holding image width and height, in
                          this order.
 [def [const height]]     Image height as separate value.
@@ -283,14 +282,15 @@ namely histogram and derived data like minumum pixel value, maximum, etc.
                          its width and height.
 [def [const type]]       Type of the image.
 [def [const width]]      Image width as separate value.
-[def [const {channel *}]]
-                         Per channel named in key [const channels], where
-                         [const *] is the place holder for the channel name.
-                         A dictionary holding the statistics for that channel.
+[def [const channels]]   List of the names for the channels in the image.
+[def [const channel]]    A dictionary mapping the names of the image's
+                         channels, as listed under key [const channels], to
+                         a dictionary holding the statistics for that channel.
 [list_begin definitions]
 [def [const min]]        The minimal pixel value with a non-zero population.
 [def [const max]]        The maximal pixel value with a non-zero population.
-[def [const mean]]       The arithmetic mean of pixel values.
+[def [const mean]]       The arithmetic mean (aka average) of pixel values.
+[def [const middle]]     The arithmetic mean of the min and max pixel values.
 [def [const median]]     The median pixel value.
 [def [const stddev]]     The standard deviation of pixel values.
 [def [const variance]]   The variance of pixel values, square of the standard
@@ -311,6 +311,16 @@ current system the result would contain internal dictionaries with 2^32 keys
 and values, taking up, roughly, 192 GiByte of memory in the worst case,
 and 96 GiByte in best case (all counter values shared in a single
 object).
+
+[call [cmd ::crimp] [method {statistics otsu}] [arg stats]]
+[keywords {otsu threshold} threshold binarization]
+
+This method takes a dictionary of basic image statistics as generated
+by [cmd {crimp statistics basic}] and returns an extended dictionary
+containing a threshold for image binarization computed by Otsu's
+method (See [sectref References reference] 2). Note that this
+threshold is computed separately for each channel and stored in the
+channel specific part of the dictionary, using the key [const otsu].
 
 
 [call [cmd ::crimp] [method type] [arg image]]
@@ -1632,6 +1642,9 @@ defined as:
 
 [enum] Simon Perreault and Patrick Hebert, "Median Filtering in Constant Time", 2007
        [uri http://nomis80.org/ctmf.html]
+
+[enum] Nobuyuki Otsu, "A threshold selection method from gray-level histograms", 1979
+       [uri http://en.wikipedia.org/wiki/Otsu%27s_method]
 
 [list_end]
 

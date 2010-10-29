@@ -3,14 +3,17 @@ def op_statistics {
     setup_image {
 	variable stat
 	variable hist
-	array set stat [crimp statistics [base]]
+	array set stat [crimp statistics basic [base]]
 
 	foreach k [lsort -dict [array names stat]] {
-	    if {[string match {channel *} $k]} {
-		array set hist $stat($k)
+	    if {$k eq "channel"} {
 		log "$k"
-		foreach j [lsort -dict [array names hist]] {
-		    log "\t$j = $hist($j)"
+		foreach {c cdata} $stat($k) {
+		    log "\t$c"
+		    array set hist $cdata
+		    foreach j [lsort -dict [array names hist]] {
+			log "\t\t$j = $hist($j)"
+		    }
 		}
 	    } else {
 		log "$k = $stat($k)"

@@ -265,6 +265,12 @@ alpha channel
 \fBfiles/crimp.n\fR
 crimp
 .RE
+average
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 binarization
 .RS
 .TP
@@ -481,6 +487,12 @@ max-filter
 \fBfiles/crimp.n\fR
 crimp
 .RE
+mean
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 median
 .RS
 .TP
@@ -488,6 +500,12 @@ median
 crimp
 .RE
 median-filter
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+middle
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -524,6 +542,12 @@ morphology
 crimp
 .RE
 opening
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+otsu threshold
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -626,6 +650,12 @@ statistics
 crimp
 .RE
 stddev
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+threshold
 .RS
 .TP
 \fBfiles/crimp.n\fR

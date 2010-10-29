@@ -610,6 +610,50 @@ proc ::crimp::threshold::global::outside {image min max} {
     return [::crimp remap $image [::crimp map threshold outside $min $max]]
 }
 
+proc ::crimp::threshold::global::otsu {image} {
+    set maps {}
+    set stat [::crimp statistics otsu [::crimp statistics basic $image]]
+    foreach c [dict get $stat channels] {
+	lappend maps \
+	    [::crimp map threshold below \
+		 [dict get $stat channel $c otsu]]
+    }
+    return [::crimp remap $image {*}$maps]
+}
+
+proc ::crimp::threshold::global::middle {image} {
+    set maps {}
+    set stat [::crimp statistics basic $image]
+    foreach c [dict get $stat channels] {
+	lappend maps \
+	    [::crimp map threshold below \
+		 [dict get $stat channel $c middle]]
+    }
+    return [::crimp remap $image {*}$maps]
+}
+
+proc ::crimp::threshold::global::mean {image} {
+    set maps {}
+    set stat [::crimp statistics basic $image]
+    foreach c [dict get $stat channels] {
+	lappend maps \
+	    [::crimp map threshold below \
+		 [dict get $stat channel $c mean]]
+    }
+    return [::crimp remap $image {*}$maps]
+}
+
+proc ::crimp::threshold::global::median {image} {
+    set maps {}
+    set stat [::crimp statistics basic $image]
+    foreach c [dict get $stat channels] {
+	lappend maps \
+	    [::crimp map threshold below \
+		 [dict get $stat channel $c median]]
+    }
+    return [::crimp remap $image {*}$maps]
+}
+
 proc ::crimp::threshold::local {image args} {
     set type [::crimp::TypeOf $image]
     set f threshold_$type
@@ -1331,25 +1375,30 @@ proc crimp::pyramid::laplace {image steps} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::statistics {image} {
+namespace eval ::crimp::statistics {
+    namespace export {[a-z]*}
+    namespace ensemble create
+}
+
+proc ::crimp::statistics::basic {image} {
     array set stat {}
 
     # Basics
-    set stat(channels)   [channels   $image]
-    set stat(dimensions) [dimensions $image]
-    set stat(height)     [height     $image]
-    set stat(width)      [width      $image]
-    set stat(type)       [TypeOf     $image]
+    set stat(channels)   [crimp channels   $image]
+    set stat(dimensions) [crimp dimensions $image]
+    set stat(height)     [crimp height     $image]
+    set stat(width)      [crimp width      $image]
+    set stat(type)       [crimp::TypeOf    $image]
     set stat(pixels)     [set n [expr {$stat(width) * $stat(height)}]]
 
     # Histogram and derived data, per channel.
-    foreach {c h} [histogram $image] {
+    foreach {c h} [crimp histogram $image] {
 	#puts <$c>
 	set hf     [dict values $h]
 	#puts H|[llength $hf]||$hf
-	set cdf    [CUMULATE $hf]
+	set cdf    [crimp::CUMULATE $hf]
 	#puts C|[llength $cdf]|$cdf
-	set cdf255 [FIT $cdf 255]
+	set cdf255 [crimp::FIT $cdf 255]
 
 	# Min, max, plus pre-processing for the mean
 	set min 255
@@ -1368,6 +1417,7 @@ proc ::crimp::statistics {image} {
 	# Median
 	if {$min == $max} {
 	    set median $min
+	    set middle $min
 	} else {
 	    set median 0
 	    foreach {p count} $h s $cdf255 {
@@ -1375,6 +1425,7 @@ proc ::crimp::statistics {image} {
 		set median $p
 		break
 	    }
+	    set middle [expr {($min+$max)/2}]
 	}
 
 	# Variance
@@ -1390,11 +1441,11 @@ proc ::crimp::statistics {image} {
 	set variance [expr {($sum2 - $sumc**2/$n)/($n - 1)}]
 	set stddev   [expr {sqrt($variance)}]
 
-	# Save the statistics
-	set key [list channel $c]
-	set stat($key) [dict create        \
+	# Save the channel statistics
+	lappend stat(channel) $c [dict create        \
 			    min       $min  \
 			    max       $max   \
+			    middle    $middle \
 			    median    $median \
 			    mean      $mean    \
 			    stddev    $stddev   \
@@ -1410,6 +1461,62 @@ proc ::crimp::statistics {image} {
     return [array get stat]
 }
 
+proc ::crimp::statistics::otsu {basic} {
+    foreach c [dict get $basic channels] {
+	dict set basic channel $c otsu \
+	    [OTSU [dict get $basic channel $c histogram]]
+    }
+    return $basic
+}
+
+proc ::crimp::statistics::OTSU {histogram} {
+    # Code based on the explanations at
+    # http://www.labbookpages.co.uk/software/imgProc/otsuThreshold.html
+    # See also http://en.wikipedia.org/wiki/Otsu%27s_method
+
+    set weightAll 0
+    set sumAll    0
+    set wlist     {}
+    foreach {pixel count} $histogram {
+	set w [expr {$pixel * $count}]
+	lappend wlist $w
+	incr sumAll    $w
+	incr weightAll $count
+    }
+
+    set sumBg       0
+    set sumFg       $sumAll
+    set threshold   0          ; # And the associated threshold.
+    set varianceMax 0          ; # Maxium of variance found so far.
+    set weightBg    0          ; # Weight of background pixels
+    set weightFg    $weightAll ; # Weight of foreground pixels
+
+    foreach {pixel count} $histogram w $wlist {
+	# update weights.
+	incr weightBg  $count ; if {!$weightBg} continue
+	incr weightFg -$count ; if {!$weightFg} break
+
+	incr sumBg  $w
+	incr sumFg -$w
+
+	# Mean values for current threshold.
+	set meanBg [expr {double($sumBg) / $weightBg}]
+	set meanFg [expr {double($sumFg) / $weightFg}]
+
+	# Variance between the classes.
+	set varianceBetween [expr {$weightBg * $weightFg * ($meanBg - $meanFg)**2}]
+
+	# And update the guess on the threshold.
+	if {$varianceBetween > $varianceMax} {
+	    set varianceMax $varianceBetween
+	    set threshold   $pixel
+	}
+    }
+
+    return $threshold
+}
+
+# # ## ### ##### ######## #############
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::gradient {

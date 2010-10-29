@@ -260,7 +260,9 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBpixel\fR \fIimage\fR
 .sp
-\fB::crimp\fR \fBstatistics\fR \fIimage\fR
+\fB::crimp\fR \fBstatistics basic\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBstatistics otsu\fR \fIstats\fR
 .sp
 \fB::crimp\fR \fBtype\fR \fIimage\fR
 .sp
@@ -770,15 +772,12 @@ This method returns the raw pixels of the \fIimage\fR as a Tcl ByteArray.
 .sp
 The method supports all image types.
 .TP
-\fB::crimp\fR \fBstatistics\fR \fIimage\fR
+\fB::crimp\fR \fBstatistics basic\fR \fIimage\fR
 This method returns a nested dictionary as its result. The outer dictionary
 contains basic information about the image, see the list of keys below.
 The inner dictionaries hold data about each (color) channel in the image,
 namely histogram and derived data like minumum pixel value, maximum, etc.
 .RS
-.TP
-\fBchannels\fR
-List of the names for the channels in the image.
 .TP
 \fBdimensions\fR
 2-element list holding image width and height, in
@@ -797,10 +796,13 @@ Type of the image.
 \fBwidth\fR
 Image width as separate value.
 .TP
-\fBchannel *\fR
-Per channel named in key \fBchannels\fR, where
-\fB*\fR is the place holder for the channel name.
-A dictionary holding the statistics for that channel.
+\fBchannels\fR
+List of the names for the channels in the image.
+.TP
+\fBchannel\fR
+A dictionary mapping the names of the image's
+channels, as listed under key \fBchannels\fR, to
+a dictionary holding the statistics for that channel.
 .RS
 .TP
 \fBmin\fR
@@ -810,7 +812,10 @@ The minimal pixel value with a non-zero population.
 The maximal pixel value with a non-zero population.
 .TP
 \fBmean\fR
-The arithmetic mean of pixel values.
+The arithmetic mean (aka average) of pixel values.
+.TP
+\fBmiddle\fR
+The arithmetic mean of the min and max pixel values.
 .TP
 \fBmedian\fR
 The median pixel value.
@@ -845,6 +850,14 @@ current system the result would contain internal dictionaries with 2^32 keys
 and values, taking up, roughly, 192 GiByte of memory in the worst case,
 and 96 GiByte in best case (all counter values shared in a single
 object).
+.TP
+\fB::crimp\fR \fBstatistics otsu\fR \fIstats\fR
+This method takes a dictionary of basic image statistics as generated
+by \fBcrimp statistics basic\fR and returns an extended dictionary
+containing a threshold for image binarization computed by Otsu's
+method (See \fBreference\fR 2). Note that this
+threshold is computed separately for each channel and stored in the
+channel specific part of the dictionary, using the key \fBotsu\fR.
 .TP
 \fB::crimp\fR \fBtype\fR \fIimage\fR
 This method returns the type of the \fIimage\fR.
@@ -2062,9 +2075,12 @@ f_{min,max} (x) = \\left\\{\\begin{eqnarray}
 .IP [1]
 Simon Perreault and Patrick Hebert, "Median Filtering in Constant Time", 2007
 \fIhttp://nomis80.org/ctmf.html\fR
+.IP [2]
+Nobuyuki Otsu, "A threshold selection method from gray-level histograms", 1979
+\fIhttp://en.wikipedia.org/wiki/Otsu%27s_method\fR
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, binarization, black tophat, blending, channels, charcoal, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, filter, flip, gamma correction, gradient, histogram, image, internal gradient, inversion, log-compression, matrix, max, max-filter, median, median-filter, min, min-filter, mirror expansion, montage, morphology, opening, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, sharpen, shrinking, solarization, sqrt-compression, statistics, stddev, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, channels, charcoal, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, filter, flip, gamma correction, gradient, histogram, image, internal gradient, inversion, log-compression, matrix, max, max-filter, mean, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, sharpen, shrinking, solarization, sqrt-compression, statistics, stddev, threshold, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

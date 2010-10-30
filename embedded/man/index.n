@@ -469,6 +469,12 @@ image
 \fBfiles/crimp.n\fR
 crimp
 .RE
+integral image
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 internal gradient
 .RS
 .TP
@@ -680,6 +686,12 @@ statistics
 crimp
 .RE
 stddev
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+summed area table
 .RS
 .TP
 \fBfiles/crimp.n\fR

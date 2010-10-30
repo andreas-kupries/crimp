@@ -374,6 +374,14 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBthreshold global outside\fR \fIimage\fR \fImin\fR \fImax\fR
 .sp
+\fB::crimp\fR \fBthreshold global middle\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBthreshold global mean\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBthreshold global median\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBthreshold global otsu\fR \fIimage\fR
+.sp
 \fB::crimp\fR \fBthreshold local\fR \fIimage\fR \fIthreshold\fR...
 .sp
 \fB::crimp\fR \fBupsample\fR \fIimage\fR \fIfactor\fR
@@ -1484,6 +1492,20 @@ This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap threshold below\fR \fIthreshold\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
+.TP
+\fB::crimp\fR \fBthreshold global middle\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBthreshold global mean\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBthreshold global median\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBthreshold global otsu\fR \fIimage\fR
+These four methods are convenience methods layered on top of
+\fBcrimp threshold global below\fR. They compute the value(s) to
+perform the thresholding with from the global statistics of the input
+image, with the element taken named by the method. For reference see
+the documentation of method \fBcrimp statistics ...\fR. Note that
+they treat each color channel in the image separately.
 .TP
 \fB::crimp\fR \fBthreshold local\fR \fIimage\fR \fIthreshold\fR...
 This method takes an \fIimage\fR and one or more \fIthreshold\fR maps

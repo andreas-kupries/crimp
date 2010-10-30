@@ -1059,6 +1059,20 @@ This method supports all image types supported by the method
 [method remap].
 
 
+[call [cmd ::crimp] [method {threshold global middle}] [arg image]]
+[call [cmd ::crimp] [method {threshold global mean}] [arg image]]
+[call [cmd ::crimp] [method {threshold global median}] [arg image]]
+[call [cmd ::crimp] [method {threshold global otsu}] [arg image]]
+[keywords thresholding binarization]
+
+These four methods are convenience methods layered on top of
+[cmd {crimp threshold global below}]. They compute the value(s) to
+perform the thresholding with from the global statistics of the input
+image, with the element taken named by the method. For reference see
+the documentation of method [cmd {crimp statistics ...}]. Note that
+they treat each color channel in the image separately.
+
+
 [call [cmd ::crimp] [method {threshold local}] [arg image] [arg threshold]...]
 [keywords thresholding binarization]
 

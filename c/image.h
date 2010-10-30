@@ -166,6 +166,12 @@ extern int      crimp_get_image_from_obj (Tcl_Interp*   interp,
 #define crimp_require_dim(image,rw,rh)					\
     (((image)->w == (rw)) && ((image)->h == (rh)))
 
+#define crimp_require_height(image,rh)					\
+    ((image)->h == (rh))
+
+#define crimp_require_width(image,rw)					\
+    ((image)->w == (rw))
+
 
 /*
  * Local Variables:

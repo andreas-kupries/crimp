@@ -709,6 +709,15 @@ This method supports all image types supported by the method
 [method remap].
 
 
+[call [cmd ::crimp] [method integrate] [arg image]]
+[keywords {integral image} {summed area table}]
+
+This method takes any single-channel image, i.e. of types
+[const float] and [const "grey\{8,16,32\}"], and returns its integral,
+i.e. a summed area table. The type of the result is always of type
+[const float].
+
+
 [call [cmd ::crimp] [method interpolate] [arg image] [arg factor] [arg kernel]]
 
 This is a convenience method combining the two steps of an [method upsample],

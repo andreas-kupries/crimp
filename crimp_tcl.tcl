@@ -768,6 +768,16 @@ proc ::crimp::remap {image args} {
     return [map_$type $image {*}$args]
 }
 
+proc ::crimp::integrate {image} {
+    set type [TypeOf $image]
+    set f integrate_$type
+    if {![Has $f]} {
+	return -code error "Unable to integrate images of type \"$type\""
+    }
+
+    return [$f $image]
+}
+
 proc ::crimp::downsample {image factor} {
     set type [TypeOf $image]
     set f downsample_$type
@@ -2102,7 +2112,8 @@ namespace eval ::crimp {
     namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold gradient effect
-    namespace export statistics rotate montage morph fft
+    namespace export statistics rotate montage morph integrate
+    namespace export fft
     #
     namespace ensemble create
 }

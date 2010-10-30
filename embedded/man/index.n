@@ -415,6 +415,18 @@ extract region
 \fBfiles/crimp.n\fR
 crimp
 .RE
+fast fourier transform
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+fft
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 filter
 .RS
 .TP
@@ -422,6 +434,12 @@ filter
 crimp
 .RE
 flip
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+fourier transform
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -452,6 +470,12 @@ image
 crimp
 .RE
 internal gradient
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+inverse fourier transform
 .RS
 .TP
 \fBfiles/crimp.n\fR

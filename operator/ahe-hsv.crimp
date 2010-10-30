@@ -91,6 +91,7 @@ n = n * n;
  * xi = column index, in the input image coordinate system.
  */
 
+#undef  SHIFT_DOWN
 #define SHIFT_DOWN(xi,yi) {				     \
 	DOWN ((xi), V (image, (xi), (yi) - radius - 1)); \
 	UP   ((xi), V (image, (xi), (yi) + radius)); }
@@ -101,6 +102,7 @@ n = n * n;
  * data for column xi-1. This is in the input image coordinate system.
  */
 
+#undef  SHIFT_RIGHT
 #define SHIFT_RIGHT(xi) { SUB ((xi) - radius - 1); ADD ((xi) + radius); }
 
 /*

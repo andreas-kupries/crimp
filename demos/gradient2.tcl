@@ -1,7 +1,11 @@
-def op_gradient {
-    label {Gradient (RGB)}
+def op_gradient2 {
+    label {Gradient De-Grey}
     active {
-	expr {[bases] == 0}
+	expr {[bases] == 1}
+    }
+    setup_image {
+	variable grey [crimp convert 2grey8 [base]]
+	show
     }
     setup {
 	variable sr 0
@@ -13,6 +17,8 @@ def op_gradient {
 	variable eb 255
 
 	proc show {args} {
+	    variable grey
+
 	    variable sr
 	    variable sg
 	    variable sb
@@ -26,14 +32,18 @@ def op_gradient {
 		       [list $er $eg $eb] \
 		       256]
 
-	    set g [crimp montage vertical $g $g] ;# 2
-	    set g [crimp montage vertical $g $g] ;# 4
-	    set g [crimp montage vertical $g $g] ;# 8
-	    set g [crimp montage vertical $g $g] ;# 16
-	    set g [crimp montage vertical $g $g] ;# 32
-	    set g [crimp montage vertical $g $g] ;# 64
+	    set gi [crimp flip transpose $g]
+	    set gi [crimp montage horizontal $gi $gi] ;# 2
+	    set gi [crimp montage horizontal $gi $gi] ;# 4
+	    set gi [crimp montage horizontal $gi $gi] ;# 8
+	    set gi [crimp montage horizontal $gi $gi] ;# 16
+	    set gi [crimp montage horizontal $gi $gi] ;# 32
+	    set gi [crimp montage horizontal $gi $gi] ;# 64
+	    set gi [crimp expand const $gi 5 5 5 5]
 
-	    show_image [crimp expand const $g 5 5 5 5]
+	    show_image [crimp montage horizontal -align top \
+			    $gi \
+			    [crimp convert 2rgb $grey $g]]
 	    return
 	}
 

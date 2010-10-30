@@ -517,6 +517,12 @@ mean
 \fBfiles/crimp.n\fR
 crimp
 .RE
+mean filter
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 median
 .RS
 .TP

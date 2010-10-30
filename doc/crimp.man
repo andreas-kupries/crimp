@@ -623,6 +623,18 @@ The latter means that a separate invokation of method
 by inverting its FFT.
 
 
+[call [cmd ::crimp] [method {filter ahe}] [arg image] [opt "[option -border] [arg spec]"] [opt [arg radius]]]
+
+This method performs adaptive histogram equalization to enhance the
+contrast of the input image. Each pixel undergoes regular histogram
+equalization, with the histogram computed from the pixels in the
+[var N]x[var N] square centered on it, where
+"[var N] = 2*[var radius]+1".
+
+[para]
+The default radius is [const 3], for a 7x7 square.
+
+
 [call [cmd ::crimp] [method {filter convolve}] [arg image] [opt "[option -border] [arg spec]"] [arg kernel]...]
 [keywords {convolution filter} filter]
 
@@ -640,6 +652,18 @@ the expansion.
 
 [para] By default a black frame is used as the border, i.e.
 "[arg spec] == {const 0}".
+
+
+[call [cmd ::crimp] [method {filter mean}] [arg image] [opt "[option -border] [arg spec]"] [opt [arg radius]]]
+[keywords {mean filter} filter]
+
+This method applies a mean filter with [arg radius] to the
+image. I.e. each pixel of the result is the mean value of all pixels
+in the [var N]x[var N] square centered on it, where
+"[var N] = 2*[var radius]+1".
+
+[para]
+The default radius is [const 3], for a 7x7 square.
 
 
 [call [cmd ::crimp] [method {filter rank}] [arg image] [opt "[option -border] [arg spec]"] [opt "[arg radius] [opt [arg percentile]]"]]

@@ -312,7 +312,11 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBfft backward\fR \fIimage\fR
 .sp
+\fB::crimp\fR \fBfilter ahe\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+.sp
 \fB::crimp\fR \fBfilter convolve\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+.sp
+\fB::crimp\fR \fBfilter mean\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
 .sp
 \fB::crimp\fR \fBfilter rank\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
 .sp
@@ -1150,6 +1154,15 @@ The latter means that a separate invokation of method
 \fBconvert 2grey8\fR is required when reconstructing an image
 by inverting its FFT.
 .TP
+\fB::crimp\fR \fBfilter ahe\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+This method performs adaptive histogram equalization to enhance the
+contrast of the input image. Each pixel undergoes regular histogram
+equalization, with the histogram computed from the pixels in the
+\fBN\fRx\fBN\fR square centered on it, where
+"\fBN\fR = 2*\fBradius\fR+1".
+.sp
+The default radius is \fB3\fR, for a 7x7 square.
+.TP
 \fB::crimp\fR \fBfilter convolve\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
 This method runs the series of filters specified by the convolution
 \fIkernel\fRs over the input and returns the filtered result. See the
@@ -1165,6 +1178,14 @@ the expansion.
 .sp
 By default a black frame is used as the border, i.e.
 "\fIspec\fR == {const 0}".
+.TP
+\fB::crimp\fR \fBfilter mean\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+This method applies a mean filter with \fIradius\fR to the
+image. I.e. each pixel of the result is the mean value of all pixels
+in the \fBN\fRx\fBN\fR square centered on it, where
+"\fBN\fR = 2*\fBradius\fR+1".
+.sp
+The default radius is \fB3\fR, for a 7x7 square.
 .TP
 \fB::crimp\fR \fBfilter rank\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
 This method runs a rank-filter over the input and returns the filtered
@@ -2125,7 +2146,7 @@ Nobuyuki Otsu, "A threshold selection method from gray-level histograms", 1979
 \fIhttp://en.wikipedia.org/wiki/Otsu%27s_method\fR
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, channels, charcoal, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, gradient, histogram, image, internal gradient, inverse fourier transform, inversion, log-compression, matrix, max, max-filter, mean, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, sharpen, shrinking, solarization, sqrt-compression, statistics, stddev, threshold, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, channels, charcoal, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, gradient, histogram, image, internal gradient, inverse fourier transform, inversion, log-compression, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, sharpen, shrinking, solarization, sqrt-compression, statistics, stddev, threshold, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

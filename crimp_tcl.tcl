@@ -273,20 +273,55 @@ namespace eval ::crimp::convert {
 ::apply {{} {
     # Converters implemented as C primitives
     foreach fun [::crimp::List convert_*] {
-	proc [lindex [::crimp::P $fun] 0] {image args} \
-	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
-		set type [::crimp::TypeOf $image]
-		# Pass through unchanged if the image is already of
-		# the requested type.
-		if {"2$type" eq "@"} {
-		    return $image
-		}
-		set f    convert_@_${type}
-		if {![::crimp::Has $f]} {
-		    return -code error "Unable to convert images of type \"$type\" to \"@\""
-		}
-		return [::crimp::$f $image {*}$args]
-	    }]
+
+	if {[string match *_2rgb* $fun]} {
+	    # Conversion to rgb(a) needs special handling in the
+	    # converter to allow for a conversion with and without a
+	    # color gradient.
+
+	    set dst [lindex [::crimp::P $fun] 0]
+	    set it  [string range $dst 1 end]
+
+	    proc $dst {image {gradient {}}} \
+		[string map [list @ $dst % $it] {
+		    set type [::crimp::TypeOf $image]
+		    # Pass through unchanged if the image is already of
+		    # the requested type.
+		    if {"2$type" eq "@"} {
+			return $image
+		    }
+		    set f convert_@_${type}
+		    if {![::crimp::Has $f]} {
+			return -code error "Unable to convert images of type \"$type\" to \"@\""
+		    }
+
+		    if {[llength [info level 0]] < 3} {
+			# Standard gradient, plain black to white greyscale
+			set gradient [crimp gradient % {0 0 0} {255 255 255} 256]
+		    }
+
+		    return [::crimp::$f $image $gradient]
+		}]
+
+	} else {
+	    # Standard converters not requiring additional arguments
+	    # to guide/configure the process.
+
+	    proc [lindex [::crimp::P $fun] 0] {image} \
+		[string map [list @ [lindex [::crimp::P $fun] 0]] {
+		    set type [::crimp::TypeOf $image]
+		    # Pass through unchanged if the image is already of
+		    # the requested type.
+		    if {"2$type" eq "@"} {
+			return $image
+		    }
+		    set f    convert_@_${type}
+		    if {![::crimp::Has $f]} {
+			return -code error "Unable to convert images of type \"$type\" to \"@\""
+		    }
+		    return [::crimp::$f $image]
+		}]
+	}
     }
 } ::crimp::convert}
 

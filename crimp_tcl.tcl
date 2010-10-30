@@ -1216,6 +1216,75 @@ proc ::crimp::filter::ahe {image args} {
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::filter::mean {image args} {
+    # args = ?-border spec? ?radius?
+
+    set type [crimp::TypeOf $image]
+
+    # Multi-channel images are handled by splitting them and
+    # processing each channel separately (invoking the method
+    # recursively).
+    switch -exact -- $type {
+	rgb - rgba - hsv {
+	    set r {}
+	    foreach c [crimp split $image] {
+		lappend r [mean $c {*}$args]
+	    }
+	    return [crimp join 2$type {*}$r]
+	}
+    }
+
+    # Instead of using the histogram-based framework underlying the
+    # rank and ahe filters we implement the mean filter via summed
+    # area tables (see method integrate), making the computation
+    # independent of the filter radius.
+
+    # Our standard border expansion is also not const, but 'mirror',
+    # as this is the only setting which will not warp the mean at the
+    # image edges.
+
+    # Default settings for border expansion.
+    lassign [crimp::BORDER $type mirror] fe values
+
+    set at 0
+    while {1} {
+	set opt [lindex $args $at]
+	if {![string match -* $opt]} break
+	incr at
+	switch -- $opt {
+	    -border {
+		set value [lindex $args $at]
+		lassign [crimp::BORDER $type $value] fe values
+		incr at
+	    }
+	    default {
+		return -code error "Unknown option \"$opt\", expected -border"
+	    }
+	}
+    }
+    set args [lrange $args $at end]
+    switch -- [llength $args] {
+	0 { set radius 3                }
+	1 { set radius [lindex $args 0] }
+	default {
+	    return -code error "wrong#args: expected image ?-border spec? ?radius?"
+	}
+    }
+
+    # Shrinkage is by 2*(radius+1). Compensate using the chosen border type.
+    set expand [expr {$radius + 1}]
+    set factor [expr {1./((2*$radius+1)**2)}]
+
+    return [crimp convert 2$type \
+		[crimp::scale_float \
+		     [crimp::region_sum \
+			  [crimp integrate \
+			       [crimp::$fe $image $expand $expand $expand $expand {*}$values]] \
+			  $radius] $factor]]
+}
+
+# # ## ### ##### ######## #############
+
 proc ::crimp::filter::rank {image args} {
     # args = ?-border spec? ?radius ?percentile??
 

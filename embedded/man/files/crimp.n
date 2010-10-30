@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/fc/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -307,6 +307,10 @@ package require \fBcrimp  ?0?\fR
 \fB::crimp\fR \fBexpand replicate\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
 .sp
 \fB::crimp\fR \fBexpand wrap\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.sp
+\fB::crimp\fR \fBfft forward\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfft backward\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBfilter convolve\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
 .sp
@@ -1126,6 +1130,25 @@ The outside pixels take the value of the associated inside pixels,
 found by toroidial (cyclic) wrapping its coordinates along the
 relevant edges. This is also called tiling.
 .RE
+.TP
+\fB::crimp\fR \fBfft forward\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfft backward\fR \fIimage\fR
+These two methods implement 2D FFT (forward) and inverse FFT (backward).
+.sp
+The input is restricted to images of the single-channel types,
+i.e. \fBfloat\fR and \fBgrey{8,16,32}\fR. The result is always
+of type \fBfloat\fR.
+.sp
+The former means that it is necessary to split \fBrgb\fR,
+etc. images into their channels before performing an FFT, and that
+results of an inverse FFT have to be joined.
+See the methods \fBsplit\fR and \fBjoin\fR for the relevant
+operations and their syntax.
+.sp
+The latter means that a separate invokation of method
+\fBconvert 2grey8\fR is required when reconstructing an image
+by inverting its FFT.
 .TP
 \fB::crimp\fR \fBfilter convolve\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
 This method runs the series of filters specified by the convolution
@@ -2102,7 +2125,7 @@ Nobuyuki Otsu, "A threshold selection method from gray-level histograms", 1979
 \fIhttp://en.wikipedia.org/wiki/Otsu%27s_method\fR
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, channels, charcoal, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, filter, flip, gamma correction, gradient, histogram, image, internal gradient, inversion, log-compression, matrix, max, max-filter, mean, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, sharpen, shrinking, solarization, sqrt-compression, statistics, stddev, threshold, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, channels, charcoal, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, gradient, histogram, image, internal gradient, inverse fourier transform, inversion, log-compression, matrix, max, max-filter, mean, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, sharpen, shrinking, solarization, sqrt-compression, statistics, stddev, threshold, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

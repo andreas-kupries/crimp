@@ -598,6 +598,31 @@ relevant edges. This is also called tiling.
 [list_end]
 
 
+[call [cmd ::crimp] [method {fft forward}] [arg image]]
+[call [cmd ::crimp] [method {fft backward}] [arg image]]
+[keywords fft {fast fourier transform} {fourier transform} {inverse fourier transform}]
+
+These two methods implement 2D FFT (forward) and inverse FFT (backward).
+
+[para]
+The input is restricted to images of the single-channel types,
+i.e. [const float] and [const "grey\{8,16,32\}"]. The result is always
+of type [const float].
+
+[para]
+The former means that it is necessary to split [const rgb],
+etc. images into their channels before performing an FFT, and that
+results of an inverse FFT have to be joined.
+
+See the methods [method split] and [method join] for the relevant
+operations and their syntax.
+
+[para]
+The latter means that a separate invokation of method
+[method {convert 2grey8}] is required when reconstructing an image
+by inverting its FFT.
+
+
 [call [cmd ::crimp] [method {filter convolve}] [arg image] [opt "[option -border] [arg spec]"] [arg kernel]...]
 [keywords {convolution filter} filter]
 

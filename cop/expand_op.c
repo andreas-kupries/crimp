@@ -134,7 +134,7 @@
      * South.
      */
 
-    if (hn) {
+    if (hs) {
 	for (yo = 0; yo < hs; yo++) {
 	    for (xo = 0; xo < image->w; xo++) {
 		FILL_S (xo + ww, yo + image->h + hn);

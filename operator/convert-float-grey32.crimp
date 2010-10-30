@@ -12,6 +12,9 @@ Tcl_Obj* imageObj
  * method.
  */
 
+#undef  MINVAL
+#undef  MAXVAL
+
 #define MINVAL 0
 #define MAXVAL 4294967295
 

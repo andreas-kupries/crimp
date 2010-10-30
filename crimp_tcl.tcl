@@ -273,7 +273,7 @@ namespace eval ::crimp::convert {
 ::apply {{} {
     # Converters implemented as C primitives
     foreach fun [::crimp::List convert_*] {
-	proc [lindex [::crimp::P $fun] 0] {image} \
+	proc [lindex [::crimp::P $fun] 0] {image args} \
 	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
 		set type [::crimp::TypeOf $image]
 		# Pass through unchanged if the image is already of
@@ -285,7 +285,7 @@ namespace eval ::crimp::convert {
 		if {![::crimp::Has $f]} {
 		    return -code error "Unable to convert images of type \"$type\" to \"@\""
 		}
-		return [::crimp::$f $image]
+		return [::crimp::$f $image {*}$args]
 	    }]
     }
 } ::crimp::convert}

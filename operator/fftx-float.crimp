@@ -1,0 +1,44 @@
+fftx_float
+Tcl_Obj* imageObj
+
+crimp_image* image;
+crimp_image* result;
+int          y;
+integer      n;
+real*        workspace;
+
+crimp_input (imageObj, image, float);
+
+result = crimp_new_like (image);
+
+n = image->w;
+workspace = NALLOC (2*image->w+15, real);
+rffti_ (&n, workspace);
+
+for (y = 0; y < image->h; y++) {
+    /*
+     * FFT on horizontal scan lines.  We copy each line to the result and then
+     * run the FFT on it in place.  The copying makes use of the identity
+     * between the float and real types to be quick.
+     */
+    memcpy (&FLOATP (result, 0, y),
+	    &FLOATP (image,  0, y),
+	    sizeof(float)*image->w);
+
+    rfftf_ (&n, &FLOATP (result, 0, y), workspace);
+}
+
+ckfree ((char*) workspace);
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

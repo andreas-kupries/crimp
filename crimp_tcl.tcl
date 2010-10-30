@@ -1410,6 +1410,57 @@ proc crimp::pyramid::laplace {image steps} {
 
 # # ## ### ##### ######## #############
 
+namespace eval ::crimp::fft {
+    namespace export {[a-z]*}
+    namespace ensemble create
+}
+
+proc ::crimp::fft::forward {image} {
+    set type [::crimp::TypeOf $image]
+    set f fftx_$type
+    if {![::crimp::Has $f]} {
+	return -code error "Unable to fourier transform images of type \"$type\""
+    }
+
+    # 2d-fft as sequence of 1d-fft's, first horizontal, then vertical.
+    # As a shortcut to the implementation the vertical is done by
+    # transposing, horizontal fftp, and transposing back.  This
+    # sequence will be replaced by a vertical fftp primitive when we
+    # have it (And the transpositions will be implicit in its
+    # implementation). As the result of the fft is a float-type image
+    # we directly call on the appropriate primitives without the need
+    # for dynamic dispatch.
+
+    return [::crimp::flip_transpose_float \
+		[::crimp::fftx_float \
+		     [::crimp::flip_transpose_float \
+			  [::crimp::$f $image]]]]
+}
+
+proc ::crimp::fft::backward {image} {
+    set type [::crimp::TypeOf $image]
+    set f ifftx_$type
+    if {![::crimp::Has $f]} {
+	return -code error "Unable to reverse fourier transform images of type \"$type\""
+    }
+
+    # 2d-ifft as sequence of 1d-ifft's, first horizontal, then vertical.
+    # As a shortcut to the implementation the vertical is done by
+    # transposing, horizontal fftp, and transposing back.  This
+    # sequence will be replaced by a vertical fftp primitive when we
+    # have it (And the transpositions will be implicit in its
+    # implementation). As the result of the fft is a float-type image
+    # we directly call on the appropriate primitives without the need
+    # for dynamic dispatch.
+
+    return [::crimp::flip_transpose_float \
+		[::crimp::ifftx_float \
+		     [::crimp::flip_transpose_float \
+			  [::crimp::$f $image]]]]
+}
+
+# # ## ### ##### ######## #############
+
 namespace eval ::crimp::statistics {
     namespace export {[a-z]*}
     namespace ensemble create
@@ -2051,7 +2102,7 @@ namespace eval ::crimp {
     namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold gradient effect
-    namespace export statistics rotate montage morph
+    namespace export statistics rotate montage morph fft
     #
     namespace ensemble create
 }

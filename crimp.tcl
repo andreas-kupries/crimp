@@ -23,6 +23,24 @@ critcl::config tk 1
 critcl::cheaders c/*.h cop/*.c
 critcl::csources c/*.c
 critcl::tsources crimp_tcl.tcl
+# FFT sources and dependencies.
+critcl::cheaders c/fftpack/f2c.h
+critcl::csources c/fftpack/radb2.c
+critcl::csources c/fftpack/radb3.c
+critcl::csources c/fftpack/radb4.c
+critcl::csources c/fftpack/radb5.c
+critcl::csources c/fftpack/radbg.c
+critcl::csources c/fftpack/radf2.c
+critcl::csources c/fftpack/radf3.c
+critcl::csources c/fftpack/radf4.c
+critcl::csources c/fftpack/radf5.c
+critcl::csources c/fftpack/radfg.c
+critcl::csources c/fftpack/rfftb.c
+critcl::csources c/fftpack/rfftb1.c
+critcl::csources c/fftpack/rfftf.c
+critcl::csources c/fftpack/rfftf1.c
+critcl::csources c/fftpack/rffti.c
+critcl::csources c/fftpack/rffti1.c
 
 ::apply {{here} {
     # image readers and writers implemented
@@ -47,6 +65,13 @@ critcl::ccode {
     #include <rank.h>
     #include <color.h>
     #include <util.h>
+    #include <f2c.h>
+
+    /* Common declarations to access the FFT functions. */
+
+    extern int rffti_ (integer *n, real *wsave);
+    extern int rfftf_ (integer *n, real* r, real *wsave);
+    extern int rfftb_ (integer *n, real* r, real *wsave);
 }
 
 # # ## ### ##### ######## #############

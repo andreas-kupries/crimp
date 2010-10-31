@@ -16,6 +16,16 @@ def op_threshold_local {
 	    return
 	}
 
+	proc showbase {} {
+	    show_image [base]
+	    return
+	}
+
+	proc otsu {} {
+	    show_image [crimp threshold global otsu [base]]
+	    return
+	}
+
 	proc showit {} {
 	    variable threshold
 	    show $threshold
@@ -48,25 +58,110 @@ def op_threshold_local {
 	    return
 	}
 
-	button .left.med1 -text {Median 20}  -command {::DEMO::median 20}
-	button .left.med2 -text {Median 50}  -command {::DEMO::median 50}
-	button .left.med3 -text {Median 100} -command {::DEMO::median 100}
-	button .left.med4 -text {Median 200} -command {::DEMO::median 200}
-	button .left.med5 -text {Median 300} -command {::DEMO::median 300}
-	button .left.med6 -text {Median 400} -command {::DEMO::median 400}
-	button .left.med7 -text {Median 500} -command {::DEMO::median 500}
-	button .left.med8 -text {Median 1K}  -command {::DEMO::median 1000}
+	# Use the local mean as threshold.
 
-	grid .left.med1 -row 0 -column 0 -sticky swen
-	grid .left.med2 -row 1 -column 0 -sticky swen
-	grid .left.med3 -row 2 -column 0 -sticky swen
-	grid .left.med4 -row 4 -column 0 -sticky swen
-	grid .left.med5 -row 5 -column 0 -sticky swen
-	grid .left.med6 -row 6 -column 0 -sticky swen
-	grid .left.med7 -row 7 -column 0 -sticky swen
-	grid .left.med8 -row 8 -column 0 -sticky swen
+	proc mean {n} {
+	    variable threshold
+	    set threshold [crimp filter mean [crimp convert 2grey8 [base]]]
+	    showit
+	    return
+	}
+
+	# niblack's method: T = M + k*S, k a parameter, M = locval
+	# mean, S = local standard deviation. Here k = 0.2. 2nd param
+	# is the usual radius.
+
+	proc niblack {n} {
+	    variable threshold
+	    set k 0.2
+
+	    set i   [crimp convert 2grey8 [base]]
+	    lassign [crimp::BORDER grey8 mirror] fe values
+	    lassign [crimp::filter::MEAN_STDDEV $i $n $fe $values] m s
+
+	    set threshold [crimp convert 2grey8 [crimp add $m [crimp::scale_float $s $k]]]
+	    showit
+	    return
+	}
+
+	proc niblack2 {n} {
+	    variable threshold
+	    set k -0.2
+
+	    set i   [crimp convert 2grey8 [base]]
+	    lassign [crimp::BORDER grey8 mirror] fe values
+	    lassign [crimp::filter::MEAN_STDDEV $i $n $fe $values] m s
+
+	    set threshold [crimp convert 2grey8 [crimp add $m [crimp::scale_float $s $k]]]
+	    showit
+	    return
+	}
+
+	# sauvola's method: T = M * (1 + k*(S/R - 1)).
+	#                     = M + M*k*(S/R - 1)
+	#                     = M + M*k*S/R - M*k
+	#
+	# M = local mean, S = local standard deviation.
+	# R = dynamic range for S, here 128
+	# k = 2nd parameter, here = 0.34
+
+	proc sauvola {n} {
+	    variable threshold
+	    set k 0.2
+
+	    set i   [crimp convert 2grey8 [base]]
+	    lassign [crimp::BORDER grey8 mirror] fe values
+	    lassign [crimp::filter::MEAN_STDDEV $i $n $fe $values] m s
+
+	    set sr [crimp::scale_float $s [expr {1./128}]] ;# S/R
+	    set mk [crimp::scale_float $m $k]              ;# M*k
+
+	    set threshold [crimp convert 2grey8 [crimp subtract [crimp add $m [crimp multiply $mk $sr]] $mk]]
+	    showit
+	    return
+	}
+
+	proc sauvola2 {n} {
+	    variable threshold
+	    set k 0.5
+
+	    set i   [crimp convert 2grey8 [base]]
+	    lassign [crimp::BORDER grey8 mirror] fe values
+	    lassign [crimp::filter::MEAN_STDDEV $i $n $fe $values] m s
+
+	    set sr [crimp::scale_float $s [expr {1./128}]] ;# S/R
+	    set mk [crimp::scale_float $m $k]              ;# M*k
+
+	    set threshold [crimp convert 2grey8 [crimp subtract [crimp add $m [crimp multiply $mk $sr]] $mk]]
+	    showit
+	    return
+	}
+
+	# GUI. Grid of buttons.
+
+	button .left.base -text Base -command ::DEMO::showbase -bg lightgreen
+	grid   .left.base -row 0 -column 0 -sticky swen
+
+	button .left.otsu -text Otsu -command ::DEMO::otsu -bg lightblue
+	grid   .left.otsu -row 0 -column 1 -sticky swen
+
+	foreach {b label cmd col startrow} {
+	    med  Median   median   0 1
+	    mean Mean     mean     1 1
+	    nib  Niblack  niblack  0 10
+	    sau  Sauvola  sauvola  1 10
+	    nbx  Niblack* niblack2 0 20
+	    sax  Sauvola* sauvola2 1 20
+	} {
+	    set r $startrow
+	    foreach n {10 20 50 100 200 300 400 500 1000} {
+		button .left.${b}$r -text "$label $n" -command [list ::DEMO::$cmd $n]
+		grid .left.${b}$r -row $r -column $col -sticky swen
+		incr r
+	    }
+	}
     }
     setup_image {
-	showit
+	showbase
     }
 }

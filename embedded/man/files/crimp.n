@@ -320,6 +320,8 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBfilter rank\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
 .sp
+\fB::crimp\fR \fBfilter stddev\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+.sp
 \fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
 .sp
 \fB::crimp\fR \fBintegrate\fR \fIimage\fR
@@ -373,6 +375,8 @@ package require \fBcrimp  ?0?\fR
 \fB::crimp\fR \fBscreen\fR \fIimage1\fR \fIimage2\fR
 .sp
 \fB::crimp\fR \fBsolarize\fR \fIimage\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBsquare\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBsubtract\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
 .sp
@@ -1188,6 +1192,17 @@ in the \fBN\fRx\fBN\fR square centered on it, where
 "\fBN\fR = 2*\fBradius\fR+1".
 .sp
 The default radius is \fB3\fR, for a 7x7 square.
+.sp
+\fINOTE\fR. As the mean is known to be in the range defined by the
+channel this method automatically converts float results back to the
+channel type. This introduces rounding / quantization errors. As a
+result of this price being paid the method is able to handle
+multi-channel images, by automatically splitting, processing, and
+rejoining its channels.
+.sp
+The method \fBfilter stddev\fR on the other makes the reverse
+tradeoff, keeping precision, but unable to handle multi-channel
+images.
 .TP
 \fB::crimp\fR \fBfilter rank\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
 This method runs a rank-filter over the input and returns the filtered
@@ -1216,6 +1231,23 @@ median-filters, for percentiles 0, 100, and 50, respectively.
 .sp
 Note that percentiles outside of the range \fB0\fR...\fB100\fR
 make no sense and are clamped to this range.
+.TP
+\fB::crimp\fR \fBfilter stddev\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+This method applies a stand deviation filter with \fIradius\fR to the
+image. I.e. each pixel of the result is the standard deviation of all
+pixel values in the \fBN\fRx\fBN\fR square centered on it, where
+"\fBN\fR = 2*\fBradius\fR+1".
+.sp
+The default radius is \fB3\fR, for a 7x7 square.
+.sp
+\fINOTE\fR. As the standard deviation is often quite small and its
+precision important the result of this method is always an image of
+type \fBfloat\fR. Because of this this method is unable to handle
+multi-channel images as the results of processing their channels
+cannot be joined back together for the proper type.
+.sp
+The method \fBfilter mean\fR on the other hand makes the reverse
+tradeoff, handling multi-channel images, but dropping precision.
 .TP
 \fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
 This method takes an image, runs it through a \fBgamma correction\fR
@@ -1493,6 +1525,10 @@ This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap solarize\fR \fIthreshold\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
+.TP
+\fB::crimp\fR \fBsquare\fR \fIimage\fR
+This is a convenience method equivalent to
+"\fBcrimp multiply\fR \fIimage\fR \fIimage\fR".
 .TP
 \fB::crimp\fR \fBsubtract\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
 This method combines the two input images into a result image by
@@ -2154,7 +2190,7 @@ Nobuyuki Otsu, "A threshold selection method from gray-level histograms", 1979
 \fIhttp://en.wikipedia.org/wiki/Otsu%27s_method\fR
 .PP
 .SH KEYWORDS
-affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, channels, charcoal, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, gradient, histogram, image, integral image, internal gradient, inverse fourier transform, inversion, log-compression, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, sharpen, shrinking, solarization, sqrt-compression, statistics, stddev, summed area table, threshold, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
+affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, channels, charcoal, closing, composite blending, composition, const expansion, convolution filter, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, gradient, histogram, image, integral image, internal gradient, inverse fourier transform, inversion, log-compression, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, photo, pixel mapping, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, resize, sabattier effect, sharpen, shrinking, solarization, sqrt-compression, standard deviation filter, statistics, stddev, summed area table, threshold, thresholding, tophat, toroidal wrap expansion, transform, variance, white tophat, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

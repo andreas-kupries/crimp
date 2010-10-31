@@ -665,6 +665,18 @@ in the [var N]x[var N] square centered on it, where
 [para]
 The default radius is [const 3], for a 7x7 square.
 
+[para]
+[emph NOTE]. As the mean is known to be in the range defined by the
+channel this method automatically converts float results back to the
+channel type. This introduces rounding / quantization errors. As a
+result of this price being paid the method is able to handle
+multi-channel images, by automatically splitting, processing, and
+rejoining its channels.
+
+[para]
+The method [method {filter stddev}] on the other makes the reverse
+tradeoff, keeping precision, but unable to handle multi-channel
+images.
 
 [call [cmd ::crimp] [method {filter rank}] [arg image] [opt "[option -border] [arg spec]"] [opt "[arg radius] [opt [arg percentile]]"]]
 [keywords filter {rank-order filter} {max-filter} {min-filter} {median-filter}]
@@ -695,6 +707,31 @@ median-filters, for percentiles 0, 100, and 50, respectively.
 
 [para] Note that percentiles outside of the range [const 0]...[const 100]
 make no sense and are clamped to this range.
+
+
+[call [cmd ::crimp] [method {filter stddev}] [arg image] [opt "[option -border] [arg spec]"] [opt [arg radius]]]
+[keywords {standard deviation filter} filter]
+
+This method applies a stand deviation filter with [arg radius] to the
+image. I.e. each pixel of the result is the standard deviation of all
+pixel values in the [var N]x[var N] square centered on it, where
+
+"[var N] = 2*[var radius]+1".
+
+[para]
+The default radius is [const 3], for a 7x7 square.
+
+[para]
+
+[emph NOTE]. As the standard deviation is often quite small and its
+precision important the result of this method is always an image of
+type [const float]. Because of this this method is unable to handle
+multi-channel images as the results of processing their channels
+cannot be joined back together for the proper type.
+
+[para]
+The method [method {filter mean}] on the other hand makes the reverse
+tradeoff, handling multi-channel images, but dropping precision.
 
 
 [call [cmd ::crimp] [method gamma] [arg image] [arg y]]
@@ -1042,6 +1079,11 @@ returned by "[method {map solarize}] [arg threshold]".
 
 This method supports all image types supported by the method
 [method remap].
+
+[call [cmd ::crimp] [method square] [arg image]]
+
+This is a convenience method equivalent to
+"[cmd {crimp multiply}] [arg image] [arg image]".
 
 
 [call [cmd ::crimp] [method subtract] [arg image1] [arg image2] [opt [arg scale]] [opt [arg offset]]]

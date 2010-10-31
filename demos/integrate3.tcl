@@ -1,5 +1,5 @@
-def op_integrate_fixed {
-    label Integrate/Fixed
+def op_integrate_fixed_b {
+    label Integrate/Fixed/2
     active { expr { [bases] == 0} }
     setup {
 	proc p {label i} {
@@ -16,7 +16,14 @@ def op_integrate_fixed {
 	    log "\n\}"
 	}
 
-	set i [crimp blank float 5 5  2]
+	set i [crimp read tcl float {
+	    {0 0 0 0 1}
+	    {0 0 0 1 0}
+	    {0 0 1 0 0}
+	    {0 1 0 0 0}
+	    {1 0 0 0 0}
+	}]
+
 	set s [crimp integrate $i]
 
 	# radius = 1 => 3x3, 2-border for (radius+1)

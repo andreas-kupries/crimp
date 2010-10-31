@@ -1028,6 +1028,10 @@ proc ::crimp::difference {a b} {
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::square {a} {
+    return [multiply $a $a]
+}
+
 proc ::crimp::multiply {a b} {
     set atype [TypeOf $a]
     set btype [TypeOf $b]
@@ -1110,7 +1114,7 @@ proc ::crimp::screen {a b} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::filter {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -1281,6 +1285,88 @@ proc ::crimp::filter::mean {image args} {
 			  [crimp integrate \
 			       [crimp::$fe $image $expand $expand $expand $expand {*}$values]] \
 			  $radius] $factor]]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::filter::stddev {image args} {
+    # args = ?-border spec? ?radius?
+
+    set type [crimp::TypeOf $image]
+
+    # Multi-channel images are not handled, because the output is a
+    # float, which we cannot join.
+    if {[llength [crimp channels $image]] > 1} {
+	    return -code error "Unable to process multi-channel images"
+    }
+
+    # Instead of using the histogram-based framework underlying the
+    # rank and ahe filters we implement the stddev filter via summed
+    # area tables (see method integrate), making the computation
+    # independent of the filter radius.
+
+    # Our standard border expansion is also not const, but 'mirror',
+    # as this is the only setting which will not warp the mean at the
+    # image edges.
+
+    # Default settings for border expansion.
+    lassign [crimp::BORDER $type mirror] fe values
+
+    set at 0
+    while {1} {
+	set opt [lindex $args $at]
+	if {![string match -* $opt]} break
+	incr at
+	switch -- $opt {
+	    -border {
+		set value [lindex $args $at]
+		lassign [crimp::BORDER $type $value] fe values
+		incr at
+	    }
+	    default {
+		return -code error "Unknown option \"$opt\", expected -border"
+	    }
+	}
+    }
+    set args [lrange $args $at end]
+    switch -- [llength $args] {
+	0 { set radius 3                }
+	1 { set radius [lindex $args 0] }
+	default {
+	    return -code error "wrong#args: expected image ?-border spec? ?radius?"
+	}
+    }
+
+    # Compute and return stddev.
+    return [lindex [MEAN_STDDEV $image $radius $fe $values] 1]
+}
+
+proc ::crimp::filter::MEAN_STDDEV {image radius fe values} {
+    # Shrinkage is by 2*(radius+1). Compensate using the chosen border type.
+    set expand [expr {$radius + 1}]
+    set factor [expr {1./((2*$radius+1)**2)}]
+
+    # Compute mean and stddev ...
+
+    set expanded [crimp::$fe $image $expand $expand $expand $expand {*}$values]
+    set mean     [crimp::scale_float \
+		      [crimp::region_sum \
+			   [crimp integrate $expanded] \
+			   $radius] \
+		      $factor]
+
+    set stddev   [crimp::sqrt_float \
+		      [crimp subtract \
+			   [crimp::scale_float \
+				[crimp::region_sum \
+				     [crimp integrate \
+					  [crimp square \
+					       [crimp convert 2float $expanded]]] \
+				     $radius] \
+				$factor] \
+			   [crimp square $mean]]]
+
+    return [list $mean $stddev]
 }
 
 # # ## ### ##### ######## #############
@@ -2182,7 +2268,7 @@ namespace eval ::crimp {
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold gradient effect
     namespace export statistics rotate montage morph integrate
-    namespace export fft
+    namespace export fft square
     #
     namespace ensemble create
 }

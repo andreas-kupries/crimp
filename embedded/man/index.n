@@ -679,6 +679,12 @@ sqrt-compression
 \fBfiles/crimp.n\fR
 crimp
 .RE
+standard deviation filter
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 statistics
 .RS
 .TP

@@ -690,17 +690,31 @@ proc ::crimp::threshold::global::median {image} {
 }
 
 proc ::crimp::threshold::local {image args} {
-    set type [::crimp::TypeOf $image]
-    set f threshold_$type
+    if {![llength $args]} {
+	return -code error "wrong\#args: expected image map..."
+    }
+
+    set itype [::crimp::TypeOf $image]
+    set mtype [::crimp::TypeOf [lindex $args 0]]
+
+    foreach map $args {
+	set xtype [::crimp::TypeOf $map]
+	if {$xtype ne $ntype} {
+	    return -code error "Map type mismatch between \"$mtype\" and \"$xtype\", all maps have to have the same type."
+	}
+    }
+
+    set f threshold_${itype}_$mtype
     if {![::crimp::Has $f]} {
-	return -code error "Unable to locally threshold images of type \"$type\""
+	return -code error "Unable to locally threshold images of type \"$itype\" with maps of type \"$mtype\""
     }
 
     # Shrink or extend the set of thresholding maps if too many or not
     # enough were specified, the latter by replicating the last map.
 
-    switch -- $type {
-	hsv - rgb {
+    switch -- $itype/$mtype {
+	hsv/float - rgb/float -
+	hsv/grey8 - rgb/grey8 {
 	    if {[llength $args]} {
 		while {[llength $args] < 3} {
 		    lappend args [lindex $args end]
@@ -710,7 +724,8 @@ proc ::crimp::threshold::local {image args} {
 		set args [lrange $args 0 2]
 	    }
 	}
-	rgba {
+	rgba/float -
+	rgba/grey8 {
 	    if {[llength $args]} {
 		while {[llength $args] < 4} {
 		    lappend args [lindex $args end]

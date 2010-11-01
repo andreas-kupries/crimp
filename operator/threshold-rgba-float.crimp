@@ -1,4 +1,4 @@
-threshold_rgba
+threshold_rgba_float
 Tcl_Obj* imageObj
 Tcl_Obj* thresholdRObj
 Tcl_Obj* thresholdGObj
@@ -14,20 +14,20 @@ crimp_image* result;
 int          x, y;
 
 crimp_input (imageObj,      image,      rgba);
-crimp_input (thresholdRObj, thresholdr, grey8);
-crimp_input (thresholdGObj, thresholdg, grey8);
-crimp_input (thresholdBObj, thresholdb, grey8);
-crimp_input (thresholdAObj, thresholda, grey8);
+crimp_input (thresholdRObj, thresholdr, float);
+crimp_input (thresholdGObj, thresholdg, float);
+crimp_input (thresholdBObj, thresholdb, float);
+crimp_input (thresholdAObj, thresholda, float);
 
 result = crimp_new_like (image);
 
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
 
-	R (result, x, y) = R (image, x, y) >= GREY8 (thresholdr, x, y) ? BLACK : WHITE;
-	G (result, x, y) = G (image, x, y) >= GREY8 (thresholdg, x, y) ? BLACK : WHITE;
-	B (result, x, y) = B (image, x, y) >= GREY8 (thresholdb, x, y) ? BLACK : WHITE;
-	A (result, x, y) = A (image, x, y) >= GREY8 (thresholda, x, y) ? BLACK : WHITE;
+	R (result, x, y) = R (image, x, y) >= FLOATP (thresholdr, x, y) ? BLACK : WHITE;
+	G (result, x, y) = G (image, x, y) >= FLOATP (thresholdg, x, y) ? BLACK : WHITE;
+	B (result, x, y) = B (image, x, y) >= FLOATP (thresholdb, x, y) ? BLACK : WHITE;
+	A (result, x, y) = A (image, x, y) >= FLOATP (thresholda, x, y) ? BLACK : WHITE;
     }
 }
 

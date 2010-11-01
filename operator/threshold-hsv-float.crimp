@@ -1,4 +1,4 @@
-threshold_hsv
+threshold_hsv_float
 Tcl_Obj* imageObj
 Tcl_Obj* thresholdHObj
 Tcl_Obj* thresholdSObj
@@ -12,18 +12,18 @@ crimp_image* result;
 int          x, y;
 
 crimp_input (imageObj,      image,      hsv);
-crimp_input (thresholdHObj, thresholdh, grey8);
-crimp_input (thresholdSObj, thresholds, grey8);
-crimp_input (thresholdVObj, thresholdv, grey8);
+crimp_input (thresholdHObj, thresholdh, float);
+crimp_input (thresholdSObj, thresholds, float);
+crimp_input (thresholdVObj, thresholdv, float);
 
 result = crimp_new_like (image);
 
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
 
-	H (result, x, y) = H (image, x, y) >= GREY8 (thresholdh, x, y) ? BLACK : WHITE;
-	S (result, x, y) = S (image, x, y) >= GREY8 (thresholds, x, y) ? BLACK : WHITE;
-	V (result, x, y) = V (image, x, y) >= GREY8 (thresholdv, x, y) ? BLACK : WHITE;
+	H (result, x, y) = H (image, x, y) >= FLOATP (thresholdh, x, y) ? BLACK : WHITE;
+	S (result, x, y) = S (image, x, y) >= FLOATP (thresholds, x, y) ? BLACK : WHITE;
+	V (result, x, y) = V (image, x, y) >= FLOATP (thresholdv, x, y) ? BLACK : WHITE;
     }
 }
 

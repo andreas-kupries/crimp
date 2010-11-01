@@ -1,0 +1,35 @@
+threshold_float_grey16
+Tcl_Obj* imageObj
+Tcl_Obj* thresholdObj
+
+crimp_image* image;
+crimp_image* threshold;
+crimp_image* result;
+int          x, y;
+
+crimp_input (imageObj,     image,     float);
+crimp_input (thresholdObj, threshold, grey16);
+
+result = crimp_new_like (image);
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+	FLOATP (result, x, y) = FLOATP (image, x, y) >= GREY16 (threshold, x, y) 
+	    ? BLACK
+	    : WHITE;
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

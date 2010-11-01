@@ -1065,6 +1065,18 @@ proc ::crimp::multiply {a b} {
 }
 
 # # ## ### ##### ######## #############
+
+proc ::crimp::divide {a b {scale 1} {offset 0}} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+    set f     div_${atype}_$btype
+    if {![Has $f]} {
+	return -code error "Division is not supported for the combination of \"$atype\" and \"$btype\""
+    }
+    return [$f $a $b $scale $offset]
+}
+
+# # ## ### ##### ######## #############
 ## min aka 'darker' as the less brighter of each pixel is chosen.
 
 proc ::crimp::min {a b} {

@@ -5,6 +5,6 @@ def op_up_interpolate2foh {
 	set K [crimp kernel make {{0 1 1}} 1]
     }
     setup_image {
-	show_image [crimp alpha opaque [crimp interpolate [base] 2 $K]]
+	show_image [crimp alpha opaque [crimp interpolate xy [base] 2 $K]]
     }
 }

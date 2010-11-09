@@ -19,7 +19,7 @@ def op_pyramid_gauss2 {
 	    if {$fac == 1} { return $image }
 	    set kernel [crimp kernel make {{1 4 6 4 1}} 8]
 	    while {$fac > 1} {
-		set image [crimp interpolate $image 2 $kernel]
+		set image [crimp interpolate xy $image 2 $kernel]
 		set fac [expr {$fac/2}]
 	    }
 	    return $image

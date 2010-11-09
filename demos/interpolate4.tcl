@@ -6,8 +6,8 @@ def op_up_interpolate4 {
     }
     setup_image {
 	show_image [crimp alpha opaque \
-			[crimp interpolate \
-			     [crimp interpolate [base] 2 $K] \
+			[crimp interpolate xy \
+			     [crimp interpolate xy [base] 2 $K] \
 			     2 $K]]
     }
 }

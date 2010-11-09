@@ -6,6 +6,7 @@ def op_decint2 {
     }
     setup_image {
 	show_image [crimp alpha opaque \
-			[crimp interpolate [crimp decimate [base] 2 $KD] 2 $KI]]
+			[crimp interpolate xy \
+			     [crimp decimate xy [base] 2 $KD] 2 $KI]]
     }
 }

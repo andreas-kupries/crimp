@@ -5,8 +5,8 @@ def op_decimate4 {
     }
     setup_image {
 	show_image [crimp alpha opaque \
-			[crimp decimate \
-			     [crimp decimate [base] 2 $K] \
+			[crimp decimate xy \
+			     [crimp decimate xy [base] 2 $K] \
 			     2 $K]]
     }
 }

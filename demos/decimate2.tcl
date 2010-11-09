@@ -4,6 +4,6 @@ def op_decimate2 {
 	set K [crimp kernel make {{1 2 1}}]
     }
     setup_image {
-	show_image [crimp alpha opaque [crimp decimate [base] 2 $K]]
+	show_image [crimp alpha opaque [crimp decimate xy [base] 2 $K]]
     }
 }

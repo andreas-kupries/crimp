@@ -52,7 +52,7 @@ def op_blend_pyramid {
 	variable result [lindex $pblend end]
 	foreach dog [lreverse [lrange $pblend 0 end-1]] {
 	    #puts "+ wXh = [crimp dimensions $dog]|[crimp dimensions $result]"
-	    set result [crimp add $dog [crimp interpolate $result 2 $ki]]
+	    set result [crimp add $dog [crimp interpolate xy $result 2 $ki]]
 	}
 
 	show_image $result

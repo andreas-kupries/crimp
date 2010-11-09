@@ -801,33 +801,33 @@ namespace eval ::crimp::downsample {
 }
 
 proc ::crimp::downsample::xy {image factor} {
-    set type [TypeOf $image]
+    set type [::crimp::TypeOf $image]
     set f downsample_$type
-    if {![Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Unable to downsample images of type \"$type\""
     }
 
-    return [$f $image $factor]
+    return [::crimp::$f $image $factor]
 }
 
 proc ::crimp::downsample::x {image factor} {
-    set type [TypeOf $image]
+    set type [::crimp::TypeOf $image]
     set f downsamplex_$type
-    if {![Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Unable to downsample (x) images of type \"$type\""
     }
 
-    return [$f $image $factor]
+    return [::crimp::$f $image $factor]
 }
 
 proc ::crimp::downsample::y {image factor} {
-    set type [TypeOf $image]
+    set type [::crimp::TypeOf $image]
     set f downsampley_$type
-    if {![Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Unable to downsample (y) images of type \"$type\""
     }
 
-    return [$f $image $factor]
+    return [::crimp::$f $image $factor]
 }
 
 # # ## ### ##### ######## #############
@@ -838,33 +838,33 @@ namespace eval ::crimp::upsample {
 }
 
 proc ::crimp::upsample::xy {image factor} {
-    set type [TypeOf $image]
+    set type [::crimp::TypeOf $image]
     set f upsample_$type
-    if {![Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Unable to upsample images of type \"$type\""
     }
 
-    return [$f $image $factor]
+    return [::crimp::$f $image $factor]
 }
 
 proc ::crimp::upsample::x {image factor} {
-    set type [TypeOf $image]
+    set type [::crimp::TypeOf $image]
     set f upsamplex_$type
-    if {![Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Unable to upsample (x) images of type \"$type\""
     }
 
-    return [$f $image $factor]
+    return [::crimp::$f $image $factor]
 }
 
 proc ::crimp::upsample::y {image factor} {
-    set type [TypeOf $image]
+    set type [::crimp::TypeOf $image]
     set f upsampley_$type
-    if {![Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Unable to upsample (y) images of type \"$type\""
     }
 
-    return [$f $image $factor]
+    return [::crimp::$f $image $factor]
 }
 
 # # ## ### ##### ######## #############

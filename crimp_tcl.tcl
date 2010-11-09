@@ -793,7 +793,14 @@ proc ::crimp::integrate {image} {
     return [$f $image]
 }
 
-proc ::crimp::downsample {image factor} {
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::downsample {
+    namespace export *
+    namespace ensemble create
+}
+
+proc ::crimp::downsample::xy {image factor} {
     set type [TypeOf $image]
     set f downsample_$type
     if {![Has $f]} {
@@ -803,7 +810,34 @@ proc ::crimp::downsample {image factor} {
     return [$f $image $factor]
 }
 
-proc ::crimp::upsample {image factor} {
+proc ::crimp::downsample::x {image factor} {
+    set type [TypeOf $image]
+    set f downsamplex_$type
+    if {![Has $f]} {
+	return -code error "Unable to downsample (x) images of type \"$type\""
+    }
+
+    return [$f $image $factor]
+}
+
+proc ::crimp::downsample::y {image factor} {
+    set type [TypeOf $image]
+    set f downsampley_$type
+    if {![Has $f]} {
+	return -code error "Unable to downsample (y) images of type \"$type\""
+    }
+
+    return [$f $image $factor]
+}
+
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::upsample {
+    namespace export *
+    namespace ensemble create
+}
+
+proc ::crimp::upsample::xy {image factor} {
     set type [TypeOf $image]
     set f upsample_$type
     if {![Has $f]} {
@@ -813,51 +847,111 @@ proc ::crimp::upsample {image factor} {
     return [$f $image $factor]
 }
 
-proc ::crimp::decimate {image factor kernel} {
-    # Combines downsampling with a pre-processing step applying a
-    # low-pass filter to avoid aliasing of higher image frequencies.
+proc ::crimp::upsample::x {image factor} {
+    set type [TypeOf $image]
+    set f upsamplex_$type
+    if {![Has $f]} {
+	return -code error "Unable to upsample (x) images of type \"$type\""
+    }
 
-    # We assume that the low-pass filter is separable, and the kernel
-    # is the 1-D horizontal form of it. We compute the vertical form
-    # on our own, transposing the kernel.
+    return [$f $image $factor]
+}
 
-    # NOTE: This implementation, while easy conceptually, is not very
-    # efficient, because it does the filtering on the input image,
-    # before downsampling.
+proc ::crimp::upsample::y {image factor} {
+    set type [TypeOf $image]
+    set f upsampley_$type
+    if {![Has $f]} {
+	return -code error "Unable to upsample (y) images of type \"$type\""
+    }
 
-    # FUTURE: Write C level primitive integrating filter and sampler,
-    # computing the filter only for the pixels which go into the
-    # result.
+    return [$f $image $factor]
+}
 
-    return [downsample \
-		[filter convolve $image $kernel [kernel transpose $kernel]] \
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::decimate {
+    namespace export *
+    namespace ensemble create
+}
+
+# Combines downsampling with a pre-processing step applying a
+# low-pass filter to avoid aliasing of higher image frequencies.
+
+# We assume that the low-pass filter is separable, and the kernel is
+# the 1-D horizontal form of it. We compute the vertical form on our
+# own, transposing the kernel (if needed).
+
+# NOTE: This implementation, while easy conceptually, is not very
+# efficient, because it does the filtering on the input image, before
+# downsampling.
+
+# FUTURE: Write a C level primitive integrating the filter and
+# sampler, computing the filter only for the pixels which go into the
+# result.
+
+proc ::crimp::decimate::xy {image factor kernel} {
+    return [::crimp::downsample::xy \
+		[::crimp::filter::convolve $image $kernel [kernel transpose $kernel]] \
 		$factor]
 }
 
-proc ::crimp::interpolate {image factor kernel} {
-    # Combines upsampling with a post-processing step applying a
-    # low-pass filter to remove copies of the image at higher image
-    # frequencies.
+proc ::crimp::decimate::x {image factor kernel} {
+    return [::crimp::downsample::x \
+		[::crimp::filter::convolve $image $kernel] \
+		$factor]
+}
 
-    # We assume that the low-pass filter is separable, and the kernel
-    # is the 1-D horizontal form of it. We compute the vertical form
-    # on our own, transposing the kernel.
+proc ::crimp::decimate::y {image factor kernel} {
+    return [::crimp::downsample::y \
+		[::crimp::filter::convolve $image [kernel transpose $kernel]] \
+		$factor]
+}
 
-    # NOTE: This implementation, while easy conceptually, is not very
-    # efficient, because it does the filtering on the full output image,
-    # after upsampling.
+# # ## ### ##### ######## #############
 
-    # FUTURE: Write C level primitive integrating filter and sampler,
-    # computing the filter only for the actually new pixels, and use
-    # polyphase restructuring.
+namespace eval ::crimp::interpolate {
+    namespace export *
+    namespace ensemble create
+}
 
-    # DANGER: This assumes that the filter, applied to the original
-    # pixels leaves them untouched. I.e. scaled center weight is 1.
-    # The easy implementation here does not have this assumption.
+# Combines upsampling with a post-processing step applying a low-pass
+# filter to remove copies of the image at higher image frequencies.
 
-    return [filter convolve [upsample $image $factor] \
+# We assume that the low-pass filter is separable, and the kernel is
+# the 1-D horizontal form of it. We compute the vertical form on our
+# own, transposing the kernel (if needed).
+
+# NOTE: This implementation, while easy conceptually, is not very
+# efficient, because it does the filtering on the full output image,
+# after upsampling.
+
+# FUTURE: Write a C level primitive integrating the filter and
+# sampler, computing the filter only for the actually new pixels, and
+# use polyphase restructuring.
+
+# DANGER: This assumes that the filter, applied to the original pixels
+# leaves them untouched. I.e. scaled center weight is 1.  The easy
+# implementation here does not have this assumption.
+
+proc ::crimp::interpolate::xy {image factor kernel} {
+    return [::crimp::filter::convolve \
+		[::crimp::upsample::xy $image $factor] \
 		$kernel [kernel transpose $kernel]]
 }
+
+proc ::crimp::interpolate::x {image factor kernel} {
+    return [::crimp::filter::convolve \
+		[::crimp::upsample::x $image $factor] \
+		$kernel]
+}
+
+proc ::crimp::interpolate::y {image factor kernel} {
+    return [::crimp::filter::convolve \
+		[::crimp::upsample::y $image $factor] \
+		[kernel transpose $kernel]]
+}
+
+# # ## ### ##### ######## #############
 
 proc ::crimp::split {image} {
     set type [TypeOf $image]

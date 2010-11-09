@@ -469,7 +469,9 @@ position relative to the upper-left corner of the input [arg image] and its
 dimensions, and returns it as its own image.
 
 
-[call [cmd ::crimp] [method decimate] [arg image] [arg factor] [arg kernel]]
+[call [cmd ::crimp] [method {decimate xy}] [arg image] [arg factor] [arg kernel]]
+[call [cmd ::crimp] [method {decimate x}] [arg image] [arg factor] [arg kernel]]
+[call [cmd ::crimp] [method {decimate y}] [arg image] [arg factor] [arg kernel]]
 
 This is a convenience method combining the two steps of filtering an image
 (via [method {filter convolve}]), followed by a [method downsample] step.
@@ -502,10 +504,12 @@ This method combines the two input images into a result image by
 taking the pixelwise absolute difference (|image1 - image2|).
 
 
-[call [cmd ::crimp] [method downsample] [arg image] [arg factor]]
+[call [cmd ::crimp] [method {downsample xy}] [arg image] [arg factor]]
+[call [cmd ::crimp] [method {downsample x}] [arg image] [arg factor]]
+[call [cmd ::crimp] [method {downsample y}] [arg image] [arg factor]]
 
 This method returns an image containing only every [arg factor] pixel of the
-input [arg image] (in both dimensions). The effect is that the input is
+input [arg image] (in x, y, or both dimensions). The effect is that the input is
 shrunken by [arg factor]. It is the complement of method [method upsample].
 
 [para] Using the method as is is not recommended because the simple subsampling
@@ -755,7 +759,9 @@ i.e. a summed area table. The type of the result is always of type
 [const float].
 
 
-[call [cmd ::crimp] [method interpolate] [arg image] [arg factor] [arg kernel]]
+[call [cmd ::crimp] [method {interpolate xy}] [arg image] [arg factor] [arg kernel]]
+[call [cmd ::crimp] [method {interpolate x}] [arg image] [arg factor] [arg kernel]]
+[call [cmd ::crimp] [method {interpolate y}] [arg image] [arg factor] [arg kernel]]
 
 This is a convenience method combining the two steps of an [method upsample],
 followed by a filter step (via [method {filter convolve}]). See the method
@@ -1192,10 +1198,12 @@ single-byte channels, i.e. all but [const grey16], [const grey32], and
 [const bw].
 
 
-[call [cmd ::crimp] [method upsample] [arg image] [arg factor]]
+[call [cmd ::crimp] [method {upsample xy}] [arg image] [arg factor]]
+[call [cmd ::crimp] [method {upsample x}] [arg image] [arg factor]]
+[call [cmd ::crimp] [method {upsample y}] [arg image] [arg factor]]
 
 This method returns an image inserting [arg factor] black pixels between
-each pixel of the input [arg image] (in both dimensions). The effect is
+each pixel of the input [arg image] (in x, y, or both dimensions). The effect is
 that the input is expanded by [arg factor]. It is the complement of
 method [method downsample].
 

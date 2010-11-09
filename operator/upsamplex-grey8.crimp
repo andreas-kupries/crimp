@@ -1,0 +1,57 @@
+upsamplex_grey8
+Tcl_Obj* imageObj
+int      factor
+
+/*
+ * The input image is upsampled in the x direction by inserting 'factor-1'
+ * 0-pixels after every pixel of the input. Note that this method of expanding
+ * an image introduces copies of the input to appear at higher frequencies.
+ *
+ * The output image has to be convolved with a low-pass filter after expansion
+ * to avoid such artefacts. The integrated combination of upsampling and such
+ * a filter is called 'interpolation'. This is but one step in the generation
+ * of difference image pyramids.
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          xo, y, xi, dx;
+
+crimp_input (imageObj, image, grey8);
+if (factor < 1) {
+    Tcl_SetResult(interp, "bad sampling factor, expected integer > 0", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+if (factor == 1) {
+    Tcl_SetObjResult(interp, imageObj);
+    return TCL_OK;
+}
+
+result = crimp_new (image->itype, image->w*factor, image->h);
+
+for (y = 0; y < image->h; y ++) {
+    for (xo = 0, xi = 0; xi < image->w; xo += factor, xi ++) {
+
+	/* Copy the pixel */
+	GREY8 (result, xo, y) = GREY8 (image, xi, y);
+
+	/* And insert factor black (0) pixels after */
+	for (dx = 1; dx < factor; dx++) {
+	    GREY8 (result, xo + dx, y) = BLACK;
+	}
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

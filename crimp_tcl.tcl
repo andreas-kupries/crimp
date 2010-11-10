@@ -291,16 +291,23 @@ namespace eval ::crimp::convert {
     # Converters implemented as C primitives
     foreach fun [::crimp::List convert_*] {
 
-	if {[string match *_2rgb* $fun]} {
-	    # Conversion to rgb(a) needs special handling in the
-	    # converter to allow for a conversion with and without a
-	    # color gradient.
+	if {[string match {*_2[rh]*_grey8} $fun]} {
+	    # Conversion from grey8 to the multi-channel types (rgb,
+	    # rgba, hsv) needs special handling in the converter to
+	    # allow for a conversion with and without a color
+	    # gradient.
 
 	    set dst [lindex [::crimp::P $fun] 0]
 	    set it  [string range $dst 1 end]
 
+	    switch -exact -- $it {
+		hsv  {set b {{0 0 0}}   ; set w {{0 0 255}}}
+		rgb  {set b {{0 0 0}}   ; set w {{255 255 255}}}
+		rgba {set b {{0 0 0 0}} ; set w {{255 255 255 255}}}
+	    }
+
 	    proc $dst {image {gradient {}}} \
-		[string map [list @ $dst % $it] {
+		[string map [list @ $dst % $it <W> $w <B> $b] {
 		    set type [::crimp::TypeOf $image]
 		    # Pass through unchanged if the image is already of
 		    # the requested type.
@@ -312,12 +319,19 @@ namespace eval ::crimp::convert {
 			return -code error "Unable to convert images of type \"$type\" to \"@\""
 		    }
 
-		    if {[llength [info level 0]] < 3} {
-			# Standard gradient, plain black to white greyscale
-			set gradient [crimp gradient % {0 0 0} {255 255 255} 256]
+		    if {$type eq "grey8"} {
+			if {[llength [info level 0]] < 3} {
+			    # Standard gradient, plain black to white greyscale
+			    set gradient [crimp gradient % <B> <W> 256]
+			}
+			return [::crimp::$f $image $gradient]
+		    } else {
+			# anything else has no gradient
+			if {[llength [info level 0]] == 3} {
+			    return -code error "wrong#args: should be \"::crimp::$f imageObj\""
+			}
+			return [::crimp::$f $image]
 		    }
-
-		    return [::crimp::$f $image $gradient]
 		}]
 
 	} else {
@@ -2017,6 +2031,37 @@ proc ::crimp::gradient::rgb {s e size} {
 		[crimp read tcl grey8 [list $r]] \
 		[crimp read tcl grey8 [list $g]] \
 		[crimp read tcl grey8 [list $b]]]
+}
+
+proc ::crimp::gradient::rgba {s e size} {
+    if {$size < 2} {
+	return -code error "Minimum size is 2"
+    }
+
+    set steps [expr {$size - 1}]
+    lassign $s sr sg sb sa
+    lassign $e er eg eb ea
+
+    set dr [expr {($er - $sr)/double($steps)}]
+    set dg [expr {($eg - $sg)/double($steps)}]
+    set db [expr {($eb - $sb)/double($steps)}]
+    set da [expr {($ea - $sa)/double($steps)}]
+
+    for {set t 0} {$steps >= 0} {
+	incr steps -1
+	incr t
+    } {
+	lappend r [expr {round($sr + $t * $dr)}]
+	lappend g [expr {round($sg + $t * $dg)}]
+	lappend b [expr {round($sb + $t * $db)}]
+	lappend a [expr {round($sa + $t * $da)}]
+    }
+
+    return [crimp join 2rgba \
+		[crimp read tcl grey8 [list $r]] \
+		[crimp read tcl grey8 [list $g]] \
+		[crimp read tcl grey8 [list $b]] \
+		[crimp read tcl grey8 [list $a]]]
 }
 
 proc ::crimp::gradient::hsv {s e steps} {

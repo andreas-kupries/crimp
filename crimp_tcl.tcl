@@ -1725,7 +1725,7 @@ namespace eval ::crimp::pyramid {
     namespace ensemble create
 }
 
-proc crimp::pyramid::run {image steps stepfun} {
+proc ::crimp::pyramid::run {image steps stepfun} {
     set     res {}
     lappend res $image
 
@@ -1739,14 +1739,14 @@ proc crimp::pyramid::run {image steps stepfun} {
     return $res
 }
 
-proc crimp::pyramid::gauss {image steps} {
+proc ::crimp::pyramid::gauss {image steps} {
     lrange [run $image $steps [list ::apply {{kernel image} {
 	set low [crimp decimate xy $image 2 $kernel]
 	return [list $low $low]
     }} [crimp kernel make {{1 4 6 4 1}}]]] 0 end-1
 }
 
-proc crimp::pyramid::laplace {image steps} {
+proc ::crimp::pyramid::laplace {image steps} {
     run $image $steps [list ::apply {{kerneld kerneli image} {
 	set low  [crimp decimate xy $image 2 $kerneld]
 	set up   [crimp interpolate xy $low 2 $kerneli]
@@ -1972,7 +1972,7 @@ namespace eval ::crimp::gradient {
 
 # TODO :: Force/check proper input ranges for pixel values.
 
-proc crimp::gradient::grey8 {s e size} {
+proc ::crimp::gradient::grey8 {s e size} {
     if {$size < 2} {
 	return -code error "Minimum size is 2"
     }
@@ -1991,7 +1991,7 @@ proc crimp::gradient::grey8 {s e size} {
     return [crimp read tcl grey8 [list $pixels]]
 }
 
-proc crimp::gradient::rgb {s e size} {
+proc ::crimp::gradient::rgb {s e size} {
     if {$size < 2} {
 	return -code error "Minimum size is 2"
     }
@@ -2019,7 +2019,7 @@ proc crimp::gradient::rgb {s e size} {
 		[crimp read tcl grey8 [list $b]]]
 }
 
-proc crimp::gradient::hsv {s e steps} {
+proc ::crimp::gradient::hsv {s e steps} {
     if {$size < 2} {
 	return -code error "Minimum size is 2"
     }

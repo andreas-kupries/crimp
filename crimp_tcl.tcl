@@ -962,19 +962,22 @@ namespace eval ::crimp::decimate {
 
 proc ::crimp::decimate::xy {image factor kernel} {
     return [::crimp::downsample::xy \
-		[::crimp::filter::convolve $image $kernel [kernel transpose $kernel]] \
+		[::crimp::filter::convolve $image \
+		     $kernel [::crimp::kernel::transpose $kernel]] \
 		$factor]
 }
 
 proc ::crimp::decimate::x {image factor kernel} {
     return [::crimp::downsample::x \
-		[::crimp::filter::convolve $image $kernel] \
+		[::crimp::filter::convolve $image \
+		     $kernel] \
 		$factor]
 }
 
 proc ::crimp::decimate::y {image factor kernel} {
     return [::crimp::downsample::y \
-		[::crimp::filter::convolve $image [kernel transpose $kernel]] \
+		[::crimp::filter::convolve $image \
+		     [::crimp::kernel::transpose $kernel]] \
 		$factor]
 }
 
@@ -1007,7 +1010,7 @@ namespace eval ::crimp::interpolate {
 proc ::crimp::interpolate::xy {image factor kernel} {
     return [::crimp::filter::convolve \
 		[::crimp::upsample::xy $image $factor] \
-		$kernel [kernel transpose $kernel]]
+		$kernel [::crimp::kernel::transpose $kernel]]
 }
 
 proc ::crimp::interpolate::x {image factor kernel} {
@@ -1019,7 +1022,7 @@ proc ::crimp::interpolate::x {image factor kernel} {
 proc ::crimp::interpolate::y {image factor kernel} {
     return [::crimp::filter::convolve \
 		[::crimp::upsample::y $image $factor] \
-		[kernel transpose $kernel]]
+		[::crimp::kernel::transpose $kernel]]
 }
 
 # # ## ### ##### ######## #############
@@ -1738,15 +1741,15 @@ proc crimp::pyramid::run {image steps stepfun} {
 
 proc crimp::pyramid::gauss {image steps} {
     lrange [run $image $steps [list ::apply {{kernel image} {
-	set low [crimp decimate $image 2 $kernel]
+	set low [crimp decimate xy $image 2 $kernel]
 	return [list $low $low]
     }} [crimp kernel make {{1 4 6 4 1}}]]] 0 end-1
 }
 
 proc crimp::pyramid::laplace {image steps} {
     run $image $steps [list ::apply {{kerneld kerneli image} {
-	set low  [crimp decimate $image 2 $kerneld]
-	set up   [crimp interpolate $low 2 $kerneli]
+	set low  [crimp decimate xy $image 2 $kerneld]
+	set up   [crimp interpolate xy $low 2 $kerneli]
 
 	# Handle problem with input image size not a multiple of
 	# two. Then the interpolated result is smaller by one pixel.

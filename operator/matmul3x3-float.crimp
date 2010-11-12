@@ -1,0 +1,49 @@
+matmul3x3_float
+Tcl_Obj* matAObj
+Tcl_Obj* matBObj
+
+/*
+ * Multiply two 3x3 float matrices A and B. Returns A*B.
+ */
+
+crimp_image*     matA;
+crimp_image*     matB;
+crimp_image*     result;
+int              w, x, y;
+
+crimp_input (matAObj,    matA, float);
+crimp_input (matBObj,    matB, float);
+
+if (!crimp_require_dim (matA, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+if (!crimp_require_dim (matB, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_float (3, 3);
+
+for (y = 0; y < 3; y++) {
+    for (x = 0; x < 3; x++) {
+
+	FLOATP (result, x, y) = 0;
+	for (w = 0; w < 3; w++) {
+	    FLOATP (result, x, y) += FLOATP (matA, w, y) * FLOATP (matB, x, w);
+	}
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

@@ -1,0 +1,68 @@
+matinv3x3_float
+Tcl_Obj* matObj
+
+/*
+ * Invert a 3x3 float matrix A.
+ */
+
+crimp_image*     mat;
+crimp_image*     result;
+int              x, y;
+
+double cofactor [3][3];
+double det = 0;
+double sign = 1;
+
+crimp_input (matObj, mat, float);
+
+if (!crimp_require_dim (mat, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_float (3, 3);
+
+/*
+ * Invert the matrix.
+ */
+
+for (y = 0; y < 3; y++) {
+    int y1 = !y;
+    int y2 = 2 - !(y - 2);
+
+    for (x = 0; x < 3; x++) {
+        int x1 = !x;
+	int x2 = 2 - !(x - 2);
+
+        cofactor[y][x] = sign * ((FLOATP (mat, x1, y1) * FLOATP (mat, x2, y2)) -
+				 (FLOATP (mat, x2, y1) * FLOATP (mat, x1, y2)));
+        sign = -sign;
+    }
+
+    det += FLOATP (mat, 0, y) * cofactor[y][0];
+}
+
+if (det == 0) {
+    Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+for (y = 0; y < 3; y++) {
+    for (x = 0; x < 3; x++) {
+
+	FLOATP (result, x, y) = cofactor[x][y] / det;
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

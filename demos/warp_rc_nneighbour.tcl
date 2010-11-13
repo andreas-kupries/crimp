@@ -1,5 +1,5 @@
 def effect_warp_rc {
-    label {Warp (Rotate around center)}
+    label {Warp (Rotate around center)} 
     setup {
 	variable i [crimp convert 2grey8 [base]]
 	set cx [expr {[crimp width  $i]/2.}]

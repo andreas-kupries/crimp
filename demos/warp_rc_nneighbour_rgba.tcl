@@ -1,14 +1,16 @@
-def effect_warp_rc_luma {
-    label {Warp/NNe luma (Rotate around center)}
+def effect_warp_rc_rgba {
+    label {Warp/NNe rgba (Rotate around center)}
     setup {
+	set cx [expr {[crimp width  [base]]/2.}]
+	set cy [expr {[crimp height [base]]/2.}]
+
 	variable angle -150
 
 	proc show {theangle} {
 	    variable cx
 	    variable cy
-	    variable i
 
-	    show_image [crimp warp projective $i \
+	    show_image [crimp warp projective [base] \
 			    [crimp transform rotate $theangle [list $cx $cy]]]
 	    return
 	}
@@ -27,9 +29,6 @@ def effect_warp_rc_luma {
 	pack .left.s -side left -fill both -expand 1
     }
     setup_image {
-	variable i [crimp convert 2grey8 [base]]
-	variable cx [expr {[crimp width  $i]/2.}]
-	variable cy [expr {[crimp height $i]/2.}]
 	showit
     }
 }

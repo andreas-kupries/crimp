@@ -96,6 +96,7 @@ proc ::crimp::INTERPOLATE {argv} {
 		if {$val ni $legal} {
 		    return -code error "Expected one of [linsert end [join $legal ,] or], got \"$val\""
 		}
+		set imethod $val
 	    }
 	    default {
 		return -code error "Expected -interpolate, got \"$opt\""
@@ -1792,8 +1793,13 @@ proc ::crimp::warp::Projective {interpolation image transform} {
     # we have a special primitive which does all that in less memory.
 
     set rtype [::crimp::TypeOf $image]
+    if {$rtype in {rgb rgba hsv grey8}} {
+	set ftype mbyte
+    } else {
+	set ftype $rtype
+    }
 
-    set f warp_${rtype}_projective_$interpolation
+    set f warp_${ftype}_projective_$interpolation
     if {![::crimp::Has $f]} {
 	return -code error "Unable to warp, the image type ${rtype} is not supported for $interpolation interpolation"
     }

@@ -7,7 +7,9 @@ if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
     return TCL_ERROR;
 }
 
-Tcl_SetObjResult (interp, image->meta);
+if (image->meta) {
+    Tcl_SetObjResult (interp, image->meta);
+}
 return TCL_OK;
 
 

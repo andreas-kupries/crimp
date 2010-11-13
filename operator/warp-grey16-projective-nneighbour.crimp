@@ -1,4 +1,4 @@
-warp_mbyte_projective_nneighbour
+warp_grey16_projective_nneighbour
 Tcl_Obj* imageObj
 Tcl_Obj* forwardObj
 
@@ -18,11 +18,7 @@ crimp_image* result;
 int x, y, xt, yt, origx, origy, pixel, xi, yi, outside, c;
 float xf, yf;
 
-crimp_input_any (imageObj, image);
-ASSERT_NOTIMGTYPE (image, float);
-ASSERT_NOTIMGTYPE (image, grey16);
-ASSERT_NOTIMGTYPE (image, grey32);
-
+crimp_input (imageObj,   image,   grey16);
 crimp_input (forwardObj, forward, float);
 
 if (!crimp_require_dim (forward, 3, 3)) {
@@ -62,9 +58,7 @@ for (y = 0, yt = origy; y < result->h; y++, yt++) {
 
 	outside = (xi < 0) || (xi >= image->w) || (yi < 0) || (yi >= image->h);
 
-	for (c = 0; c < image->itype->channels; c++) {
-	    CH (result, c, x, y) = outside ? BLACK : CH (image, c, xi, yi);
-	}
+	GREY16 (result, x, y) = outside ? BLACK : GREY16 (image, xi, yi);
     }
 }
 

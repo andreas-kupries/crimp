@@ -1733,14 +1733,14 @@ proc ::crimp::transform::MAKE {m} {
 }
 
 proc ::crimp::transform::CHECK {transform {prefix {}}} {
-    variable $typecode
+    variable typecode
     if {
 	[catch {llength $transform} len] ||
 	($len != 2) ||
 	([lindex $transform 0] ne $typecode) ||
-	[catch {TypeOf [set m [lindex $transform 1]]} t] ||
+	[catch {::crimp::TypeOf [set m [lindex $transform 1]]} t] ||
 	($t ne "float") ||
-	([dimensions $m] ne {3 3})
+	([::crimp::dimensions $m] ne {3 3})
     } {
 	return -code error "${prefix}expected projective transform, this is not it."
     }
@@ -1753,7 +1753,6 @@ proc ::crimp::transform::CHECK {transform {prefix {}}} {
 namespace eval ::crimp::warp {
     namespace export {[a-z]*}
     namespace ensemble create
-    namespace import ::crimp::transform::CHECK
 }
 
 # Alt syntax: Single vector field, this will require a 2d-float type.
@@ -1775,7 +1774,7 @@ proc ::crimp::warp::Warp {interpolation image xvec yvec} {
     set ytype [::crimp::TypeOf $yvec]
 
     set f warp_${rtype}_${xtype}_${ytype}_$interpolation
-    if {![Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Unable to warp, the type combination ${rtype}/${xtype}/$ytype is not supported for $interpolation interpolation"
     }
 
@@ -1795,15 +1794,11 @@ proc ::crimp::warp::Projective {interpolation image transform} {
     set rtype [::crimp::TypeOf $image]
 
     set f warp_${rtype}_projective_$interpolation
-    if {![Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Unable to warp, the image type ${rtype} is not supported for $interpolation interpolation"
     }
 
-    # - compute the inverse here, and provide both to the primitive ?
-    # T     => forward project the corners.
-    # T'inv => backward project for sampling.
-
-    return [::crimp::$f $image [CHECK $transform "Unable to warp, "]]
+    return [::crimp::$f $image [::crimp::transform::CHECK $transform "Unable to warp, "]]
 }
 
 # # ## ### ##### ######## #############
@@ -2684,7 +2679,7 @@ namespace eval ::crimp {
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold gradient effect
     namespace export statistics rotate montage morph integrate
-    namespace export fft square resize
+    namespace export fft square resize warp transform
     #
     namespace ensemble create
 }

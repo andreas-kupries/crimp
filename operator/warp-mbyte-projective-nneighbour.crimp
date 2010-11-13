@@ -3,7 +3,7 @@ Tcl_Obj* imageObj
 Tcl_Obj* forwardObj
 
 /*
- * Warp image using the given specified transform. The result is made large
+ * Warp image using the given specified transform. The result is made large 
  * enough to contain all of the warped image, and will contain meta data about
  * the location of the actual (0,0) origin point relative to the physical top
  * left corner of the result. This last is required because translations in

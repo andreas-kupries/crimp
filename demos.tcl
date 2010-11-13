@@ -628,6 +628,9 @@ proc show_image {image} {
     #display [crimp gamma $image 2.2]
     #display [crimp degamma $image 2.2]
     display $image
+    log TYPE=[crimp type       $image]
+    log DIM_=[crimp dimensions $image]
+    log META=[crimp::meta_get  $image]
     return
 }
 

@@ -20,38 +20,11 @@ if (!crimp_require_dim (mat, 3, 3)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_float (3, 3);
+result = crimp_mat3x3_invers (mat);
 
-/*
- * Invert the matrix.
- */
-
-for (y = 0; y < 3; y++) {
-    int y1 = !y;
-    int y2 = 2 - !(y - 2);
-
-    for (x = 0; x < 3; x++) {
-        int x1 = !x;
-	int x2 = 2 - !(x - 2);
-
-        cofactor[y][x] = sign * ((FLOATP (mat, x1, y1) * FLOATP (mat, x2, y2)) -
-				 (FLOATP (mat, x2, y1) * FLOATP (mat, x1, y2)));
-        sign = -sign;
-    }
-
-    det += FLOATP (mat, 0, y) * cofactor[y][0];
-}
-
-if (det == 0) {
+if (!result) {
     Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);
     return TCL_ERROR;
-}
-
-for (y = 0; y < 3; y++) {
-    for (x = 0; x < 3; x++) {
-
-	FLOATP (result, x, y) = cofactor[x][y] / det;
-    }
 }
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));

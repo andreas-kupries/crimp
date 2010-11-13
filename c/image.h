@@ -6,6 +6,7 @@
  */
 
 #include <image_type.h>
+#include <util.h>
 
 /*
  * Structures describing images.

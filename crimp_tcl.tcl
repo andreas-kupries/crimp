@@ -80,24 +80,6 @@ proc ::crimp::ALIGN {image size where fe values} {
     return [crimp::$fe $image $w $n $e $s {*}$values]
 }
 
-proc ::crimp::wm::PTcheck {transform {prefix {}}} {
-    if {
-	[catch {llength $transform} res] ||
-	($res != 2) ||
-	([lindex $transform 0] ne "crimp/transform") ||
-	[catch {TypeOf [set m [lindex $transform 1]]} t] ||
-	($t ne "float") ||
-	([dimensions $m] ne {3 3})
-    } {
-	return -code error "${prefix}expected projective transform, this is not it."
-    }
-    return $m
-}
-
-proc ::crimp::wm::PTmake {m} {
-    return [list crimp/transform $m]
-}
-
 proc ::crimp::INTERPOLATE {argv} {
     upvar 1 $argv args
 
@@ -1624,12 +1606,154 @@ proc ::crimp::filter::rank {image args} {
 }
 
 # # ## ### ##### ######## #############
+## Commands for the creation and manipulation of transformation
+## matrices. We are using 3x3 matrices to allow the full range of
+## projective transforms, i.e. perspective.
+
+namespace eval ::crimp::transform {
+    namespace export {[a-z]*}
+    namespace ensemble create
+    namespace import ::tcl::mathfunc::*
+    namespace import ::tcl::mathop::*
+
+    variable typecode crimp/transform
+}
+
+proc ::crimp::transform::projective {a b c d e f g h} {
+    # Create the matrix for a projective transform (3x3 float) from
+    # the eight parameters.
+    return [MAKE [crimp read tcl float \
+		[list \
+		     [list $a $b $c] \
+		     [list $d $e $f] \
+		     [list $g $h 1]]]]
+}
+
+proc ::crimp::transform::affine {a b c d e f} {
+    # An affine transform is a special case of the projective, without
+    # perspective warping.
+    return [projective $a $b $c $d $e $f 0 0]
+}
+
+proc ::crimp::transform::translate {dx dy} {
+    # Translate in the x, y directions
+    return [affine 1 0 $dx 0 1 $dy]
+}
+
+proc ::crimp::transform::scale {sx sy} {
+    # Scale in the x, y directions
+    return [affine $sx 0 0 0 $sy 0]
+}
+
+proc ::crimp::transform::rotate {theta {p {0 0}}} {
+    # Rotate around around a point, by default (0,0), i.e. the upper
+    # left corner. Rotation around any other point is done by
+    # translation that point to (0,0), rotating, and then translating
+    # everything back.
+
+    # convert angle from degree to radians.
+    set s  [sin [* $theta 0.017453292519943295769236907684886]]
+    set c  [cos [* $theta 0.017453292519943295769236907684886]]
+    set sn [- $s]
+
+    set r [affine $c $s 0 $sn $c 0]
+    if {$p ne {0 0}} {
+	lassign $p x y
+	set dx [- $x]
+	set dy [- $y]
+	set r [mul [translate $x $y] [mul $r [translate $dx $dy]]]
+    }
+
+    return $r
+}
+
+proc ::crimp::transform::quadrilateral {src dst} {
+    # A quadrilateral is a set of 4 arbitrary points connected by
+    # lines, convex. It is the most general form of a convex polygon
+    # through 4 points.
+    #
+    # A transform based on quadrilaterals maps from a source quad to a
+    # destination quad. This can be captured as perspective, i.e.
+    # projective transform.
+
+    return [mul [Q2UNIT $dst] [inv [Q2UNIT $src]]]
+    #         ~~~~~~~~~~~   ~~~~~~~~~~~~~~~~
+    #     unit rect -> dst  src -> unit rect
+}
+
+proc ::crimp::transform::mul {a b} {
+    return [MAKE [::crimp::matmul3x3_float [CHECK $a] [CHECK $b]]]
+}
+
+proc ::crimp::transform::inv {a} {
+    return [MAKE [::crimp::matinv3x3_float [CHECK $a]]]
+}
+
+proc ::crimp::transform::Q2UNIT {quad} {
+    # Calculate the transform from the unit rectangle to the specified
+    # quad.
+    # Derived from the paper.
+    # A Planar Perspective Image Matching using Point Correspondences and Rectangle-to-Quadrilateral Mapping
+    # Dong-Keun Kim, Byung-Tae Jang, Chi-Jung Hwang
+    # http://portal.acm.org/citation.cfm?id=884607
+    # http://www.informatik.uni-trier.de/~ley/db/conf/ssiai/ssiai2002.html
+
+    lassign $quad pa pb pc pd
+    lassign $pa ax ay
+    lassign $pb bx by
+    lassign $pc cx cy
+    lassign $pd dx dy
+
+    set dxb [expr {$bx - $cx}]
+    set dxc [expr {$dx - $cx}]
+    set dxd [expr {$ax - $bx + $cx - $dx}]
+
+    set dyb [expr {$by - $cy}]
+    set dyc [expr {$dy - $cy}]
+    set dyd [expr {$ay - $by + $cy - $dy}]
+
+    set D [expr {($dxb*$dyc - $dyb*$dxc)}]
+    set g [expr {($dxd*$dyd - $dxc*$dyd)/double($D)}]
+    set h [expr {($dxb*$dyd - $dyb*$dxd)/double($D)}]
+
+    set a [expr {$bx * (1+$g) - $ax}]
+    set b [expr {$dx * (1+$h) - $ax}]
+    set c $ax
+
+    set d [expr {$by * (1+$g) - $ay}]
+    set e [expr {$dy * (1+$h) - $ay}]
+    set f $ay
+
+    return [projective $a $b $c $d $e $f $g $h]
+}
+
+proc ::crimp::transform::MAKE {m} {
+    variable typecode
+    return [list $typecode $m]
+}
+
+proc ::crimp::transform::CHECK {transform {prefix {}}} {
+    variable $typecode
+    if {
+	[catch {llength $transform} len] ||
+	($len != 2) ||
+	([lindex $transform 0] ne $typecode) ||
+	[catch {TypeOf [set m [lindex $transform 1]]} t] ||
+	($t ne "float") ||
+	([dimensions $m] ne {3 3})
+    } {
+	return -code error "${prefix}expected projective transform, this is not it."
+    }
+    return $m
+}
+
+# # ## ### ##### ######## #############
 ## warping images
 
 namespace eval ::crimp::warp {
     namespace export {[a-z]*}
     namespace ensemble create
-    namespace import ::crimp::wm::PTcheck
+    namespace import ::crimp::transform::CHECK
 }
 
 # Alt syntax: Single vector field, this will require a 2d-float type.
@@ -1668,7 +1792,6 @@ proc ::crimp::warp::Projective {interpolation image transform} {
     # calling on the general 'warp'. However, this is so common that
     # we have a special primitive which does all that in less memory.
 
-    set m     [PTcheck $transform "Unable to warp, "]
     set rtype [::crimp::TypeOf $image]
 
     set f warp_${rtype}_projective_$interpolation
@@ -1676,63 +1799,11 @@ proc ::crimp::warp::Projective {interpolation image transform} {
 	return -code error "Unable to warp, the image type ${rtype} is not supported for $interpolation interpolation"
     }
 
-    return [::crimp::$f $image $m]
-}
+    # - compute the inverse here, and provide both to the primitive ?
+    # T     => forward project the corners.
+    # T'inv => backward project for sampling.
 
-
-# # ## ### ##### ######## #############
-## commands for the creation and manipulation of warp matrices.
-## WM is a tentative name, until I find a better place.
-
-namespace eval ::crimp::wm {
-    namespace export {[a-z]*}
-    namespace ensemble create
-    namespace import ::tcl::mathfunc::*
-    namespace import ::tcl::mathop::*
-}
-
-proc ::crimp::wm::projective {a b c d e f g h} {
-    # Create matrix for a projective transform (3x3 float) from the
-    # eight parameters.
-    return [PTmake [crimp read tcl float \
-		[list \
-		     [list $a $b $c] \
-		     [list $d $e $f] \
-		     [list $g $h 1] \
-		    ]]]
-}
-
-proc ::crimp::wm::affine {a b c d e f} {
-    # an affine transform is a special case of the projective, without perspective warping.
-    return [projective $a $b $c $d $e $f 0 0]
-}
-
-proc ::crimp::wm::translate {dx dy} {
-    # translate in x, y directions
-    return [affine 1 0 $dx 0 1 $dy]
-}
-
-proc ::crimp::wm::scale {sx sy} {
-    # scaling x, y directions
-    return [affine $sx 0 0 0 $sy 0]
-}
-
-proc ::crimp::wm::rotate {theta} {
-    # angle degree -> radians conversion.
-    set s  [sin [* $theta 0.017453292519943295769236907684886]]
-    set c  [cos [* $theta 0.017453292519943295769236907684886]]
-    set sn [- $s]
-    return [affine $c $s 0 $sn $c 0]
-}
-
-proc ::crimp::wm::quadrangle {...} {
-
-}
-
-proc ::crimp::wm::* {a b} {
-    set a [PTcheck $a]
-    set b [PTcheck $b]
-    return [PTmake [::crimp::mm_float $a $b]]
+    return [::crimp::$f $image [CHECK $transform "Unable to warp, "]]
 }
 
 # # ## ### ##### ######## #############

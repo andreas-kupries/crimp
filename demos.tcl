@@ -277,11 +277,14 @@ proc reframe {} {
     ttk::frame .right
     ttk::frame .bottom
 
-    grid .slide  -row 0 -column 2 -columnspan 3 -sticky swen
-    grid .top    -row 1 -column 2 -columnspan 3 -sticky swen
-    grid .left   -row 2 -column 2 -rowspan 3    -sticky swen
-    grid .right  -row 2 -column 4 -rowspan 3    -sticky swen
-    grid .bottom -row 5 -column 2 -columnspan 3 -sticky swen
+    # The slide control is above the paneling
+    grid .slide -row 0 -column 1 -sticky swen
+
+    # And this is around the image display in the paneling
+    grid .top    -row 0 -column 0 -sticky swen -in .r -columnspan 3
+    grid .left   -row 1 -column 0 -sticky swen -in .r
+    grid .right  -row 1 -column 2 -sticky swen -in .r
+    grid .bottom -row 2 -column 0 -sticky swen -in .r -columnspan 3
     return
 }
 
@@ -303,16 +306,31 @@ proc tags {tw} {
 }
 
 proc gui {} {
+    widgets
+    layout
+    bindings
+    reframe
+    wm deiconify .
+    return
+}
+
+proc widgets {} {
     widget::toolbar .t
 
     .t add button exit -text Exit -command ::exit -separator 1
 
-    widget::scrolledwindow .sl -borderwidth 1 -relief sunken
-    widget::scrolledwindow .sc -borderwidth 1 -relief sunken
-    widget::scrolledwindow .si -borderwidth 1 -relief sunken
-    widget::scrolledwindow .sd -borderwidth 1 -relief sunken
+    ttk::panedwindow .h -orient horizontal
+    ttk::panedwindow .v -orient vertical
 
-    text .log -height 5 -width 10
+    ttk::frame .r
+    ttk::frame .l
+
+    widget::scrolledwindow .sl -borderwidth 1 -relief sunken ; # log
+    widget::scrolledwindow .sc -borderwidth 1 -relief sunken ; # image canvas
+    widget::scrolledwindow .si -borderwidth 1 -relief sunken ; # list (image)
+    widget::scrolledwindow .sd -borderwidth 1 -relief sunken ; # list (demo)
+
+    text .log -height 5 -width 10 -font {Helvetica -18}
     tags .log
 
     canvas   .c -scrollregion {-4000 -4000 4000 4000}
@@ -321,34 +339,52 @@ proc gui {} {
 
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
+    return
+}
+
+proc layout {} {
+    # Place scrollable parts into their managers.
 
     .sl setwidget .log
     .si setwidget .li
     .sd setwidget .ld
     .sc setwidget .c
 
-    grid .t  -row 0 -column 0 -columnspan 2 -sticky swen
-    grid .sl -row 1 -column 0 -columnspan 2 -rowspan 2 -sticky swen
+    .h add .v
+    .h add .r
 
-    grid .sc -row 2 -column 3 -rowspan 3    -sticky swen
-    grid .si -row 3 -column 0 -rowspan 3    -sticky swen
-    grid .sd -row 3 -column 1 -rowspan 3    -sticky swen
+    .v add .sl
+    .v add .l
+
+    # Toolbar/pseudo-menu @ top, with the paneling below.
+    grid .t -row 0 -column 0 -sticky swen
+    grid .h -row 1 -column 0 -sticky swen -columnspan 2
 
     grid rowconfigure    . 0 -weight 0
-    grid rowconfigure    . 1 -weight 0
-    grid rowconfigure    . 2 -weight 1
-    grid rowconfigure    . 3 -weight 3
-    grid rowconfigure    . 4 -weight 1
-    grid rowconfigure    . 5 -weight 0
+    grid rowconfigure    . 1 -weight 1
+    grid columnconfigure . 0 -weight 1
 
-    grid columnconfigure . 0 -weight 0
-    grid columnconfigure . 1 -weight 0
-    grid columnconfigure . 2 -weight 0
-    grid columnconfigure . 3 -weight 1
-    grid columnconfigure . 4 -weight 0
+    # Place the image and demo lists side by side.
+    grid .si -row 0 -column 0 -rowspan 3 -sticky swen -in .l
+    grid .sd -row 0 -column 1 -rowspan 3 -sticky swen -in .l
 
-    reframe
+    grid rowconfigure    .l 0 -weight 1
+    grid columnconfigure .l 0 -weight 1
 
+    # Image display in the center of the right panel
+    grid .sc -row 1 -column 1 -sticky swen -in .r
+
+    grid rowconfigure    .r 0 -weight 0
+    grid rowconfigure    .r 1 -weight 1
+    grid rowconfigure    .r 2 -weight 0
+    grid columnconfigure .r 0 -weight 0
+    grid columnconfigure .r 1 -weight 1
+    grid columnconfigure .r 2 -weight 0
+
+    return
+}
+
+proc bindings {} {
     bind .li <<ListboxSelect>> show_selection
     bind .ld <<ListboxSelect>> show_demo
 
@@ -360,8 +396,6 @@ proc gui {} {
     #.c configure -cursor tcross
     #crosshair::crosshair .c -width 0 -fill \#999999 -dash {.}
     #crosshair::track on  .c TRACK
-
-    wm deiconify .
     return
 }
 

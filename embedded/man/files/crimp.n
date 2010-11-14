@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/de/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -258,6 +258,40 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBhistogram\fR \fIimage\fR
 .sp
+\fB::crimp\fR \fBmeta append\fR \fIimage\fR \fIkey\fR ?\fIstring\fR...?
+.sp
+\fB::crimp\fR \fBmeta create\fR \fIimage\fR ?\fIkey\fR \fIvalue\fR...?
+.sp
+\fB::crimp\fR \fBmeta exists\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...?
+.sp
+\fB::crimp\fR \fBmeta filter\fR \fIimage\fR \fIargs\fR...
+.sp
+\fB::crimp\fR \fBmeta for\fR \fIimage\fR {\fIkeyVar\fR \fIvalueVar\fR} \fIbody\fR
+.sp
+\fB::crimp\fR \fBmeta get\fR \fIimage\fR ?\fIkey\fR...?
+.sp
+\fB::crimp\fR \fBmeta incr\fR \fIimage\fR \fIkey\fR ?\fIincrement\fR?
+.sp
+\fB::crimp\fR \fBmeta info\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmeta keys\fR \fIimage\fR ?\fIglobPattern\fR?
+.sp
+\fB::crimp\fR \fBmeta lappend\fR \fIimage\fR \fIkey\fR ?\fIvalue\fR...?
+.sp
+\fB::crimp\fR \fBmeta merge\fR \fIimage\fR ?\fIdictionaryValue\fR...?
+.sp
+\fB::crimp\fR \fBmeta remove\fR \fIimage\fR ?\fIkey\fR...?
+.sp
+\fB::crimp\fR \fBmeta replace\fR \fIimage\fR ?\fIkey\fR \fIvalue\fR...?
+.sp
+\fB::crimp\fR \fBmeta set\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...? \fIvalue\fR
+.sp
+\fB::crimp\fR \fBmeta size\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmeta unset\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...?
+.sp
+\fB::crimp\fR \fBmeta values\fR \fIimage\fR ?\fIglobPattern\fR?
+.sp
 \fB::crimp\fR \fBpixel\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBstatistics basic\fR \fIimage\fR
@@ -284,13 +318,21 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBcut\fR \fIimage\fR \fIx\fR \fIy\fR \fIw\fR \fIh\fR
 .sp
-\fB::crimp\fR \fBdecimate\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+\fB::crimp\fR \fBdecimate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBdecimate x\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBdecimate y\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
 .sp
 \fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
 .sp
 \fB::crimp\fR \fBdifference\fR \fIimage1\fR \fIimage2\fR
 .sp
-\fB::crimp\fR \fBdownsample\fR \fIimage\fR \fIfactor\fR
+\fB::crimp\fR \fBdownsample xy\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBdownsample x\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBdownsample y\fR \fIimage\fR \fIfactor\fR
 .sp
 \fB::crimp\fR \fBeffect charcoal\fR \fIimage\fR
 .sp
@@ -326,7 +368,11 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBintegrate\fR \fIimage\fR
 .sp
-\fB::crimp\fR \fBinterpolate\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+\fB::crimp\fR \fBinterpolate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBinterpolate x\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBinterpolate y\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
 .sp
 \fB::crimp\fR \fBinvert\fR \fIimage\fR
 .sp
@@ -398,7 +444,11 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBthreshold local\fR \fIimage\fR \fIthreshold\fR...
 .sp
-\fB::crimp\fR \fBupsample\fR \fIimage\fR \fIfactor\fR
+\fB::crimp\fR \fBupsample xy\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBupsample x\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBupsample y\fR \fIimage\fR \fIfactor\fR
 .sp
 \fB::crimp\fR \fBwavy\fR \fIimage\fR \fIoffset\fR \fIadj1\fR \fIadjb\fR
 .sp
@@ -452,17 +502,19 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBwrite 2file\fR \fIformat\fR \fIpath\fR \fIimage\fR
 .sp
+\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient rgba\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
 \fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR? ?\fIoffset\fR?
 .sp
 \fB::crimp\fR \fBkernel fpmake\fR \fImatrix\fR ?\fIoffset\fR?
 .sp
 \fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
-.sp
-\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
-.sp
-\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
-.sp
-\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
 .sp
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 .sp
@@ -789,6 +841,52 @@ values, taking up, roughly, 192 GiByte of memory in the worst case,
 and 96 GiByte in best case (all counter values shared in a single
 object).
 .TP
+\fB::crimp\fR \fBmeta append\fR \fIimage\fR \fIkey\fR ?\fIstring\fR...?
+.TP
+\fB::crimp\fR \fBmeta create\fR \fIimage\fR ?\fIkey\fR \fIvalue\fR...?
+.TP
+\fB::crimp\fR \fBmeta exists\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...?
+.TP
+\fB::crimp\fR \fBmeta filter\fR \fIimage\fR \fIargs\fR...
+.TP
+\fB::crimp\fR \fBmeta for\fR \fIimage\fR {\fIkeyVar\fR \fIvalueVar\fR} \fIbody\fR
+.TP
+\fB::crimp\fR \fBmeta get\fR \fIimage\fR ?\fIkey\fR...?
+.TP
+\fB::crimp\fR \fBmeta incr\fR \fIimage\fR \fIkey\fR ?\fIincrement\fR?
+.TP
+\fB::crimp\fR \fBmeta info\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBmeta keys\fR \fIimage\fR ?\fIglobPattern\fR?
+.TP
+\fB::crimp\fR \fBmeta lappend\fR \fIimage\fR \fIkey\fR ?\fIvalue\fR...?
+.TP
+\fB::crimp\fR \fBmeta merge\fR \fIimage\fR ?\fIdictionaryValue\fR...?
+.TP
+\fB::crimp\fR \fBmeta remove\fR \fIimage\fR ?\fIkey\fR...?
+.TP
+\fB::crimp\fR \fBmeta replace\fR \fIimage\fR ?\fIkey\fR \fIvalue\fR...?
+.TP
+\fB::crimp\fR \fBmeta set\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...? \fIvalue\fR
+.TP
+\fB::crimp\fR \fBmeta size\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBmeta unset\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...?
+.TP
+\fB::crimp\fR \fBmeta values\fR \fIimage\fR ?\fIglobPattern\fR?
+These methods provide access to the meta data slot of images, treating
+its contents as a dictionary. As such all the methods provided here
+have an appropriate counterpart in the methods of Tcl's builtin
+command \fBdict\fR, with the image's metadata taking the place of the
+dictionary value or vqariable.
+The converse is not true, as \fBdict\fR's methods \fBupdate\fR and
+\fBwith\fR are not supported here.
+.sp
+Please read the documentation of Tcl's \fBdict\fR command for reference.
+.sp
+\fINOTE\fR that the toplevel key \fBcrimp\fR is reserved for
+use by CRIMP itself.
+.TP
 \fB::crimp\fR \fBpixel\fR \fIimage\fR
 This method returns the raw pixels of the \fIimage\fR as a Tcl ByteArray.
 .sp
@@ -1020,7 +1118,11 @@ This method cuts the rectangular region specified throught its \fIx\fR/\fIy\fR
 position relative to the upper-left corner of the input \fIimage\fR and its
 dimensions, and returns it as its own image.
 .TP
-\fB::crimp\fR \fBdecimate\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+\fB::crimp\fR \fBdecimate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.TP
+\fB::crimp\fR \fBdecimate x\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.TP
+\fB::crimp\fR \fBdecimate y\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
 This is a convenience method combining the two steps of filtering an image
 (via \fBfilter convolve\fR), followed by a \fBdownsample\fR step.
 See the method \fBinterpolate\fR for the complementary operation.
@@ -1044,9 +1146,13 @@ This method supports all image types supported by the method
 This method combines the two input images into a result image by
 taking the pixelwise absolute difference (|image1 - image2|).
 .TP
-\fB::crimp\fR \fBdownsample\fR \fIimage\fR \fIfactor\fR
+\fB::crimp\fR \fBdownsample xy\fR \fIimage\fR \fIfactor\fR
+.TP
+\fB::crimp\fR \fBdownsample x\fR \fIimage\fR \fIfactor\fR
+.TP
+\fB::crimp\fR \fBdownsample y\fR \fIimage\fR \fIfactor\fR
 This method returns an image containing only every \fIfactor\fR pixel of the
-input \fIimage\fR (in both dimensions). The effect is that the input is
+input \fIimage\fR (in x, y, or both dimensions). The effect is that the input is
 shrunken by \fIfactor\fR. It is the complement of method \fBupsample\fR.
 .sp
 Using the method as is is not recommended because the simple subsampling
@@ -1263,7 +1369,11 @@ This method takes any single-channel image, i.e. of types
 i.e. a summed area table. The type of the result is always of type
 \fBfloat\fR.
 .TP
-\fB::crimp\fR \fBinterpolate\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+\fB::crimp\fR \fBinterpolate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.TP
+\fB::crimp\fR \fBinterpolate x\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.TP
+\fB::crimp\fR \fBinterpolate y\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
 This is a convenience method combining the two steps of an \fBupsample\fR,
 followed by a filter step (via \fBfilter convolve\fR). See the method
 \fBdecimate\fR for the complementary operation.
@@ -1611,9 +1721,13 @@ This method supports all image types with one or more
 single-byte channels, i.e. all but \fBgrey16\fR, \fBgrey32\fR, and
 \fBbw\fR.
 .TP
-\fB::crimp\fR \fBupsample\fR \fIimage\fR \fIfactor\fR
+\fB::crimp\fR \fBupsample xy\fR \fIimage\fR \fIfactor\fR
+.TP
+\fB::crimp\fR \fBupsample x\fR \fIimage\fR \fIfactor\fR
+.TP
+\fB::crimp\fR \fBupsample y\fR \fIimage\fR \fIfactor\fR
 This method returns an image inserting \fIfactor\fR black pixels between
-each pixel of the input \fIimage\fR (in both dimensions). The effect is
+each pixel of the input \fIimage\fR (in x, y, or both dimensions). The effect is
 that the input is expanded by \fIfactor\fR. It is the complement of
 method \fBdownsample\fR.
 .sp
@@ -1819,6 +1933,29 @@ The methods support the writing of \fBrgb\fR, \fBrgba\fR,
 .PP
 .SS SUPPORT
 .TP
+\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient rgba\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
+This set of methods takes two "color" (pixel value) arguments and
+returns an image of height 1 and width \fIsize\fR containing a
+gradient interpolating between these two colors, with \fIfrom\fR in
+the pixel at the left (x == 0) and \fIto\fR at the right
+(x == \fIsize\fR-1).
+.sp
+\fIsize\fR has to be greater than or equal to \fB2\fR. An
+error is thrown if that restriction is not met.
+.sp
+The resulting image has the type indicated in the method name.
+This also specifies what is expected as the contents of the arguments
+\fIfrom\fR and \fIto\fR. For \fBgrey8\fR these are simple pixel
+values in the range 0...255 whereas for the types \fBrgb\fR and
+\fBhsv\fR the arguments are triples (3-element lists) specifying
+the R, G, and B (and H, S, and V respectively) values.
+.TP
 \fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR? ?\fIoffset\fR?
 This method takes a \fImatrix\fR of weights and an optional
 \fIscale\fR factor and returns a structure containing the associated
@@ -1875,27 +2012,6 @@ the original input, i.e.
     [transpose [transpose $K]] == $K
 
 .fi
-.TP
-\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
-.TP
-\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
-.TP
-\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
-This set of methods takes two "color" (pixel value) arguments and
-returns an image of height 1 and width \fIsize\fR containing a
-gradient interpolating between these two colors, with \fIfrom\fR in
-the pixel at the left (x == 0) and \fIto\fR at the right
-(x == \fIsize\fR-1).
-.sp
-\fIsize\fR has to be greater than or equal to \fB2\fR. An
-error is thrown if that restriction is not met.
-.sp
-The resulting image has the type indicated in the method name.
-This also specifies what is expected as the contents of the arguments
-\fIfrom\fR and \fIto\fR. For \fBgrey8\fR these are simple pixel
-values in the range 0...255 whereas for the types \fBrgb\fR and
-\fBhsv\fR the arguments are triples (3-element lists) specifying
-the R, G, and B (and H, S, and V respectively) values.
 .TP
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 This method accepts the same sub-methods and arguments as are accepted

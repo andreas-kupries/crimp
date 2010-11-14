@@ -1662,7 +1662,7 @@ proc ::crimp::transform::rotate {theta {p {0 0}}} {
 	lassign $p x y
 	set dx [- $x]
 	set dy [- $y]
-	set r [mul [translate $x $y] [mul $r [translate $dx $dy]]]
+	set r [chain [translate $x $y] $r [translate $dx $dy]]
     }
 
     return $r
@@ -1682,11 +1682,21 @@ proc ::crimp::transform::quadrilateral {src dst} {
     #     unit rect -> dst  src -> unit rect
 }
 
-proc ::crimp::transform::mul {a b} {
-    return [MAKE [::crimp::matmul3x3_float [CHECK $a] [CHECK $b]]]
+proc ::crimp::transform::chain {t args} {
+    if {[llength $args] == 0} {
+	return $t
+    }
+    set args [linsert $args 0 $t]
+    while {[llength $args] > 1} {
+	set args [lreplace $args end-1 end \
+		      [MAKE [::crimp::matmul3x3_float \
+				 [CHECK [lindex $args end-1]] \
+				 [CHECK [lindex $args end]]]]]
+    }
+    return [lindex $args 0]
 }
 
-proc ::crimp::transform::inv {a} {
+proc ::crimp::transform::invert {a} {
     return [MAKE [::crimp::matinv3x3_float [CHECK $a]]]
 }
 

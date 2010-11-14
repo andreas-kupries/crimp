@@ -167,12 +167,36 @@ proc ::crimp::GCD {p q} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::meta {image {meta {}}} {
+proc ::crimp::meta {cmd image args} {
+    # The meta data as exposed through here is a dictionary. Thus we
+    # expose all dictionary operations as submethods, with the
+    # dictionary value/variable implied by the image.
 
-    if {[llength [info level 0]] == 3} {
-	return [meta_set [K $image [unset image]] $meta]
-    } else {
-	return [meta_get $image]
+    switch -exact -- $cmd {
+	append - incr - lappend - set - unset {
+	    set meta [meta_get $image]
+	    dict $cmd meta {*}$args
+	    return [meta_set [K $image [unset image]] $meta]
+	}
+	create {
+	    return [meta_set [K $image [unset image]] [dict $cmd {*}$args]]
+	}
+	merge - remove - replace {
+	    return [meta_set [K $image [unset image]] [dict $cmd [meta_get $image] {*}$args]]
+	}
+	exists - get - info - keys - size - values {
+	    return [dict $cmd [meta_get $image] {*}$args]
+	}
+	for {
+	    return [uplevel 1 [list dict $cmd {*}[linsert $args 1 [meta_get $image]]]]
+	}
+	filter {
+	    return [uplevel 1 [list dict $cmd [meta_get $image] {*}$args]]
+	}
+	default {
+	    set x {append create exists filter for get incr info keys lappend merge remove replace set size unset values}
+	    return -code error "Unknown method \"$cmd\", expected one of [linsert [::join $x {, }] end-1 or]"
+	}
     }
 }
 
@@ -2455,7 +2479,7 @@ namespace eval ::crimp {
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold gradient effect
     namespace export statistics rotate montage morph integrate
-    namespace export fft square resize
+    namespace export fft square meta
     #
     namespace ensemble create
 }

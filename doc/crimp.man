@@ -259,6 +259,39 @@ and 96 GiByte in best case (all counter values shared in a single
 object).
 
 
+[call [cmd ::crimp] [method {meta append}] [arg image] [arg key] [opt [arg string]...]]
+[call [cmd ::crimp] [method {meta create}] [arg image] [opt "[arg key] [arg value]..."]]
+[call [cmd ::crimp] [method {meta exists}] [arg image] [arg key] [opt [arg key]...]]
+[call [cmd ::crimp] [method {meta filter}] [arg image] [arg args]...]
+[call [cmd ::crimp] [method {meta for}] [arg image] \{[arg keyVar] [arg valueVar]\} [arg body]]
+[call [cmd ::crimp] [method {meta get}] [arg image] [opt [arg key]...]]
+[call [cmd ::crimp] [method {meta incr}] [arg image] [arg key] [opt [arg increment]]]
+[call [cmd ::crimp] [method {meta info}] [arg image]]
+[call [cmd ::crimp] [method {meta keys}] [arg image] [opt [arg globPattern]]]
+[call [cmd ::crimp] [method {meta lappend}] [arg image] [arg key] [opt [arg value]...]]
+[call [cmd ::crimp] [method {meta merge}] [arg image] [opt [arg dictionaryValue]...]]
+[call [cmd ::crimp] [method {meta remove}] [arg image] [opt [arg key]...]]
+[call [cmd ::crimp] [method {meta replace}] [arg image] [opt "[arg key] [arg value]..."]]
+[call [cmd ::crimp] [method {meta set}] [arg image] [arg key] [opt [arg key]...] [arg value]]
+[call [cmd ::crimp] [method {meta size}] [arg image]]
+[call [cmd ::crimp] [method {meta unset}] [arg image] [arg key] [opt [arg key]...]]
+[call [cmd ::crimp] [method {meta values}] [arg image] [opt [arg globPattern]]]
+
+These methods provide access to the meta data slot of images, treating
+its contents as a dictionary. As such all the methods provided here
+have an appropriate counterpart in the methods of Tcl's builtin
+command [cmd dict], with the image's metadata taking the place of the
+dictionary value or vqariable.
+
+The converse is not true, as [cmd dict]'s methods [method update] and
+[method with] are not supported here.
+
+[para] Please read the documentation of Tcl's [cmd dict] command for reference.
+
+[para] [emph NOTE] that the toplevel key [const crimp] is reserved for
+use by CRIMP itself.
+
+
 [call [cmd ::crimp] [method pixel] [arg image]]
 
 This method returns the raw pixels of the [arg image] as a Tcl ByteArray.
@@ -1449,6 +1482,28 @@ The raw binary format of portable pix maps, as per
 [subsection Support]
 [list_begin definitions]
 
+[call [cmd ::crimp] [method {gradient grey8}] [arg from] [arg to] [arg size]]
+[call [cmd ::crimp] [method {gradient rgb}] [arg from] [arg to] [arg size]]
+[call [cmd ::crimp] [method {gradient rgba}] [arg from] [arg to] [arg size]]
+[call [cmd ::crimp] [method {gradient hsv}] [arg from] [arg to] [arg size]]
+
+This set of methods takes two "color" (pixel value) arguments and
+returns an image of height 1 and width [arg size] containing a
+gradient interpolating between these two colors, with [arg from] in
+the pixel at the left (x == 0) and [arg to] at the right
+(x == [arg size]-1).
+
+[para] [arg size] has to be greater than or equal to [const 2]. An
+error is thrown if that restriction is not met.
+
+[para] The resulting image has the type indicated in the method name.
+This also specifies what is expected as the contents of the arguments
+[arg from] and [arg to]. For [method grey8] these are simple pixel
+values in the range 0...255 whereas for the types [method rgb] and
+[method hsv] the arguments are triples (3-element lists) specifying
+the R, G, and B (and H, S, and V respectively) values.
+
+
 [call [cmd ::crimp] [method {kernel make}] [arg matrix] [opt [arg scale]] [opt [arg offset]]]
 
 This method takes a [arg matrix] of weights and an optional
@@ -1505,26 +1560,6 @@ This method is its own inverse, i.e. application to its result returns
 the original input, i.e. [example {
     [transpose [transpose $K]] == $K
 }]
-
-[call [cmd ::crimp] [method {gradient grey8}] [arg from] [arg to] [arg size]]
-[call [cmd ::crimp] [method {gradient rgb}] [arg from] [arg to] [arg size]]
-[call [cmd ::crimp] [method {gradient hsv}] [arg from] [arg to] [arg size]]
-
-This set of methods takes two "color" (pixel value) arguments and
-returns an image of height 1 and width [arg size] containing a
-gradient interpolating between these two colors, with [arg from] in
-the pixel at the left (x == 0) and [arg to] at the right
-(x == [arg size]-1).
-
-[para] [arg size] has to be greater than or equal to [const 2]. An
-error is thrown if that restriction is not met.
-
-[para] The resulting image has the type indicated in the method name.
-This also specifies what is expected as the contents of the arguments
-[arg from] and [arg to]. For [method grey8] these are simple pixel
-values in the range 0...255 whereas for the types [method rgb] and
-[method hsv] the arguments are triples (3-element lists) specifying
-the R, G, and B (and H, S, and V respectively) values.
 
 
 [call [cmd ::crimp] [method map] [arg arg]...]

@@ -1,5 +1,5 @@
 def effect_warp_rc3_rgba {
-    label {Warp/BiC rgba (Rotate around center)}
+    label {Warp/BiL rgba (Rotate around center)}
     setup {
 	variable angle -150
 
@@ -7,7 +7,7 @@ def effect_warp_rc3_rgba {
 	    variable cx
 	    variable cy
 
-	    show_image [crimp warp projective -interpolate bicubic [base] \
+	    show_image [crimp warp projective -interpolate bilinear [base] \
 			    [crimp transform rotate $theangle [list $cx $cy]]]
 	    return
 	}

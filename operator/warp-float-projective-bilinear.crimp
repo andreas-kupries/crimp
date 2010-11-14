@@ -1,4 +1,4 @@
-warp_mbyte_projective_bicubic
+warp_float_projective_bilinear
 Tcl_Obj* imageObj
 Tcl_Obj* forwardObj
 
@@ -18,12 +18,8 @@ crimp_image* result;
 int x, y, xt, yt, origx, origy, pixel, xl, xr, yu, yd, c;
 float xf, yf;
 
-crimp_input_any (imageObj, image);
-ASSERT_NOTIMGTYPE (image, float);
-ASSERT_NOTIMGTYPE (image, grey16);
-ASSERT_NOTIMGTYPE (image, grey32);
-
-crimp_input (forwardObj,  forward,  float);
+crimp_input (imageObj,   image,   float);
+crimp_input (forwardObj, forward, float);
 
 if (!crimp_require_dim (forward, 3, 3)) {
     Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
@@ -52,8 +48,10 @@ for (y = 0, yt = origy; y < result->h; y++, yt++) {
 	crimp_transform (backward, &xf, &yf);
 
 	/*
-	 * Perform bicubic interpolation using the nearest 4x4 pixels around
-	 * the sampling location.
+	 * Perform bilinear interpolation (1) using the nearest 2x2 pixels
+	 * around the sampling location.
+	 *
+	 * (Ad 1) http://en.wikipedia.org/wiki/Bilinear_interpolation
 	 */
 
         ixw = xf;
@@ -62,7 +60,7 @@ for (y = 0, yt = origy; y < result->h; y++, yt++) {
         xf -= ixw;
         yf -= iyw;
 
-        for (c = 0; c < 4; ++c) {
+	{
             float val = 0;
 	    int ix, iy;
             for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, image->h); iy++) {
@@ -70,11 +68,11 @@ for (y = 0, yt = origy; y < result->h; y++, yt++) {
                 for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, image->w); ix++) {
                     xf = 1 - xf;
 
-		    val += CH (image, c, ix, iy) * yf * xf;
+		    val += FLOATP (image, ix, iy) * yf * xf;
                 }
             }
 
-	    CH (result, c, x, y) = val;
+	    FLOATP (result, x, y) = val;
         }
     }
 }

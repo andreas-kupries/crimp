@@ -1,5 +1,5 @@
 def effect_warp_sc3_luma {
-    label {Warp/BiC luma (Scale X/Y)}
+    label {Warp/BiL luma (Scale X/Y)}
     setup {
 	variable sx 1
 	variable sy 1
@@ -9,7 +9,7 @@ def effect_warp_sc3_luma {
 	    variable sy
 	    variable i
 
-	    show_image [crimp warp projective -interpolate bicubic $i \
+	    show_image [crimp warp projective -interpolate bilinear $i \
 			    [crimp transform scale $sx $sy]]
 	    return
 	}

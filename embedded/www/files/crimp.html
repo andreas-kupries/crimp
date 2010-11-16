@@ -92,7 +92,7 @@
     }
 --></style>
 </head>
-<! -- Generated from file '/home/aku/Projects/Tcl/Crimp/de/embedded/www/files/crimp.html' by tcllib/doctools with format 'html'
+<! -- Generated from file '/home/aku/Projects/Tcl/Crimp/warp/embedded/www/files/crimp.html' by tcllib/doctools with format 'html'
    -->
 <! -- Copyright &copy; 2010 Andreas Kupries   -- Copyright &copy; 2010 Documentation, Andreas Kupries
    -->
@@ -242,53 +242,64 @@
 <li><a href="#103"><b class="cmd">::crimp</b> <b class="method">flip transpose</b> <i class="arg">image</i></a></li>
 <li><a href="#104"><b class="cmd">::crimp</b> <b class="method">flip transverse</b> <i class="arg">image</i></a></li>
 <li><a href="#105"><b class="cmd">::crimp</b> <b class="method">flip vertical</b> <i class="arg">image</i></a></li>
-<li><a href="#106"><b class="cmd">::crimp</b> <b class="method">rotate cw</b> <i class="arg">image</i></a></li>
-<li><a href="#107"><b class="cmd">::crimp</b> <b class="method">rotate ccw</b> <i class="arg">image</i></a></li>
-<li><a href="#108"><b class="cmd">::crimp</b> <b class="method">rotate half</b> <i class="arg">image</i></a></li>
-<li><a href="#109"><b class="cmd">::crimp</b> <b class="method">convert 2grey8</b> <i class="arg">image</i></a></li>
-<li><a href="#110"><b class="cmd">::crimp</b> <b class="method">convert 2hsv</b> <i class="arg">image</i></a></li>
-<li><a href="#111"><b class="cmd">::crimp</b> <b class="method">convert 2rgba</b> <i class="arg">image</i></a></li>
-<li><a href="#112"><b class="cmd">::crimp</b> <b class="method">convert 2rgb</b> <i class="arg">image</i></a></li>
-<li><a href="#113"><b class="cmd">::crimp</b> <b class="method">join 2hsv</b> <i class="arg">hueImage</i> <i class="arg">satImage</i> <i class="arg">valImage</i></a></li>
-<li><a href="#114"><b class="cmd">::crimp</b> <b class="method">join 2rgba</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i> <i class="arg">alphaImage</i></a></li>
-<li><a href="#115"><b class="cmd">::crimp</b> <b class="method">join 2rgb</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i></a></li>
-<li><a href="#116"><b class="cmd">::crimp</b> <b class="method">split</b> <i class="arg">image</i></a></li>
-<li><a href="#117"><b class="cmd">::crimp</b> <b class="method">read pgm</b> <i class="arg">string</i></a></li>
-<li><a href="#118"><b class="cmd">::crimp</b> <b class="method">read ppm</b> <i class="arg">string</i></a></li>
-<li><a href="#119"><b class="cmd">::crimp</b> <b class="method">read strimj</b> <i class="arg">string</i> <span class="opt">?<i class="arg">colormap</i>?</span></a></li>
-<li><a href="#120"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></li>
-<li><a href="#121"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></li>
-<li><a href="#122"><b class="cmd">::crimp</b> <b class="method">read tk</b> <i class="arg">photo</i></a></li>
-<li><a href="#123"><b class="cmd">::crimp</b> <b class="method">write 2tk</b> <i class="arg">photo</i> <i class="arg">image</i></a></li>
-<li><a href="#124"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></li>
-<li><a href="#125"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></li>
-<li><a href="#126"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></li>
-<li><a href="#127"><b class="cmd">::crimp</b> <b class="method">gradient grey8</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
-<li><a href="#128"><b class="cmd">::crimp</b> <b class="method">gradient rgb</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
-<li><a href="#129"><b class="cmd">::crimp</b> <b class="method">gradient rgba</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
-<li><a href="#130"><b class="cmd">::crimp</b> <b class="method">gradient hsv</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
-<li><a href="#131"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span> <span class="opt">?<i class="arg">offset</i>?</span></a></li>
-<li><a href="#132"><b class="cmd">::crimp</b> <b class="method">kernel fpmake</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">offset</i>?</span></a></li>
-<li><a href="#133"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></li>
-<li><a href="#134"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></li>
-<li><a href="#135"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></li>
-<li><a href="#136"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></li>
-<li><a href="#137"><b class="cmd">::crimp</b> <b class="method">table eval</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">cmd</i></a></li>
-<li><a href="#138"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></li>
-<li><a href="#139"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></li>
-<li><a href="#140"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></li>
-<li><a href="#141"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></li>
-<li><a href="#142"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></li>
-<li><a href="#143"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></li>
-<li><a href="#144"><b class="cmd">::crimp</b> <b class="method">table linear</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">gain</i> <i class="arg">offset</i></a></li>
-<li><a href="#145"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
-<li><a href="#146"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></li>
-<li><a href="#147"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
-<li><a href="#148"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
-<li><a href="#149"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></li>
-<li><a href="#150"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></li>
-<li><a href="#151"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
-<li><a href="#152"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#106"><b class="cmd">::crimp</b> <b class="method">resize</b> <span class="opt">?<b class="option">-interpolate</b> <b class="const">nneighbour</b>|<b class="const">bilinear</b>|<b class="const">bicubic</b>?</span> <i class="arg">image</i> <i class="arg">w</i> <i class="arg">h</i></a></li>
+<li><a href="#107"><b class="cmd">::crimp</b> <b class="method">rotate cw</b> <i class="arg">image</i></a></li>
+<li><a href="#108"><b class="cmd">::crimp</b> <b class="method">rotate ccw</b> <i class="arg">image</i></a></li>
+<li><a href="#109"><b class="cmd">::crimp</b> <b class="method">rotate half</b> <i class="arg">image</i></a></li>
+<li><a href="#110"><b class="cmd">::crimp</b> <b class="method">warp field</b> <span class="opt">?<b class="option">-interpolate</b> <b class="const">nneighbour</b>|<b class="const">bilinear</b>|<b class="const">bicubic</b>?</span> <i class="arg">image</i> <i class="arg">xvec</i> <i class="arg">yvec</i></a></li>
+<li><a href="#111"><b class="cmd">::crimp</b> <b class="method">warp projective</b> <span class="opt">?<b class="option">-interpolate</b> <b class="const">nneighbour</b>|<b class="const">bilinear</b>|<b class="const">bicubic</b>?</span> <i class="arg">image</i> <i class="arg">transform</i></a></li>
+<li><a href="#112"><b class="cmd">::crimp</b> <b class="method">convert 2grey8</b> <i class="arg">image</i></a></li>
+<li><a href="#113"><b class="cmd">::crimp</b> <b class="method">convert 2hsv</b> <i class="arg">image</i></a></li>
+<li><a href="#114"><b class="cmd">::crimp</b> <b class="method">convert 2rgba</b> <i class="arg">image</i></a></li>
+<li><a href="#115"><b class="cmd">::crimp</b> <b class="method">convert 2rgb</b> <i class="arg">image</i></a></li>
+<li><a href="#116"><b class="cmd">::crimp</b> <b class="method">join 2hsv</b> <i class="arg">hueImage</i> <i class="arg">satImage</i> <i class="arg">valImage</i></a></li>
+<li><a href="#117"><b class="cmd">::crimp</b> <b class="method">join 2rgba</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i> <i class="arg">alphaImage</i></a></li>
+<li><a href="#118"><b class="cmd">::crimp</b> <b class="method">join 2rgb</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i></a></li>
+<li><a href="#119"><b class="cmd">::crimp</b> <b class="method">split</b> <i class="arg">image</i></a></li>
+<li><a href="#120"><b class="cmd">::crimp</b> <b class="method">read pgm</b> <i class="arg">string</i></a></li>
+<li><a href="#121"><b class="cmd">::crimp</b> <b class="method">read ppm</b> <i class="arg">string</i></a></li>
+<li><a href="#122"><b class="cmd">::crimp</b> <b class="method">read strimj</b> <i class="arg">string</i> <span class="opt">?<i class="arg">colormap</i>?</span></a></li>
+<li><a href="#123"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#124"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#125"><b class="cmd">::crimp</b> <b class="method">read tk</b> <i class="arg">photo</i></a></li>
+<li><a href="#126"><b class="cmd">::crimp</b> <b class="method">write 2tk</b> <i class="arg">photo</i> <i class="arg">image</i></a></li>
+<li><a href="#127"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></li>
+<li><a href="#128"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></li>
+<li><a href="#129"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></li>
+<li><a href="#130"><b class="cmd">::crimp</b> <b class="method">gradient grey8</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
+<li><a href="#131"><b class="cmd">::crimp</b> <b class="method">gradient rgb</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
+<li><a href="#132"><b class="cmd">::crimp</b> <b class="method">gradient rgba</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
+<li><a href="#133"><b class="cmd">::crimp</b> <b class="method">gradient hsv</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></li>
+<li><a href="#134"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span> <span class="opt">?<i class="arg">offset</i>?</span></a></li>
+<li><a href="#135"><b class="cmd">::crimp</b> <b class="method">kernel fpmake</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">offset</i>?</span></a></li>
+<li><a href="#136"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></li>
+<li><a href="#137"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></li>
+<li><a href="#138"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></li>
+<li><a href="#139"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></li>
+<li><a href="#140"><b class="cmd">::crimp</b> <b class="method">table eval</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">cmd</i></a></li>
+<li><a href="#141"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></li>
+<li><a href="#142"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></li>
+<li><a href="#143"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></li>
+<li><a href="#144"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></li>
+<li><a href="#145"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></li>
+<li><a href="#146"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></li>
+<li><a href="#147"><b class="cmd">::crimp</b> <b class="method">table linear</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">gain</i> <i class="arg">offset</i></a></li>
+<li><a href="#148"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
+<li><a href="#149"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></li>
+<li><a href="#150"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
+<li><a href="#151"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#152"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></li>
+<li><a href="#153"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></li>
+<li><a href="#154"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#155"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#156"><b class="cmd">::crimp</b> <b class="method">transform affine</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i></a></li>
+<li><a href="#157"><b class="cmd">::crimp</b> <b class="method">transform chain</b> <i class="arg">transform</i>...</a></li>
+<li><a href="#158"><b class="cmd">::crimp</b> <b class="method">transform invert</b> <i class="arg">transform</i></a></li>
+<li><a href="#159"><b class="cmd">::crimp</b> <b class="method">transform projective</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i> <i class="arg">g</i> <i class="arg">h</i></a></li>
+<li><a href="#160"><b class="cmd">::crimp</b> <b class="method">transform quadrilateral</b> <i class="arg">src</i> <i class="arg">dst</i></a></li>
+<li><a href="#161"><b class="cmd">::crimp</b> <b class="method">transform rotate</b> <i class="arg">theta</i> <span class="opt">?<i class="arg">center</i>?</span></a></li>
+<li><a href="#162"><b class="cmd">::crimp</b> <b class="method">transform scale</b> <i class="arg">sx</i> <i class="arg">sy</i></a></li>
+<li><a href="#163"><b class="cmd">::crimp</b> <b class="method">transform translate</b> <i class="arg">dx</i> <i class="arg">dy</i></a></li>
 </ul>
 </div>
 </div>
@@ -954,7 +965,7 @@ arguments this method may need, except for the size of the expansion.</p>
 <dd></dd>
 <dt><a name="70"><b class="cmd">::crimp</b> <b class="method">morph erode</b> <i class="arg">image</i></a></dt>
 <dd><p>These two methods implement the basic set of morphology operations,
-<i class="term"><a href="../index.html#key71">erosion</a></i>, and <i class="term"><a href="../index.html#key16">dilation</a></i> using a flat 3x3 brick as their
+<i class="term"><a href="../index.html#key82">erosion</a></i>, and <i class="term"><a href="../index.html#key18">dilation</a></i> using a flat 3x3 brick as their
 structuring element. For grayscale, which we have here, these are,
 mathematically, max and min rank-order filters, i.e.</p>
 <pre class="example">
@@ -966,21 +977,21 @@ mathematically, max and min rank-order filters, i.e.</p>
 <dd></dd>
 <dt><a name="72"><b class="cmd">::crimp</b> <b class="method">morph open</b> <i class="arg">image</i></a></dt>
 <dd><p>These two methods add to the basic set of morphology operations,
-<i class="term"><a href="../index.html#key73">opening</a></i> and <i class="term"><a href="../index.html#key8">closing</a></i>. In terms of erosion and dilation:</p>
+<i class="term"><a href="../index.html#key84">opening</a></i> and <i class="term"><a href="../index.html#key10">closing</a></i>. In terms of erosion and dilation:</p>
 <pre class="example">
     close = erode o dilate 
     open  = dilate o erode
 </pre>
 </dd>
 <dt><a name="73"><b class="cmd">::crimp</b> <b class="method">morph gradient</b> <i class="arg">image</i></a></dt>
-<dd><p>The morphological <i class="term"><a href="../index.html#key78">gradient</a></i> is defined as</p>
+<dd><p>The morphological <i class="term"><a href="../index.html#key91">gradient</a></i> is defined as</p>
 <pre class="example">
     [dilate $image] - [erode $image]
 </pre>
 <p>This can also be expressed as the sum of the external and internal
 gradients, see below.</p></dd>
 <dt><a name="74"><b class="cmd">::crimp</b> <b class="method">morph igradient</b> <i class="arg">image</i></a></dt>
-<dd><p>The morphological <i class="term"><a href="../index.html#key14">internal gradient</a></i> is defined as</p>
+<dd><p>The morphological <i class="term"><a href="../index.html#key16">internal gradient</a></i> is defined as</p>
 <pre class="example">
     $image - [erode image]
 </pre>
@@ -992,13 +1003,13 @@ gradients, see below.</p></dd>
 </pre>
 </dd>
 <dt><a name="76"><b class="cmd">::crimp</b> <b class="method">morph tophatw</b> <i class="arg">image</i></a></dt>
-<dd><p>The <i class="term"><a href="../index.html#key45">white tophat</a></i> transformation is defined as</p>
+<dd><p>The <i class="term"><a href="../index.html#key54">white tophat</a></i> transformation is defined as</p>
 <pre class="example">
     $image - [open $image]
 </pre>
 </dd>
 <dt><a name="77"><b class="cmd">::crimp</b> <b class="method">morph tophatb</b> <i class="arg">image</i></a></dt>
-<dd><p>The <i class="term"><a href="../index.html#key26">black tophat</a></i> transformation is defined as</p>
+<dd><p>The <i class="term"><a href="../index.html#key30">black tophat</a></i> transformation is defined as</p>
 <pre class="example">
     [close $image] - $image
 </pre>
@@ -1091,7 +1102,7 @@ multiplication of the inverted input images. I.e.</p>
 <dt><a name="86"><b class="cmd">::crimp</b> <b class="method">solarize</b> <i class="arg">image</i> <i class="arg">threshold</i></a></dt>
 <dd><p>This method takes an image, runs it through the <b class="function">solarize</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
-image as it result. This is also known as the <i class="term"><a href="../index.html#key64">sabattier effect</a></i>.
+image as it result. This is also known as the <i class="term"><a href="../index.html#key75">sabattier effect</a></i>.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map solarize</b> <i class="arg">threshold</i>&quot;.
 This method supports all image types supported by the method
@@ -1109,7 +1120,7 @@ specified.</p></dd>
 <dd><p>This method takes an image, runs it through the <b class="function">threshold above</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
 image as it result. As the result only contains black and white,
-i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key76">binarization</a></i> or
+i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key88">binarization</a></i> or
 foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold above</b> <i class="arg">threshold</i>&quot;.
@@ -1119,7 +1130,7 @@ This method supports all image types supported by the method
 <dd><p>This method takes an image, runs it through the <b class="function">threshold below</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
 image as it result. As the result only contains black and white,
-i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key76">binarization</a></i>, or
+i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key88">binarization</a></i>, or
 foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold below</b> <i class="arg">threshold</i>&quot;.
@@ -1129,7 +1140,7 @@ This method supports all image types supported by the method
 <dd><p>This method takes an image, runs it through the <b class="function">threshold inside</b>
 function with parameters <i class="arg">min</i> and <i class="arg">max</i>, and returns the
 modified image as it result. As the result only contains black and
-white, i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key76">binarization</a></i>
+white, i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key88">binarization</a></i>
 or foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold above</b> <i class="arg">threshold</i>&quot;.
@@ -1139,7 +1150,7 @@ This method supports all image types supported by the method
 <dd><p>This method takes an image, runs it through the <b class="function">threshold outside</b>
 function with parameters <i class="arg">min</i> and <i class="arg">max</i>, and returns the
 modified image as it result. As the result only contains black and
-white, i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key76">binarization</a></i>,
+white, i.e. 2 colors, this process is also called <i class="term"><a href="../index.html#key88">binarization</a></i>,
 or foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold below</b> <i class="arg">threshold</i>&quot;.
@@ -1166,7 +1177,7 @@ other pixels are set to white. Each map is applied to one color
 channel of the input image. If there are too many maps the remainder
 is ignored. If there are not enough maps the last map is replicated.</p>
 <p>This is the core for all methods of non-global
-<i class="term"><a href="../index.html#key76">binarization</a></i>, i.e. foreground/background segmentation. Their
+<i class="term"><a href="../index.html#key88">binarization</a></i>, i.e. foreground/background segmentation. Their
 differences are just in the calculation of the maps.</p>
 <p>This method supports all image types with one or more
 single-byte channels, i.e. all but <b class="const">grey16</b>, <b class="const">grey32</b>, and
@@ -1207,24 +1218,68 @@ transverse along the secondary diagonal.  These two methods also
 exchange width and height of the image in the output.</p>
 <p>The methods currently support the image types <b class="const">rgb</b>,
 <b class="const">rgba</b>, <b class="const">hsv</b>, and <b class="const">grey8</b>.</p></dd>
-<dt><a name="106"><b class="cmd">::crimp</b> <b class="method">rotate cw</b> <i class="arg">image</i></a></dt>
+<dt><a name="106"><b class="cmd">::crimp</b> <b class="method">resize</b> <span class="opt">?<b class="option">-interpolate</b> <b class="const">nneighbour</b>|<b class="const">bilinear</b>|<b class="const">bicubic</b>?</span> <i class="arg">image</i> <i class="arg">w</i> <i class="arg">h</i></a></dt>
+<dd><p>This method takes the input <i class="arg">image</i> and resizes it to the
+specified width <i class="arg">w</i> and height <i class="arg">h</i>.
+In constrast to <b class="method">cut</b> this is not done by taking part of the
+image in the specified size, but by scaling it up or down as
+needed. In other words, this method is a degenerate case of a
+projective transform as created by the <b class="method">transform</b> methods and
+used by method <b class="method">warp projective</b> (see below).</p>
+<p>Like the aforementioned general method this method supports all
+the possible interpolation types, i.e. nearest neighbour, bilinear,
+and bicubic. By default <b class="const">bilinear</b> interpolation is used, as a
+compromise between accuracy and speed.</p></dd>
+<dt><a name="107"><b class="cmd">::crimp</b> <b class="method">rotate cw</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="107"><b class="cmd">::crimp</b> <b class="method">rotate ccw</b> <i class="arg">image</i></a></dt>
+<dt><a name="108"><b class="cmd">::crimp</b> <b class="method">rotate ccw</b> <i class="arg">image</i></a></dt>
 <dd><p>This set of methods rotates the image in steps of 90 degrees, either
 clockwise and counter to it.</p></dd>
-<dt><a name="108"><b class="cmd">::crimp</b> <b class="method">rotate half</b> <i class="arg">image</i></a></dt>
+<dt><a name="109"><b class="cmd">::crimp</b> <b class="method">rotate half</b> <i class="arg">image</i></a></dt>
 <dd><p>This methods rotates the image a half-turn, i.e. 180 degrees.</p></dd>
+<dt><a name="110"><b class="cmd">::crimp</b> <b class="method">warp field</b> <span class="opt">?<b class="option">-interpolate</b> <b class="const">nneighbour</b>|<b class="const">bilinear</b>|<b class="const">bicubic</b>?</span> <i class="arg">image</i> <i class="arg">xvec</i> <i class="arg">yvec</i></a></dt>
+<dd><p>This method takes an input image and two images the size of the
+expected result which provide for each pixel in the result the
+coordinates to sample in the input to determine the result's color.</p>
+<p>This allows the specification of any possible geometric
+transformation and warping, going beyond even projective
+transformations.</p>
+<p>The two images providing the coordinate information have to be
+of the same size, which is also the size of the returned result. The
+type of the result is however specified through the type of the iput
+image.</p>
+<p>The method supports all the possible interpolation types,
+i.e. nearest neighbour, bilinear, and bicubic.
+By default <b class="const">bilinear</b> interpolation is used, as a compromise
+between accuracy and speed.</p></dd>
+<dt><a name="111"><b class="cmd">::crimp</b> <b class="method">warp projective</b> <span class="opt">?<b class="option">-interpolate</b> <b class="const">nneighbour</b>|<b class="const">bilinear</b>|<b class="const">bicubic</b>?</span> <i class="arg">image</i> <i class="arg">transform</i></a></dt>
+<dd><p>This method accepts a general projective <i class="arg">transform</i> as created by
+the <b class="method">transform</b> methods, applies it to the input <i class="arg">image</i>
+and returns the projected result.</p>
+<p>Like the <b class="method">resize</b> method above this method supports all
+the possible interpolation types, i.e. nearest neighbour, bilinear,
+and bicubic. By default <b class="const">bilinear</b> interpolation is used, as a
+compromise between accuracy and speed.</p>
+<p><em>Note</em> that the returned result image is made as large as
+necessary to contain the whole of the projected input. Depending on
+the transformation this means that parts of the result can be black,
+coming from outside of the boundaries of the input. Further, the
+origin point of the result may conceptually be inside of the result
+instead of the top left corner, because of pixels in the input getting
+projected to negative coordinates. To handle this situation the result
+will contain the physical coordinates of the conceptual origin point
+in its meta data, under the hierarchical key <b class="const">crimp origin</b>.</p></dd>
 </dl>
 </div>
 <div id="subsection3" class="subsection"><h3><a name="subsection3">Converters</a></h3>
 <dl class="definitions">
-<dt><a name="109"><b class="cmd">::crimp</b> <b class="method">convert 2grey8</b> <i class="arg">image</i></a></dt>
+<dt><a name="112"><b class="cmd">::crimp</b> <b class="method">convert 2grey8</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="110"><b class="cmd">::crimp</b> <b class="method">convert 2hsv</b> <i class="arg">image</i></a></dt>
+<dt><a name="113"><b class="cmd">::crimp</b> <b class="method">convert 2hsv</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="111"><b class="cmd">::crimp</b> <b class="method">convert 2rgba</b> <i class="arg">image</i></a></dt>
+<dt><a name="114"><b class="cmd">::crimp</b> <b class="method">convert 2rgba</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="112"><b class="cmd">::crimp</b> <b class="method">convert 2rgb</b> <i class="arg">image</i></a></dt>
+<dt><a name="115"><b class="cmd">::crimp</b> <b class="method">convert 2rgb</b> <i class="arg">image</i></a></dt>
 <dd><p>This set of methods all convert their input <i class="arg">image</i> to the
 specified type and returns it as their result. All converters accept
 an image of the destination type as input and will pass it through
@@ -1240,17 +1295,17 @@ contents of an image's alpha channel see the methods <b class="method">setalpha<
 and <b class="method">join rgba</b>.</p>
 <p>At last, the conversion to <b class="const">rgb</b> accepts both <b class="const">rgba</b> and
 <b class="const">hsv</b> images as input.</p></dd>
-<dt><a name="113"><b class="cmd">::crimp</b> <b class="method">join 2hsv</b> <i class="arg">hueImage</i> <i class="arg">satImage</i> <i class="arg">valImage</i></a></dt>
+<dt><a name="116"><b class="cmd">::crimp</b> <b class="method">join 2hsv</b> <i class="arg">hueImage</i> <i class="arg">satImage</i> <i class="arg">valImage</i></a></dt>
 <dd></dd>
-<dt><a name="114"><b class="cmd">::crimp</b> <b class="method">join 2rgba</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i> <i class="arg">alphaImage</i></a></dt>
+<dt><a name="117"><b class="cmd">::crimp</b> <b class="method">join 2rgba</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i> <i class="arg">alphaImage</i></a></dt>
 <dd></dd>
-<dt><a name="115"><b class="cmd">::crimp</b> <b class="method">join 2rgb</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i></a></dt>
+<dt><a name="118"><b class="cmd">::crimp</b> <b class="method">join 2rgb</b> <i class="arg">redImage</i> <i class="arg">greenImage</i> <i class="arg">blueImage</i></a></dt>
 <dd><p>This set of methods is the complement of method <b class="method">split</b>. Each
 take a set of <b class="const">grey8</b> images and fuse them together into an
 image of the given type, with each input image becoming one channel of
 the fusing result, which is returned as the result of the command. All
 input images have to have the same dimensions.</p></dd>
-<dt><a name="116"><b class="cmd">::crimp</b> <b class="method">split</b> <i class="arg">image</i></a></dt>
+<dt><a name="119"><b class="cmd">::crimp</b> <b class="method">split</b> <i class="arg">image</i></a></dt>
 <dd><p>This method takes an image of one of the multi-channel types, i.e.
 <b class="const">rgb</b>, const rgba], and <b class="const">hsv</b> and returns a list of
 <b class="const">grey8</b> images, each of which contains the contents of one of
@@ -1262,15 +1317,15 @@ above.</p></dd>
 </div>
 <div id="subsection4" class="subsection"><h3><a name="subsection4">I/O commands</a></h3>
 <dl class="definitions">
-<dt><a name="117"><b class="cmd">::crimp</b> <b class="method">read pgm</b> <i class="arg">string</i></a></dt>
+<dt><a name="120"><b class="cmd">::crimp</b> <b class="method">read pgm</b> <i class="arg">string</i></a></dt>
 <dd><p>This method returns an image of type <b class="const">grey8</b> containing the data
 of the portable grey map (PGM) stored in the <i class="arg">string</i>. The method
 recognizes images in both plain and raw sub-formats.</p></dd>
-<dt><a name="118"><b class="cmd">::crimp</b> <b class="method">read ppm</b> <i class="arg">string</i></a></dt>
+<dt><a name="121"><b class="cmd">::crimp</b> <b class="method">read ppm</b> <i class="arg">string</i></a></dt>
 <dd><p>This method returns an image of type <b class="const">rgb</b> containing the data
 of the portable pix map (PPM) stored in the <i class="arg">string</i>. The method
 recognizes images in both plain and raw sub-formats.</p></dd>
-<dt><a name="119"><b class="cmd">::crimp</b> <b class="method">read strimj</b> <i class="arg">string</i> <span class="opt">?<i class="arg">colormap</i>?</span></a></dt>
+<dt><a name="122"><b class="cmd">::crimp</b> <b class="method">read strimj</b> <i class="arg">string</i> <span class="opt">?<i class="arg">colormap</i>?</span></a></dt>
 <dd><p>This method returns an image of type <b class="const">rgba</b> containing the data
 of the <i class="term">strimj</i> (string image) (See <a href="http://wiki.tcl.tk/1846">http://wiki.tcl.tk/1846</a>)
 stored in the <i class="arg">string</i>.</p>
@@ -1290,7 +1345,7 @@ dictionary mapping characters to triples of integers in the range
 @...@..@@@..@.@..@@@.
 </pre>
 </dd>
-<dt><a name="120"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></dt>
+<dt><a name="123"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></dt>
 <dd><p>This method takes the <i class="arg">pixelmatrix</i>, a list of rows, with each row
 a list of pixel values in the domain [0..255] and returns an
 image of type <b class="const">grey8</b> whose height is the number of rows, i.e.
@@ -1298,26 +1353,26 @@ the length of the outer list, and whose width is the maximum length
 found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
 <b class="const">255</b>.</p></dd>
-<dt><a name="121"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></dt>
+<dt><a name="124"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></dt>
 <dd><p>This method takes the <i class="arg">pixelmatrix</i>, a list of rows, with each row
 a list of floating point values for pixel values and returns an image
 of type <b class="const">float</b> whose height is the number of rows, i.e.  the
 length of the outer list, and whose width is the maximum length found
 among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with a pixel value of <b class="const">255</b>.</p></dd>
-<dt><a name="122"><b class="cmd">::crimp</b> <b class="method">read tk</b> <i class="arg">photo</i></a></dt>
+<dt><a name="125"><b class="cmd">::crimp</b> <b class="method">read tk</b> <i class="arg">photo</i></a></dt>
 <dd><p>This method returns an image of type <b class="const">rgba</b> containing the data
 from the specified Tk <i class="arg">photo</i> image.</p></dd>
-<dt><a name="123"><b class="cmd">::crimp</b> <b class="method">write 2tk</b> <i class="arg">photo</i> <i class="arg">image</i></a></dt>
+<dt><a name="126"><b class="cmd">::crimp</b> <b class="method">write 2tk</b> <i class="arg">photo</i> <i class="arg">image</i></a></dt>
 <dd><p>This method writes the input <i class="arg">image</i> to the specified Tk
 <i class="arg">photo</i> image.</p>
 <p>The method supports the writing of <b class="const">rgb</b>, <b class="const">rgba</b>,
 and <b class="const">grey8</b> images.</p></dd>
-<dt><a name="124"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></dt>
+<dt><a name="127"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="125"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></dt>
+<dt><a name="128"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="126"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></dt>
+<dt><a name="129"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></dt>
 <dd><p>This family of methods either returns the input <i class="arg">image</i> as a
 binary string in the specified <i class="arg">format</i>, or writes this string to
 the open channel <i class="arg">chan</i>, or the named file at <i class="arg">path</i>.</p>
@@ -1350,13 +1405,13 @@ dependent, and listed below, with the supported formats.</p>
 </div>
 <div id="subsection5" class="subsection"><h3><a name="subsection5">Support</a></h3>
 <dl class="definitions">
-<dt><a name="127"><b class="cmd">::crimp</b> <b class="method">gradient grey8</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
+<dt><a name="130"><b class="cmd">::crimp</b> <b class="method">gradient grey8</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
 <dd></dd>
-<dt><a name="128"><b class="cmd">::crimp</b> <b class="method">gradient rgb</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
+<dt><a name="131"><b class="cmd">::crimp</b> <b class="method">gradient rgb</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
 <dd></dd>
-<dt><a name="129"><b class="cmd">::crimp</b> <b class="method">gradient rgba</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
+<dt><a name="132"><b class="cmd">::crimp</b> <b class="method">gradient rgba</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
 <dd></dd>
-<dt><a name="130"><b class="cmd">::crimp</b> <b class="method">gradient hsv</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
+<dt><a name="133"><b class="cmd">::crimp</b> <b class="method">gradient hsv</b> <i class="arg">from</i> <i class="arg">to</i> <i class="arg">size</i></a></dt>
 <dd><p>This set of methods takes two &quot;color&quot; (pixel value) arguments and
 returns an image of height 1 and width <i class="arg">size</i> containing a
 gradient interpolating between these two colors, with <i class="arg">from</i> in
@@ -1370,7 +1425,7 @@ This also specifies what is expected as the contents of the arguments
 values in the range 0...255 whereas for the types <b class="method">rgb</b> and
 <b class="method">hsv</b> the arguments are triples (3-element lists) specifying
 the R, G, and B (and H, S, and V respectively) values.</p></dd>
-<dt><a name="131"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span> <span class="opt">?<i class="arg">offset</i>?</span></a></dt>
+<dt><a name="134"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span> <span class="opt">?<i class="arg">offset</i>?</span></a></dt>
 <dd><p>This method takes a <i class="arg">matrix</i> of weights and an optional
 <i class="arg">scale</i> factor and returns a structure containing the associated
 convolution kernel, ready for use by method <b class="method">filter convolve</b>.</p>
@@ -1386,7 +1441,7 @@ matrix for method <b class="method">read tcl grey8</b>, i.e. a list of lists
 columns is the maxium length over the row lists, and shorter lists are
 padded with <b class="const">128</b>. The values are expected to be integer numbers
 in the range -128..127.</p></dd>
-<dt><a name="132"><b class="cmd">::crimp</b> <b class="method">kernel fpmake</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">offset</i>?</span></a></dt>
+<dt><a name="135"><b class="cmd">::crimp</b> <b class="method">kernel fpmake</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">offset</i>?</span></a></dt>
 <dd><p>This method is like <b class="method">kernel make</b> except that the generated
 kernel is based on floating-point values. Because of this it is not
 accpeting a scale argument either, it is expected that the kernel
@@ -1397,7 +1452,7 @@ matrix for method <b class="method">read tcl float</b>, i.e. a list of lists
 columns is the maxium length over the row lists, and shorter lists are
 padded with <b class="const">255</b>.  The values are expected to be floating-point
 numbers.</p></dd>
-<dt><a name="133"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></dt>
+<dt><a name="136"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></dt>
 <dd><p>This method takes a <i class="arg">kernel</i> as returned by the method
 <b class="method">kernel make</b> and returns a transposed kernel, i.e. one where
 the x- and y-axes are switched.
@@ -1415,20 +1470,20 @@ the original input, i.e.</p>
     [transpose [transpose $K]] == $K
 </pre>
 </dd>
-<dt><a name="134"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></dt>
+<dt><a name="137"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></dt>
 <dd><p>This method accepts the same sub-methods and arguments as are accepted
 by the <b class="method">table</b> method below. In contrast to <b class="method">table</b> the
 result is not a list of values, but a map image directly suitable as
 argument to the <b class="method">remap</b> method.</p></dd>
-<dt><a name="135"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></dt>
+<dt><a name="138"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></dt>
 <dd><p>This method accepts a list of 256 values, constructs a map image
 directly suitable as argument to the <b class="method">remap</b> method, and
 returns this map image as its result.</p></dd>
-<dt><a name="136"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></dt>
+<dt><a name="139"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></dt>
 <dd><p>This accepts two lookup tables (aka functions) specified as lists of
 256 values, constructs the composite function f(g(x)), and then
 returns this new function as its result.</p></dd>
-<dt><a name="137"><b class="cmd">::crimp</b> <b class="method">table eval</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">cmd</i></a></dt>
+<dt><a name="140"><b class="cmd">::crimp</b> <b class="method">table eval</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">cmd</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the function specified by the command prefix
 <i class="arg">cmd</i>.
@@ -1440,13 +1495,13 @@ presence of the option <b class="option">-wrap</b>. When present the values are
 wrapped, otherwise (default) they are clamped.</p>
 <p>The signature of the command prefix is</p>
 <dl class="definitions">
-<dt><a name="138"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></dt>
+<dt><a name="141"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></dt>
 <dd><p>which is expected to return a number in the range
 [0..255]. While the result should be an integer number it is
 allowed to be a float, the caller takes care to round the result to
 the nearest integer.</p></dd>
 </dl></dd>
-<dt><a name="139"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></dt>
+<dt><a name="142"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">inverse gamma correction</b> with
 parameter <i class="arg">y</i>.
@@ -1457,7 +1512,7 @@ both argument and result, is defined as:</p>
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
 <p><img alt="scaled_gamma_inv" src="../image/scaled_gamma_inv.png"></p></dd>
-<dt><a name="140"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
+<dt><a name="143"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">gamma correction</b> with parameter
 <i class="arg">y</i>.
@@ -1468,23 +1523,23 @@ argument and result, is defined as:</p>
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
 <p><img alt="scaled_gamma" src="../image/scaled_gamma.png"></p></dd>
-<dt><a name="141"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></dt>
+<dt><a name="144"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">sampled gauss</b> function with
 parameter <i class="arg">sigma</i>.
 This function is defined as:</p>
 <p><img alt="gauss" src="../image/gauss.png"></p></dd>
-<dt><a name="142"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
+<dt><a name="145"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">identity</b> function, which is defined
 as</p>
 <p><img alt="identity" src="../image/identity.png"></p></dd>
-<dt><a name="143"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
+<dt><a name="146"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">inverse</b> function, which is defined
 as</p>
 <p><img alt="inverse" src="../image/inverse.png"></p></dd>
-<dt><a name="144"><b class="cmd">::crimp</b> <b class="method">table linear</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">gain</i> <i class="arg">offset</i></a></dt>
+<dt><a name="147"><b class="cmd">::crimp</b> <b class="method">table linear</b> <span class="opt">?<b class="option">-wrap</b>?</span> <i class="arg">gain</i> <i class="arg">offset</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a simple linear function with parameters
 <i class="arg">gain</i> (the slope) and <i class="arg">offset</i>. The results are rounded to
@@ -1498,14 +1553,14 @@ Thus the relevant definitions are</p>
 for the wrapped case, and</p>
 <p><img alt="linear_clamp" src="../image/linear_clamp.png">
 when clamping.</p></dd>
-<dt><a name="145"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
+<dt><a name="148"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">log-compression</b> function with
 parameter <i class="arg">max</i>. This parameter is the maximum pixel value the
 function is for, this value, and all larger will be mapped to 255.
 This function is defined as:</p>
 <p><img alt="log" src="../image/log.png"></p></dd>
-<dt><a name="146"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="149"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">solarize</b> function, with parameter
 <i class="arg">threshold</i>. This function is defined as:</p>
@@ -1513,41 +1568,100 @@ values 0 to 255 through the <b class="function">solarize</b> function, with para
 <p>Note how the function is the <b class="function">identity</b> for values under the
 threshold, and the <b class="function">inverse</b> for values at and above it. Its
 application to an image produces what is known as either
-<i class="term"><a href="../index.html#key70">solarization</a></i> or <i class="term"><a href="../index.html#key64">sabattier effect</a></i>.</p></dd>
-<dt><a name="147"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
+<i class="term"><a href="../index.html#key81">solarization</a></i> or <i class="term"><a href="../index.html#key75">sabattier effect</a></i>.</p></dd>
+<dt><a name="150"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">sqrt-compression</b> function with
 parameter <i class="arg">max</i>. This parameter is the maximum pixel value the
 function is for, this value, and all larger will be mapped to 255.
 This function is defined as:</p>
 <p><img alt="sqrt" src="../image/sqrt.png"></p></dd>
-<dt><a name="148"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
+<dt><a name="151"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This is a convenience method around <b class="method">table linear</b> which maps
 <i class="arg">min</i> to 0, and <i class="arg">max</i> to 255, with linear interpolation in
 between. Values below <i class="arg">min</i> and above <i class="arg">max</i> are clamped to 0
 and 255 respectively.</p></dd>
-<dt><a name="149"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="152"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key76">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key88">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-ge" src="../image/threshold-ge.png"></p></dd>
-<dt><a name="150"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="153"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key76">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key88">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-le" src="../image/threshold-le.png"></p></dd>
-<dt><a name="151"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
+<dt><a name="154"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key76">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key88">binarization</a></i>)
 function, with parameters <i class="arg">min</i> and <i class="arg">max</i>. This function is
 defined as:</p>
 <p><img alt="threshold-inside" src="../image/threshold-inside.png"></p></dd>
-<dt><a name="152"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
+<dt><a name="155"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key76">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../index.html#key88">binarization</a></i>)
 function, with parameters <i class="arg">min</i> and <i class="arg">max</i>. This function is
 defined as:</p>
 <p><img alt="threshold-outside" src="../image/threshold-outside.png"></p></dd>
+<dt><a name="156"><b class="cmd">::crimp</b> <b class="method">transform affine</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i></a></dt>
+<dd><p>This method returns the affine transformation specified by the 2x3
+matrix</p>
+<pre class="example">
+    |a b c|
+    |d e f|
+</pre>
+<p>Note that it is in general easier to use the methods <b class="method">rotate</b>,
+<b class="method">scale</b>, and <b class="method">translate</b> <b class="method">scale</b> to generate the
+desired transformation piecemal and then use <b class="method">chain</b> to chain the
+pieces together.</p></dd>
+<dt><a name="157"><b class="cmd">::crimp</b> <b class="method">transform chain</b> <i class="arg">transform</i>...</a></dt>
+<dd><p>This method computes and returns the projective transformation
+generated by applying the specified transformations in reverse order,
+i.e with the transformation at the end of the argument list applied
+first, then the one before it, etc.</p></dd>
+<dt><a name="158"><b class="cmd">::crimp</b> <b class="method">transform invert</b> <i class="arg">transform</i></a></dt>
+<dd><p>This method computes and returns the inverse of the specified
+projective <i class="arg">transform</i>ation.</p></dd>
+<dt><a name="159"><b class="cmd">::crimp</b> <b class="method">transform projective</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i> <i class="arg">g</i> <i class="arg">h</i></a></dt>
+<dd><p>This method returns the projective transformation specified by the 3x3
+matrix</p>
+<pre class="example">
+    |a b c|
+    |d e f|
+    |g h 1|
+</pre>
+<p>Note that for the affine subset of projective transformation it is in
+general easier to use the methods <b class="method">rotate</b>, <b class="method">scale</b>, and
+<b class="method">translate</b> <b class="method">scale</b> to generate the desired
+transformation piecemal and then use <b class="method">chain</b> to chain the pieces
+together.</p>
+<p>And for a true perspective transformation specification through
+<b class="method">quadrilateral</b> should be simpler as well.</p></dd>
+<dt><a name="160"><b class="cmd">::crimp</b> <b class="method">transform quadrilateral</b> <i class="arg">src</i> <i class="arg">dst</i></a></dt>
+<dd><p>This method returns the projective transformation which maps the
+quadrilateral <i class="arg">src</i> on to the quadrilateral <i class="arg">dst</i>.</p>
+<p>Each quadrilateral is specified as a list of 4 points, each
+point a pair of x- and y-coordinates.</p></dd>
+<dt><a name="161"><b class="cmd">::crimp</b> <b class="method">transform rotate</b> <i class="arg">theta</i> <span class="opt">?<i class="arg">center</i>?</span></a></dt>
+<dd><p>This methods returns the projective transformation which rotates the
+image by the anglie <i class="arg">theta</i> around the point <i class="arg">center</i>. If the
+latter is not specified {0 0} is assumed. The point, if present, is
+specified as pair of x- and y-coordinates.</p>
+<p>The angle is specified in degrees, with <b class="const">0</b> not rotating
+the image at all. Positive values cause a counterclockwise rotation,
+negative values a clockwise one.</p></dd>
+<dt><a name="162"><b class="cmd">::crimp</b> <b class="method">transform scale</b> <i class="arg">sx</i> <i class="arg">sy</i></a></dt>
+<dd><p>This methods returns the projective transformation which scales an
+image by factor <i class="arg">sx</i> in width, and <i class="arg">sy</i> in height. Values
+larger than <b class="const">1</b> expand the image along the specified dimension,
+while values less than <b class="const">1</b> shrink it. Negative values flip the
+respective axis.</p></dd>
+<dt><a name="163"><b class="cmd">::crimp</b> <b class="method">transform translate</b> <i class="arg">dx</i> <i class="arg">dy</i></a></dt>
+<dd><p>This methods returns the projective transformation which translates an
+image by <i class="arg">dx</i> pixels along the x-axis, and <i class="arg">dx</i> pixels along
+the y-axis. Values larger than <b class="const">0</b> move the image to the right,
+or down, along the specified dimension, while values less than
+<b class="const">0</b> move it to the left, or up.</p></dd>
 </dl>
 </div>
 </div>
@@ -1560,7 +1674,7 @@ defined as:</p>
 </ol>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p><a href="../index.html#key66">affine transform</a>, <a href="../index.html#key7">alpha</a>, <a href="../index.html#key75">alpha blending</a>, <a href="../index.html#key9">alpha channel</a>, <a href="../index.html#key25">average</a>, <a href="../index.html#key76">binarization</a>, <a href="../index.html#key26">black tophat</a>, <a href="../index.html#key35">blending</a>, <a href="../index.html#key38">channels</a>, <a href="../index.html#key17">charcoal</a>, <a href="../index.html#key8">closing</a>, <a href="../index.html#key79">composite blending</a>, <a href="../index.html#key65">composition</a>, <a href="../index.html#key4">const expansion</a>, <a href="../index.html#key68">convolution filter</a>, <a href="../index.html#key2">cropping</a>, <a href="../index.html#key10">cut region</a>, <a href="../index.html#key43">cyclic wrap expansion</a>, <a href="../index.html#key16">dilation</a>, <a href="../index.html#key60">dimensions</a>, <a href="../index.html#key24">edge shrinking</a>, <a href="../index.html#key67">effect</a>, <a href="../index.html#key61">emboss</a>, <a href="../index.html#key71">erosion</a>, <a href="../index.html#key18">expansion</a>, <a href="../index.html#key40">extend expansion</a>, <a href="../index.html#key1">external gradient</a>, <a href="../index.html#key21">extract rectangle</a>, <a href="../index.html#key72">extract region</a>, <a href="../index.html#key44">fast fourier transform</a>, <a href="../index.html#key22">fft</a>, <a href="../index.html#key41">filter</a>, <a href="../index.html#key3">flip</a>, <a href="../index.html#key81">fourier transform</a>, <a href="../index.html#key15">gamma correction</a>, <a href="../index.html#key78">gradient</a>, <a href="../index.html#key55">histogram</a>, <a href="../index.html#key48">image</a>, <a href="../index.html#key46">integral image</a>, <a href="../index.html#key14">internal gradient</a>, <a href="../index.html#key51">inverse fourier transform</a>, <a href="../index.html#key52">inversion</a>, <a href="../index.html#key23">log-compression</a>, <a href="../index.html#key5">matrix</a>, <a href="../index.html#key42">max</a>, <a href="../index.html#key59">max-filter</a>, <a href="../index.html#key74">mean</a>, <a href="../index.html#key56">mean filter</a>, <a href="../index.html#key19">median</a>, <a href="../index.html#key31">median-filter</a>, <a href="../index.html#key28">middle</a>, <a href="../index.html#key37">min</a>, <a href="../index.html#key80">min-filter</a>, <a href="../index.html#key58">mirror expansion</a>, <a href="../index.html#key34">montage</a>, <a href="../index.html#key20">morphology</a>, <a href="../index.html#key73">opening</a>, <a href="../index.html#key0">otsu threshold</a>, <a href="../index.html#key83">photo</a>, <a href="../index.html#key6">pixel mapping</a>, <a href="../index.html#key27">projective transform</a>, <a href="../index.html#key84">rank-order filter</a>, <a href="../index.html#key47">rectangle cut</a>, <a href="../index.html#key69">rectangle extraction</a>, <a href="../index.html#key57">region cut</a>, <a href="../index.html#key77">remapping</a>, <a href="../index.html#key49">replicate edge expansion</a>, <a href="../index.html#key62">resize</a>, <a href="../index.html#key64">sabattier effect</a>, <a href="../index.html#key82">sharpen</a>, <a href="../index.html#key39">shrinking</a>, <a href="../index.html#key70">solarization</a>, <a href="../index.html#key11">sqrt-compression</a>, <a href="../index.html#key32">standard deviation filter</a>, <a href="../index.html#key63">statistics</a>, <a href="../index.html#key13">stddev</a>, <a href="../index.html#key50">summed area table</a>, <a href="../index.html#key53">threshold</a>, <a href="../index.html#key33">thresholding</a>, <a href="../index.html#key30">tophat</a>, <a href="../index.html#key54">toroidal wrap expansion</a>, <a href="../index.html#key36">transform</a>, <a href="../index.html#key12">variance</a>, <a href="../index.html#key45">white tophat</a>, <a href="../index.html#key29">wrap expansion</a></p>
+<p><a href="../index.html#key53">affine</a>, <a href="../index.html#key77">affine transform</a>, <a href="../index.html#key9">alpha</a>, <a href="../index.html#key87">alpha blending</a>, <a href="../index.html#key11">alpha channel</a>, <a href="../index.html#key29">average</a>, <a href="../index.html#key88">binarization</a>, <a href="../index.html#key30">black tophat</a>, <a href="../index.html#key40">blending</a>, <a href="../index.html#key44">channels</a>, <a href="../index.html#key19">charcoal</a>, <a href="../index.html#key41">clockwise</a>, <a href="../index.html#key10">closing</a>, <a href="../index.html#key92">composite blending</a>, <a href="../index.html#key76">composition</a>, <a href="../index.html#key6">const expansion</a>, <a href="../index.html#key79">convolution filter</a>, <a href="../index.html#key85">counter-clockwise</a>, <a href="../index.html#key4">cropping</a>, <a href="../index.html#key12">cut region</a>, <a href="../index.html#key49">cyclic wrap expansion</a>, <a href="../index.html#key18">dilation</a>, <a href="../index.html#key70">dimensions</a>, <a href="../index.html#key28">edge shrinking</a>, <a href="../index.html#key78">effect</a>, <a href="../index.html#key71">emboss</a>, <a href="../index.html#key82">erosion</a>, <a href="../index.html#key20">expansion</a>, <a href="../index.html#key46">extend expansion</a>, <a href="../index.html#key1">external gradient</a>, <a href="../index.html#key25">extract rectangle</a>, <a href="../index.html#key83">extract region</a>, <a href="../index.html#key50">fast fourier transform</a>, <a href="../index.html#key26">fft</a>, <a href="../index.html#key47">filter</a>, <a href="../index.html#key5">flip</a>, <a href="../index.html#key94">fourier transform</a>, <a href="../index.html#key17">gamma correction</a>, <a href="../index.html#key59">geometry</a>, <a href="../index.html#key91">gradient</a>, <a href="../index.html#key65">histogram</a>, <a href="../index.html#key57">image</a>, <a href="../index.html#key55">integral image</a>, <a href="../index.html#key16">internal gradient</a>, <a href="../index.html#key61">inverse fourier transform</a>, <a href="../index.html#key62">inversion</a>, <a href="../index.html#key27">log-compression</a>, <a href="../index.html#key7">matrix</a>, <a href="../index.html#key48">max</a>, <a href="../index.html#key69">max-filter</a>, <a href="../index.html#key86">mean</a>, <a href="../index.html#key66">mean filter</a>, <a href="../index.html#key22">median</a>, <a href="../index.html#key36">median-filter</a>, <a href="../index.html#key32">middle</a>, <a href="../index.html#key43">min</a>, <a href="../index.html#key93">min-filter</a>, <a href="../index.html#key68">mirror expansion</a>, <a href="../index.html#key39">montage</a>, <a href="../index.html#key24">morphology</a>, <a href="../index.html#key84">opening</a>, <a href="../index.html#key0">otsu threshold</a>, <a href="../index.html#key2">perspective</a>, <a href="../index.html#key96">photo</a>, <a href="../index.html#key8">pixel mapping</a>, <a href="../index.html#key73">projective</a>, <a href="../index.html#key31">projective transform</a>, <a href="../index.html#key97">rank-order filter</a>, <a href="../index.html#key56">rectangle cut</a>, <a href="../index.html#key80">rectangle extraction</a>, <a href="../index.html#key67">region cut</a>, <a href="../index.html#key89">remapping</a>, <a href="../index.html#key58">replicate edge expansion</a>, <a href="../index.html#key51">rescale</a>, <a href="../index.html#key72">resize</a>, <a href="../index.html#key23">rotate</a>, <a href="../index.html#key34">rotation</a>, <a href="../index.html#key75">sabattier effect</a>, <a href="../index.html#key52">scale</a>, <a href="../index.html#key95">sharpen</a>, <a href="../index.html#key45">shrinking</a>, <a href="../index.html#key81">solarization</a>, <a href="../index.html#key13">sqrt-compression</a>, <a href="../index.html#key37">standard deviation filter</a>, <a href="../index.html#key74">statistics</a>, <a href="../index.html#key15">stddev</a>, <a href="../index.html#key60">summed area table</a>, <a href="../index.html#key63">threshold</a>, <a href="../index.html#key38">thresholding</a>, <a href="../index.html#key35">tophat</a>, <a href="../index.html#key64">toroidal wrap expansion</a>, <a href="../index.html#key42">transform</a>, <a href="../index.html#key21">translate</a>, <a href="../index.html#key14">variance</a>, <a href="../index.html#key90">vector-field</a>, <a href="../index.html#key3">warp</a>, <a href="../index.html#key54">white tophat</a>, <a href="../index.html#key33">wrap expansion</a></p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2010 Andreas Kupries<br>

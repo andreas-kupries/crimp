@@ -258,6 +258,40 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBhistogram\fR \fIimage\fR
 .sp
+\fB::crimp\fR \fBmeta append\fR \fIimage\fR \fIkey\fR ?\fIstring\fR...?
+.sp
+\fB::crimp\fR \fBmeta create\fR \fIimage\fR ?\fIkey\fR \fIvalue\fR...?
+.sp
+\fB::crimp\fR \fBmeta exists\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...?
+.sp
+\fB::crimp\fR \fBmeta filter\fR \fIimage\fR \fIargs\fR...
+.sp
+\fB::crimp\fR \fBmeta for\fR \fIimage\fR {\fIkeyVar\fR \fIvalueVar\fR} \fIbody\fR
+.sp
+\fB::crimp\fR \fBmeta get\fR \fIimage\fR ?\fIkey\fR...?
+.sp
+\fB::crimp\fR \fBmeta incr\fR \fIimage\fR \fIkey\fR ?\fIincrement\fR?
+.sp
+\fB::crimp\fR \fBmeta info\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmeta keys\fR \fIimage\fR ?\fIglobPattern\fR?
+.sp
+\fB::crimp\fR \fBmeta lappend\fR \fIimage\fR \fIkey\fR ?\fIvalue\fR...?
+.sp
+\fB::crimp\fR \fBmeta merge\fR \fIimage\fR ?\fIdictionaryValue\fR...?
+.sp
+\fB::crimp\fR \fBmeta remove\fR \fIimage\fR ?\fIkey\fR...?
+.sp
+\fB::crimp\fR \fBmeta replace\fR \fIimage\fR ?\fIkey\fR \fIvalue\fR...?
+.sp
+\fB::crimp\fR \fBmeta set\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...? \fIvalue\fR
+.sp
+\fB::crimp\fR \fBmeta size\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmeta unset\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...?
+.sp
+\fB::crimp\fR \fBmeta values\fR \fIimage\fR ?\fIglobPattern\fR?
+.sp
 \fB::crimp\fR \fBpixel\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBstatistics basic\fR \fIimage\fR
@@ -474,17 +508,19 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBwrite 2file\fR \fIformat\fR \fIpath\fR \fIimage\fR
 .sp
+\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient rgba\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
 \fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR? ?\fIoffset\fR?
 .sp
 \fB::crimp\fR \fBkernel fpmake\fR \fImatrix\fR ?\fIoffset\fR?
 .sp
 \fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
-.sp
-\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
-.sp
-\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
-.sp
-\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
 .sp
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 .sp
@@ -826,6 +862,52 @@ current system the result would be a dictionary with 2^32 keys and
 values, taking up, roughly, 192 GiByte of memory in the worst case,
 and 96 GiByte in best case (all counter values shared in a single
 object).
+.TP
+\fB::crimp\fR \fBmeta append\fR \fIimage\fR \fIkey\fR ?\fIstring\fR...?
+.TP
+\fB::crimp\fR \fBmeta create\fR \fIimage\fR ?\fIkey\fR \fIvalue\fR...?
+.TP
+\fB::crimp\fR \fBmeta exists\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...?
+.TP
+\fB::crimp\fR \fBmeta filter\fR \fIimage\fR \fIargs\fR...
+.TP
+\fB::crimp\fR \fBmeta for\fR \fIimage\fR {\fIkeyVar\fR \fIvalueVar\fR} \fIbody\fR
+.TP
+\fB::crimp\fR \fBmeta get\fR \fIimage\fR ?\fIkey\fR...?
+.TP
+\fB::crimp\fR \fBmeta incr\fR \fIimage\fR \fIkey\fR ?\fIincrement\fR?
+.TP
+\fB::crimp\fR \fBmeta info\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBmeta keys\fR \fIimage\fR ?\fIglobPattern\fR?
+.TP
+\fB::crimp\fR \fBmeta lappend\fR \fIimage\fR \fIkey\fR ?\fIvalue\fR...?
+.TP
+\fB::crimp\fR \fBmeta merge\fR \fIimage\fR ?\fIdictionaryValue\fR...?
+.TP
+\fB::crimp\fR \fBmeta remove\fR \fIimage\fR ?\fIkey\fR...?
+.TP
+\fB::crimp\fR \fBmeta replace\fR \fIimage\fR ?\fIkey\fR \fIvalue\fR...?
+.TP
+\fB::crimp\fR \fBmeta set\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...? \fIvalue\fR
+.TP
+\fB::crimp\fR \fBmeta size\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBmeta unset\fR \fIimage\fR \fIkey\fR ?\fIkey\fR...?
+.TP
+\fB::crimp\fR \fBmeta values\fR \fIimage\fR ?\fIglobPattern\fR?
+These methods provide access to the meta data slot of images, treating
+its contents as a dictionary. As such all the methods provided here
+have an appropriate counterpart in the methods of Tcl's builtin
+command \fBdict\fR, with the image's metadata taking the place of the
+dictionary value or vqariable.
+The converse is not true, as \fBdict\fR's methods \fBupdate\fR and
+\fBwith\fR are not supported here.
+.sp
+Please read the documentation of Tcl's \fBdict\fR command for reference.
+.sp
+\fINOTE\fR that the toplevel key \fBcrimp\fR is reserved for
+use by CRIMP itself.
 .TP
 \fB::crimp\fR \fBpixel\fR \fIimage\fR
 This method returns the raw pixels of the \fIimage\fR as a Tcl ByteArray.
@@ -1926,6 +2008,29 @@ The methods support the writing of \fBrgb\fR, \fBrgba\fR,
 .PP
 .SS SUPPORT
 .TP
+\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient rgba\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
+This set of methods takes two "color" (pixel value) arguments and
+returns an image of height 1 and width \fIsize\fR containing a
+gradient interpolating between these two colors, with \fIfrom\fR in
+the pixel at the left (x == 0) and \fIto\fR at the right
+(x == \fIsize\fR-1).
+.sp
+\fIsize\fR has to be greater than or equal to \fB2\fR. An
+error is thrown if that restriction is not met.
+.sp
+The resulting image has the type indicated in the method name.
+This also specifies what is expected as the contents of the arguments
+\fIfrom\fR and \fIto\fR. For \fBgrey8\fR these are simple pixel
+values in the range 0...255 whereas for the types \fBrgb\fR and
+\fBhsv\fR the arguments are triples (3-element lists) specifying
+the R, G, and B (and H, S, and V respectively) values.
+.TP
 \fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR? ?\fIoffset\fR?
 This method takes a \fImatrix\fR of weights and an optional
 \fIscale\fR factor and returns a structure containing the associated
@@ -1982,27 +2087,6 @@ the original input, i.e.
     [transpose [transpose $K]] == $K
 
 .fi
-.TP
-\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
-.TP
-\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
-.TP
-\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
-This set of methods takes two "color" (pixel value) arguments and
-returns an image of height 1 and width \fIsize\fR containing a
-gradient interpolating between these two colors, with \fIfrom\fR in
-the pixel at the left (x == 0) and \fIto\fR at the right
-(x == \fIsize\fR-1).
-.sp
-\fIsize\fR has to be greater than or equal to \fB2\fR. An
-error is thrown if that restriction is not met.
-.sp
-The resulting image has the type indicated in the method name.
-This also specifies what is expected as the contents of the arguments
-\fIfrom\fR and \fIto\fR. For \fBgrey8\fR these are simple pixel
-values in the range 0...255 whereas for the types \fBrgb\fR and
-\fBhsv\fR the arguments are triples (3-element lists) specifying
-the R, G, and B (and H, S, and V respectively) values.
 .TP
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 This method accepts the same sub-methods and arguments as are accepted

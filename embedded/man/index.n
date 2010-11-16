@@ -241,6 +241,12 @@ Database Class:	\\fB\\$3\\fR
 .SH INDEX
 doc
 .RS
+affine
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 affine transform
 .RS
 .TP
@@ -301,6 +307,12 @@ charcoal
 \fBfiles/crimp.n\fR
 crimp
 .RE
+clockwise
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 closing
 .RS
 .TP
@@ -326,6 +338,12 @@ const expansion
 crimp
 .RE
 convolution filter
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+counter-clockwise
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -446,6 +464,12 @@ fourier transform
 crimp
 .RE
 gamma correction
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+geometry
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -589,6 +613,12 @@ otsu threshold
 \fBfiles/crimp.n\fR
 crimp
 .RE
+perspective
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 photo
 .RS
 .TP
@@ -596,6 +626,12 @@ photo
 crimp
 .RE
 pixel mapping
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+projective
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -643,13 +679,37 @@ replicate edge expansion
 \fBfiles/crimp.n\fR
 crimp
 .RE
+rescale
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 resize
 .RS
 .TP
 \fBfiles/crimp.n\fR
 crimp
 .RE
+rotate
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+rotation
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 sabattier effect
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+scale
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -733,7 +793,25 @@ transform
 \fBfiles/crimp.n\fR
 crimp
 .RE
+translate
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 variance
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+vector-field
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+warp
 .RS
 .TP
 \fBfiles/crimp.n\fR

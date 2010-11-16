@@ -1,0 +1,77 @@
+warp_float_projective_nneighbour
+Tcl_Obj* imageObj
+Tcl_Obj* forwardObj
+
+/*
+ * Warp the image using the specified transform. The result is made large
+ * enough to contain all of the warped image, and will contain meta data about
+ * the location of the actual (0,0) origin point relative to the physical top
+ * left corner of the result. This last is required because translations in
+ * the transform may move result pixels to negative positions which we cannot
+ * express with the regular memory grid.
+ */
+
+crimp_image* image;
+crimp_image* forward;
+crimp_image* backward;
+crimp_image* result;
+int x, y, xt, yt, origx, origy, pixel, xi, yi, outside, c;
+float xf, yf;
+
+crimp_input (imageObj,   image,   float);
+crimp_input (forwardObj, forward, float);
+
+if (!crimp_require_dim (forward, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+backward = crimp_mat3x3_invers (forward);
+if (!backward) {
+    Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+/*
+ * Determine size of the result, and the location of the origin point inside
+ * based on the four corners of the input image and the forward transformation.
+ */
+
+result = crimp_warp_setup (image, forward, &origx, &origy);
+
+for (y = 0, yt = origy; y < result->h; y++, yt++) {
+    for (x = 0, xt = origx; x < result->w; x++, xt++) {
+	xf = xt;
+	yf = yt;
+	crimp_transform (backward, &xf, &yf);
+
+	/*
+	 * Choose the nearest neighbour in x and y to the sampling location as
+	 * the source of the pixel.  Use black for when we moved outside the
+	 * boundaries of the input.
+	 */
+
+	xi = xf;
+	yi = yf;
+	if ((xf - xi) >= 0.5) xi++;
+	if ((yf - yi) >= 0.5) yi++;
+
+	outside = (xi < 0) || (xi >= image->w) || (yi < 0) || (yi >= image->h);
+
+	FLOATP (result, x, y) = outside ? BLACK : FLOATP (image, xi, yi);
+    }
+}
+
+crimp_del (backward);
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

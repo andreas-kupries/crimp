@@ -9,7 +9,8 @@ def effect_warp_sc_luma {
 	    variable sy
 	    variable i
 
-	    show_image [crimp warp projective $i [crimp transform scale $sx $sy]]
+	    show_image [crimp warp projective -interpolate nneighbour \
+			    $i [crimp transform scale $sx $sy]]
 	    return
 	}
 

@@ -9,7 +9,8 @@ def effect_warp_sc_rgba {
 	    variable sy
 	    variable i
 
-	    show_image [crimp warp projective [base] [crimp transform scale $sx $sy]]
+	    show_image [crimp warp projective -interpolate nneighbour \
+			    [base] [crimp transform scale $sx $sy]]
 	    return
 	}
 

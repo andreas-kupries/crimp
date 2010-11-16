@@ -150,10 +150,10 @@ crimp_warp_setup (crimp_image* input, crimp_image* forward, int* origx, int* ori
     up    = MIN (MIN (ylu,yld), MIN (yru,yrd));
     down  = MAX (MAX (ylu,yld), MAX (yru,yrd));
 
-    ileft  = left;  if (ileft  >= left)  ileft --;
-    iright = right; if (iright <= right) iright ++;
-    iup    = up;    if (iup    >= up)    iup --;
-    idown  = down;  if (idown  <= down)  idown ++;
+    ileft  = left;  if (ileft  > left)  ileft --;
+    iright = right; if (iright < right) iright ++;
+    iup    = up;    if (iup    > up)    iup --;
+    idown  = down;  if (idown  < down)  idown ++;
 
     w = iright - ileft + 1;
     h = idown  - iup   + 1;

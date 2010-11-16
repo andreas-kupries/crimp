@@ -83,8 +83,9 @@ proc ::crimp::ALIGN {image size where fe values} {
 proc ::crimp::INTERPOLATE {argv} {
     upvar 1 $argv args
 
-    # Default interpolation method. Simplest, fastest, worst
-    set imethod nneighbour
+    # Default interpolation method. Compromise between accuracy and
+    # speed.
+    set imethod bilinear
 
     set at 0
     while {[string match -* [set opt [lindex $args $at]]]} {
@@ -92,7 +93,7 @@ proc ::crimp::INTERPOLATE {argv} {
 	    -interpolate {
 		incr at
 		set val [lindex $args $at]
-		set legal {nneighbour bilinear bicubic gaussian}
+		set legal {nneighbour bilinear bicubic}
 		if {$val ni $legal} {
 		    return -code error "Expected one of [linsert end [join $legal ,] or], got \"$val\""
 		}
@@ -439,6 +440,27 @@ proc ::crimp::rotate::cw {image} {
 
 proc ::crimp::rotate::half {image} {
     return [crimp flip horizontal [crimp flip vertical $image]]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::resize {args} {
+    return [Resize [::crimp::INTERPOLATE args] {*}$args]
+}
+
+proc ::crimp::Resize {interpolation image w h} {
+    # Resize the image to new width and height.
+
+    # Note that the projective transform can leave the image a bit to
+    # large, due to it rounding the west and south borders up (ceil)
+    # when going from rational to integral coordinates. This is fixed
+    # by cutting the result to the proper dimensions.
+
+    return [cut [warp::Projective $interpolation $image \
+		     [transform::scale \
+			  [expr {double($w)/[width  $image]}] \
+			  [expr {double($h)/[height $image]}]]] \
+		0 0 $w $h]
 }
 
 # # ## ### ##### ######## #############
@@ -1677,9 +1699,9 @@ proc ::crimp::transform::quadrilateral {src dst} {
     # destination quad. This can be captured as perspective, i.e.
     # projective transform.
 
-    return [mul [Q2UNIT $dst] [inv [Q2UNIT $src]]]
-    #         ~~~~~~~~~~~   ~~~~~~~~~~~~~~~~
-    #     unit rect -> dst  src -> unit rect
+    return [chain [Q2UNIT $dst] [invert [Q2UNIT $src]]]
+    #              ~~~~~~~~~~~   ~~~~~~~~~~~~~~~~
+    #         unit rect -> dst   src -> unit rect
 }
 
 proc ::crimp::transform::chain {t args} {
@@ -1767,11 +1789,11 @@ namespace eval ::crimp::warp {
 }
 
 # Alt syntax: Single vector field, this will require a 2d-float type.
-proc ::crimp::warp::warp {args} {
-    return [Warp [::crimp::INTERPOLATE args] {*}$args]
+proc ::crimp::warp::field {args} {
+    return [Field [::crimp::INTERPOLATE args] {*}$args]
 }
 
-proc ::crimp::warp::Warp {interpolation image xvec yvec} {
+proc ::crimp::warp::Field {interpolation image xvec yvec} {
     # General warping. Two images of identical size in all dimensions
     # providing for each pixel of the result the x and y coordinates
     # in the input image to sample from.
@@ -1780,13 +1802,19 @@ proc ::crimp::warp::Warp {interpolation image xvec yvec} {
 	return -code error "Unable to warp, expected equally-sized coordinate fields"
     }
 
-    set rtype [::crimp::TypeOf $image]
-    set xtype [::crimp::TypeOf $xvec]
-    set ytype [::crimp::TypeOf $yvec]
+    set xvec [crimp::convert::2float $xvec]
+    set yvec [crimp::convert::2float $yvec]
 
-    set f warp_${rtype}_${xtype}_${ytype}_$interpolation
+    set rtype [::crimp::TypeOf $image]
+    if {$rtype in {rgb rgba hsv grey8}} {
+	set ftype mbyte
+    } else {
+	set ftype $rtype
+    }
+
+    set f warp_${ftype}_field_$interpolation
     if {![::crimp::Has $f]} {
-	return -code error "Unable to warp, the type combination ${rtype}/${xtype}/$ytype is not supported for $interpolation interpolation"
+	return -code error "Unable to warp, the image type ${rtype} is not supported for $interpolation interpolation"
     }
 
     return [::crimp::$f $image $xvec $yvec]

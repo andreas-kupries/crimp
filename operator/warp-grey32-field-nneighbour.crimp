@@ -1,0 +1,62 @@
+warp_grey32_field_nneighbour
+Tcl_Obj* imageObj
+Tcl_Obj* xvecObj
+Tcl_Obj* yvecObj
+
+/*
+ * Warp image using the given vector field.
+ */
+
+crimp_image* image;
+crimp_image* xvector;
+crimp_image* yvector;
+crimp_image* result;
+int x, y;
+float xf, yf;
+
+crimp_input (imageObj, image,   grey32);
+crimp_input (xvecObj,  xvector, float);
+crimp_input (yvecObj,  yvector, float);
+
+if (!crimp_eq_dim (xvector, yvector)) {
+    Tcl_SetResult(interp, "Unable to warp, expected equally-sized coordinate fields", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+/*
+ * Create result and scan through it, sampling the input under the guidance of
+ * the coordinate fields.
+ */
+
+result = crimp_new (image->itype, xvector->w, xvector->h);
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+	int xi, yi, outside;
+
+	xf = FLOATP (xvector, x, y);
+	yf = FLOATP (yvector, x, y);
+
+	xi = xf;
+	yi = yf;
+	if ((xf - xi) >= 0.5) xi++;
+	if ((yf - yi) >= 0.5) yi++;
+
+	outside = (xi < 0) || (xi >= image->w) || (yi < 0) || (yi >= image->h);
+
+	GREY32 (result, x, y) = outside ? BLACK : GREY32 (image, xi, yi);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

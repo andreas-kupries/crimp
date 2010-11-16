@@ -65,6 +65,7 @@ for (y = 0, yt = origy; y < result->h; y++, yt++) {
 	ixw --; xf += 1.; xf /= 3.;
 	iyw --; yf += 1.; yf /= 3.;
 
+#undef  SAMPLE
 #define SAMPLE(dx,dy) ((((ixw+(dx)) < 0) || ((ixw+(dx)) >= image->w) || ((iyw+(dy)) < 0) || ((iyw+(dy)) >= image->h)) ? BLACK : (CH (image, c, (ixw+(dx)), (iyw+(dy)))))
 
         for (c = 0; c < 4; ++c) {

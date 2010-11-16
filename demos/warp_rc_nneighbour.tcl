@@ -8,8 +8,8 @@ def effect_warp_rc_luma {
 	    variable cy
 	    variable i
 
-	    show_image [crimp warp projective $i \
-			    [crimp transform rotate $theangle [list $cx $cy]]]
+	    show_image [crimp warp projective -interpolate nneighbour \
+			    $i [crimp transform rotate $theangle [list $cx $cy]]]
 	    return
 	}
 

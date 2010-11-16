@@ -10,8 +10,8 @@ def effect_warp_rc_rgba {
 	    variable cx
 	    variable cy
 
-	    show_image [crimp warp projective [base] \
-			    [crimp transform rotate $theangle [list $cx $cy]]]
+	    show_image [crimp warp projective \
+			    [base] [crimp transform rotate $theangle [list $cx $cy]]]
 	    return
 	}
 

@@ -5,9 +5,7 @@ crimp_image*   image;
 unsigned char* bytes;
 int            length;
 
-if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
-    return TCL_ERROR;
-}
+crimp_input_any (imageObj, image);
 
 bytes  = image->pixel;
 length = image->w * image->h * image->itype->size;

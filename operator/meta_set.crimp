@@ -4,9 +4,7 @@ Tcl_Obj* metaObj
 
 crimp_image* image;
 
-if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
-    return TCL_ERROR;
-}
+crimp_input_any (imageObj, image);
 
 /*
  * Nothing to do if the assignment doesn't change anything.

@@ -3,9 +3,7 @@ Tcl_Obj* imageObj
 
 crimp_image* image;
 
-if (crimp_get_image_from_obj (interp, imageObj, &image) != TCL_OK) {
-    return TCL_ERROR;
-}
+crimp_input_any (imageObj, image);
 
 Tcl_SetObjResult (interp, Tcl_NewIntObj (image->w));
 return TCL_OK;

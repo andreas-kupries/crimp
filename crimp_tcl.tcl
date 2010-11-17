@@ -738,19 +738,19 @@ namespace eval ::crimp::threshold {
 # TODO :: introspect the threshold ensemble !
 
 proc ::crimp::threshold::global::below {image n} {
-    return [::crimp::remap $image [::crimp::map::threshold::below $n]]
+    return [::crimp::remap $image [::crimp::map threshold below $n]]
 }
 
 proc ::crimp::threshold::global::above {image n} {
-    return [::crimp::remap $image [::crimp::map::threshold::above $n]]
+    return [::crimp::remap $image [::crimp::map threshold above $n]]
 }
 
 proc ::crimp::threshold::global::inside {image min max} {
-    return [::crimp::remap $image [::crimp::map::threshold::inside $min $max]]
+    return [::crimp::remap $image [::crimp::map threshold inside $min $max]]
 }
 
 proc ::crimp::threshold::global::outside {image min max} {
-    return [::crimp::remap $image [::crimp::map::threshold::outside $min $max]]
+    return [::crimp::remap $image [::crimp::map threshold outside $min $max]]
 }
 
 proc ::crimp::threshold::global::otsu {image} {
@@ -758,7 +758,7 @@ proc ::crimp::threshold::global::otsu {image} {
     set stat [::crimp::statistics::otsu [::crimp::statistics::basic $image]]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp::map::threshold::below \
+	    [::crimp::map threshold below \
 		 [dict get $stat channel $c otsu]]
     }
     return [::crimp::remap $image {*}$maps]
@@ -769,7 +769,7 @@ proc ::crimp::threshold::global::middle {image} {
     set stat [::crimp::statistics::basic $image]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp::map::threshold::below \
+	    [::crimp::map threshold below \
 		 [dict get $stat channel $c middle]]
     }
     return [::crimp::remap $image {*}$maps]
@@ -780,7 +780,7 @@ proc ::crimp::threshold::global::mean {image} {
     set stat [::crimp::statistics::basic $image]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp::map::threshold::below \
+	    [::crimp::map threshold below \
 		 [dict get $stat channel $c mean]]
     }
     return [::crimp::remap $image {*}$maps]
@@ -791,7 +791,7 @@ proc ::crimp::threshold::global::median {image} {
     set stat [::crimp::statistics::basic $image]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp::map::threshold::below \
+	    [::crimp::map threshold below \
 		 [dict get $stat channel $c median]]
     }
     return [::crimp::remap $image {*}$maps]
@@ -807,7 +807,7 @@ proc ::crimp::threshold::local {image args} {
 
     foreach map $args {
 	set xtype [::crimp::TypeOf $map]
-	if {$xtype ne $ntype} {
+	if {$xtype ne $mtype} {
 	    return -code error "Map type mismatch between \"$mtype\" and \"$xtype\", all maps have to have the same type."
 	}
     }
@@ -1170,7 +1170,7 @@ proc ::crimp::alpha::opaque {image} {
     if {$itype ne "rgba"} { return $image }
     # alpha::set
     return [set $image \
-		[::crimp::blank::grey8 \
+		[::crimp::blank grey8 \
 		     {*}[::crimp::dimensions $image] 255]]
 }
 
@@ -1675,7 +1675,7 @@ namespace eval ::crimp::transform {
 proc ::crimp::transform::projective {a b c d e f g h} {
     # Create the matrix for a projective transform (3x3 float) from
     # the eight parameters.
-    return [MAKE [::crimp::read::tcl::float \
+    return [MAKE [::crimp::read::tcl float \
 		[list \
 		     [list $a $b $c] \
 		     [list $d $e $f] \
@@ -1917,7 +1917,7 @@ proc ::crimp::kernel::make {kernelmatrix {scale {}} {offset {}}} {
 	}
     }
 
-    set kernel [::crimp::read::tcl::grey8 $tmpmatrix]
+    set kernel [::crimp::read::tcl grey8 $tmpmatrix]
 
     lassign [::crimp::dimensions $kernel] w h
 
@@ -1951,7 +1951,7 @@ proc ::crimp::kernel::fpmake {kernelmatrix {offset {}}} {
 	}
     }
 
-    set kernel [::crimp::read::tcl::float $kernelmatrix]
+    set kernel [::crimp::read::tcl float $kernelmatrix]
 
     lassign [::crimp::dimensions $kernel] w h
 
@@ -2014,11 +2014,11 @@ proc ::crimp::pyramid::laplace {image steps} {
 	# two. Then the interpolated result is smaller by one pixel.
 	set dx [expr {[::crimp::width $image] - [::crimp::width $up]}]
 	if {$dx > 0} {
-	    set up [::crimp::expand::const $up 0 0 $dx 0]
+	    set up [::crimp::expand const $up 0 0 $dx 0]
 	}
 	set dy [expr {[::crimp::height $image] - [::crimp::height $up]}]
 	if {$dy > 0} {
-	    set up [::crimp::expand::const $up 0 0 0 $dy]
+	    set up [::crimp::expand const $up 0 0 0 $dy]
 	}
 
 	set high [::crimp::subtract $image $up]
@@ -2247,7 +2247,7 @@ proc ::crimp::gradient::grey8 {s e size} {
 	lappend pixels [expr {round($s + $t * $d)}]
     }
 
-    return [::crimp::read::tcl::grey8 [list $pixels]]
+    return [::crimp::read::tcl grey8 [list $pixels]]
 }
 
 proc ::crimp::gradient::rgb {s e size} {
@@ -2273,9 +2273,9 @@ proc ::crimp::gradient::rgb {s e size} {
     }
 
     return [::crimp::join::2rgb \
-		[::crimp::read::tcl::grey8 [list $r]] \
-		[::crimp::read::tcl::grey8 [list $g]] \
-		[::crimp::read::tcl::grey8 [list $b]]]
+		[::crimp::read::tcl grey8 [list $r]] \
+		[::crimp::read::tcl grey8 [list $g]] \
+		[::crimp::read::tcl grey8 [list $b]]]
 }
 
 proc ::crimp::gradient::rgba {s e size} {
@@ -2303,10 +2303,10 @@ proc ::crimp::gradient::rgba {s e size} {
     }
 
     return [::crimp::join::2rgba \
-		[::crimp::read::tcl::grey8 [list $r]] \
-		[::crimp::read::tcl::grey8 [list $g]] \
-		[::crimp::read::tcl::grey8 [list $b]] \
-		[::crimp::read::tcl::grey8 [list $a]]]
+		[::crimp::read::tcl grey8 [list $r]] \
+		[::crimp::read::tcl grey8 [list $g]] \
+		[::crimp::read::tcl grey8 [list $b]] \
+		[::crimp::read::tcl grey8 [list $a]]]
 }
 
 proc ::crimp::gradient::hsv {s e steps} {
@@ -2332,9 +2332,9 @@ proc ::crimp::gradient::hsv {s e steps} {
     }
 
     return [::crimp::join::2hsv \
-		[::crimp::read::tcl::grey8 [list $h]] \
-		[::crimp::read::tcl::grey8 [list $s]] \
-		[::crimp::read::tcl::grey8 [list $v]]]
+		[::crimp::read::tcl grey8 [list $h]] \
+		[::crimp::read::tcl grey8 [list $s]] \
+		[::crimp::read::tcl grey8 [list $v]]]
 }
 
 # # ## ### ##### ######## #############
@@ -2343,11 +2343,11 @@ proc ::crimp::gradient::hsv {s e steps} {
 ## This is not needed to just get things working howver.
 
 proc ::crimp::map {args} {
-    return [read tcl grey8 [list [table {*}$args]]]
+    return [read::tcl grey8 [list [table {*}$args]]]
 }
 
 proc ::crimp::mapof {table} {
-    return [read tcl grey8 [list $table]]
+    return [read::tcl grey8 [list $table]]
 }
 
 namespace eval ::crimp::table {

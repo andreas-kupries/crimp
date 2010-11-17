@@ -77,7 +77,7 @@ proc ::crimp::ALIGN {image size where fe values} {
     }
 
     # Run the expansion.
-    return [crimp::$fe $image $w $n $e $s {*}$values]
+    return [::crimp::$fe $image $w $n $e $s {*}$values]
 }
 
 proc ::crimp::INTERPOLATE {argv} {
@@ -377,7 +377,7 @@ namespace eval ::crimp::convert {
 		    if {$type eq "grey8"} {
 			if {[llength [info level 0]] < 3} {
 			    # Standard gradient, plain black to white greyscale
-			    set gradient [crimp gradient % <B> <W> 256]
+			    set gradient [::crimp::gradient % <B> <W> 256]
 			}
 			return [::crimp::$f $image $gradient]
 		    } else {
@@ -455,15 +455,15 @@ namespace eval ::crimp::rotate {
 }
 
 proc ::crimp::rotate::ccw {image} {
-    return [crimp flip vertical [crimp flip transpose $image]]
+    return [::crimp::flip::vertical [::crimp::flip::transpose $image]]
 }
 
 proc ::crimp::rotate::cw {image} {
-    return [crimp flip horizontal [crimp flip transpose $image]]
+    return [::crimp::flip::horizontal [::crimp::flip::transpose $image]]
 }
 
 proc ::crimp::rotate::half {image} {
-    return [crimp flip horizontal [crimp flip vertical $image]]
+    return [::crimp::flip::horizontal [::crimp::flip::vertical $image]]
 }
 
 # # ## ### ##### ######## #############
@@ -497,11 +497,11 @@ namespace eval ::crimp::morph {
 }
 
 proc ::crimp::morph::erode {image} {
-    return [crimp filter rank $image 1 99.99]
+    return [::crimp::filter::rank $image 1 99.99]
 }
 
 proc ::crimp::morph::dilate {image} {
-    return [crimp filter rank $image 1 0]
+    return [::crimp::filter::rank $image 1 0]
 }
 
 proc ::crimp::morph::open {image} {
@@ -513,23 +513,23 @@ proc ::crimp::morph::close {image} {
 }
 
 proc ::crimp::morph::gradient {image} {
-    return [::crimp subtract [dilate $image] [erode $image]]
+    return [::crimp::subtract [dilate $image] [erode $image]]
 }
 
 proc ::crimp::morph::igradient {image} {
-    return [::crimp subtract $image [erode $image]]
+    return [::crimp::subtract $image [erode $image]]
 }
 
 proc ::crimp::morph::egradient {image} {
-    return [::crimp subtract [dilate $image] $image]
+    return [::crimp::subtract [dilate $image] $image]
 }
 
 proc ::crimp::morph::tophatw {image} {
-    return [::crimp subtract $image [open $image]]
+    return [::crimp::subtract $image [open $image]]
 }
 
 proc ::crimp::morph::tophatb {image} {
-    return [::crimp subtract [close $image] $image]
+    return [::crimp::subtract [close $image] $image]
 }
 
 # # ## ### ##### ######## #############
@@ -590,10 +590,10 @@ proc ::crimp::montage::horizontal {args} {
 	    return -code error "Type mismatch, unable to montage $type to $itype"
 	}
 	set type   $itype
-	set height [tcl::mathfunc::max $height [::crimp height $image]]
+	set height [tcl::mathfunc::max $height [::crimp::height $image]]
     }	
 
-    lassign [crimp::BORDER $type $border] fe values
+    lassign [::crimp::BORDER $type $border] fe values
 
     set f montageh_${type}
     if {![::crimp::Has $f]} {
@@ -603,9 +603,9 @@ proc ::crimp::montage::horizontal {args} {
     # todo: investigate ability of critcl to have typed var-args
     # commands.
     set remainder [lassign $args result]
-    set result    [crimp::ALIGN $result $height $alignment $fe $values]
+    set result    [::crimp::ALIGN $result $height $alignment $fe $values]
     foreach image $remainder {
-	set image [crimp::ALIGN $image $height $alignment $fe $values]
+	set image [::crimp::ALIGN $image $height $alignment $fe $values]
 	set result [::crimp::$f $result $image]
     }
     return $result
@@ -662,10 +662,10 @@ proc ::crimp::montage::vertical {args} {
 	    return -code error "Type mismatch, unable to montage $type to $itype"
 	}
 	set type   $itype
-	set width [tcl::mathfunc::max $width [::crimp width $image]]
+	set width [tcl::mathfunc::max $width [::crimp::width $image]]
     }	
 
-    lassign [crimp::BORDER $type $border] fe values
+    lassign [::crimp::BORDER $type $border] fe values
 
     set f montagev_${type}
     if {![::crimp::Has $f]} {
@@ -675,9 +675,9 @@ proc ::crimp::montage::vertical {args} {
     # todo: investigate ability of critcl to have typed var-args
     # commands.
     set remainder [lassign $args result]
-    set result    [crimp::ALIGN $result $width $alignment $fe $values]
+    set result    [::crimp::ALIGN $result $width $alignment $fe $values]
     foreach image $remainder {
-	set image [crimp::ALIGN $image $width $alignment $fe $values]
+	set image [::crimp::ALIGN $image $width $alignment $fe $values]
 	set result [::crimp::$f $result $image]
     }
     return $result
@@ -702,8 +702,8 @@ namespace eval ::crimp::effect {
 
 proc ::crimp::effect::sharpen {image} {
     # http://wiki.tcl.tk/9521
-    return [crimp filter convolve $image \
-		[crimp kernel make {
+    return [::crimp::filter::convolve $image \
+		[::crimp::kernel::make {
 		    { 0  -1  0}
 		    {-1   5 -1}
 		    { 0  -1  0}} 1]]
@@ -711,15 +711,16 @@ proc ::crimp::effect::sharpen {image} {
 
 proc ::crimp::effect::emboss {image} {
     # http://wiki.tcl.tk/9521 (Suchenwirth)
-    return [crimp filter convolve $image \
-		[crimp kernel make {
+    return [::crimp::filter::convolve $image \
+		[::crimp::kernel::make {
 		    {2  0  0}
 		    {0 -1  0}
 		    {0  0 -1}}]]
 }
 
 proc ::crimp::effect::charcoal {image} {
-    return [crimp morph gradient [crimp convert 2grey8 $image]]
+    return [::crimp::morph::gradient \
+		[::crimp::convert::2grey8 $image]]
 }
 
 # # ## ### ##### ######## #############
@@ -737,63 +738,63 @@ namespace eval ::crimp::threshold {
 # TODO :: introspect the threshold ensemble !
 
 proc ::crimp::threshold::global::below {image n} {
-    return [::crimp remap $image [::crimp map threshold below $n]]
+    return [::crimp::remap $image [::crimp::map::threshold::below $n]]
 }
 
 proc ::crimp::threshold::global::above {image n} {
-    return [::crimp remap $image [::crimp map threshold above $n]]
+    return [::crimp::remap $image [::crimp::map::threshold::above $n]]
 }
 
 proc ::crimp::threshold::global::inside {image min max} {
-    return [::crimp remap $image [::crimp map threshold inside $min $max]]
+    return [::crimp::remap $image [::crimp::map::threshold::inside $min $max]]
 }
 
 proc ::crimp::threshold::global::outside {image min max} {
-    return [::crimp remap $image [::crimp map threshold outside $min $max]]
+    return [::crimp::remap $image [::crimp::map::threshold::outside $min $max]]
 }
 
 proc ::crimp::threshold::global::otsu {image} {
     set maps {}
-    set stat [::crimp statistics otsu [::crimp statistics basic $image]]
+    set stat [::crimp::statistics::otsu [::crimp::statistics::basic $image]]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp map threshold below \
+	    [::crimp::map::threshold::below \
 		 [dict get $stat channel $c otsu]]
     }
-    return [::crimp remap $image {*}$maps]
+    return [::crimp::remap $image {*}$maps]
 }
 
 proc ::crimp::threshold::global::middle {image} {
     set maps {}
-    set stat [::crimp statistics basic $image]
+    set stat [::crimp::statistics::basic $image]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp map threshold below \
+	    [::crimp::map::threshold::below \
 		 [dict get $stat channel $c middle]]
     }
-    return [::crimp remap $image {*}$maps]
+    return [::crimp::remap $image {*}$maps]
 }
 
 proc ::crimp::threshold::global::mean {image} {
     set maps {}
-    set stat [::crimp statistics basic $image]
+    set stat [::crimp::statistics::basic $image]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp map threshold below \
+	    [::crimp::map::threshold::below \
 		 [dict get $stat channel $c mean]]
     }
-    return [::crimp remap $image {*}$maps]
+    return [::crimp::remap $image {*}$maps]
 }
 
 proc ::crimp::threshold::global::median {image} {
     set maps {}
-    set stat [::crimp statistics basic $image]
+    set stat [::crimp::statistics::basic $image]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp map threshold below \
+	    [::crimp::map::threshold::below \
 		 [dict get $stat channel $c median]]
     }
-    return [::crimp remap $image {*}$maps]
+    return [::crimp::remap $image {*}$maps]
 }
 
 proc ::crimp::threshold::local {image args} {
@@ -1122,10 +1123,10 @@ proc ::crimp::expand {bordertype image ww hn we hs args} {
 proc ::crimp::crop {image ww hn we hs} {
     set type [TypeOf $image]
     set f    crop_$type
-    if {![crimp::Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Cropping is not supported for images of type \"$type\""
     }
-    return [crimp::$f $image $ww $hn $we $hs]
+    return [::crimp::$f $image $ww $hn $we $hs]
 }
 
 proc ::crimp::cut {image x y w h} {
@@ -1153,46 +1154,48 @@ namespace eval ::crimp::alpha {
 # requires '::set'.
 
 proc ::crimp::alpha::set {image mask} {
-    ::set itype [crimp::TypeOf $image]
-    ::set mtype [crimp::TypeOf $mask]
+    ::set itype [::crimp::TypeOf $image]
+    ::set mtype [::crimp::TypeOf $mask]
     ::set f     setalpha_${itype}_$mtype
-    if {![crimp::Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Setting the alpha channel is not supported for images of type \"$itype\" and mask of type \"$mtype\""
     }
-    return [crimp::$f $image $mask]
+    return [::crimp::$f $image $mask]
 }
 
 # # ## ### ##### ######## #############
 
 proc ::crimp::alpha::opaque {image} {
-    ::set itype [crimp::TypeOf $image]
+    ::set itype [::crimp::TypeOf $image]
     if {$itype ne "rgba"} { return $image }
     # alpha::set
-    return [set $image [crimp blank grey8 {*}[crimp dimensions $image] 255]]
+    return [set $image \
+		[::crimp::blank::grey8 \
+		     {*}[::crimp::dimensions $image] 255]]
 }
 
 # # ## ### ##### ######## #############
 
 proc ::crimp::alpha::blend {fore back alpha} {
-    ::set ftype [crimp::TypeOf $fore]
-    ::set btype [crimp::TypeOf $back]
+    ::set ftype [::crimp::TypeOf $fore]
+    ::set btype [::crimp::TypeOf $back]
     ::set f     alpha_blend_${ftype}_$btype
-    if {![crimp::Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Blend is not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
-    return [crimp::$f $fore $back [::crimp::table::CLAMP $alpha]]
+    return [::crimp::$f $fore $back [::crimp::table::CLAMP $alpha]]
 }
 
 # # ## ### ##### ######## #############
 
 proc ::crimp::alpha::over {fore back} {
-    ::set ftype [crimp::TypeOf $fore]
-    ::set btype [crimp::TypeOf $back]
+    ::set ftype [::crimp::TypeOf $fore]
+    ::set btype [::crimp::TypeOf $back]
     ::set f     alpha_over_${ftype}_$btype
-    if {![crimp::Has $f]} {
+    if {![::crimp::Has $f]} {
 	return -code error "Over is not supported for a foreground of type \"$ftype\" and a background of type \"$btype\""
     }
-    return [crimp::$f $fore $back]
+    return [::crimp::$f $fore $back]
 }
 
 # # ## ### ##### ######## #############
@@ -1354,14 +1357,14 @@ namespace eval ::crimp::filter {
 proc ::crimp::filter::convolve {image args} {
     # args = ?-border spec? kernel...
 
-    set type [crimp::TypeOf $image]
+    set type [::crimp::TypeOf $image]
     set fc convolve_*_${type}
-    if {![llength [crimp::List $fc]]} {
+    if {![llength [::crimp::List $fc]]} {
 	return -code error "Convolution is not supported for image type \"$type\""
     }
 
     # Default settings for border expansion.
-    lassign [crimp::BORDER $type const] fe values
+    lassign [::crimp::BORDER $type const] fe values
 
     set at 0
     while {1} {
@@ -1371,7 +1374,7 @@ proc ::crimp::filter::convolve {image args} {
 	switch -- $opt {
 	    -border {
 		set value [lindex $args $at]
-		lassign [crimp::BORDER $type $value] fe values
+		lassign [::crimp::BORDER $type $value] fe values
 		incr at
 	    }
 	    default {
@@ -1392,13 +1395,15 @@ proc ::crimp::filter::convolve {image args} {
     foreach kernel $args {
 	lassign $kernel kw kh K scale offset
 
-	set ktype [crimp::TypeOf $K]
+	set ktype [::crimp::TypeOf $K]
 	set fc convolve_${ktype}_${type}
-	if {![crimp::Has $fc]} {
+	if {![::crimp::Has $fc]} {
 	    return -code error "Convolution kernel type \"$ktype\" is not supported for image type \"$type\""
 	}
 
-	set image [crimp::$fc [crimp::$fe $image $kw $kh $kw $kh {*}$values] $K $scale $offset]
+	set image [::crimp::$fc \
+		       [::crimp::$fe $image $kw $kh $kw $kh {*}$values] \
+		       $K $scale $offset]
     }
 
     return $image
@@ -1409,14 +1414,14 @@ proc ::crimp::filter::convolve {image args} {
 proc ::crimp::filter::ahe {image args} {
     # args = ?-border spec? ?radius?
 
-    set type [crimp::TypeOf $image]
+    set type [::crimp::TypeOf $image]
     set fc ahe_${type}
-    if {![crimp::Has $fc]} {
+    if {![::crimp::Has $fc]} {
 	return -code error "AHE filtering is not supported for image type \"$type\""
     }
 
     # Default settings for border expansion.
-    lassign [crimp::BORDER $type const] fe values
+    lassign [::crimp::BORDER $type const] fe values
 
     set at 0
     while {1} {
@@ -1426,7 +1431,7 @@ proc ::crimp::filter::ahe {image args} {
 	switch -- $opt {
 	    -border {
 		set value [lindex $args $at]
-		lassign [crimp::BORDER $type $value] fe values
+		lassign [::crimp::BORDER $type $value] fe values
 		incr at
 	    }
 	    default {
@@ -1445,7 +1450,8 @@ proc ::crimp::filter::ahe {image args} {
 
     # Shrinkage by 2*radius. Compensate using the chosen border type.
 
-    return [crimp::$fc [crimp::$fe $image $radius $radius $radius $radius {*}$values] \
+    return [::crimp::$fc \
+		[::crimp::$fe $image $radius $radius $radius $radius {*}$values] \
 		$radius]
 }
 
@@ -1454,7 +1460,7 @@ proc ::crimp::filter::ahe {image args} {
 proc ::crimp::filter::mean {image args} {
     # args = ?-border spec? ?radius?
 
-    set type [crimp::TypeOf $image]
+    set type [::crimp::TypeOf $image]
 
     # Multi-channel images are handled by splitting them and
     # processing each channel separately (invoking the method
@@ -1462,10 +1468,10 @@ proc ::crimp::filter::mean {image args} {
     switch -exact -- $type {
 	rgb - rgba - hsv {
 	    set r {}
-	    foreach c [crimp split $image] {
+	    foreach c [::crimp::split $image] {
 		lappend r [mean $c {*}$args]
 	    }
-	    return [crimp join 2$type {*}$r]
+	    return [::crimp::join 2$type {*}$r]
 	}
     }
 
@@ -1479,7 +1485,7 @@ proc ::crimp::filter::mean {image args} {
     # image edges.
 
     # Default settings for border expansion.
-    lassign [crimp::BORDER $type mirror] fe values
+    lassign [::crimp::BORDER $type mirror] fe values
 
     set at 0
     while {1} {
@@ -1489,7 +1495,7 @@ proc ::crimp::filter::mean {image args} {
 	switch -- $opt {
 	    -border {
 		set value [lindex $args $at]
-		lassign [crimp::BORDER $type $value] fe values
+		lassign [::crimp::BORDER $type $value] fe values
 		incr at
 	    }
 	    default {
@@ -1510,11 +1516,11 @@ proc ::crimp::filter::mean {image args} {
     set expand [expr {$radius + 1}]
     set factor [expr {1./((2*$radius+1)**2)}]
 
-    return [crimp convert 2$type \
-		[crimp::scale_float \
-		     [crimp::region_sum \
-			  [crimp integrate \
-			       [crimp::$fe $image $expand $expand $expand $expand {*}$values]] \
+    return [::crimp::convert 2$type \
+		[::crimp::scale_float \
+		     [::crimp::region_sum \
+			  [::crimp::integrate \
+			       [::crimp::$fe $image $expand $expand $expand $expand {*}$values]] \
 			  $radius] $factor]]
 }
 
@@ -1523,11 +1529,11 @@ proc ::crimp::filter::mean {image args} {
 proc ::crimp::filter::stddev {image args} {
     # args = ?-border spec? ?radius?
 
-    set type [crimp::TypeOf $image]
+    set type [::crimp::TypeOf $image]
 
     # Multi-channel images are not handled, because the output is a
     # float, which we cannot join.
-    if {[llength [crimp channels $image]] > 1} {
+    if {[llength [::crimp::channels $image]] > 1} {
 	    return -code error "Unable to process multi-channel images"
     }
 
@@ -1541,7 +1547,7 @@ proc ::crimp::filter::stddev {image args} {
     # image edges.
 
     # Default settings for border expansion.
-    lassign [crimp::BORDER $type mirror] fe values
+    lassign [::crimp::BORDER $type mirror] fe values
 
     set at 0
     while {1} {
@@ -1551,7 +1557,7 @@ proc ::crimp::filter::stddev {image args} {
 	switch -- $opt {
 	    -border {
 		set value [lindex $args $at]
-		lassign [crimp::BORDER $type $value] fe values
+		lassign [::crimp::BORDER $type $value] fe values
 		incr at
 	    }
 	    default {
@@ -1579,23 +1585,22 @@ proc ::crimp::filter::MEAN_STDDEV {image radius fe values} {
 
     # Compute mean and stddev ...
 
-    set expanded [crimp::$fe $image $expand $expand $expand $expand {*}$values]
-    set mean     [crimp::scale_float \
-		      [crimp::region_sum \
-			   [crimp integrate $expanded] \
+    set expanded [::crimp::$fe $image $expand $expand $expand $expand {*}$values]
+    set mean     [::crimp::scale_float \
+		      [::crimp::region_sum \
+			   [::crimp::integrate $expanded] \
 			   $radius] \
 		      $factor]
-
-    set stddev   [crimp::sqrt_float \
-		      [crimp subtract \
-			   [crimp::scale_float \
-				[crimp::region_sum \
-				     [crimp integrate \
-					  [crimp square \
-					       [crimp convert 2float $expanded]]] \
+    set stddev   [::crimp::sqrt_float \
+		      [::crimp::subtract \
+			   [::crimp::scale_float \
+				[::crimp::region_sum \
+				     [::crimp::integrate \
+					  [::crimp::square \
+					       [::crimp::convert::2float $expanded]]] \
 				     $radius] \
 				$factor] \
-			   [crimp square $mean]]]
+			   [::crimp::square $mean]]]
 
     return [list $mean $stddev]
 }
@@ -1605,14 +1610,14 @@ proc ::crimp::filter::MEAN_STDDEV {image radius fe values} {
 proc ::crimp::filter::rank {image args} {
     # args = ?-border spec? ?radius ?percentile??
 
-    set type [crimp::TypeOf $image]
+    set type [::crimp::TypeOf $image]
     set fc rof_${type}
-    if {![crimp::Has $fc]} {
+    if {![::crimp::Has $fc]} {
 	return -code error "Rank filtering is not supported for image type \"$type\""
     }
 
     # Default settings for border expansion.
-    lassign [crimp::BORDER $type const] fe values
+    lassign [::crimp::BORDER $type const] fe values
 
     set at 0
     while {1} {
@@ -1622,7 +1627,7 @@ proc ::crimp::filter::rank {image args} {
 	switch -- $opt {
 	    -border {
 		set value [lindex $args $at]
-		lassign [crimp::BORDER $type $value] fe values
+		lassign [::crimp::BORDER $type $value] fe values
 		incr at
 	    }
 	    default {
@@ -1648,7 +1653,8 @@ proc ::crimp::filter::rank {image args} {
 
     # Shrinkage by 2*radius. Compensate using the chosen border type.
 
-    return [crimp::$fc [crimp::$fe $image $radius $radius $radius $radius {*}$values] \
+    return [::crimp::$fc \
+		[::crimp::$fe $image $radius $radius $radius $radius {*}$values] \
 		$radius $percentile]
 }
 
@@ -1669,7 +1675,7 @@ namespace eval ::crimp::transform {
 proc ::crimp::transform::projective {a b c d e f g h} {
     # Create the matrix for a projective transform (3x3 float) from
     # the eight parameters.
-    return [MAKE [crimp read tcl float \
+    return [MAKE [::crimp::read::tcl::float \
 		[list \
 		     [list $a $b $c] \
 		     [list $d $e $f] \
@@ -1826,8 +1832,8 @@ proc ::crimp::warp::Field {interpolation image xvec yvec} {
 	return -code error "Unable to warp, expected equally-sized coordinate fields"
     }
 
-    set xvec [crimp::convert::2float $xvec]
-    set yvec [crimp::convert::2float $yvec]
+    set xvec [::crimp::convert::2float $xvec]
+    set yvec [::crimp::convert::2float $yvec]
 
     set rtype [::crimp::TypeOf $image]
     if {$rtype in {rgb rgba hsv grey8}} {
@@ -1911,9 +1917,9 @@ proc ::crimp::kernel::make {kernelmatrix {scale {}} {offset {}}} {
 	}
     }
 
-    set kernel [crimp read tcl grey8 $tmpmatrix]
+    set kernel [::crimp::read::tcl::grey8 $tmpmatrix]
 
-    lassign [crimp::dimensions $kernel] w h
+    lassign [::crimp::dimensions $kernel] w h
 
     if {!($w % 2) || !($h % 2)} {
 	# Keep in sync with the convolve primitives.
@@ -1945,9 +1951,9 @@ proc ::crimp::kernel::fpmake {kernelmatrix {offset {}}} {
 	}
     }
 
-    set kernel [crimp read tcl float $kernelmatrix]
+    set kernel [::crimp::read::tcl::float $kernelmatrix]
 
-    lassign [crimp::dimensions $kernel] w h
+    lassign [::crimp::dimensions $kernel] w h
 
     if {!($w % 2) || !($h % 2)} {
 	# Keep in sync with the convolve primitives.
@@ -1966,7 +1972,7 @@ proc ::crimp::kernel::fpmake {kernelmatrix {offset {}}} {
 
 proc ::crimp::kernel::transpose {kernel} {
     lassign $kernel w h K scale offset
-    set Kt [crimp flip transpose $K]
+    set Kt [::crimp::flip::transpose $K]
     return [list $h $w $Kt $scale $offset]
 }
 
@@ -1994,31 +2000,31 @@ proc ::crimp::pyramid::run {image steps stepfun} {
 
 proc ::crimp::pyramid::gauss {image steps} {
     lrange [run $image $steps [list ::apply {{kernel image} {
-	set low [crimp decimate xy $image 2 $kernel]
+	set low [::crimp::decimate::xy $image 2 $kernel]
 	return [list $low $low]
-    }} [crimp kernel make {{1 4 6 4 1}}]]] 0 end-1
+    }} [::crimp::kernel::make {{1 4 6 4 1}}]]] 0 end-1
 }
 
 proc ::crimp::pyramid::laplace {image steps} {
     run $image $steps [list ::apply {{kerneld kerneli image} {
-	set low  [crimp decimate xy $image 2 $kerneld]
-	set up   [crimp interpolate xy $low 2 $kerneli]
+	set low  [::crimp::decimate::xy    $image 2 $kerneld]
+	set up   [::crimp::interpolate::xy $low   2 $kerneli]
 
 	# Handle problem with input image size not a multiple of
 	# two. Then the interpolated result is smaller by one pixel.
-	set dx [expr {[crimp width $image] - [crimp width $up]}]
+	set dx [expr {[::crimp::width $image] - [::crimp::width $up]}]
 	if {$dx > 0} {
-	    set up [crimp expand const $up 0 0 $dx 0]
+	    set up [::crimp::expand::const $up 0 0 $dx 0]
 	}
-	set dy [expr {[crimp height $image] - [crimp height $up]}]
+	set dy [expr {[::crimp::height $image] - [::crimp::height $up]}]
 	if {$dy > 0} {
-	    set up [crimp expand const $up 0 0 0 $dy]
+	    set up [::crimp::expand::const $up 0 0 0 $dy]
 	}
 
-	set high [crimp subtract $image $up]
+	set high [::crimp::subtract $image $up]
 	return [list $high $low]
-    }} [crimp kernel make {{1 4 6 4 1}}] \
-       [crimp kernel make {{1 4 6 4 1}} 8]]
+    }} [::crimp::kernel::make {{1 4 6 4 1}}] \
+       [::crimp::kernel::make {{1 4 6 4 1}} 8]]
 }
 
 # # ## ### ##### ######## #############
@@ -2083,21 +2089,21 @@ proc ::crimp::statistics::basic {image} {
     array set stat {}
 
     # Basics
-    set stat(channels)   [crimp channels   $image]
-    set stat(dimensions) [crimp dimensions $image]
-    set stat(height)     [crimp height     $image]
-    set stat(width)      [crimp width      $image]
-    set stat(type)       [crimp::TypeOf    $image]
+    set stat(channels)   [::crimp::channels   $image]
+    set stat(dimensions) [::crimp::dimensions $image]
+    set stat(height)     [::crimp::height     $image]
+    set stat(width)      [::crimp::width      $image]
+    set stat(type)       [::crimp::TypeOf     $image]
     set stat(pixels)     [set n [expr {$stat(width) * $stat(height)}]]
 
     # Histogram and derived data, per channel.
-    foreach {c h} [crimp histogram $image] {
+    foreach {c h} [::crimp::histogram $image] {
 	#puts <$c>
 	set hf     [dict values $h]
 	#puts H|[llength $hf]||$hf
-	set cdf    [crimp::CUMULATE $hf]
+	set cdf    [::crimp::CUMULATE $hf]
 	#puts C|[llength $cdf]|$cdf
-	set cdf255 [crimp::FIT $cdf 255]
+	set cdf255 [::crimp::FIT $cdf 255]
 
 	# Min, max, plus pre-processing for the mean
 	set min 255
@@ -2105,8 +2111,8 @@ proc ::crimp::statistics::basic {image} {
 	set sum 0
 	foreach {p count} $h {
 	    if {!$count} continue
-	    set min [tcl::mathfunc::min $min $p]
-	    set max [tcl::mathfunc::max $max $p]
+	    set min [::tcl::mathfunc::min $min $p]
+	    set max [::tcl::mathfunc::max $max $p]
 	    incr sum [expr {$p * $count}]
 	}
 
@@ -2241,7 +2247,7 @@ proc ::crimp::gradient::grey8 {s e size} {
 	lappend pixels [expr {round($s + $t * $d)}]
     }
 
-    return [crimp read tcl grey8 [list $pixels]]
+    return [::crimp::read::tcl::grey8 [list $pixels]]
 }
 
 proc ::crimp::gradient::rgb {s e size} {
@@ -2266,10 +2272,10 @@ proc ::crimp::gradient::rgb {s e size} {
 	lappend b [expr {round($sb + $t * $db)}]
     }
 
-    return [crimp join 2rgb \
-		[crimp read tcl grey8 [list $r]] \
-		[crimp read tcl grey8 [list $g]] \
-		[crimp read tcl grey8 [list $b]]]
+    return [::crimp::join::2rgb \
+		[::crimp::read::tcl::grey8 [list $r]] \
+		[::crimp::read::tcl::grey8 [list $g]] \
+		[::crimp::read::tcl::grey8 [list $b]]]
 }
 
 proc ::crimp::gradient::rgba {s e size} {
@@ -2296,11 +2302,11 @@ proc ::crimp::gradient::rgba {s e size} {
 	lappend a [expr {round($sa + $t * $da)}]
     }
 
-    return [crimp join 2rgba \
-		[crimp read tcl grey8 [list $r]] \
-		[crimp read tcl grey8 [list $g]] \
-		[crimp read tcl grey8 [list $b]] \
-		[crimp read tcl grey8 [list $a]]]
+    return [::crimp::join::2rgba \
+		[::crimp::read::tcl::grey8 [list $r]] \
+		[::crimp::read::tcl::grey8 [list $g]] \
+		[::crimp::read::tcl::grey8 [list $b]] \
+		[::crimp::read::tcl::grey8 [list $a]]]
 }
 
 proc ::crimp::gradient::hsv {s e steps} {
@@ -2325,10 +2331,10 @@ proc ::crimp::gradient::hsv {s e steps} {
 	lappend v [expr {round($sv + $t * $dv)}]
     }
 
-    return [crimp join 2hsv \
-		[crimp read tcl grey8 [list $h]] \
-		[crimp read tcl grey8 [list $s]] \
-		[crimp read tcl grey8 [list $v]]]
+    return [::crimp::join::2hsv \
+		[::crimp::read::tcl::grey8 [list $h]] \
+		[::crimp::read::tcl::grey8 [list $s]] \
+		[::crimp::read::tcl::grey8 [list $v]]]
 }
 
 # # ## ### ##### ######## #############
@@ -2600,9 +2606,9 @@ proc ::crimp::table::quantize::histogram {n p h} {
     # standard range 0...255 before using it to compute a
     # quantization.
 
-    return [crimp::table::QuantizeCore $n $p \
-		[crimp::FIT \
-		     [crimp::CUMULATE [dict values $h]] \
+    return [::crimp::table::QuantizeCore $n $p \
+		[::crimp::FIT \
+		     [::crimp::CUMULATE [dict values $h]] \
 		     255]]
 }
 
@@ -2628,7 +2634,7 @@ proc ::crimp::table::QuantizeCore {n p cdf} {
     set step  {}
     set color {}
 
-    foreach pv [crimp::table::identity] sum $cdf {
+    foreach pv [::crimp::table::identity] sum $cdf {
 	if {$sum <= $threshold} continue
 	lappend step   $pv
 	lappend color [expr {round($threshold)}]

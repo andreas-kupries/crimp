@@ -1,5 +1,6 @@
 hough_grey8
 Tcl_Obj* imageObj
+int emptyBucketColor
 
 crimp_image* image;
 crimp_image* result;
@@ -36,7 +37,9 @@ result = crimp_new_float (rw, rh);
  * interpolation when sampling the input. This alternate phrasing makes things
  * easier, for (1) there is no need for a separate initialization step, and
  * (2) we avoid the need to decide which pixels to count as on a line which is
- * required by the regular implementation (See the 'pixel > 0' condition!).
+ * required by the regular implementation (See the 'pixel > 0' condition!). On
+ * the other hand, this phrasing needs a color representing empty buckets, the
+ * background color of the image, the color not used by pixels on a line.
  */
 
 for (rho = 0; rho < rh; rho++) {
@@ -87,13 +90,19 @@ for (rho = 0; rho < rh; rho++) {
 	}
 
 	/*
-	 * Convert to the average and save.
+	 * Convert to the average and save. The specified default color for
+	 * empty buckets is used if we were unable to seep a proper line
+	 * across the input. It should match the background color of the
+	 * input, with the actual lines we are looking for deviating from that
+	 * color. For black lines this is usually WHITE. This is this
+	 * algorithm's complement to the regular algorithm's need to decide if
+	 * a pixel belongs to a line or not.
 	 */
 
 	if (total) {
 	    FLOATP (result, theta, rho) = ((float)sum)/total;
 	} else {
-	    FLOATP (result, theta, rho) = 0;
+	    FLOATP (result, theta, rho) = emptyBucketColor;
 	}
     }
 }

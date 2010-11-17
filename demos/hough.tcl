@@ -14,7 +14,7 @@ def op_hough {
 	variable falsecolor
 
 	set g  [crimp convert 2grey8 [base]]
-	set h  [crimp::hough_grey8 $g]
+	set h  [crimp::hough_grey8 $g 255]
 
 	set gd  [crimp convert 2rgb $g]
 	set hd  [crimp convert 2rgb [crimp invert [crimp convert 2grey8 $h]] $falsecolor]

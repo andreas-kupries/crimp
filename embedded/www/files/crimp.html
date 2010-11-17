@@ -92,7 +92,7 @@
     }
 --></style>
 </head>
-<! -- Generated from file '/home/aku/Projects/Tcl/Crimp/warp/embedded/www/files/crimp.html' by tcllib/doctools with format 'html'
+<! -- Generated from file '/home/aku/Projects/Tcl/Crimp/de/embedded/www/files/crimp.html' by tcllib/doctools with format 'html'
    -->
 <! -- Copyright &copy; 2010 Andreas Kupries   -- Copyright &copy; 2010 Documentation, Andreas Kupries
    -->
@@ -1246,7 +1246,7 @@ transformation and warping, going beyond even projective
 transformations.</p>
 <p>The two images providing the coordinate information have to be
 of the same size, which is also the size of the returned result. The
-type of the result is however specified through the type of the iput
+type of the result is however specified through the type of the input
 image.</p>
 <p>The method supports all the possible interpolation types,
 i.e. nearest neighbour, bilinear, and bicubic.
@@ -1264,11 +1264,12 @@ compromise between accuracy and speed.</p>
 necessary to contain the whole of the projected input. Depending on
 the transformation this means that parts of the result can be black,
 coming from outside of the boundaries of the input. Further, the
-origin point of the result may conceptually be inside of the result
-instead of the top left corner, because of pixels in the input getting
-projected to negative coordinates. To handle this situation the result
-will contain the physical coordinates of the conceptual origin point
-in its meta data, under the hierarchical key <b class="const">crimp origin</b>.</p></dd>
+origin point of the result may conceptually be inside or outside of
+the result instead of at the top left corner, because of pixels in the
+input getting projected to negative coordinates. To handle this
+situation the result will contain the physical coordinates of the
+conceptual origin point in its meta data, under the hierarchical key
+<b class="const">crimp origin</b>.</p></dd>
 </dl>
 </div>
 <div id="subsection3" class="subsection"><h3><a name="subsection3">Converters</a></h3>

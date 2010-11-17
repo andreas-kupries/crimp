@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/warp/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/de/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -1820,7 +1820,7 @@ transformations.
 .sp
 The two images providing the coordinate information have to be
 of the same size, which is also the size of the returned result. The
-type of the result is however specified through the type of the iput
+type of the result is however specified through the type of the input
 image.
 .sp
 The method supports all the possible interpolation types,
@@ -1842,11 +1842,12 @@ compromise between accuracy and speed.
 necessary to contain the whole of the projected input. Depending on
 the transformation this means that parts of the result can be black,
 coming from outside of the boundaries of the input. Further, the
-origin point of the result may conceptually be inside of the result
-instead of the top left corner, because of pixels in the input getting
-projected to negative coordinates. To handle this situation the result
-will contain the physical coordinates of the conceptual origin point
-in its meta data, under the hierarchical key \fBcrimp origin\fR.
+origin point of the result may conceptually be inside or outside of
+the result instead of at the top left corner, because of pixels in the
+input getting projected to negative coordinates. To handle this
+situation the result will contain the physical coordinates of the
+conceptual origin point in its meta data, under the hierarchical key
+\fBcrimp origin\fR.
 .PP
 .SS CONVERTERS
 .TP

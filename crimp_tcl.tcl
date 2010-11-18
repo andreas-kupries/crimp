@@ -2096,7 +2096,19 @@ proc ::crimp::statistics::basic {image} {
     set stat(type)       [::crimp::TypeOf     $image]
     set stat(pixels)     [set n [expr {$stat(width) * $stat(height)}]]
 
+    # Type specific statistics primitive available ? If yes, then this
+    # has priority over us doing the histogram and pulling the data
+    # out of it.
+
+    set f stats_$stat(type)
+    if {[::crimp::Has $f]} {
+	set stat(channel) [::crimp::$f $image]
+	return [array get stat]
+    }
+
+    # No primitive, go through the histogram.
     # Histogram and derived data, per channel.
+
     foreach {c h} [::crimp::histogram $image] {
 	#puts <$c>
 	set hf     [dict values $h]

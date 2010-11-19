@@ -1,0 +1,64 @@
+color_combine
+Tcl_Obj* imageObj
+Tcl_Obj* combineMatrixObj
+
+/*
+ * Taking a color image in either RGB(A) and HSV it combines the color channels
+ * by feeding the channels of each pixel through the specified vector. One
+ * application of this is conversion to grey scale in various ways.
+ */
+
+crimp_image* image;
+crimp_image* combine;
+crimp_image* result;
+int x, y;
+double wr, wg, wb;
+
+/*
+ * Ensure that the input is of type RGB(A) or HSV
+ */
+
+crimp_input_any (imageObj, image);
+ASSERT_NOTIMGTYPE (image, float);
+ASSERT_NOTIMGTYPE (image, grey8);
+ASSERT_NOTIMGTYPE (image, grey16);
+ASSERT_NOTIMGTYPE (image, grey32);
+
+crimp_input (combineMatrixObj, combine, float);
+
+if (!crimp_require_dim (combine, 3, 1)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x1", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+wr = CH (image, 0, x, y);
+wg = CH (image, 1, x, y);
+wb = CH (image, 2, x, y);
+
+result = crimp_new_grey8 (image->w, image->h);
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+
+	double r = CH (image, 0, x, y);
+	double g = CH (image, 1, x, y);
+	double b = CH (image, 2, x, y);
+
+	double c = r*wr + g*wg + b*wb;
+
+	GREY8 (result, x, y) = CLAMP (0, (int) c, 255);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

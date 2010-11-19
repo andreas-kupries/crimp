@@ -858,6 +858,8 @@ proc ::crimp::degamma {image y} {
     remap $image [map degamma $y]
 }
 
+# # ## ### ##### ######## #############
+
 proc ::crimp::remap {image args} {
     set type [TypeOf $image]
     if {![Has map_$type]} {
@@ -890,6 +892,197 @@ proc ::crimp::remap {image args} {
 
     return [map_$type $image {*}$args]
 }
+
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::color {
+    namespace export {[0-9a-z]*}
+    namespace ensemble create
+
+    variable typecode crimp/colortransform
+}
+
+proc ::crimp::color::mix {image colortransform} {
+    set itype [::crimp::TypeOf $image]
+    if {$itype ni {rgb rgba hsv}} {
+	return -code error "Unable to mix colors for image type $itype"
+    }
+    return [::crimp::color_mix $image [CHECK $colortransform]]
+}
+
+proc ::crimp::color::combine {image wa wb wc} {
+    set itype [::crimp::TypeOf $image]
+    if {$itype ni {rgb rgba hsv}} {
+	return -code error "Unable to recombine colors for image type $itype"
+    }
+
+    return [::crimp::color_combine $image \
+		[::crimp::read::tcl float [list [list $wa $wb $wc]]]
+}
+
+proc ::crimp::color::rgb2xyz {} {
+    return [MAKE [XYZ]]
+}
+
+namespace eval ::crimp::color::xyz2lms {
+    namespace export {[0-9a-z]*}
+    namespace ensemble create
+}
+
+proc ::crimp::color::xyz2lms::cmccat97 {} {
+    return [::crimp::color::MAKE [::crimp::color::LMS::CMCCAT97]]
+}
+
+proc ::crimp::color::xyz2lms::rlab {} {
+    return [::crimp::color::MAKE [::crimp::color::LMS::RLAB]]
+}
+
+proc ::crimp::color::xyz2lms::ciecam97 {} {
+    return [::crimp::color::MAKE [::crimp::color::LMS::CIECAM97]]
+}
+
+proc ::crimp::color::xyz2lms::ciecam02 {} {
+    return [::crimp::color::MAKE [::crimp::color::LMS::CIECAM02]]
+}
+
+namespace eval ::crimp::color::rgb2lms {
+    namespace export {[0-9a-z]*}
+    namespace ensemble create
+}
+
+proc ::crimp::color::rgb2lms::cmccat97 {} {
+    return [::crimp::color::MAKE \
+		[::crimp::matmul3x3_float \
+		     [::crimp::color::LMS::CMCCAT97] \
+		     [::crimp::color::XYZ]]]
+}
+
+proc ::crimp::color::rgb2lms::rlab {} {
+    return [::crimp::color::MAKE \
+		[::crimp::matmul3x3_float \
+		     [::crimp::color::LMS::RLAB] \
+		     [::crimp::color::XYZ]]]
+}
+
+proc ::crimp::color::rgb2lms::ciecam97 {} {
+    return [::crimp::color::MAKE \
+		[::crimp::matmul3x3_float \
+		     [::crimp::color::LMS::CIECAM97] \
+		     [::crimp::color::XYZ]]]
+}
+
+proc ::crimp::color::rgb2lms::ciecam02 {} {
+    return [::crimp::color::MAKE \
+		[::crimp::matmul3x3_float \
+		     [::crimp::color::LMS::CIECAM02] \
+		     [::crimp::color::XYZ]]]
+}
+
+proc ::crimp::color::chain {t args} {
+    if {[llength $args] == 0} {
+	return $t
+    }
+    set args [linsert $args 0 $t]
+    while {[llength $args] > 1} {
+	set args [lreplace $args end-1 end \
+		      [MAKE [::crimp::matmul3x3_float \
+				 [CHECK [lindex $args end-1]] \
+				 [CHECK [lindex $args end]]]]]
+    }
+    return [lindex $args 0]
+}
+
+proc ::crimp::color::make {a b c d e f g h i} {
+    # Create the matrix for a color transform (3x3 float) from
+    # the nine parameters.
+    return [MAKE [::crimp::read::tcl float \
+		[list \
+		     [list $a $b $c] \
+		     [list $d $e $f] \
+		     [list $g $h $i]]]]
+}
+
+proc ::crimp::color::MAKE {m} {
+    variable typecode
+    return [list $typecode $m]
+}
+
+proc ::crimp::color::CHECK {transform {prefix {}}} {
+    variable typecode
+    if {
+	[catch {llength $transform} len] ||
+	($len != 2) ||
+	([lindex $transform 0] ne $typecode) ||
+	[catch {::crimp::TypeOf [set m [lindex $transform 1]]} t] ||
+	($t ne "float") ||
+	([::crimp::dimensions $m] ne {3 3})
+    } {
+	return -code error "${prefix}expected color transform, this is not it."
+    }
+    return $m
+}
+
+proc ::crimp::color::XYZ {} {
+    # RGB to XYZ. Core matrix.
+    # http://en.wikipedia.org/wiki/CIE_1931_color_space
+    # http://en.wikipedia.org/wiki/CIE_1960_color_space
+    # http://en.wikipedia.org/wiki/XYZ_color_space
+
+    #    1    | 0.49    0.31    0.20	|   | 2.76883 1.75171 1.13014 |
+    # ------- |	0.17697 0.81240 0.01063	| = | 1       4.59061 0.06007 |
+    # 0.17697 |	0       0.01    0.99    |   | 0       0.05651 5.59417 |
+
+    return [::crimp::read::tcl float {
+	{2.76883087528959710685 1.75170932926484714923 1.13013505113861106402}
+	{1                      4.59060857772503814205 0.06006667796801717805}
+	{0                      0.05650675255693055320 5.59416850313612476690}
+    }]
+}
+
+namespace eval ::crimp::color::LMS {}
+# http://en.wikipedia.org/wiki/LMS_color_space
+
+proc ::crimp::color::LMS::CMCCAT97 {} {
+    # Core matrix XYZ to LMS per CMCCAT97.
+
+    return [::crimp::read::tcl float {
+	{ 0.8951  0.2664 -0.1614}
+	{-0.7502  1.7135  0.0367}
+	{ 0.0389 -0.0685  1.0296}
+    }]
+}
+
+proc ::crimp::color::LMS::RLAB {} {
+    # Core matrix XYZ to LMS per RLAB (D65).
+
+    return [::crimp::read::tcl float {
+	{ 0.4002 0.7076 -0.0808}
+	{-0.2263 1.1653  0.0457}
+	{ 0      0       0.9182}
+    }]
+}
+
+proc ::crimp::color::LMS::CIECAM97 {} {
+    # Core matrix XYZ to LMS per CIECAM97.
+
+    return [::crimp::read::tcl float {
+	{ 0.8562  0.3372 -0.1934}
+	{-0.8360  1.8327  0.0033}
+	{ 0.0357 -0.0469  1.0112}
+    }]
+}
+
+proc ::crimp::color::LMS::CIECAM02 {} {
+    # Core matrix XYZ to LMS per CIECAM02.
+
+    return [::crimp::read::tcl float {
+	{ 0.7328 0.4296 -0.1624}
+	{-0.7036 1.6975  0.0061}
+	{ 0.0030 0.0136  0.9834}
+    }]
+}
+
+# # ## ### ##### ######## #############
 
 proc ::crimp::integrate {image} {
     set type [TypeOf $image]
@@ -2756,7 +2949,7 @@ proc ::crimp::K {x y} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp {
-    namespace export type width height dimensions channels cut
+    namespace export type width height dimensions channels cut color
     namespace export read write convert join flip split table
     namespace export invert solarize gamma degamma remap map
     namespace export wavy psychedelia matrix blank filter crop

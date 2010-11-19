@@ -134,6 +134,51 @@ crimp_color_hsv_to_rgb (int h, int s, int v, int* r, int* g, int* b)
     *g = green;
     *b = blue;
 }
+
+#define T  (0.00885645167903563081) /* = (6/29)^3 */
+#define Ti (0.20689655172413793103) /* = (6/29) = sqrt (T) */
+#define A  (7.78703703703703703702) /* = (1/3)(29/6)^2 */
+#define B  (0.13793103448275862068) /* = 4/29 */
+
+static double
+flabforw (double t)
+{
+    return ((t > T ? pow (t, 1./3) : (A*t+B))
+}
+
+static double
+flabback (double t)
+{
+    return ((t > Ti ? (t*t*t) : ((t-B)/A))
+}
+
+void
+crimp_color_xyz_to_cielab (double x, double y, double z, double* l, double* a, double* b)
+{
+    /*
+     * Whitepoint = (1,1,1). To convert XYZ for any other whitepoint predivide
+     * the input values by Xn, Yn, Zn, i.e. before calling this function.
+     */
+
+    *l = 116 * flabforw (y) - 16;
+    *a = 500 (flabforw(x) - flabforw(y));
+    *b = 200 (flabforw(y) - flabforw(z));
+}
+
+void
+crimp_color_cielab_to_xyz (double l, double a, double b, double* x, double* y, double* z)
+{
+    /*
+     * Whitepoint = (1,1,1). To convert CIELAB for any other whitepoint post-multiply
+     * the output values by Xn, Yn, Zn, i.e. after calling this function.
+     */
+
+    double L = (l+16)/116;
+
+    *x = flabback (L);
+    *y = flabback (L + a/500);
+    *z = flabback (L + b/200);
+}
 
 /*
  * Local Variables:

@@ -16,7 +16,7 @@ crimp_image* forward;
 crimp_image* backward;
 crimp_image* result;
 int x, y, xt, yt, origx, origy, pixel, xi, yi, outside, c;
-float xf, yf;
+double xf, yf;
 
 crimp_input_any (imageObj, image);
 ASSERT_NOTIMGTYPE (image, float);
@@ -30,7 +30,7 @@ if (!crimp_require_dim (forward, 3, 3)) {
     return TCL_ERROR;
 }
 
-backward = crimp_mat3x3_invers (forward);
+backward = crimp_la_invert_matrix_3x3 (forward);
 if (!backward) {
     Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);
     return TCL_ERROR;
@@ -41,13 +41,13 @@ if (!backward) {
  * based on the four corners of the input image and the forward transformation.
  */
 
-result = crimp_warp_setup (image, forward, &origx, &origy);
+result = crimp_geo_warp_init (image, forward, &origx, &origy);
 
 for (y = 0, yt = origy; y < result->h; y++, yt++) {
     for (x = 0, xt = origx; x < result->w; x++, xt++) {
 	xf = xt;
 	yf = yt;
-	crimp_transform (backward, &xf, &yf);
+	crimp_geo_warp_point (backward, &xf, &yf);
 
 	/*
 	 * Choose the nearest neighbour in x and y to the sampling location as

@@ -23,7 +23,7 @@ if (!crimp_require_dim (matB, 3, 3)) {
     return TCL_ERROR;
 }
 
-result = crimp_mat_multiply (matA, matB);
+result = crimp_la_multiply_matrix (matA, matB);
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;

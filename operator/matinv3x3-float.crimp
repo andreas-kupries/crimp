@@ -20,7 +20,7 @@ if (!crimp_require_dim (mat, 3, 3)) {
     return TCL_ERROR;
 }
 
-result = crimp_mat3x3_invers (mat);
+result = crimp_la_invert_matrix_3x3 (mat);
 
 if (!result) {
     Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);

@@ -12,7 +12,7 @@ crimp_image* xvector;
 crimp_image* yvector;
 crimp_image* result;
 int x, y, c;
-float xf, yf;
+double xf, yf;
 
 crimp_input_any (imageObj, image);
 ASSERT_NOTIMGTYPE (image, float);

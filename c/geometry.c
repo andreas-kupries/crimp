@@ -8,98 +8,24 @@
  */
 
 #include <geometry.h>
+#include <linearalgebra.h>
 
 /*
  * Definitions :: Core.
  */
 
-crimp_image*
-crimp_mat3x3_invers (crimp_image* matrix)
-{
-    crimp_image* result;
-    int x, y;
-    double cofactor [3][3];
-    double det  = 0;
-    double sign = 1;
-
-    ASSERT_IMGTYPE (matrix, float);
-    ASSERT (crimp_require_dim(matrix, 3, 3),"Unable to invert matrix, not 3x3");
-
-    result = crimp_new_float (3, 3);
-
-    for (y = 0; y < 3; y++) {
-	int y1 = !y;
-	int y2 = 2 - !(y - 2);
-
-	for (x = 0; x < 3; x++) {
-	    int x1 = !x;
-	    int x2 = 2 - !(x - 2);
-
-	    cofactor[y][x] = sign * ((FLOATP (matrix, x1, y1) * FLOATP (matrix, x2, y2)) -
-				     (FLOATP (matrix, x2, y1) * FLOATP (matrix, x1, y2)));
-	    sign = -sign;
-	}
-
-	det += FLOATP (matrix, 0, y) * cofactor[y][0];
-    }
-
-    if (det == 0) {
-	return NULL;
-    }
-
-    for (y = 0; y < 3; y++) {
-	for (x = 0; x < 3; x++) {
-
-	    FLOATP (result, x, y) = cofactor[x][y] / det;
-	}
-    }
-
-    return result;
-}
-
-crimp_image*
-crimp_mat_multiply (crimp_image* a, crimp_image* b)
-{
-    crimp_image* result;
-    int x, y, w;
-
-    ASSERT_IMGTYPE (a, float);
-    ASSERT_IMGTYPE (b, float);
-    ASSERT (crimp_require_height(a, b->w),"Unable to multiply matrices, size mismatch");
-    ASSERT (crimp_require_height(b, a->w),"Unable to multiply matrices, size mismatch");
-
-    result = crimp_new_float (a->h, a->h);
-
-    for (y = 0; y < a->h; y++) {
-	for (x = 0; x < a->h; x++) {
-
-	    FLOATP (result, x, y) = 0;
-	    for (w = 0; w < a->w; w++) {
-		FLOATP (result, x, y) += FLOATP (a, w, y) * FLOATP (b, x, w);
-	    }
-	}
-    }
-
-    return result;
-}
-
 void
-crimp_transform (crimp_image* matrix, float* x, float* y)
+crimp_geo_warp_point (crimp_image* matrix, double* x, double* y)
 {
-    /*
-     * Inlined multiplication of matrix and vector
-     */
+    double w = 1.0;
+    crimp_la_multiply_matrix_3v (matrix, x, y, &w);
 
-    float xout   = (*x) * FLOATP (matrix, 0, 0) + (*y) * FLOATP (matrix, 1, 0) + FLOATP (matrix, 2, 0);
-    float yout   = (*x) * FLOATP (matrix, 0, 1) + (*y) * FLOATP (matrix, 1, 1) + FLOATP (matrix, 2, 1);
-    float weight = (*x) * FLOATP (matrix, 0, 2) + (*y) * FLOATP (matrix, 1, 2) + FLOATP (matrix, 2, 2);
-
-    *x = xout/weight;
-    *y = yout/weight;
+    *x = (*x) / w;
+    *y = (*y) / w;
 }
 
 crimp_image*
-crimp_warp_setup (crimp_image* input, crimp_image* forward, int* origx, int* origy)
+crimp_geo_warp_init (crimp_image* input, crimp_image* forward, int* origx, int* origy)
 {
     /*
      * Run the four corners of the input through the forward transformation to
@@ -110,8 +36,8 @@ crimp_warp_setup (crimp_image* input, crimp_image* forward, int* origx, int* ori
      * to and are taking this into account when computing the input corners.
      */
 
-    float xlu, xru, xld, xrd, left, right;
-    float ylu, yru, yld, yrd, up, down;
+    double xlu, xru, xld, xrd, left, right;
+    double ylu, yru, yld, yrd, up, down;
     int ileft, iright, iup, idown, w, h, iorigx, iorigy, oc;
     Tcl_Obj* meta;
     Tcl_Obj* key1 = Tcl_NewStringObj ("crimp", -1);
@@ -131,19 +57,19 @@ crimp_warp_setup (crimp_image* input, crimp_image* forward, int* origx, int* ori
 
     xlu = - iorigx;
     ylu = - iorigy;
-    crimp_transform (forward, &xlu, &ylu);
+    crimp_geo_warp_point (forward, &xlu, &ylu);
 
     xru = - iorigx + input->w - 1;
     yru = - iorigy;
-    crimp_transform (forward, &xru, &yru);
+    crimp_geo_warp_point (forward, &xru, &yru);
 
     xld = - iorigx;
     yld = - iorigy + input->h - 1;
-    crimp_transform (forward, &xld, &yld);
+    crimp_geo_warp_point (forward, &xld, &yld);
 
     xrd = - iorigx + input->w - 1;
     yrd = - iorigy + input->h - 1;
-    crimp_transform (forward, &xrd, &yrd);
+    crimp_geo_warp_point (forward, &xrd, &yrd);
 
     left  = MIN (MIN (xlu,xld), MIN (xru,xrd));
     right = MAX (MAX (xlu,xld), MAX (xru,xrd));

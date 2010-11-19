@@ -63,6 +63,7 @@ critcl::ccode {
     #include <image.h>
     #include <ahe.h>
     #include <rank.h>
+    #include <linearalgebra.h>
     #include <geometry.h>
     #include <color.h>
     #include <util.h>

@@ -143,13 +143,13 @@ crimp_color_hsv_to_rgb (int h, int s, int v, int* r, int* g, int* b)
 static double
 flabforw (double t)
 {
-    return ((t > T ? pow (t, 1./3) : (A*t+B))
+    return ((t > T) ? (pow (t, 1./3.)) : (A*t+B));
 }
 
 static double
 flabback (double t)
 {
-    return ((t > Ti ? (t*t*t) : ((t-B)/A))
+    return ((t > Ti) ? (t*t*t) : ((t-B)/A));
 }
 
 void
@@ -161,8 +161,8 @@ crimp_color_xyz_to_cielab (double x, double y, double z, double* l, double* a, d
      */
 
     *l = 116 * flabforw (y) - 16;
-    *a = 500 (flabforw(x) - flabforw(y));
-    *b = 200 (flabforw(y) - flabforw(z));
+    *a = 500 * (flabforw(x) - flabforw(y));
+    *b = 200 * (flabforw(y) - flabforw(z));
 }
 
 void

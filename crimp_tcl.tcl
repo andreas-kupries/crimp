@@ -895,6 +895,107 @@ proc ::crimp::remap {image args} {
 
 # # ## ### ##### ######## #############
 
+namespace eval ::crimp::contrast {
+    namespace export {[0-9a-z]*}
+    namespace ensemble create
+}
+
+proc ::crimp::contrast::normalize {image {percentile 5}} {
+    set itype [::crimp::TypeOf $image]
+    switch -exact -- $itype {
+	rgb - rgba - hsv {
+	    set sb [::crimp::statistics::basic $image]
+	    set result {}
+	    foreach chan [::crimp::split $image] name [dict get $sb channels] {
+		if {$name ne "alpha"} {
+		    set chan [NORM $chan $percentile [dict get $sb channel $name]]
+		}
+		lappend result $chan
+	    }
+	    return [::crimp::join::2$itype {*}$result]
+	}
+	grey8 {
+	    return [NORM $image $percentile [dict get [::crimp::statistics::basic $image] channel luma]]
+	}
+	default {
+	    return -code error "global histogram equalization not supported for image type \"$itype\""
+	}
+    }
+}
+
+proc ::crimp::contrast::NORM {image percentile statistics} {
+    # GREY8 normalization (stretching).
+
+    set mint [expr {$percentile*255./100}]
+    set maxt [expr {255 - $mint}]
+    set cdf  [dict get $statistics cdf255]
+
+    set min 0
+    foreach count $cdf {
+	if {$count >= $mint} break
+	incr min
+    }
+
+    set max 0
+    foreach count $cdf {
+	incr max
+	if {$count >= $maxt} break
+    }
+
+    return [::crimp::remap $image [::crimp::map stretch $min $max]]
+}
+
+namespace eval ::crimp::contrast::equalize {
+    namespace export {[0-9a-z]*}
+    namespace ensemble create
+}
+
+proc ::crimp::contrast::equalize::local {args} {
+    return [::crimp::filter::ahe {*}$args]
+}
+
+proc ::crimp::contrast::equalize::global {image} {
+    set itype [::crimp::TypeOf $image]
+    switch -exact -- $itype {
+	rgb {
+	    # Recursive invokation with conversion into and out of the
+	    # proper type.
+	    return [::crimp::convert::2rgb [global [::crimp::convert::2hsv $image]]]
+	}
+	rgba {
+	    # Recursive invokation, with conversion into and out of
+	    # the proper type, making sure to leave the alpha-channel
+	    # untouched.
+
+	    return [crimp::alpha::set \
+			[::crimp::convert::2rgb [global [::crimp::convert::2hsv $image]]] \
+			[lindex [::crimp::split $image] end]]
+	}
+	hsv {
+	    lassign [::crimp::split $image] h s v
+	    return [::crimp::join::2hsv $h $s [GLOBAL $v]]
+	}
+	grey8 {
+	    return [GLOBAL $image]
+	}
+	default {
+	    return -code error "global histogram equalization not supported for image type \"$itype\""
+	}
+    }
+}
+
+proc ::crimp::contrast::equalize::GLOBAL {image} {
+    # GREY8 equalization.
+    return [::crimp::remap $image \
+		[crimp::mapof \
+		     [::crimp::FIT \
+			  [::crimp::CUMULATE \
+			       [dict values [dict get [::crimp::histogram $image] luma]]] \
+			  255]]]
+}
+
+# # ## ### ##### ######## #############
+
 namespace eval ::crimp::color {
     namespace export {[0-9a-z]*}
     namespace ensemble create
@@ -2959,7 +3060,7 @@ namespace eval ::crimp {
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold gradient effect
     namespace export statistics rotate montage morph integrate
-    namespace export fft square meta resize warp transform
+    namespace export fft square meta resize warp transform contrast
     #
     namespace ensemble create
 }

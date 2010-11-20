@@ -950,8 +950,36 @@ namespace eval ::crimp::contrast::equalize {
     namespace ensemble create
 }
 
-proc ::crimp::contrast::equalize::local {args} {
-    return [::crimp::filter::ahe {*}$args]
+proc ::crimp::contrast::equalize::local {image args} {
+
+    set itype [::crimp::TypeOf $image]
+    switch -exact -- $itype {
+	rgb {
+	    # Recursive invokation with conversion into and out of the
+	    # proper type.
+	    return [::crimp::convert::2rgb [local [::crimp::convert::2hsv $image]]]
+	}
+	rgba {
+	    # Recursive invokation, with conversion into and out of
+	    # the proper type, making sure to leave the alpha-channel
+	    # untouched.
+
+	    return [crimp::alpha::set \
+			[::crimp::convert::2rgb [local [::crimp::convert::2hsv $image]]] \
+			[lindex [::crimp::split $image] end]]
+	}
+	hsv {
+	    # The equalization is done on the value/luma channel only.
+	    lassign [::crimp::split $image] h s v
+	    return [::crimp::join::2hsv $h $s [::crimp::filter::ahe $v {*}$args]]
+	}
+	grey8 {
+	    return [::crimp::filter::ahe $image {*}$args]
+	}
+	default {
+	    return -code error "local (adaptive) histogram equalization not supported for image type \"$itype\""
+	}
+    }
 }
 
 proc ::crimp::contrast::equalize::global {image} {

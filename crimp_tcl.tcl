@@ -346,7 +346,7 @@ namespace eval ::crimp::convert {
     # Converters implemented as C primitives
     foreach fun [::crimp::List convert_*] {
 
-	if {[string match {*_2[rh]*_grey8} $fun]} {
+	if {[string match {*_2[rh]*_*} $fun]} {
 	    # Conversion from grey8 to the multi-channel types (rgb,
 	    # rgba, hsv) needs special handling in the converter to
 	    # allow for a conversion with and without a color
@@ -2735,9 +2735,10 @@ proc ::crimp::table::stretch {min max} {
     # <=> GAIN = 255/(max-min)
     # 
 
-    set gain [expr {255.0*($max - $min)}]
+    set gain [expr {255.0/($max - $min)}]
     set offs [expr {- ($min * $gain)}]
-    return [linear $gain $offs]
+
+    return [linear -- $gain $offs]
 }
 
 namespace eval ::crimp::table::threshold {

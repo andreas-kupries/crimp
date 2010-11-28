@@ -27,6 +27,7 @@ proc ::crimp::writec_pgm-plain_grey8 {chan image} {
 	binary scan $c cu g
 	puts -nonewline $chan " $g"
     }
+    puts $chan ""
     return
 }
 

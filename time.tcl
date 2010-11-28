@@ -15,8 +15,9 @@ if {[catch {
 
     puts "Using Tcl/Tk 8.5 + img::png"
 }
-package require widget::scrolledwindow
-package require widget::toolbar
+#package require widget::scrolledwindow
+#package require widget::toolbar
+package require fileutil
 
 # Self dir
 set dir [file dirname [file normalize [info script]]]
@@ -46,11 +47,22 @@ if {![file exists $dir/lib] ||
 
     puts "Trying dynamically compiled crimp package"
 
-    # Access to critcl library from a local unwrapped critcl app.
-    lappend auto_path [file join $dir critcl.vfs lib]
+    set cp [file join [file dirname $dir] lib critcl.vfs lib]
 
-    # Direct access to the crimp package
-    source [file join $dir crimp.tcl]
+    puts "Looking for critcl in $cp"
+
+    # Access to critcl library from a local unwrapped critcl app.
+    lappend auto_path $cp
+    package require critcl 2
+
+    puts "Got:           [package ifneeded critcl [package present critcl]]"
+
+    # Directly access the crimp package
+    source         [file join $dir crimp.tcl]
+
+    # and then force the compilation and loading of the C-level
+    # primitives, instead of defering until use.
+    critcl::cbuild [file join $dir crimp.tcl]
 
     puts "Using dynamically compiled crimp package"
 }
@@ -60,75 +72,52 @@ puts "Starting up ..."
 # # ## ### ##### ######## #############
 ## Definitions to help with timing ...
 
-lassign [::apply {{kernel} {
-    set scale 0
-    foreach r $kernel { foreach v $r { incr scale $v } }
-    return [list [crimp read tcl grey8 $kernel] $scale]
-}}  {
-    {2  4  5  4 2}
-    {4  9 12  9 4}
-    {5 12 15 12 5}
-    {4  9 12  9 4}
-    {2  4  5  4 2}
-}] K scale
-
-lassign [::apply {{kernel} {
-    set scale 0
-    foreach r $kernel { foreach v $r { incr scale $v } }
-    return [list [crimp read tcl grey8 $kernel] $scale]
-}}  {
-    {1 1 1 1 1}
-    {1 1 1 1 1}
-    {1 1 1 1 1}
-    {1 1 1 1 1}
-    {1 1 1 1 1}
-}] B scaleb
-
-lassign [::apply {{kernel} {
-    set scale 0
-    foreach r $kernel { foreach v $r { incr scale $v } }
-    return [list [crimp read tcl grey8 $kernel] $scale]
-}}  {
-    {1 1 1 1 1}
-}] Bh scalebx
-
-set Bv [crimp flip transpose $Bh]
+proc s {usec} { expr {double($usec)/1e6} }
 
 # # ## ### ##### ######## #############
 ## Time an operation
 
-foreach image [glob -directory $dir/images *] {
-    set photo [image create photo -file $image]
-    set i [crimp read tk $photo]
-    image delete $photo
-    set i       [crimp join 2rgb {*}[lrange [crimp split $i] 0 2]]
-    set npixels [expr {[crimp width $i] * [crimp height $i]}]
-
+foreach image $argv {
+    puts ""
     puts "[file tail $image]:"
 
-puts \tGauss
+    set sz [file size $image]
+
     set usec [lindex [time {
-	crimp::convolve_rgb_const $i $K $scale
+	set data [fileutil::cat -translation binary $image]
     }] 0]
 
-    puts "\t\t$usec microseconds per iteration"
-    puts "\t\t[expr {double($usec)/$npixels}] microseconds per pixel"
+    puts ""
+    puts "R\t$usec microseconds to read $sz bytes"
+    puts "\t[s $usec] seconds to read $sz bytes"
+    puts "\t[expr {double($usec)/$sz}] microseconds/byte"
 
-    puts \tBox
     set usec [lindex [time {
-	crimp::convolve_rgb_const $i $B $scaleb
+	set image [crimp read pgm $data]
     }] 0]
 
-    puts "\t\t$usec microseconds per iteration"
-    puts "\t\t[expr {double($usec)/$npixels}] microseconds per pixel"
+    puts ""
+    puts "C\t$usec microseconds to convert $sz bytes"
+    puts "\t[s $usec] seconds to convert $sz bytes"
+    puts "\t[expr {double($usec)/$sz}] microseconds/byte"
 
-    puts \tBox/separable
+    set npixels [expr {[crimp width $image] * [crimp height $image]}]
+
+    puts ""
+    puts "\t$usec microseconds to convert $npixels pixels"
+    puts "\t[s $usec] seconds to convert $npixels pixels"
+    puts "\t[expr {double($usec)/$npixels}] microseconds/pixel"
+
     set usec [lindex [time {
-	crimp::convolve_rgb_const [crimp::convolve_rgb_const $i $Bh $scalebx] $Bv $scalebx
+	set stats [crimp statistics basic $image]
     }] 0]
 
-    puts "\t\t$usec microseconds per iteration"
-    puts "\t\t[expr {double($usec)/$npixels}] microseconds per pixel"
+    puts ""
+    puts "S\t$usec microseconds for statistics of $npixels pixels"
+    puts "\t[s $usec] seconds for statistics of $npixels pixels"
+    puts "\t[expr {double($usec)/$npixels}] microseconds/pixel"
+
+    unset image
 }
 
 # # ## ### ##### ######## #############

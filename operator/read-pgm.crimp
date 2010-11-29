@@ -100,6 +100,15 @@ for (at = bytes, state = GETP; (at < stop) && (state != STOP); at ++) {
 	    case GETM: max = value; value = 0; break;
 	    }
 	    state ++ ; /* GETW -> SEPW, GETH -> SEPH, GETM -> SEPM */
+	    if (state == SEPM) {
+		/*
+		 * The max value has exactly ONE space after it (which we
+		 * found above), and the next byte is the beginning of the
+		 * pixel data, regardless of content. No comments, no
+		 * whitespace
+		 */
+		state = STOP;
+	    }
 	    continue;
 	}
 	if (PGM_DIGIT (*at)) {

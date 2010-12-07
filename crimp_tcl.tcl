@@ -159,6 +159,9 @@ proc ::crimp::BORDER {imagetype spec} {
 			set values [lrange $values 0 3]
 		    }
 		}
+		float -
+		grey32 -
+		grey16 -
 		grey8 {
 		    if {![llength $values]} {
 			set values {0}

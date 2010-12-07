@@ -2,7 +2,7 @@ sqrt_float
 Tcl_Obj* imageObj
 
 /*
- * Sqrt all pixels of the image by the factor.
+ * Square root of all pixels of the image.
  */
 
 crimp_image* image;

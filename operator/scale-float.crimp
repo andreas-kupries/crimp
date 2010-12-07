@@ -1,9 +1,9 @@
 scale_float
 Tcl_Obj* imageObj
-float factor
+double factor
 
 /*
- * Scale all pixels of the image by the factor.
+ * Multiply all pixels of the image by the factor.
  */
 
 crimp_image* image;

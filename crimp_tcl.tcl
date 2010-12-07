@@ -1998,8 +1998,10 @@ namespace eval ::crimp::transform {
 }
 
 proc ::crimp::transform::projective {a b c d e f g h} {
-    # Create the matrix for a projective transform (3x3 float) from
-    # the eight parameters.
+    #                   | a b c |
+    # Create the matrix | d e f | for a projective transform.
+    #		        | g h 1 |
+
     return [MAKE [::crimp::read::tcl float \
 		[list \
 		     [list $a $b $c] \
@@ -2009,7 +2011,8 @@ proc ::crimp::transform::projective {a b c d e f g h} {
 
 proc ::crimp::transform::affine {a b c d e f} {
     # An affine transform is a special case of the projective, without
-    # perspective warping.
+    # perspective warping. Its matrix is | a b c |
+    #                                    | d e f |
     return [projective $a $b $c $d $e $f 0 0]
 }
 
@@ -2021,6 +2024,50 @@ proc ::crimp::transform::translate {dx dy} {
 proc ::crimp::transform::scale {sx sy} {
     # Scale in the x, y directions
     return [affine $sx 0 0 0 $sy 0]
+}
+
+proc ::crimp::transform::shear {sx sy} {
+    # Shear in the x, y directions
+    return [affine 1 $sx $sy 1 0 0]
+}
+
+namespace eval ::crimp::transform::reflect {
+    namespace export line x y
+    namespace ensemble create
+    # TODO line segment (arbitrary line).
+}
+
+proc ::crimp::transform::reflect::line {lx ly} {
+    # Reflect along the line (lx, ly) through the origin.
+    # This can be handled as a chain of
+    # (a) rotation through the origin to map the line to either x- or y-axis
+    # (b) reflection along the chosen axis,
+    # (c) and rotation back to the chosen line.
+    # Here we use the direct approach.
+    # See http://en.wikipedia.org/wiki/Transformation_matrix
+
+    # Note: A reflection through an arbitrary line (i.e. not through
+    # the origin), needs two additional steps. After the first
+    # rotation the line is parallel to an axis, and has to be
+    # translated on it. Ditto we have to undo the translation before
+    # rotating back. As the rotation is through an arbitray point it
+    # also needs translations, which can be combined, by proper choice
+    # of the rotation point.
+
+    set a [expr {$lx*$lx-$ly*$ly}]
+    set b [expr {2*$lx*$ly}]
+    set c [expr {$ly*$ly-$lx*$lx}]
+    return [affine $a $b 0 $b $c 0]
+}
+
+proc ::crimp::transform::reflect::x {} {
+    # Reflect along the x-axis.
+    return [affine -1 0 0 1 0 0]
+}
+
+proc ::crimp::transform::reflect::y {} {
+    # Reflect along the y-axis
+    return [affine 1 0 0 -1 0 0]
 }
 
 proc ::crimp::transform::rotate {theta {p {0 0}}} {

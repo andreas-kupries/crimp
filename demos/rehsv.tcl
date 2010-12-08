@@ -7,31 +7,31 @@ def effect_rehsv {
 	variable ghg 1 ; variable gsg 1 ; variable gvg 1
 	variable ghb 0 ; variable gsb 0 ; variable gvb 0
 
-	variable th [crimp table linear -wrap -- $ghg $ghb] ; variable mh [crimp map linear -wrap -- $ghg $ghb]
-	variable ts [crimp table linear       -- $gsg $gsb] ; variable ms [crimp map linear       -- $gsg $gsb]
-	variable tv [crimp table linear       -- $gvg $gvb] ; variable mv [crimp map linear       -- $gvg $gvb]
+	variable th [crimp table linear wrap  $ghg $ghb] ; variable mh [crimp mapof $th]
+	variable ts [crimp table linear clamp $gsg $gsb] ; variable ms [crimp mapof $ts]
+	variable tv [crimp table linear clamp $gvg $gvb] ; variable mv [crimp mapof $tv]
 
 	proc H {args} {
 	    variable ghb
 	    variable ghg
-	    variable th [crimp table linear -wrap -- $ghg $ghb]
-	    variable mh [crimp map   linear -wrap -- $ghg $ghb]
+	    variable th [crimp table linear wrap $ghg $ghb]
+	    variable mh [crimp mapof $th]
 	    UPDATE
 	    return
 	}
 	proc S {args} {
 	    variable gsb
 	    variable gsg
-	    variable ts [crimp table linear -- $gsg $gsb]
-	    variable ms [crimp map   linear -- $gsg $gsb]
+	    variable ts [crimp table linear clamp $gsg $gsb]
+	    variable ms [crimp mapof $ts]
 	    UPDATE
 	    return
 	}
 	proc V {args} {
 	    variable gvb
 	    variable gvg
-	    variable tv [crimp table linear -- $gvg $gvb]
-	    variable mv [crimp map   linear -- $gvg $gvb]
+	    variable tv [crimp table linear clamp $gvg $gvb]
+	    variable mv [crimp mapof $tv]
 	    UPDATE
 	    return
 	}

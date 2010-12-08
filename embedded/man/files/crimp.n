@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/de/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2010 Andreas Kupries
 '\" Copyright (c) 2010 Documentation, Andreas Kupries
 '\"
@@ -528,7 +528,9 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBtable compose\fR \fIf\fR \fIg\fR
 .sp
-\fB::crimp\fR \fBtable eval\fR ?\fB-wrap\fR? \fIcmd\fR
+\fB::crimp\fR \fBtable eval wrap\fR \fIcmd\fR
+.sp
+\fB::crimp\fR \fBtable eval clamp\fR \fIcmd\fR
 .sp
 \fB<cmd>\fR \fIx\fR
 .sp
@@ -542,7 +544,9 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBtable invers\fR
 .sp
-\fB::crimp\fR \fBtable linear\fR ?\fB-wrap\fR? \fIgain\fR \fIoffset\fR
+\fB::crimp\fR \fBtable linear wrap\fR \fIgain\fR \fIoffset\fR
+.sp
+\fB::crimp\fR \fBtable linear clamp\fR \fIgain\fR \fIoffset\fR
 .sp
 \fB::crimp\fR \fBtable log\fR ?\fImax\fR?
 .sp
@@ -1049,7 +1053,7 @@ and "fully transparent", respectively.
 .sp
 The following combinations of fore- and background image types are
 supported:
-.nf
+.CS
 
     Result = Foreground Background
     ------   ---------- ----------
@@ -1063,7 +1067,7 @@ supported:
     rgba     rgba       rgba
     ------   ---------- ----------
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBalpha set\fR \fIimage\fR \fImask\fR
 This command takes two images, the input and a \fImask\fR, and returns
@@ -1470,66 +1474,66 @@ These two methods implement the basic set of morphology operations,
 \fIerosion\fR, and \fIdilation\fR using a flat 3x3 brick as their
 structuring element. For grayscale, which we have here, these are,
 mathematically, max and min rank-order filters, i.e.
-.nf
+.CS
 
     dilate = filter rank 1  0.00 (min)
     erode  = filter rank 1 99.99 (max)
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmorph close\fR \fIimage\fR
 .TP
 \fB::crimp\fR \fBmorph open\fR \fIimage\fR
 These two methods add to the basic set of morphology operations,
 \fIopening\fR and \fIclosing\fR. In terms of erosion and dilation:
-.nf
+.CS
 
     close = erode o dilate
     open  = dilate o erode
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmorph gradient\fR \fIimage\fR
 The morphological \fIgradient\fR is defined as
-.nf
+.CS
 
     [dilate $image] - [erode $image]
 
-.fi
+.CE
 This can also be expressed as the sum of the external and internal
 gradients, see below.
 .TP
 \fB::crimp\fR \fBmorph igradient\fR \fIimage\fR
 The morphological \fIinternal gradient\fR is defined as
-.nf
+.CS
 
     $image - [erode image]
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmorph egradient\fR \fIimage\fR
 The morphological \fIexternal gradient\fR is defined as
-.nf
+.CS
 
     [dilate $image] - $image
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmorph tophatw\fR \fIimage\fR
 The \fIwhite tophat\fR transformation is defined as
-.nf
+.CS
 
     $image - [open $image]
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmorph tophatb\fR \fIimage\fR
 The \fIblack tophat\fR transformation is defined as
-.nf
+.CS
 
     [close $image] - $image
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmultiply\fR \fIimage1\fR \fIimage2\fR
 This method combines the two input images into a result image by
@@ -1578,9 +1582,9 @@ successively smaller images, each \fBdecimate\fRd by a factor two
 compared to its predecessor, for a total length of "\fIsteps\fR+1" images.
 .sp
 The convolution part of the decimation uses
-.nf
+.CS
  1/16 [1 4 6 4 1]
-.fi
+.CE
 as its kernel.
 .sp
 IMAGE: pyramid_gauss
@@ -1597,9 +1601,9 @@ decimated by two compared to the preceding bandpass image. In total the result
 contains "\fIsteps\fR+2" images.
 .sp
 The convolution part of the decimation uses
-.nf
+.CS
  1/16 [1 4 6 4 1]
-.fi
+.CE
 as its kernel. The internal interpolation used to generate the band pass
 images (resynthesis) doubles the weights of this kernel for its convolution
 step.
@@ -1922,7 +1926,7 @@ dictionary mapping characters to triples of integers in the range
 [0...255], specifying the red, green, and blue intensities.
 .sp
 An example of a strimj is:
-.nf
+.CS
 
 @...@.......@.@......
 @...@.......@.@......
@@ -1933,7 +1937,7 @@ An example of a strimj is:
 @...@.@...@.@.@.@...@
 @...@..@@@..@.@..@@@.
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBread tcl grey8\fR \fIpixelmatrix\fR
 This method takes the \fIpixelmatrix\fR, a list of rows, with each row
@@ -2071,7 +2075,7 @@ This method takes a \fIkernel\fR as returned by the method
 the x- and y-axes are switched.
 For example
 .sp
-.nf
+.CS
 
                     (1)
                     (2)
@@ -2079,15 +2083,15 @@ For example
                     (2)
                     (1)
 
-.fi
+.CE
 .sp
 This method is its own inverse, i.e. application to its result returns
 the original input, i.e.
-.nf
+.CS
 
     [transpose [transpose $K]] == $K
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 This method accepts the same sub-methods and arguments as are accepted
@@ -2105,16 +2109,16 @@ This accepts two lookup tables (aka functions) specified as lists of
 256 values, constructs the composite function f(g(x)), and then
 returns this new function as its result.
 .TP
-\fB::crimp\fR \fBtable eval\fR ?\fB-wrap\fR? \fIcmd\fR
+\fB::crimp\fR \fBtable eval wrap\fR \fIcmd\fR
+.TP
+\fB::crimp\fR \fBtable eval clamp\fR \fIcmd\fR
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through the function specified by the command prefix
 \fIcmd\fR.
 The results returned by the command prefix are rounded to the nearest
 integer and then forced into the domain [0..255] by either
 wrapping them around (modulo 256), or clamping them to the appropriate
-border, i.e 0, and 255 respectively. This is controlled by the
-presence of the option \fB-wrap\fR. When present the values are
-wrapped, otherwise (default) they are clamped.
+border, i.e 0, and 255 respectively.
 .sp
 The signature of the command prefix is
 .RS
@@ -2214,15 +2218,15 @@ inverse (x) = 255 - x
 .fi
 .PE
 .TP
-\fB::crimp\fR \fBtable linear\fR ?\fB-wrap\fR? \fIgain\fR \fIoffset\fR
+\fB::crimp\fR \fBtable linear wrap\fR \fIgain\fR \fIoffset\fR
+.TP
+\fB::crimp\fR \fBtable linear clamp\fR \fIgain\fR \fIoffset\fR
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through a simple linear function with parameters
 \fIgain\fR (the slope) and \fIoffset\fR. The results are rounded to
 the nearest integer and then forced into the domain [0..255] by
 either wrapping them around (modulo 256), or clamping them to the
-appropriate border, i.e 0, and 255 respectively. This is controlled by
-the presence of the option \fB-wrap\fR. When present the values are
-wrapped, otherwise (default) they are clamped.
+appropriate border, i.e 0, and 255 respectively.
 Thus the relevant definitions are
 .sp
 .PS
@@ -2376,12 +2380,12 @@ f_{min,max} (x) = \\left\\{\\begin{eqnarray}
 \fB::crimp\fR \fBtransform affine\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR
 This method returns the affine transformation specified by the 2x3
 matrix
-.nf
+.CS
 
     |a b c|
     |d e f|
 
-.fi
+.CE
 Note that it is in general easier to use the methods \fBrotate\fR,
 \fBscale\fR, and \fBtranslate\fR \fBscale\fR to generate the
 desired transformation piecemal and then use \fBchain\fR to chain the
@@ -2400,13 +2404,13 @@ projective \fItransform\fRation.
 \fB::crimp\fR \fBtransform projective\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR \fIg\fR \fIh\fR
 This method returns the projective transformation specified by the 3x3
 matrix
-.nf
+.CS
 
     |a b c|
     |d e f|
     |g h 1|
 
-.fi
+.CE
 Note that for the affine subset of projective transformation it is in
 general easier to use the methods \fBrotate\fR, \fBscale\fR, and
 \fBtranslate\fR \fBscale\fR to generate the desired

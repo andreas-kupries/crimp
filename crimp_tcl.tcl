@@ -2741,36 +2741,24 @@ namespace eval ::crimp::table {
 
 # NOTE: From now on the use of the builtin 'eval' command in the table
 # namespace requires '::eval'.
-proc ::crimp::table::eval {args} {
-    lassign [ProcessWrap args 1 cmdprefix] wrap cmdprefix
-    if {$wrap} {
-	return [EvalWrap $cmdprefix]
-    } else {
-	return [EvalSaturate $cmdprefix]
-    }
+
+namespace eval ::crimp::table::eval {
+    namespace export wrap clamp
+    namespace ensemble create
 }
 
-proc ::crimp::table::ProcessWrap {argv n usage} {
-    upvar 1 $argv args
-    array set opt [cmdline::getoptions args {
-	{wrap 0 {}}
-    }]
-    if {[llength $args] != $n} {
-	return -code error "wrong#args: Expected ?-wrap bool? $usage"
-    }
-    return [list $opt(wrap) {*}$args]
-}
-
-proc ::crimp::table::EvalWrap {cmdprefix} {
+proc ::crimp::table::eval::wrap {cmdprefix} {
     for {set i 0} {$i < 256} {incr i} {
-	lappend table [WRAP [expr {round([uplevel #0 [list {*}$cmdprefix $i]])}]]
+	lappend table [::crimp::table::WRAP \
+			   [expr {round([uplevel #0 [list {*}$cmdprefix $i]])}]]
     }
     return $table
 }
 
-proc ::crimp::table::EvalSaturate {cmdprefix} {
+proc ::crimp::table::eval::clamp {cmdprefix} {
     for {set i 0} {$i < 256} {incr i} {
-	lappend table [CLAMP [expr {round([uplevel #0 [list {*}$cmdprefix $i]])}]]
+	lappend table [::crimp::table::CLAMP \
+			   [expr {round([uplevel #0 [list {*}$cmdprefix $i]])}]]
     }
     return $table
 }
@@ -2840,7 +2828,7 @@ proc ::crimp::table::gamma {y} {
     # Note: gamma operates in range [0..1], our data is [0..255]. We
     # have to scale down before applying the gamma, then scale back.
 
-    #EvalSaturate [list ::apply {{y i} {expr {(($i/255.0) ** $y)*255.0}}} $y]
+    #eval::clamp [list ::apply {{y i} {expr {(($i/255.0) ** $y)*255.0}}} $y]
 
     for {set i 0} {$i < 256} {incr i} {
 	lappend table [CLAMP [expr {round ((($i/255.0) ** $y)*255.0)}]]
@@ -2853,7 +2841,7 @@ proc ::crimp::table::degamma {y} {
     # have to scale down before applying the gamma, then scale back.
 
     set dy [expr {1.0/$y}]
-    #EvalSaturate [list ::apply {{dy i} {expr {(($i/255.0) ** $dy)*255.0}}} $dy]
+    #eval::clamp [list ::apply {{dy i} {expr {(($i/255.0) ** $dy)*255.0}}} $dy]
 
     for {set i 0} {$i < 256} {incr i} {
 	lappend table [CLAMP [expr {round ((($i/255.0) ** $dy)*255.0)}]]
@@ -2868,7 +2856,7 @@ proc ::crimp::table::sqrt {{max 255}} {
     # (r == 1) <=> (sqrt(max) == 255)
 
     set r [expr {255.0/sqrt($max)}]
-    #EvalSaturate [list ::apply {{r i} {expr {$r*sqrt($i)}}} $r]
+    #eval::clamp [list ::apply {{r i} {expr {$r*sqrt($i)}}} $r]
 
     for {set i 0} {$i < 256} {incr i} {
 	lappend table [CLAMP [expr {round ($r*sqrt($i))}]]
@@ -2883,7 +2871,7 @@ proc ::crimp::table::log {{max 255}} {
     # (c == 1) <=> (log(1+max) == 255)
 
     set c [expr {255.0/log(1.0+$max)}]
-    #EvalSaturate [list ::apply {{c i} {expr {$c*log(1+$i)}}} $r]
+    #eval::clamp [list ::apply {{c i} {expr {$c*log(1+$i)}}} $r]
 
     # i = 1..256 instead of 0..255 i.e. 1+x is implied by the change
     # in the iteration range.
@@ -2893,16 +2881,21 @@ proc ::crimp::table::log {{max 255}} {
     return $table
 }
 
-proc ::crimp::table::linear {args} {
-    lassign [ProcessWrap args 2 {gain offset}] wrap gain offset
-    set cmdprefix [list ::apply {{gain offset i} {
+namespace eval ::crimp::table::linear {
+    namespace export wrap clamp
+    namespace ensemble create
+}
+
+proc ::crimp::table::linear::wrap {gain offset} {
+    return [::crimp::table::eval::wrap [list ::apply {{gain offset i} {
 	expr {double($gain) * $i + double($offset)}
-    }} $gain $offset]
-    if {$wrap} {
-	return [EvalWrap $cmdprefix]
-    } else {
-	return [EvalSaturate $cmdprefix]
-    }
+    }} $gain $offset]]
+}
+
+proc ::crimp::table::linear::clamp {gain offset} {
+    return [::crimp::table::eval::clamp [list ::apply {{gain offset i} {
+	expr {double($gain) * $i + double($offset)}
+    }} $gain $offset]]
 }
 
 proc ::crimp::table::stretch {min max} {
@@ -2914,10 +2907,10 @@ proc ::crimp::table::stretch {min max} {
     # <=> GAIN = 255/(max-min)
     # 
 
-    set gain [expr {255.0/($max - $min)}]
-    set offs [expr {- ($min * $gain)}]
+    set gain   [expr {255.0/($max - $min)}]
+    set offset [expr {- ($min * $gain)}]
 
-    return [linear -- $gain $offs]
+    return [linear::clamp $gain $offset]
 }
 
 namespace eval ::crimp::table::threshold {

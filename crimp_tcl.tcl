@@ -1984,6 +1984,25 @@ proc ::crimp::filter::rank {image args} {
 }
 
 # # ## ### ##### ######## #############
+
+namespace eval ::crimp::filter::gauss {
+    namespace export discrete sampled
+    namespace ensemble create
+}
+
+proc ::crimp::filter::gauss::discrete {image sigma {r {}}} {
+    set Kx [::crimp::kernel::fpmake [::crimp::table::fgauss::discrete $sigma $r]]
+    set Ky [::crimp::kernel::transpose $Kxd]
+    return [convolve $image $Kx $Ky]
+}
+
+proc ::crimp::filter::gauss::sampled {image sigma {r {}}} {
+    set Kx [::crimp::kernel::fpmake [::crimp::table::fgauss::sampled $sigma $r]]
+    set Ky [::crimp::kernel::transpose $Kxd]
+    return [convolve $image $Kx $Ky]
+}
+
+# # ## ### ##### ######## #############
 ## Commands for the creation and manipulation of transformation
 ## matrices. We are using 3x3 matrices to allow the full range of
 ## projective transforms, i.e. perspective.
@@ -2964,6 +2983,101 @@ proc ::crimp::table::gauss {sigma} {
 	lappend table [expr {round(255*exp(-(($x-127.5)**2/(2*$sigma**2))))}]
     }
     return $table
+}
+
+# Reference: http://en.wikipedia.org/wiki/Scale_space_implementation
+namespace eval ::crimp::table::fgauss {
+    namespace export discrete sampled
+    namespace ensemble create
+}
+
+proc ::crimp::table::fgauss::discrete {sigma {r {}}} {
+    # Discrete gaussian.
+
+    # Reference: http://en.wikipedia.org/wiki/Scale_space_implementation#The_discrete_Gaussian_kernel
+    # G(x,sigma) = e^(-t)*I_x(t), where t = sigma^2
+    # and I_x = Modified Bessel function of Order x
+    package require math::special
+
+    if {$sigma <= 0} {
+	return -code error -errorCode {ARITH DOMAIN INVALID} {Invalid sigma, expected number > 0}
+    }
+
+    # Determine kernel radius from the sigma, if not overriden by the caller.
+    if {([llength [info level 0]] < 3) || ($r eq {})} {
+	set r [expr {int(ceil(3*$sigma))}]
+	if {$r < 1} { set r 1 }
+    }
+
+    # Compute the upper half of the kernel (0...3*sigma).
+    set table {}
+    set t [expr {$sigma ** 2}]
+
+    for {set x 0} {$x <= $r} {incr x} {
+        set v [expr {exp(-$t)*[math::special::I_n $x $t]}]
+	lappend table $v
+    }
+
+    # Then reflect this to get the lower half, and join the two. This
+    # also ensures that the generated table is of odd length, as
+    # expected for convolution kernels.
+
+    if {[llength $table] > 1} {
+	set table [linsert $table 0 {*}[lreverse [lrange $table 1 end]]]
+    }
+
+    # Last step, get the sum over the table, and then adjust all
+    # elements to make this sum equial to 1.
+
+    set s 0    ; foreach t $table {set s [expr {$s+$t}]}
+    set tmp {} ; foreach t $table {lappend tmp [expr {$t/$s}]}
+
+    return $tmp
+}
+
+proc ::crimp::table::fgauss::sampled {sigma {r {}}} {
+    # Sampled gaussian
+
+    # Reference: http://en.wikipedia.org/wiki/Scale_space_implementation#The_sampled_Gaussian_kernel
+    # G(x,sigma) =  1/sqrt(2*t*pi)*e^(-x^2/(2*t))
+    # where t = sigma^2
+    package require math::constants
+    math::constants::constants pi
+
+    if {$sigma <= 0} {
+	return -code error -errorCode {ARITH DOMAIN INVALID} {Invalid sigma, expected number > 0}
+    }
+
+    # Determine kernel radius from the sigma, if not overriden by the caller.
+    if {([llength [info level 0]] < 3) || ($r eq {})} {
+	set r [expr {int(ceil(3*$sigma))}]
+	if {$r < 1} { set r 1 }
+    }
+
+    # Compute upper half of the kernel (0...3*sigma).
+    set table {}
+    set scale  [expr {1.0 / ($sigma * sqrt(2 * $pi))}]
+    set escale [expr {2 * $sigma ** 2}]
+
+    for {set x 0} {$x <= $r} {incr x} {
+	lappend table [expr {$scale * exp(-($x**2/$escale))}]
+    }
+
+    # Then reflect this to get the lower half, and join the two. This
+    # also ensures that the generated table is of odd length, as
+    # expected for convolution kernels.
+
+    if {[llength $table] > 1} {
+	set table [linsert $table 0 {*}[lreverse [lrange $table 1 end]]]
+    }
+
+    # Last step, get the sum over the table, and then adjust all
+    # elements to make this sum equial to 1.
+
+    set s 0    ; foreach t $table {set s [expr {$s+$t}]}
+    set tmp {} ; foreach t $table {lappend tmp [expr {$t/$s}]}
+
+    return $tmp
 }
 
 # # ## ### ##### ######## #############

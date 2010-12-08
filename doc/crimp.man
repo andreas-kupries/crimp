@@ -691,6 +691,15 @@ the expansion.
 "[arg spec] == {const 0}".
 
 
+[call [cmd ::crimp] [method {filter gauss discrete}] [arg image] [arg sigma] [opt [arg r]]]
+[call [cmd ::crimp] [method {filter gauss sampled}] [arg image] [arg sigma] [opt [arg r]]]
+
+These methods apply a discrete or sampled gaussian blur with
+parameters [arg sigma] and kernel [arg r]adius to the [arg image]. If
+the radius is not specified it defaults to the smallest integer
+greater than "3*[arg sigma]".
+
+
 [call [cmd ::crimp] [method {filter mean}] [arg image] [opt "[option -border] [arg spec]"] [opt [arg radius]]]
 [keywords {mean filter} filter]
 
@@ -1852,6 +1861,15 @@ defined as:
 
 [para][image threshold-outside]
 [para]
+
+
+[call [cmd ::crimp] [method {table fgauss discrete}] [arg sigma] [opt [arg r]]]
+[call [cmd ::crimp] [method {table fgauss sampled}] [arg sigma] [opt [arg r]]]
+
+This method computes the table for a discrete or sampled gaussian with
+parameters [arg sigma] and kernel [arg r]adius. If the radius is not
+specified it defaults to the smallest integer greater than
+"3*[arg sigma]".
 
 
 [call [cmd ::crimp] [method {transform affine}] [arg a] [arg b] [arg c] [arg d] [arg e] [arg f]]

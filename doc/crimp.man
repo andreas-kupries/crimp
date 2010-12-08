@@ -1650,7 +1650,8 @@ This accepts two lookup tables (aka functions) specified as lists of
 returns this new function as its result.
 
 
-[call [cmd ::crimp] [method {table eval}] [opt [option -wrap]] [arg cmd]]
+[call [cmd ::crimp] [method {table eval wrap}]  [arg cmd]]
+[call [cmd ::crimp] [method {table eval clamp}] [arg cmd]]
 
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through the function specified by the command prefix
@@ -1659,9 +1660,7 @@ values 0 to 255 through the function specified by the command prefix
 The results returned by the command prefix are rounded to the nearest
 integer and then forced into the domain [lb]0..255[rb] by either
 wrapping them around (modulo 256), or clamping them to the appropriate
-border, i.e 0, and 255 respectively. This is controlled by the
-presence of the option [option -wrap]. When present the values are
-wrapped, otherwise (default) they are clamped.
+border, i.e 0, and 255 respectively.
 
 [para]
 
@@ -1742,7 +1741,8 @@ as
 [para][image inverse]
 
 
-[call [cmd ::crimp] [method {table linear}] [opt [option -wrap]] [arg gain] [arg offset]]
+[call [cmd ::crimp] [method {table linear wrap}]  [arg gain] [arg offset]]
+[call [cmd ::crimp] [method {table linear clamp}] [arg gain] [arg offset]]
 
 This method returns a list of 256 values, the result of running the
 values 0 to 255 through a simple linear function with parameters
@@ -1750,9 +1750,7 @@ values 0 to 255 through a simple linear function with parameters
 [arg gain] (the slope) and [arg offset]. The results are rounded to
 the nearest integer and then forced into the domain [lb]0..255[rb] by
 either wrapping them around (modulo 256), or clamping them to the
-appropriate border, i.e 0, and 255 respectively. This is controlled by
-the presence of the option [option -wrap]. When present the values are
-wrapped, otherwise (default) they are clamped.
+appropriate border, i.e 0, and 255 respectively.
 
 Thus the relevant definitions are
 

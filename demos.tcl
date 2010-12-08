@@ -610,7 +610,7 @@ proc cycle {lv} {
 ##              image display.  Multiple widgets can be had via a
 ##              frame.
 
-proc show_slides {images} {
+proc show_slides {images {run 1}} {
     global slides direction
     if {$direction < 0} {
 	set slides [lreverse $images]
@@ -619,7 +619,11 @@ proc show_slides {images} {
     }
 
     slide_gui
-    scontinue
+    if {$run} {
+	scontinue
+    } else {
+	spause
+    }
     return
 }
 

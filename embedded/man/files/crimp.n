@@ -358,6 +358,10 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBfilter convolve\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
 .sp
+\fB::crimp\fR \fBfilter gauss discrete\fR \fIimage\fR \fIsigma\fR ?\fIr\fR?
+.sp
+\fB::crimp\fR \fBfilter gauss sampled\fR \fIimage\fR \fIsigma\fR ?\fIr\fR?
+.sp
 \fB::crimp\fR \fBfilter mean\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
 .sp
 \fB::crimp\fR \fBfilter rank\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
@@ -563,6 +567,10 @@ package require \fBcrimp  ?0?\fR
 \fB::crimp\fR \fBtable threshold inside\fR \fImin\fR \fImax\fR
 .sp
 \fB::crimp\fR \fBtable threshold outside\fR \fImin\fR \fImax\fR
+.sp
+\fB::crimp\fR \fBtable fgauss discrete\fR \fIsigma\fR ?\fIr\fR?
+.sp
+\fB::crimp\fR \fBtable fgauss sampled\fR \fIsigma\fR ?\fIr\fR?
 .sp
 \fB::crimp\fR \fBtransform affine\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR
 .sp
@@ -1316,6 +1324,14 @@ the expansion.
 .sp
 By default a black frame is used as the border, i.e.
 "\fIspec\fR == {const 0}".
+.TP
+\fB::crimp\fR \fBfilter gauss discrete\fR \fIimage\fR \fIsigma\fR ?\fIr\fR?
+.TP
+\fB::crimp\fR \fBfilter gauss sampled\fR \fIimage\fR \fIsigma\fR ?\fIr\fR?
+These methods apply a discrete or sampled gaussian blur with
+parameters \fIsigma\fR and kernel \fIr\fRadius to the \fIimage\fR. If
+the radius is not specified it defaults to the smallest integer
+greater than "3*\fIsigma\fR".
 .TP
 \fB::crimp\fR \fBfilter mean\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
 This method applies a mean filter with \fIradius\fR to the
@@ -2376,6 +2392,14 @@ f_{min,max} (x) = \\left\\{\\begin{eqnarray}
 .fi
 .PE
 .sp
+.TP
+\fB::crimp\fR \fBtable fgauss discrete\fR \fIsigma\fR ?\fIr\fR?
+.TP
+\fB::crimp\fR \fBtable fgauss sampled\fR \fIsigma\fR ?\fIr\fR?
+This method computes the table for a discrete or sampled gaussian with
+parameters \fIsigma\fR and kernel \fIr\fRadius. If the radius is not
+specified it defaults to the smallest integer greater than
+"3*\fIsigma\fR".
 .TP
 \fB::crimp\fR \fBtransform affine\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR
 This method returns the affine transformation specified by the 2x3

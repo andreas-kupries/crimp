@@ -2003,6 +2003,143 @@ proc ::crimp::filter::gauss::sampled {image sigma {r {}}} {
 }
 
 # # ## ### ##### ######## #############
+# Related reference:
+# http://www.holoborodko.com/pavel/image-processing/edge-detection/
+
+namespace eval ::crimp::filter::sobel {
+    namespace export x y
+    namespace ensemble create
+
+}
+
+proc ::crimp::filter::sobel::x {image} {
+    # Works best on float input.
+    return [::crimp::filter::convolve $image \
+		[::crimp::kernel::fpmake {{-1  0 1}} 0] \
+		[::crimp::kernel::fpmake {{{1} {2} {1}}} 0]]
+    if 0 {
+	[::crimp::kernel::fpmake {
+	    {-1  0 1}
+	    {-2  0 2}
+	    {-1  0 1}} 0]
+    }
+}
+
+proc ::crimp::filter::sobel::y {image sigma {r {}}} {
+    # Works best on float input.
+    return [::crimp::filter::convolve $image \
+		[::crimp::kernel::fpmake {{1 2 1}} 0] \
+		[::crimp::kernel::fpmake {{{-1} {0} {-1}}} 0]]
+    if 0 {
+	[::crimp::kernel::fpmake {
+	    {-1 -2 -1}
+	    { 0  0  0}
+	    { 1  2  1}} 0]
+    }
+}
+
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::filter::scharr {
+    namespace export x y
+    namespace ensemble create
+
+}
+
+proc ::crimp::filter::scharr::x {image} {
+    # Works best on float input.
+    return [::crimp::filter::convolve $image \
+		[::crimp::kernel::fpmake {{-1  0 1}} 0] \
+		[::crimp::kernel::fpmake {{{3} {10} {3}}} 0]]
+    if 0 {
+	[::crimp::kernel::fpmake {
+	    { -3 0  3}
+	    {-10 0 10}
+	    { -3 0  3}} 0]
+    }
+}
+
+proc ::crimp::filter::scharr::y {image sigma {r {}}} {
+    # Works best on float input.
+    return [::crimp::filter::convolve $image \
+		[::crimp::kernel::fpmake {{3 10 3}} 0] \
+		[::crimp::kernel::fpmake {{{-1} {0} {-1}}} 0]]
+    if 0 {
+	[::crimp::kernel::fpmake {
+	    {-3 -10 -3}
+	    { 0   0  0}
+	    { 3  10  3}} 0]
+    }
+}
+
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::filter::prewitt {
+    namespace export x y
+    namespace ensemble create
+}
+
+proc ::crimp::filter::prewitt::x {image} {
+    # Works best on float input
+    return [::crimp::filter::convolve $image
+		[::crimp::kernel::fpmake {{-1  0 1}} 0] \
+		[::crimp::kernel::fpmake {{{1} {1} {1}}} 0]]
+    if 0 {
+	[::crimp::kernel::fpmake {
+	    {-1  0 1}
+	    {-1  0 1}
+	    {-1  0 1}} 0]
+    }
+}
+
+proc ::crimp::filter::prewitt::y {image sigma {r {}}} {
+    # Works best on float input
+    return [::crimp::filter::convolve $image \
+		[::crimp::kernel::fpmake {{1 1 1}} 0] \
+		[::crimp::kernel::fpmake {{{-1} {0} {-1}}} 0]]
+    if 0 {
+	[::crimp::kernel::fpmake {
+	    {-1 -1 -1}
+	    { 0  0  0}
+	    { 1  1  1}} 0]
+    }
+}
+
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::gradient {
+    namespace export {[a-z]*}
+    namespace ensemble create
+}
+
+proc ::crimp::gradient::sobel {image} {
+    return [list \
+		[::crimp::filter::sobel::x $image] \
+		[::crimp::filter::sobel::y $image]]
+}
+
+proc ::crimp::gradient::scharr {image} {
+    return [list \
+		[::crimp::filter::scharr::x $image] \
+		[::crimp::filter::scharr::y $image]]
+}
+
+proc ::crimp::gradient::prewitt {image} {
+    return [list \
+		[::crimp::filter::prewitt::x $image] \
+		[::crimp::filter::prewitt::y $image]]
+}
+
+if 0 {
+    proc ::crimp::gradient::polar {gradient} {
+	# gradient = list (Gx Gy)
+	# polar = angle+magnitude (atan2, hypot (gy, gx))
+	return [list \
+		    []]
+    }
+}
+
+# # ## ### ##### ######## #############
 ## Commands for the creation and manipulation of transformation
 ## matrices. We are using 3x3 matrices to allow the full range of
 ## projective transforms, i.e. perspective.

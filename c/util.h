@@ -28,6 +28,7 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define CLAMP(min, v, max) ((v) < (min) ? (min) : (v) < (max) ? (v) : (max))
+#define CLAMPT(min, t, v, max) ((v) < (min) ? (min) : (v) < (max) ? ((t) (v)) : (max))
 
 #define RANGEOK(i,n) ((0 <= (i)) && (i < (n)))
 

@@ -1598,6 +1598,25 @@ proc ::crimp::multiply {a b} {
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::hypot {a b} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+
+    set f hypot_${atype}_$btype
+    if {[Has $f]} {
+	return [$f $a $b]
+    }
+
+    set f hypot_${btype}_$atype
+    if {[Has $f]} {
+	return [$f $b $a]
+    }
+
+    return -code error "Hypot is not supported for the combination of \"$atype\" and \"$btype\""
+}
+
+# # ## ### ##### ######## #############
+
 proc ::crimp::divide {a b {scale 1} {offset 0}} {
     set atype [TypeOf $a]
     set btype [TypeOf $b]
@@ -1606,6 +1625,18 @@ proc ::crimp::divide {a b {scale 1} {offset 0}} {
 	return -code error "Division is not supported for the combination of \"$atype\" and \"$btype\""
     }
     return [$f $a $b $scale $offset]
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::atan2 {a b} {
+    set atype [TypeOf $a]
+    set btype [TypeOf $b]
+    set f     atan2_${atype}_$btype
+    if {![Has $f]} {
+	return -code error "atan2 is not supported for the combination of \"$atype\" and \"$btype\""
+    }
+    return [$f $a $b]
 }
 
 # # ## ### ##### ######## #############

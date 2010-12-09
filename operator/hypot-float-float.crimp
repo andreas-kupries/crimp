@@ -1,4 +1,4 @@
-hypot_float
+hypot_float_float
 Tcl_Obj* imageXObj
 Tcl_Obj* imageYObj
 

@@ -469,6 +469,31 @@ type [const rgba]. For the [arg background] image the types
 [const rgb] and [const rgba] are supported.
 
 
+[call [cmd ::crimp] [method atan2] [arg image1] [arg image2]]
+[keywords hypot]
+
+This method combines the two input images into a result image by
+computing
+
+[para][image atan2][para]
+
+at each pixel.
+
+[para]
+The input is restricted to images of the single-channel types,
+i.e. [const float] and [const "grey\{8,16,32\}"]. The result is always
+of type [const float].
+
+[para]
+
+An application of this operation is the computation of a gradient's
+direction from two images representing a gradient in X and Y directions.
+
+For the full conversion of such cartesian gradients to a polar
+representation use the [method {crimp hypot}] operation to compute the
+gradient's magnitude at each pixel.
+
+
 [call [cmd ::crimp] [method blank] [arg type] [arg width] [arg height] [arg value]...]
 
 This method returns a blank image of the given image type and
@@ -790,6 +815,31 @@ returned by "[method {map gamma}] [arg y]".
 
 This method supports all image types supported by the method
 [method remap].
+
+
+[call [cmd ::crimp] [method hypot] [arg image1] [arg image2]]
+[keywords hypot]
+
+This method combines the two input images into a result image by
+computing
+
+[para][image hypot][para]
+
+at each pixel.
+
+[para]
+The input is restricted to images of the single-channel types,
+i.e. [const float] and [const "grey\{8,16,32\}"]. The result is always
+of type [const float].
+
+[para]
+
+An application of this operation is the computation of the gradient
+magnitude from two images representing a gradient in X and Y directions.
+
+For the full conversion of such cartesian gradients to a polar
+representation use the [method {crimp atan2}] operation to compute the
+gradient's direction at each pixel.
 
 
 [call [cmd ::crimp] [method integrate] [arg image]]

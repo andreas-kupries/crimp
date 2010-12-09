@@ -14,9 +14,10 @@ proc ::crimp::List {pattern} {
     # immediate mode (the cproc's etc. are only registered in
     # auto_index, compilation and actualy registriation is defered
     # until actual usage of a command).
-    return [list \
-		{*}[info commands            ::crimp::$pattern] \
-		{*}[array names ::auto_index ::crimp::$pattern]]
+    return [lsort -uniq \
+		[list \
+		     {*}[info commands            ::crimp::$pattern] \
+		     {*}[array names ::auto_index ::crimp::$pattern]]]
 }
 
 proc ::crimp::Has {name} {
@@ -1534,9 +1535,11 @@ proc ::crimp::add {a b {scale 1} {offset 0}} {
 	return [$f $a $b $scale $offset]
     }
 
-    set f add_${btype}_$atype
-    if {[Has $f]} {
-	return [$f $b $a $scale $offset]
+    if {$atype ne $btype} {
+	set f add_${btype}_$atype
+	if {[Has $f]} {
+	    return [$f $b $a $scale $offset]
+	}
     }
 
     return -code error "Add is not supported for the combination of \"$atype\" and \"$btype\""
@@ -1565,9 +1568,11 @@ proc ::crimp::difference {a b} {
 	return [$f $a $b]
     }
 
-    set f difference_${btype}_$atype
-    if {[Has $f]} {
-	return [$f $b $a]
+    if {$atype ne $btype} {
+	set f difference_${btype}_$atype
+	if {[Has $f]} {
+	    return [$f $b $a]
+	}
     }
 
     return -code error "Difference is not supported for the combination of \"$atype\" and \"$btype\""
@@ -1588,9 +1593,11 @@ proc ::crimp::multiply {a b} {
 	return [$f $a $b]
     }
 
-    set f multiply_${btype}_$atype
-    if {[Has $f]} {
-	return [$f $b $a]
+    if {$atype ne $btype} {
+	set f multiply_${btype}_$atype
+	if {[Has $f]} {
+	    return [$f $b $a]
+	}
     }
 
     return -code error "Multiply is not supported for the combination of \"$atype\" and \"$btype\""
@@ -1607,9 +1614,11 @@ proc ::crimp::hypot {a b} {
 	return [$f $a $b]
     }
 
-    set f hypot_${btype}_$atype
-    if {[Has $f]} {
-	return [$f $b $a]
+    if {$atype ne $btype} {
+	set f hypot_${btype}_$atype
+	if {[Has $f]} {
+	    return [$f $b $a]
+	}
     }
 
     return -code error "Hypot is not supported for the combination of \"$atype\" and \"$btype\""
@@ -1651,9 +1660,11 @@ proc ::crimp::min {a b} {
 	return [$f $a $b]
     }
 
-    set f min_${btype}_$atype
-    if {[Has $f]} {
-	return [$f $b $a]
+    if {$atype ne $btype} {
+	set f min_${btype}_$atype
+	if {[Has $f]} {
+	    return [$f $b $a]
+	}
     }
 
     return -code error "Min is not supported for the combination of \"$atype\" and \"$btype\""
@@ -1671,9 +1682,11 @@ proc ::crimp::max {a b} {
 	return [$f $a $b]
     }
 
-    set f max_${btype}_$atype
-    if {[Has $f]} {
-	return [$f $b $a]
+    if {$atype ne $btype} {
+	set f max_${btype}_$atype
+	if {[Has $f]} {
+	    return [$f $b $a]
+	}
     }
 
     return -code error "Max is not supported for the combination of \"$atype\" and \"$btype\""
@@ -1693,9 +1706,11 @@ proc ::crimp::screen {a b} {
 	return [$f $a $b]
     }
 
-    set f screen_${btype}_$atype
-    if {[Has $f]} {
-	return [$f $b $a]
+    if {$atype ne $btype} {
+	set f screen_${btype}_$atype
+	if {[Has $f]} {
+	    return [$f $b $a]
+	}
     }
 
     return -code error "Screen is not supported for the combination of \"$atype\" and \"$btype\""
@@ -2044,29 +2059,23 @@ namespace eval ::crimp::filter::sobel {
 }
 
 proc ::crimp::filter::sobel::x {image} {
-    # Works best on float input.
+    # |-1 0 1|            |1|
+    # |-2 0 2| = |-1 0 1|*|2|
+    # |-1 0 1|            |1|
+
     return [::crimp::filter::convolve $image \
 		[::crimp::kernel::fpmake {{-1  0 1}} 0] \
 		[::crimp::kernel::fpmake {{{1} {2} {1}}} 0]]
-    if 0 {
-	[::crimp::kernel::fpmake {
-	    {-1  0 1}
-	    {-2  0 2}
-	    {-1  0 1}} 0]
-    }
 }
 
-proc ::crimp::filter::sobel::y {image sigma {r {}}} {
-    # Works best on float input.
+proc ::crimp::filter::sobel::y {image} {
+    # |-1 -2 -1|   |-1|
+    # | 0  0  0| = | 0|*|1 2 1|
+    # | 1  2  1|   | 1|
+
     return [::crimp::filter::convolve $image \
-		[::crimp::kernel::fpmake {{1 2 1}} 0] \
-		[::crimp::kernel::fpmake {{{-1} {0} {-1}}} 0]]
-    if 0 {
-	[::crimp::kernel::fpmake {
-	    {-1 -2 -1}
-	    { 0  0  0}
-	    { 1  2  1}} 0]
-    }
+		[::crimp::kernel::transpose [::crimp::kernel::fpmake {{-1 0 1}} 0]] \
+		[::crimp::kernel::fpmake {{1 2 1}} 0]]
 }
 
 # # ## ### ##### ######## #############
@@ -2078,29 +2087,23 @@ namespace eval ::crimp::filter::scharr {
 }
 
 proc ::crimp::filter::scharr::x {image} {
-    # Works best on float input.
+    # | -3 0  3|            | 3|
+    # |-10 0 10| = |-1 0 1|*|10|
+    # | -3 0  3|            | 3|
+
     return [::crimp::filter::convolve $image \
 		[::crimp::kernel::fpmake {{-1  0 1}} 0] \
 		[::crimp::kernel::fpmake {{{3} {10} {3}}} 0]]
-    if 0 {
-	[::crimp::kernel::fpmake {
-	    { -3 0  3}
-	    {-10 0 10}
-	    { -3 0  3}} 0]
-    }
 }
 
-proc ::crimp::filter::scharr::y {image sigma {r {}}} {
-    # Works best on float input.
+proc ::crimp::filter::scharr::y {image} {
+    # |-3 -10 -3|   |-1|
+    # | 0   0  0| = | 0|*|3 10 3|
+    # | 3  10  3|   | 1|
+
     return [::crimp::filter::convolve $image \
-		[::crimp::kernel::fpmake {{3 10 3}} 0] \
-		[::crimp::kernel::fpmake {{{-1} {0} {-1}}} 0]]
-    if 0 {
-	[::crimp::kernel::fpmake {
-	    {-3 -10 -3}
-	    { 0   0  0}
-	    { 3  10  3}} 0]
-    }
+		[::crimp::kernel::transpose [::crimp::kernel::fpmake {{-1 0 1}} 0]] \
+		[::crimp::kernel::fpmake {{3 10 3}} 0]]
 }
 
 # # ## ### ##### ######## #############
@@ -2111,29 +2114,23 @@ namespace eval ::crimp::filter::prewitt {
 }
 
 proc ::crimp::filter::prewitt::x {image} {
-    # Works best on float input
+    # |-1 0 1|            |1|
+    # |-1 0 1| = |-1 0 1|*|1|
+    # |-1 0 1|            |1|
+
     return [::crimp::filter::convolve $image
 		[::crimp::kernel::fpmake {{-1  0 1}} 0] \
 		[::crimp::kernel::fpmake {{{1} {1} {1}}} 0]]
-    if 0 {
-	[::crimp::kernel::fpmake {
-	    {-1  0 1}
-	    {-1  0 1}
-	    {-1  0 1}} 0]
-    }
 }
 
-proc ::crimp::filter::prewitt::y {image sigma {r {}}} {
-    # Works best on float input
+proc ::crimp::filter::prewitt::y {image} {
+    # |-1 -1 -1|   |-1|
+    # | 0  0  0| = | 0|*|1 1 1|
+    # | 1  1  1|   | 1|
+
     return [::crimp::filter::convolve $image \
-		[::crimp::kernel::fpmake {{1 1 1}} 0] \
-		[::crimp::kernel::fpmake {{{-1} {0} {-1}}} 0]]
-    if 0 {
-	[::crimp::kernel::fpmake {
-	    {-1 -1 -1}
-	    { 0  0  0}
-	    { 1  1  1}} 0]
-    }
+		[::crimp::kernel::transpose [::crimp::kernel::fpmake {{-1 0 1}} 0]] \
+		[::crimp::kernel::fpmake {{1 1 1}} 0]]
 }
 
 # # ## ### ##### ######## #############
@@ -2142,6 +2139,8 @@ namespace eval ::crimp::gradient {
     namespace export {[a-z]*}
     namespace ensemble create
 }
+
+# TODO gradient via laplace directly, or as difference of gaussians.
 
 proc ::crimp::gradient::sobel {image} {
     return [list \
@@ -2161,13 +2160,24 @@ proc ::crimp::gradient::prewitt {image} {
 		[::crimp::filter::prewitt::y $image]]
 }
 
-if 0 {
-    proc ::crimp::gradient::polar {gradient} {
-	# gradient = list (Gx Gy)
-	# polar = angle+magnitude (atan2, hypot (gy, gx))
-	return [list \
-		    []]
-    }
+proc ::crimp::gradient::polar {cgradient} {
+    # cgradient = list (Gx Gy), c for cartesian
+    # result = polar = list (magnitude angle) (hypot, atan2 (gy, gx))
+    lassign $cgradient x y
+    return [list \
+		[::crimp::hypot $y $x] \
+		[::crimp::atan2 $y $x]]
+}
+
+proc ::crimp::gradient::visual {pgradient} {
+    # pgradient = list (magnitude angle), p for polar
+    # result = HSV encoding magnitude as value, and angle as hue.
+    # saturation is full.
+    lassign $pgradient m a
+    set h [::crimp::FITFLOATRANGE $a 0 360]
+    set s [::crimp::blank grey8 {*}[crimp dimensions $m] 255]
+    set v [::crimp::FITFLOAT $m]
+    return [::crimp::convert::2rgb [::crimp::join::2hsv $h $s $v]]
 }
 
 # # ## ### ##### ######## #############
@@ -3391,6 +3401,25 @@ proc ::crimp::FIT {series max} {
     return $res
 }
 
+# Compress (or expand) a float image into the full 0...255 range of grey8.
+proc ::crimp::FITFLOAT {i} {
+    set s [crimp statistics basic $i]
+    set min [dict get $s channel value min]
+    set max [dict get $s channel value max]
+
+    return [FITFLOATRANGE $i $min $max]
+}
+
+proc ::crimp::FITFLOATRANGE {i min max} {
+    set offset [expr {-1 * $min}]
+    set scale  [expr {255.0/($max - $min)}]
+
+    return [crimp convert 2grey8 \
+		[crimp::scale_float \
+		     [crimp::offset_float $i $offset] \
+		     $scale]]
+}
+
 # # ## ### ##### ######## #############
 
 proc ::crimp::TypeOf {image} {
@@ -3405,8 +3434,8 @@ proc ::crimp::K {x y} {
 
 namespace eval ::crimp {
     namespace export type width height dimensions channels cut color
-    namespace export read write convert join flip split table
-    namespace export invert solarize gamma degamma remap map
+    namespace export read write convert join flip split table hypot
+    namespace export invert solarize gamma degamma remap map atan2
     namespace export wavy psychedelia matrix blank filter crop
     namespace export alpha histogram max min screen add pixel
     namespace export subtract difference multiply pyramid mapof

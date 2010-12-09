@@ -1992,14 +1992,14 @@ namespace eval ::crimp::filter::gauss {
 
 proc ::crimp::filter::gauss::discrete {image sigma {r {}}} {
     set Kx [::crimp::kernel::fpmake [::crimp::table::fgauss::discrete $sigma $r]]
-    set Ky [::crimp::kernel::transpose $Kxd]
-    return [convolve $image $Kx $Ky]
+    set Ky [::crimp::kernel::transpose $Kx]
+    return [::crimp::filter::convolve $image $Kx $Ky]
 }
 
 proc ::crimp::filter::gauss::sampled {image sigma {r {}}} {
     set Kx [::crimp::kernel::fpmake [::crimp::table::fgauss::sampled $sigma $r]]
-    set Ky [::crimp::kernel::transpose $Kxd]
-    return [convolve $image $Kx $Ky]
+    set Ky [::crimp::kernel::transpose $Kx]
+    return [::crimp::filter::convolve $image $Kx $Ky]
 }
 
 # # ## ### ##### ######## #############

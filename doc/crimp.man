@@ -805,6 +805,27 @@ The method [method {filter mean}] on the other hand makes the reverse
 tradeoff, handling multi-channel images, but dropping precision.
 
 
+[call [cmd ::crimp] [method {filter sobel x}] [arg image]]
+[call [cmd ::crimp] [method {filter sobel y}] [arg image]]
+[call [cmd ::crimp] [method {filter scharr x}] [arg image]]
+[call [cmd ::crimp] [method {filter scharr y}] [arg image]]
+[call [cmd ::crimp] [method {filter prewitt x}] [arg image]]
+[call [cmd ::crimp] [method {filter prewitt y}] [arg image]]
+[keywords filter sobel scharr prewitt edge-detection gradient]
+
+These methods are convenience methods implementing a number of standard
+convolution filters using for edge detection and calculation of image
+gradients.
+
+[para]
+See the [method {crimp gradient}] methods for users of these filters.
+
+[para]
+Also note that the [method x] methods emphasize gradient in the horizontal
+direction, and thus highlight [emph vertical] lines, and vice versa for
+[method y].
+
+
 [call [cmd ::crimp] [method gamma] [arg image] [arg y]]
 
 This method takes an image, runs it through a [fun {gamma correction}]
@@ -815,6 +836,40 @@ returned by "[method {map gamma}] [arg y]".
 
 This method supports all image types supported by the method
 [method remap].
+
+
+[call [cmd ::crimp] [method {gradient sobel}] [arg image]]
+[call [cmd ::crimp] [method {gradient scharr}] [arg image]]
+[call [cmd ::crimp] [method {gradient prewitt}] [arg image]]
+[keywords sobel scharr prewitt edge-detection gradient]
+
+These methods generate two gradient images for the input image, in the
+X- and Y-directions, using different semi-standard filters. I.e. the
+result is a cartesian representation of the gradients in the input.
+The result is a 2-element list containing the X- and Y-gradient
+images, in this order.
+
+
+[call [cmd ::crimp] [method {gradient polar}] [arg cgradient]]
+
+This method takes a gradient in cartesian representation (as
+returned by the above methods) and converts it to polar
+representation, i.e. magnitude and angle. The result of the method
+is a 2-element list containing two [const float] images, the
+magnitude and angle, in this order. The angle is represented
+in degrees running from 0 to 360.
+
+
+[call [cmd ::crimp] [method {gradient visual}] [arg pgradient]]
+
+This method takes a gradient in polar representation (as
+returned by method [method {gradient polar}]) and converts it
+into a color image ([const rgb]) visualizing the gradient.
+
+[para]
+The visualization is easier to understand in HSV space tough,
+with the angle mapped to Hue, i.e. color, magnitude to Value,
+and Saturation simply at full.
 
 
 [call [cmd ::crimp] [method hypot] [arg image1] [arg image2]]

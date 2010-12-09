@@ -28,8 +28,8 @@ result = crimp_new_grey32 (image->w, image->h);
 
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
-	float f =  FLOATP(image, x, y);
-	GREY32 (result, x, y) = (f < MINVAL) ? MINVAL : ((f > MAXVAL) ? MAXVAL : (int) f);
+	double f =  FLOATP(image, x, y);
+	GREY32 (result, x, y) = CLAMPT (MINVAL, int, f, MAXVAL);
     }
 }
 

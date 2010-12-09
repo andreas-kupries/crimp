@@ -2093,7 +2093,7 @@ proc ::crimp::filter::scharr::x {image} {
 
     return [::crimp::filter::convolve $image \
 		[::crimp::kernel::fpmake {{-1  0 1}} 0] \
-		[::crimp::kernel::fpmake {{{3} {10} {3}}} 0]]
+		[::crimp::kernel::transpose [::crimp::kernel::fpmake {{3 10 3}} 0]]]
 }
 
 proc ::crimp::filter::scharr::y {image} {
@@ -2118,9 +2118,9 @@ proc ::crimp::filter::prewitt::x {image} {
     # |-1 0 1| = |-1 0 1|*|1|
     # |-1 0 1|            |1|
 
-    return [::crimp::filter::convolve $image
+    return [::crimp::filter::convolve $image \
 		[::crimp::kernel::fpmake {{-1  0 1}} 0] \
-		[::crimp::kernel::fpmake {{{1} {1} {1}}} 0]]
+		[::crimp::kernel::transpose [::crimp::kernel::fpmake {{1 1 1}} 0]]]
 }
 
 proc ::crimp::filter::prewitt::y {image} {

@@ -312,6 +312,8 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBalpha over\fR \fIforeground\fR \fIbackground\fR
 .sp
+\fB::crimp\fR \fBatan2\fR \fIimage1\fR \fIimage2\fR
+.sp
 \fB::crimp\fR \fBblank\fR \fItype\fR \fIwidth\fR \fIheight\fR \fIvalue\fR...
 .sp
 \fB::crimp\fR \fBcrop\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
@@ -368,7 +370,31 @@ package require \fBcrimp  ?0?\fR
 .sp
 \fB::crimp\fR \fBfilter stddev\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
 .sp
+\fB::crimp\fR \fBfilter sobel x\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter sobel y\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter scharr x\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter scharr y\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter prewitt x\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter prewitt y\fR \fIimage\fR
+.sp
 \fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
+.sp
+\fB::crimp\fR \fBgradient sobel\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBgradient scharr\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBgradient prewitt\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBgradient polar\fR \fIcgradient\fR
+.sp
+\fB::crimp\fR \fBgradient visual\fR \fIpgradient\fR
+.sp
+\fB::crimp\fR \fBhypot\fR \fIimage1\fR \fIimage2\fR
 .sp
 \fB::crimp\fR \fBintegrate\fR \fIimage\fR
 .sp
@@ -1108,6 +1134,29 @@ Due to the need for an alpha channel the \fIforeground\fR has to be of
 type \fBrgba\fR. For the \fIbackground\fR image the types
 \fBrgb\fR and \fBrgba\fR are supported.
 .TP
+\fB::crimp\fR \fBatan2\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+computing
+.sp
+.PS
+.nf
+atan2 (x,y) = atan(\\frac{x}{y})
+
+.fi
+.PE
+.sp
+at each pixel.
+.sp
+The input is restricted to images of the single-channel types,
+i.e. \fBfloat\fR and \fBgrey{8,16,32}\fR. The result is always
+of type \fBfloat\fR.
+.sp
+An application of this operation is the computation of a gradient's
+direction from two images representing a gradient in X and Y directions.
+For the full conversion of such cartesian gradients to a polar
+representation use the \fBcrimp hypot\fR operation to compute the
+gradient's magnitude at each pixel.
+.TP
 \fB::crimp\fR \fBblank\fR \fItype\fR \fIwidth\fR \fIheight\fR \fIvalue\fR...
 This method returns a blank image of the given image type and
 dimensions.  The \fIvalue\fRs after the dimensions are the pixel
@@ -1397,6 +1446,27 @@ cannot be joined back together for the proper type.
 The method \fBfilter mean\fR on the other hand makes the reverse
 tradeoff, handling multi-channel images, but dropping precision.
 .TP
+\fB::crimp\fR \fBfilter sobel x\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter sobel y\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter scharr x\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter scharr y\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter prewitt x\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter prewitt y\fR \fIimage\fR
+These methods are convenience methods implementing a number of standard
+convolution filters using for edge detection and calculation of image
+gradients.
+.sp
+See the \fBcrimp gradient\fR methods for users of these filters.
+.sp
+Also note that the \fBx\fR methods emphasize gradient in the horizontal
+direction, and thus highlight \fIvertical\fR lines, and vice versa for
+\fBy\fR.
+.TP
 \fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
 This method takes an image, runs it through a \fBgamma correction\fR
 with parameter \fIy\fR, and returns the corrected image as it result.
@@ -1404,6 +1474,57 @@ This is an application of method \fBremap\fR, using the mapping
 returned by "\fBmap gamma\fR \fIy\fR".
 This method supports all image types supported by the method
 \fBremap\fR.
+.TP
+\fB::crimp\fR \fBgradient sobel\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBgradient scharr\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBgradient prewitt\fR \fIimage\fR
+These methods generate two gradient images for the input image, in the
+X- and Y-directions, using different semi-standard filters. I.e. the
+result is a cartesian representation of the gradients in the input.
+The result is a 2-element list containing the X- and Y-gradient
+images, in this order.
+.TP
+\fB::crimp\fR \fBgradient polar\fR \fIcgradient\fR
+This method takes a gradient in cartesian representation (as
+returned by the above methods) and converts it to polar
+representation, i.e. magnitude and angle. The result of the method
+is a 2-element list containing two \fBfloat\fR images, the
+magnitude and angle, in this order. The angle is represented
+in degrees running from 0 to 360.
+.TP
+\fB::crimp\fR \fBgradient visual\fR \fIpgradient\fR
+This method takes a gradient in polar representation (as
+returned by method \fBgradient polar\fR) and converts it
+into a color image (\fBrgb\fR) visualizing the gradient.
+.sp
+The visualization is easier to understand in HSV space tough,
+with the angle mapped to Hue, i.e. color, magnitude to Value,
+and Saturation simply at full.
+.TP
+\fB::crimp\fR \fBhypot\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+computing
+.sp
+.PS
+.nf
+hypot (x,y) = \\sqrt{x^2 + y^2}
+
+.fi
+.PE
+.sp
+at each pixel.
+.sp
+The input is restricted to images of the single-channel types,
+i.e. \fBfloat\fR and \fBgrey{8,16,32}\fR. The result is always
+of type \fBfloat\fR.
+.sp
+An application of this operation is the computation of the gradient
+magnitude from two images representing a gradient in X and Y directions.
+For the full conversion of such cartesian gradients to a polar
+representation use the \fBcrimp atan2\fR operation to compute the
+gradient's direction at each pixel.
 .TP
 \fB::crimp\fR \fBintegrate\fR \fIimage\fR
 This method takes any single-channel image, i.e. of types
@@ -2484,7 +2605,7 @@ Nobuyuki Otsu, "A threshold selection method from gray-level histograms", 1979
 \fIhttp://en.wikipedia.org/wiki/Otsu%27s_method\fR
 .PP
 .SH KEYWORDS
-affine, affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, channels, charcoal, clockwise, closing, composite blending, composition, const expansion, convolution filter, counter-clockwise, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, geometry, gradient, histogram, image, integral image, internal gradient, inverse fourier transform, inversion, log-compression, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, perspective, photo, pixel mapping, projective, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, rescale, resize, rotate, rotation, sabattier effect, scale, sharpen, shrinking, solarization, sqrt-compression, standard deviation filter, statistics, stddev, summed area table, threshold, thresholding, tophat, toroidal wrap expansion, transform, translate, variance, vector-field, warp, white tophat, wrap expansion
+affine, affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, channels, charcoal, clockwise, closing, composite blending, composition, const expansion, convolution filter, counter-clockwise, cropping, cut region, cyclic wrap expansion, dilation, dimensions, edge shrinking, edge-detection, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, geometry, gradient, histogram, hypot, image, integral image, internal gradient, inverse fourier transform, inversion, log-compression, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, perspective, photo, pixel mapping, prewitt, projective, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, rescale, resize, rotate, rotation, sabattier effect, scale, scharr, sharpen, shrinking, sobel, solarization, sqrt-compression, standard deviation filter, statistics, stddev, summed area table, threshold, thresholding, tophat, toroidal wrap expansion, transform, translate, variance, vector-field, warp, white tophat, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2010 Andreas Kupries

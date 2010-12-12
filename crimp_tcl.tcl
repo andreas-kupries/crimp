@@ -961,7 +961,7 @@ proc ::crimp::contrast::equalize::local {image args} {
 	rgb {
 	    # Recursive invokation with conversion into and out of the
 	    # proper type.
-	    return [::crimp::convert::2rgb [local [::crimp::convert::2hsv $image]]]
+	    return [::crimp::convert::2rgb [local [::crimp::convert::2hsv $image] {*}$args]]
 	}
 	rgba {
 	    # Recursive invokation, with conversion into and out of
@@ -969,7 +969,7 @@ proc ::crimp::contrast::equalize::local {image args} {
 	    # untouched.
 
 	    return [crimp::alpha::set \
-			[::crimp::convert::2rgb [local [::crimp::convert::2hsv $image]]] \
+			[::crimp::convert::2rgb [local [::crimp::convert::2hsv $image] {*}$args]] \
 			[lindex [::crimp::split $image] end]]
 	}
 	hsv {
@@ -1811,6 +1811,7 @@ proc ::crimp::filter::ahe {image args} {
 	}
     }
     set args [lrange $args $at end]
+
     switch -- [llength $args] {
 	0 { set radius 3                }
 	1 { set radius [lindex $args 0] }

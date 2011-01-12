@@ -11,6 +11,10 @@
 #package require Tk
 package require critcl
 
+if {![critcl::compiling]} {
+    error "Unable to build CRIMP, no proper compiler found."
+}
+
 # # ## ### ##### ######## #############
 ## Implementation.
 
@@ -117,7 +121,14 @@ catch {
 }
 
 # # ## ### ##### ######## #############
-## Ready. Export.
+## C pieces ready. Force build of the binaries and check if ok.
+
+if {[critcl::failed]} {
+    error "Building CRIMP failed."
+}
+
+# # ## ### ##### ######## #############
+## Fully Ready. Export.
 
 package provide crimp 0
 return

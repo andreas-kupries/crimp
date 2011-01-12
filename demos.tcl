@@ -66,11 +66,7 @@ if {![file exists $dir/lib] ||
     puts "Got:           [package ifneeded critcl [package present critcl]]"
 
     # Directly access the crimp package
-    source         [file join $dir crimp.tcl]
-
-    # and then force the compilation and loading of the C-level
-    # primitives, instead of defering until use.
-    critcl::cbuild [file join $dir crimp.tcl]
+    source [file join $dir crimp.tcl]
 
     puts "Using dynamically compiled crimp package"
 }

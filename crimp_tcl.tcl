@@ -8,24 +8,11 @@ namespace eval ::crimp {}
 # # ## ### ##### ######## #############
 
 proc ::crimp::List {pattern} {
-    # We have to look at both actually registered commands, and
-    # potentially registered commands. The first are defined when
-    # loading crimp as package, the latter when using crimp in
-    # immediate mode (the cproc's etc. are only registered in
-    # auto_index, compilation and actualy registriation is defered
-    # until actual usage of a command).
-    return [lsort -uniq \
-		[list \
-		     {*}[info commands            ::crimp::$pattern] \
-		     {*}[array names ::auto_index ::crimp::$pattern]]]
+    return [info commands ::crimp::$pattern]
 }
 
 proc ::crimp::Has {name} {
-    # See List above for why we look into the auto_index.
-    return [expr {
-	  [llength [info commands            ::crimp::$name]] ||
-	  [llength [array names ::auto_index ::crimp::$name]]
-      }]
+    return [llength [info commands ::crimp::$name]]
 }
 
 proc ::crimp::P {fqn} {

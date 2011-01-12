@@ -14,6 +14,7 @@ package require critcl
 if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
+#critcl::config keepsrc 1
 
 # # ## ### ##### ######## #############
 ## Implementation.
@@ -104,6 +105,18 @@ critcl::ccode {
 }} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
+## Make the C pieces ready. Force build of the binaries and check if ok.
+
+if {[critcl::failed]} {
+    error "Building CRIMP failed."
+} else {
+    # Build OK, force system to load the generated shared library.
+    # Required bececause critcl::failed explicitly disables the
+    # load phase.
+    critcl::cbuild [info script]
+}
+
+# # ## ### ##### ######## #############
 ## Pull in the Tcl layer aggregating the C primitives into useful
 ## commands.
 ##
@@ -118,13 +131,6 @@ source [file join [file dirname [file normalize [info script]]] crimp_tcl.tcl]
 # separate the pieces. Plot should likely be its own package.
 catch {
     source [file join [file dirname [file normalize [info script]]] plot.tcl]
-}
-
-# # ## ### ##### ######## #############
-## C pieces ready. Force build of the binaries and check if ok.
-
-if {[critcl::failed]} {
-    error "Building CRIMP failed."
 }
 
 # # ## ### ##### ######## #############

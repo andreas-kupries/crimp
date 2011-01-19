@@ -15,10 +15,10 @@
 typedef unsigned char* crimp_pixel_array;
 
 typedef struct crimp_image {
+    Tcl_Obj*               meta;     /* Tcl level client data */
     const crimp_imagetype* itype;    /* Reference to type descriptor */
     int                    w;        /* Image dimension, width  */
     int                    h;        /* Image dimension, height */
-    Tcl_Obj*               meta;     /* Tcl level client data */
     unsigned char          pixel[4]; /* Integrated pixel storage */
 } crimp_image;
 
@@ -62,13 +62,15 @@ typedef struct crimp_image {
 #define A(iptr,x,y) (iptr)->pixel [ALPHA (iptr,x,y)]
 
 /*
- * Pixel Access Macros. GREY8, GREY16, GREY32.
+ * Pixel Access Macros. GREY8, GREY16, GREY32, FLOATP.
  *
  * NOTE: The casts should use standard types where we we know the size in
  *       bytes exactly, by definition.
  */
 
-#define INDEX(iptr,x,y) (((x)*SZ (iptr)) + ((y)*SZ (iptr)*(iptr)->w))
+#define INDEX(iptr,x,y) \
+    (((x)*SZ (iptr)) + \
+     ((y)*SZ (iptr)*((iptr)->w)))
 
 #define GREY8(iptr,x,y)                        (iptr)->pixel [INDEX (iptr,x,y)]
 #define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [INDEX (iptr,x,y)]))
@@ -119,10 +121,10 @@ typedef struct crimp_image {
  * API :: Core. Image lifecycle management.
  */
 
-extern crimp_image* crimp_new (const crimp_imagetype* type, int w, int h);
+extern crimp_image* crimp_new  (const crimp_imagetype* type, int w, int h);
 extern crimp_image* crimp_newm (const crimp_imagetype* type, int w, int h, Tcl_Obj* meta);
-extern crimp_image* crimp_dup (crimp_image* image);
-extern void         crimp_del (crimp_image* image);
+extern crimp_image* crimp_dup  (crimp_image* image);
+extern void         crimp_del  (crimp_image* image);
 
 #define crimp_new_hsv(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),    (w), (h)))
 #define crimp_new_rgba(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),   (w), (h)))

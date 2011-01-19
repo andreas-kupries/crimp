@@ -66,6 +66,7 @@ critcl::ccode {
     #include <string.h>
     #include <image_type.h>
     #include <image.h>
+    #include <volume.h>
     #include <ahe.h>
     #include <rank.h>
     #include <linearalgebra.h>

@@ -1,0 +1,245 @@
+bilateral_grey8
+Tcl_Obj* imageObj
+Tcl_Obj* wimageObj
+double sigma_s
+double sigma_r
+
+/*
+ * Joint (or Cross) Bilateral filter. Like a bilateral filter, except that the
+ * weight information is pulled from a second image. I.e. we filter image A
+ * using the edge information of image B.
+ *
+ * Uses a bilateral grid downsampled by sigma-s and sigma-r for higher
+ * performance, and lesser memory use. A sigma of 1 implies 'no downsampling',
+ * filtering is on the full grid: high memory use, slow speed.
+ */
+
+crimp_image*     result;
+crimp_image*     image;
+crimp_image*     wimage;
+crimp_image*     wi;    /* Bilateral grid, accumulated pixel intensities */
+crimp_image*     w;     /* Bilateral grid, accumulated pixel counts, = weight factor */
+int              x, y, wg, hg, rg, mg;
+double* nw;
+double* nwi;
+
+/*
+ * Process and validate the arguments.
+ */
+
+crimp_input (imageObj,  image, grey8);
+crimp_input (wimageObj, wimage, grey8);
+
+if (!crimp_eq_dim (image, wimage)) {
+    Tcl_SetResult(interp, "Unable to  filter, expected equally-sized images", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+ASSERT (sigma_s >= 1, "Cannot use sigma/s < 1");
+ASSERT (sigma_r >= 1, "Cannot use sigma/r < 1");
+
+result = crimp_new_like (image);
+
+/*
+ * Determine the size of the bilateral grid.
+ * +1 = One more, in case the float->int of the ceil result rounded down.
+ * +4 = Borders for the convolution of the grid.
+ */
+
+wg = 4 + 1 + (int) ceil (image->w/sigma_s);
+hg = 4 + 1 + (int) ceil (image->w/sigma_s);
+rg = 4 + 1 + (int) ceil (256/sigma_r);
+mg = MAX (wg, MAX (hg, rg));
+
+/*
+ * Phase I. Allocate and initialize the bilateral grid (2 volumes).
+ */
+
+wi = crimp_vnew_float (wg, hg, rg);
+w  = crimp_vnew_float (wg, hg, rg);
+
+for (z = 0; z < rg; z++) {
+  for (y = 0; y < hg; y++) {
+    for (x = 0; x < wg; x++) {
+      VFLOATP (wi, xr, yr, pr) = 0.0;
+      VFLOATP (w,  xr, yr, pr) = 0.0;
+    }
+  }
+}
+
+/*
+ * Phase II. Update the bilateral grid with the downsampled image data.
+ */
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+      double p = GREY8 (image, x, y);
+      double pw = GREY8 (wimage, x, y);
+
+      /* +2 is the offset to keep the borders empty. */
+
+      int xr = 2 + lrint (((double) x) / sigma_s);
+      int yr = 2 + lrint (((double) y) / sigma_s);
+      int pr = 2 + lrint (pw / sigma_r); /* Edge information = Range distance
+					  * for the pixel = the Z in the grid
+					  * comes from the wimage (image B).
+					  * This is the point of the joint
+					  * filter.
+					  */
+      VFLOATP (wi, xr, yr, pr) += p;
+      VFLOATP (w,  xr, yr, pr) ++;
+    }
+}
+
+/*
+ * Phase III. Convolve the grid using gaussian (1 4 6 4 1) along each
+ * of the three axes. The convolution is hard-wired. Note that the
+ * grid was allocated with the necessary borders, and the previous
+ * phases made sure to keep the borders empty.
+ */
+
+nw  = NALLOC (mg, double); /* Helper arrays to buffer the convolution */
+nwi = NALLOC (mg, double); /* result per scan line. */
+
+/* gauss(a,b,c,d,e) = 1a+4b+6c+4d+1e = a+e+4(b+d)+6c = a+e+4(b+d+c)+2c */
+
+#define G (a, b, c, d, e) (((a)+(e)) + 4*((b)+(d)) + 6*(c))
+
+#define GX (f, x, y, z)		   \
+       G (VFLOATP (f, x-2, y, z), \
+	  VFLOATP (f, x-1, y, z), \
+	  VFLOATP (f, x  , y, z), \
+	  VFLOATP (f, x+1, y, z), \
+	  VFLOATP (f, x+2, y, z))
+
+#define GY (f, x, y, z)		   \
+       G (VFLOATP (f, x, y-2, z), \
+	  VFLOATP (f, x, y-1, z), \
+	  VFLOATP (f, x, y  , z), \
+	  VFLOATP (f, x, y+1, z), \
+	  VFLOATP (f, x, y+2, z))
+
+#define GZ (f, x, y, z)		   \
+       G (VFLOATP (f, x, y, z-2), \
+	  VFLOATP (f, x, y, z-1), \
+	  VFLOATP (f, x, y, z  ), \
+	  VFLOATP (f, x, y, z+1), \
+	  VFLOATP (f, x, y, z+2))
+
+/* Gaussian @ X */
+
+for (z = 2; z < rg-2; z++) {
+    for (y = 2; y < hg-2; y++) {
+	nw  [0] = nw  [1] = nw  [wg-2] = nw  [wg-1] = 0.0;
+	nwi [0] = nwi [1] = nwi [wg-2] = nwi [wg-1] = 0.0;
+
+	for (x = 2; x < wg-2; x++) {
+	    nw  [x-2] = GX(w,  x, y, z);
+	    nwi [x-2] = GX(wi, x, y, z);
+	}
+
+	memcpy (&VFLOATP (w,  0, y, z), nw,  wg);
+	memcpy (&VFLOATP (wi, 0, y, z), nwi, wg);
+    }
+}
+
+/* Gaussian @ Y */
+
+for (z = 2; z < rg-2; z++) {
+    for (x = 2; x < wg-2; x++) {
+	nw  [0] = nw  [1] = nw  [hg-2] = nw  [hg-1] = 0.0;
+	nwi [0] = nwi [1] = nwi [hg-2] = nwi [hg-1] = 0.0;
+
+	for (y = 2; y < hg-2; y++) {
+	    nw  [y-2] = GY(w,  x, y, z);
+	    nwi [y-2] = GY(wi, x, y, z);
+	}
+
+	for (y = 0; y < hg; y++) { VFLOATP (w,  x, y, z) = nw [y]; }
+	for (y = 0; y < hg; y++) { VFLOATP (wi, x, y, z) = nwi[y]; }
+    }
+}
+
+
+/* Gaussian @ Z */
+
+for (y = 2; y < hg-2; y++) {
+    for (x = 2; x < wg-2; x++) {
+	nw  [0] = nw  [1] = nw  [rg-2] = nw  [rg-1] = 0.0;
+	nwi [0] = nwi [1] = nwi [rg-2] = nwi [rg-1] = 0.0;
+
+	for (z = 2; z < rg-2; z++) {
+	    nw  [z-2] = GZ(w,  x, y, z);
+	    nwi [z-2] = GZ(wi, x, y, z);
+	}
+
+	for (z = 0; z < rg; y++) { VFLOATP (w,  x, y, z) = nw [z]; }
+	for (z = 0; z < rg; y++) { VFLOATP (wi, x, y, z) = nwi[z]; }
+    }
+}
+
+#undef GX
+#undef GY
+#undef GZ
+#undef G
+
+/*
+ * Phase IV. Resample the image using the updated bilateral grid and trilinear
+ * interpolation.
+ *
+ * #define I(a,b,s) ((b) + ((a)-(b))*(s))
+ */
+
+#define BETWEEN(a,b,s) ((a)*(s) + (b)*(1-(s)))
+
+for (y = 0; y < image->h; y++) {
+    for (x = 0; x < image->w; x++) {
+
+	double winew, wnew, p = GREY8 (image, x, y);
+
+	/* Continuous grid location */
+	double xf = ((double) x) / sigma_s;
+	double yf = ((double) y) / sigma_s;
+	double pf = p / sigma_r;
+
+	/* Integral grid location */
+	int xr = lrint (xf);
+	int yr = lrint (yf);
+	int pr = lrint (pf);
+
+	/* Fractional grid location from the integral */
+	if (xr > xf) { xr -- ; } ; xf = xf - xr;
+	if (yr > yf) { yr -- ; } ; yf = yf - yr;
+	if (pr > pf) { pr -- ; } ; pf = pf - pr;
+
+	/* Trilinear interpolate over the grid */
+
+	winew = BETWEEN (BETWEEN (BETWEEN (VFLOATP (wi, xr, yr,   pr),   VFLOATP (wi, xr+1, yr,   pr),   xf),
+				  BETWEEN (VFLOATP (wi, xr, yr+1, pr),   VFLOATP (wi, xr+1, yr+1, pr),   xf), yf),
+			 BETWEEN (BETWEEN (VFLOATP (wi, xr, yr,   pr+1), VFLOATP (wi, xr+1, yr,   pr+1), xf),
+				  BETWEEN (VFLOATP (wi, xr, yr+1, pr+1), VFLOATP (wi, xr+1, yr+1, pr+1), xf), yf), pf);
+
+	wnew  = BETWEEN (BETWEEN (BETWEEN (VFLOATP (w, xr, yr,   pr),   VFLOATP (w, xr+1, yr,   pr),   xf),
+				  BETWEEN (VFLOATP (w, xr, yr+1, pr),   VFLOATP (w, xr+1, yr+1, pr),   xf), yf),
+			 BETWEEN (BETWEEN (VFLOATP (w, xr, yr,   pr+1), VFLOATP (w, xr+1, yr,   pr+1), xf),
+				  BETWEEN (VFLOATP (w, xr, yr+1, pr+1), VFLOATP (w, xr+1, yr+1, pr+1), xf), yf), pf);
+
+	GREY8 (result, x, y) = CLAMP (0, (winew / wnew), 255);
+    }
+}
+
+#undef BETWEEN
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

@@ -12,9 +12,9 @@ double sigma_r
 
 crimp_image*     result;
 crimp_image*     image;
-crimp_image*     wi;    /* Bilateral grid, accumulated pixel intensities */
-crimp_image*     w;     /* Bilateral grid, accumulated pixel counts, = weight factor */
-int              x, y, wg, hg, rg, mg;
+crimp_volume*    wi;    /* Bilateral grid, accumulated pixel intensities */
+crimp_volume*    w;     /* Bilateral grid, accumulated pixel counts, = weight factor */
+int              x, y, z, wg, hg, rg, mg;
 double* nw;
 double* nwi;
 
@@ -50,8 +50,8 @@ w  = crimp_vnew_float (wg, hg, rg);
 for (z = 0; z < rg; z++) {
   for (y = 0; y < hg; y++) {
     for (x = 0; x < wg; x++) {
-      VFLOATP (wi, xr, yr, pr) = 0.0;
-      VFLOATP (w,  xr, yr, pr) = 0.0;
+      VFLOATP (wi, x, y, z) = 0.0;
+      VFLOATP (w,  x, y, z) = 0.0;
     }
   }
 }
@@ -72,7 +72,7 @@ for (y = 0; y < image->h; y++) {
       int pr = 2 + lrint (p / sigma_r);
 
       VFLOATP (wi, xr, yr, pr) += p;
-      VFLOATP (w,  xr, yr, pr) ++;
+      VFLOATP (w,  xr, yr, pr) += 1;
     }
 }
 
@@ -88,24 +88,24 @@ nwi = NALLOC (mg, double); /* result per scan line. */
 
 /* gauss(a,b,c,d,e) = 1a+4b+6c+4d+1e = a+e+4(b+d)+6c = a+e+4(b+d+c)+2c */
 
-#define G (a, b, c, d, e) (((a)+(e)) + 4*((b)+(d)) + 6*(c))
+#define GAUSS(a, b, c, d, e) (((a)+(e)) + 4*((b)+(d)) + 6*(c))
 
-#define GX (f, x, y, z)		   \
-       G (VFLOATP (f, x-2, y, z), \
+#define GX(f, x, y, z)		   \
+       GAUSS (VFLOATP (f, x-2, y, z), \
 	  VFLOATP (f, x-1, y, z), \
 	  VFLOATP (f, x  , y, z), \
 	  VFLOATP (f, x+1, y, z), \
 	  VFLOATP (f, x+2, y, z))
 
-#define GY (f, x, y, z)		   \
-       G (VFLOATP (f, x, y-2, z), \
+#define GY(f, x, y, z)		   \
+       GAUSS (VFLOATP (f, x, y-2, z), \
 	  VFLOATP (f, x, y-1, z), \
 	  VFLOATP (f, x, y  , z), \
 	  VFLOATP (f, x, y+1, z), \
 	  VFLOATP (f, x, y+2, z))
 
-#define GZ (f, x, y, z)		   \
-       G (VFLOATP (f, x, y, z-2), \
+#define GZ(f, x, y, z)		   \
+       GAUSS (VFLOATP (f, x, y, z-2), \
 	  VFLOATP (f, x, y, z-1), \
 	  VFLOATP (f, x, y, z  ), \
 	  VFLOATP (f, x, y, z+1), \
@@ -158,15 +158,15 @@ for (y = 2; y < hg-2; y++) {
 	    nwi [z-2] = GZ(wi, x, y, z);
 	}
 
-	for (z = 0; z < rg; y++) { VFLOATP (w,  x, y, z) = nw [z]; }
-	for (z = 0; z < rg; y++) { VFLOATP (wi, x, y, z) = nwi[z]; }
+	for (z = 0; z < rg; z++) { VFLOATP (w,  x, y, z) = nw [z]; }
+	for (z = 0; z < rg; z++) { VFLOATP (wi, x, y, z) = nwi[z]; }
     }
 }
 
 #undef GX
 #undef GY
 #undef GZ
-#undef G
+#undef GAUSS
 
 /*
  * Phase IV. Resample the image using the updated bilateral grid and trilinear

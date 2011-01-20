@@ -115,16 +115,13 @@ nwi = NALLOC (mg, double); /* result per scan line. */
 
 for (z = 2; z < rg-2; z++) {
     for (y = 2; y < hg-2; y++) {
-	nw  [0] = nw  [1] = nw  [wg-2] = nw  [wg-1] = 0.0;
-	nwi [0] = nwi [1] = nwi [wg-2] = nwi [wg-1] = 0.0;
-
 	for (x = 2; x < wg-2; x++) {
 	    nw  [x-2] = GX(w,  x, y, z);
 	    nwi [x-2] = GX(wi, x, y, z);
 	}
 
-	memcpy (&VFLOATP (w,  0, y, z), nw,  wg);
-	memcpy (&VFLOATP (wi, 0, y, z), nwi, wg);
+	for (x = 2; x < wg-2; x++) { VFLOATP (w,  x, y, z) = nw [x-2]; }
+	for (x = 2; x < wg-2; x++) { VFLOATP (wi, x, y, z) = nwi[x-2]; }
     }
 }
 
@@ -132,16 +129,13 @@ for (z = 2; z < rg-2; z++) {
 
 for (z = 2; z < rg-2; z++) {
     for (x = 2; x < wg-2; x++) {
-	nw  [0] = nw  [1] = nw  [hg-2] = nw  [hg-1] = 0.0;
-	nwi [0] = nwi [1] = nwi [hg-2] = nwi [hg-1] = 0.0;
-
 	for (y = 2; y < hg-2; y++) {
 	    nw  [y-2] = GY(w,  x, y, z);
 	    nwi [y-2] = GY(wi, x, y, z);
 	}
 
-	for (y = 0; y < hg; y++) { VFLOATP (w,  x, y, z) = nw [y]; }
-	for (y = 0; y < hg; y++) { VFLOATP (wi, x, y, z) = nwi[y]; }
+	for (y = 2; y < hg-2; y++) { VFLOATP (w,  x, y, z) = nw [y-2]; }
+	for (y = 2; y < hg-2; y++) { VFLOATP (wi, x, y, z) = nwi[y-2]; }
     }
 }
 
@@ -150,16 +144,13 @@ for (z = 2; z < rg-2; z++) {
 
 for (y = 2; y < hg-2; y++) {
     for (x = 2; x < wg-2; x++) {
-	nw  [0] = nw  [1] = nw  [rg-2] = nw  [rg-1] = 0.0;
-	nwi [0] = nwi [1] = nwi [rg-2] = nwi [rg-1] = 0.0;
-
 	for (z = 2; z < rg-2; z++) {
 	    nw  [z-2] = GZ(w,  x, y, z);
 	    nwi [z-2] = GZ(wi, x, y, z);
 	}
 
-	for (z = 0; z < rg; z++) { VFLOATP (w,  x, y, z) = nw [z]; }
-	for (z = 0; z < rg; z++) { VFLOATP (wi, x, y, z) = nwi[z]; }
+	for (z = 2; z < rg-2; z++) { VFLOATP (w,  x, y, z) = nw [z-2]; }
+	for (z = 2; z < rg-2; z++) { VFLOATP (wi, x, y, z) = nwi[z-2]; }
     }
 }
 

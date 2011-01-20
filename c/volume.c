@@ -294,7 +294,7 @@ VolumeFromAny (Tcl_Interp* interp, Tcl_Obj* volObjPtr)
 	return TCL_ERROR;
     }
 
-    if ((crimp_get_volumetype_from_obj (interp, objv[0], &ct) != TCL_OK) ||
+    if ((crimp_get_imagetype_from_obj (interp, objv[0], &ct) != TCL_OK) ||
         (Tcl_GetIntFromObj            (interp, objv[1], &w) != TCL_OK) ||
 	(Tcl_GetIntFromObj            (interp, objv[2], &h) != TCL_OK) ||
 	(Tcl_GetIntFromObj            (interp, objv[3], &d) != TCL_OK) ||

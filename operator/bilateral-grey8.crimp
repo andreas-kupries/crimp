@@ -1,7 +1,7 @@
 bilateral_grey8
 Tcl_Obj* imageObj
-double sigma_s
-double sigma_r
+double sigma_space
+double sigma_range
 
 /*
  * Bilateral filter. Uses a bilateral grid downsampled by sigma-s and
@@ -14,7 +14,8 @@ crimp_image*     result;
 crimp_image*     image;
 crimp_volume*    wi;    /* Bilateral grid, accumulated pixel intensities */
 crimp_volume*    w;     /* Bilateral grid, accumulated pixel counts, = weight factor */
-int              x, y, z, wg, hg, rg, mg;
+int              x, y, z;
+int              bgrid_width, bgrid_height, bgrid_range, bgrid_maxdim;
 double* nw;
 double* nwi;
 
@@ -24,8 +25,8 @@ double* nwi;
 
 crimp_input (imageObj, image, grey8);
 
-ASSERT (sigma_s >= 1, "Cannot use sigma/s < 1");
-ASSERT (sigma_r >= 1, "Cannot use sigma/r < 1");
+ASSERT (sigma_space >= 1, "Cannot use sigma/s < 1");
+ASSERT (sigma_range >= 1, "Cannot use sigma/r < 1");
 
 result = crimp_new_like (image);
 
@@ -33,27 +34,31 @@ result = crimp_new_like (image);
  * Determine the size of the bilateral grid.
  * +1 = One more, in case the float->int of the ceil result rounded down.
  * +4 = Borders for the convolution of the grid.
+ *
+ * TODO NOTE: The SParis BF code obtains the min and max grey levels from the
+ * TODO NOTE: image and uses that for the range, instead of a fixed 256 (Also
+ * TODO NOTE: assumes that intensity is in [0,1]).
  */
 
-wg = 4 + 1 + (int) ceil (image->w/sigma_s);
-hg = 4 + 1 + (int) ceil (image->w/sigma_s);
-rg = 4 + 1 + (int) ceil (256/sigma_r);
-mg = MAX (wg, MAX (hg, rg));
+bgrid_width  = 4 + 1 + (int) ceil (image->w/sigma_space);
+bgrid_height = 4 + 1 + (int) ceil (image->w/sigma_space);
+bgrid_range  = 4 + 1 + (int) ceil (256/sigma_range);
+bgrid_maxdim = MAX (bgrid_width, MAX (bgrid_height, bgrid_range));
 
 /*
  * Phase I. Allocate and initialize the bilateral grid (2 volumes).
  */
 
-wi = crimp_vnew_float (wg, hg, rg);
-w  = crimp_vnew_float (wg, hg, rg);
+wi = crimp_vnew_float (bgrid_width, bgrid_height, bgrid_range);
+w  = crimp_vnew_float (bgrid_width, bgrid_height, bgrid_range);
 
-for (z = 0; z < rg; z++) {
-  for (y = 0; y < hg; y++) {
-    for (x = 0; x < wg; x++) {
-      VFLOATP (wi, x, y, z) = 0.0;
-      VFLOATP (w,  x, y, z) = 0.0;
+for (z = 0; z < bgrid_range; z++) {
+    for (y = 0; y < bgrid_height; y++) {
+	for (x = 0; x < bgrid_width; x++) {
+	    VFLOATP (wi, x, y, z) = 0.0;
+	    VFLOATP (w,  x, y, z) = 0.0;
+	}
     }
-  }
 }
 
 /*
@@ -63,94 +68,101 @@ for (z = 0; z < rg; z++) {
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
 
-      double p = GREY8 (image, x, y);
+	double p = GREY8 (image, x, y);
 
-      /* +2 is the offset to keep the borders empty. */
+	/* +2 is the offset to keep the borders empty. */
 
-      int xr = 2 + lrint (((double) x) / sigma_s);
-      int yr = 2 + lrint (((double) y) / sigma_s);
-      int pr = 2 + lrint (p / sigma_r);
+	int xr = 2 + lrint (((double) x) / sigma_space);
+	int yr = 2 + lrint (((double) y) / sigma_space);
+	int pr = 2 + lrint (p / sigma_range);
 
-      VFLOATP (wi, xr, yr, pr) += p;
-      VFLOATP (w,  xr, yr, pr) += 1;
+	VFLOATP (wi, xr, yr, pr) += p;
+	VFLOATP (w,  xr, yr, pr) += 1;
     }
 }
 
 /*
- * Phase III. Convolve the grid using gaussian (1 4 6 4 1) along each
- * of the three axes. The convolution is hard-wired. Note that the
- * grid was allocated with the necessary borders, and the previous
- * phases made sure to keep the borders empty.
+ * Phase III. Convolve the grid using gaussian [1/16 (1 4 6 4 1)] along each
+ * of the three axes. The convolution is hard-wired. Note that the grid was
+ * allocated with the necessary borders, and the previous phases made sure to
+ * keep the borders empty.
+ *
+ * NOTE: I sort of tried to optimize here, using a buffer just for a single
+ * slice through the grid. The SParis code creates a whole duplicate of the
+ * grid. It doesn't have to access the grid in strided fashion either, except
+ * for the neighbour calculations.
+ *
+ * It also uses a simpler gaussian (1/4 (1 2 1)), and applies it twice.
  */
 
-nw  = NALLOC (mg, double); /* Helper arrays to buffer the convolution */
-nwi = NALLOC (mg, double); /* result per scan line. */
+nw  = NALLOC (bgrid_maxdim, double); /* Helper arrays to buffer the convolution */
+nwi = NALLOC (bgrid_maxdim, double); /* result per scan line. */
 
 /* gauss(a,b,c,d,e) = 1a+4b+6c+4d+1e = a+e+4(b+d)+6c = a+e+4(b+d+c)+2c */
 
-#define GAUSS(a, b, c, d, e) (((a)+(e)) + 4*((b)+(d)) + 6*(c))
+#define GAUSS(a, b, c, d, e) ((((a)+(e)) + 4*((b)+(d)) + 6*(c))/16.)
 
 #define GX(f, x, y, z)		   \
        GAUSS (VFLOATP (f, x-2, y, z), \
-	  VFLOATP (f, x-1, y, z), \
-	  VFLOATP (f, x  , y, z), \
-	  VFLOATP (f, x+1, y, z), \
-	  VFLOATP (f, x+2, y, z))
+	      VFLOATP (f, x-1, y, z), \
+	      VFLOATP (f, x  , y, z), \
+	      VFLOATP (f, x+1, y, z), \
+	      VFLOATP (f, x+2, y, z))
 
 #define GY(f, x, y, z)		   \
        GAUSS (VFLOATP (f, x, y-2, z), \
-	  VFLOATP (f, x, y-1, z), \
-	  VFLOATP (f, x, y  , z), \
-	  VFLOATP (f, x, y+1, z), \
-	  VFLOATP (f, x, y+2, z))
+	      VFLOATP (f, x, y-1, z), \
+	      VFLOATP (f, x, y  , z), \
+	      VFLOATP (f, x, y+1, z), \
+	      VFLOATP (f, x, y+2, z))
 
 #define GZ(f, x, y, z)		   \
        GAUSS (VFLOATP (f, x, y, z-2), \
-	  VFLOATP (f, x, y, z-1), \
-	  VFLOATP (f, x, y, z  ), \
-	  VFLOATP (f, x, y, z+1), \
-	  VFLOATP (f, x, y, z+2))
+	      VFLOATP (f, x, y, z-1), \
+	      VFLOATP (f, x, y, z  ), \
+	      VFLOATP (f, x, y, z+1), \
+	      VFLOATP (f, x, y, z+2))
 
 /* Gaussian @ X */
 
-for (z = 2; z < rg-2; z++) {
-    for (y = 2; y < hg-2; y++) {
-	for (x = 2; x < wg-2; x++) {
+for (z = 2; z < bgrid_range-2; z++) {
+    for (y = 2; y < bgrid_height-2; y++) {
+	for (x = 2; x < bgrid_width-2; x++) {
 	    nw  [x-2] = GX(w,  x, y, z);
 	    nwi [x-2] = GX(wi, x, y, z);
 	}
 
-	for (x = 2; x < wg-2; x++) { VFLOATP (w,  x, y, z) = nw [x-2]; }
-	for (x = 2; x < wg-2; x++) { VFLOATP (wi, x, y, z) = nwi[x-2]; }
+	for (x = 2; x < bgrid_width-2; x++) { VFLOATP (w,  x, y, z) = nw [x-2]; }
+	for (x = 2; x < bgrid_width-2; x++) { VFLOATP (wi, x, y, z) = nwi[x-2]; }
     }
 }
 
 /* Gaussian @ Y */
 
-for (z = 2; z < rg-2; z++) {
-    for (x = 2; x < wg-2; x++) {
-	for (y = 2; y < hg-2; y++) {
+for (z = 2; z < bgrid_range-2; z++) {
+    for (x = 2; x < bgrid_width-2; x++) {
+	for (y = 2; y < bgrid_height-2; y++) {
 	    nw  [y-2] = GY(w,  x, y, z);
 	    nwi [y-2] = GY(wi, x, y, z);
 	}
 
-	for (y = 2; y < hg-2; y++) { VFLOATP (w,  x, y, z) = nw [y-2]; }
-	for (y = 2; y < hg-2; y++) { VFLOATP (wi, x, y, z) = nwi[y-2]; }
+	for (y = 2; y < bgrid_height-2; y++) { VFLOATP (w,  x, y, z) = nw [y-2]; }
+	for (y = 2; y < bgrid_height-2; y++) { VFLOATP (wi, x, y, z) = nwi[y-2]; }
     }
 }
 
 
 /* Gaussian @ Z */
 
-for (y = 2; y < hg-2; y++) {
-    for (x = 2; x < wg-2; x++) {
-	for (z = 2; z < rg-2; z++) {
+for (y = 2; y < bgrid_height-2; y++) {
+    for (x = 2; x < bgrid_width-2; x++) {
+	for (z = 2; z < bgrid_range-2; z++) {
 	    nw  [z-2] = GZ(w,  x, y, z);
 	    nwi [z-2] = GZ(wi, x, y, z);
 	}
 
-	for (z = 2; z < rg-2; z++) { VFLOATP (w,  x, y, z) = nw [z-2]; }
-	for (z = 2; z < rg-2; z++) { VFLOATP (wi, x, y, z) = nwi[z-2]; }
+	for (z = 2; z < bgrid_range-2; z++) { VFLOATP (w,  x, y, z) = nw [z-2]; }
+	for (z = 2; z < bgrid_range-2; z++) { VFLOATP (wi, x, y, z) = nwi[z-2]; }
     }
 }
 
@@ -174,9 +186,9 @@ for (y = 0; y < image->h; y++) {
 	double winew, wnew, p = GREY8 (image, x, y);
 
 	/* Continuous grid location */
-	double xf = ((double) x) / sigma_s;
-	double yf = ((double) y) / sigma_s;
-	double pf = p / sigma_r;
+	double xf = 2 + ((double) x) / sigma_space;
+	double yf = 2 + ((double) y) / sigma_space;
+	double pf = 2 + p / sigma_range;
 
 	/* Integral grid location */
 	int xr = lrint (xf);

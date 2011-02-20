@@ -41,7 +41,7 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	 * identically
 	 */
 
-	int sum = 0;
+	double sum = 0;
 
 	for (yk = 0, dy = -kh; yk < kernel->h; yk++, dy++) {
 	    for (xk = 0, dx = -kw; xk < kernel->w; xk++, dx++) {
@@ -50,7 +50,7 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	    }
 	}
 
-	sum /= scale; sum += offset; FLOATP (result, xo, yo) = CLAMP (0, sum, 255);
+	sum /= scale; sum += offset; FLOATP (result, xo, yo) = sum;
     }
 }
 

@@ -3391,11 +3391,7 @@ proc ::crimp::FIT {series max} {
 
 # Compress (or expand) a float image into the full 0...255 range of grey8.
 proc ::crimp::FITFLOAT {i} {
-    set s [crimp statistics basic $i]
-    set min [dict get $s channel value min]
-    set max [dict get $s channel value max]
-
-    return [FITFLOATRANGE $i $min $max]
+    return [FITFLOATRANGE $i {*}[FLOATMINMAX $i]]
 }
 
 proc ::crimp::FITFLOATRANGE {i min max} {
@@ -3406,6 +3402,13 @@ proc ::crimp::FITFLOATRANGE {i min max} {
 		[crimp::scale_float \
 		     [crimp::offset_float $i $offset] \
 		     $scale]]
+}
+
+proc ::crimp::FLOATMINMAX {i} {
+    set s [crimp statistics basic $i]
+    set min [dict get $s channel value min]
+    set max [dict get $s channel value max]
+    return [list $min $max]
 }
 
 # # ## ### ##### ######## #############

@@ -3394,20 +3394,33 @@ proc ::crimp::FITFLOAT {i} {
     return [FITFLOATRANGE $i {*}[FLOATMINMAX $i]]
 }
 
+proc ::crimp::FITFLOATB {i {sigma 1.2}} {
+    return [FITFLOATRANGE $i {*}[FLOATMEANSTDDEV $i $sigma]]
+}
+
 proc ::crimp::FITFLOATRANGE {i min max} {
     set offset [expr {-1 * $min}]
     set scale  [expr {255.0/($max - $min)}]
 
-    return [crimp convert 2grey8 \
+    return [crimp::convert_2grey8_float \
 		[crimp::scale_float \
 		     [crimp::offset_float $i $offset] \
 		     $scale]]
 }
 
 proc ::crimp::FLOATMINMAX {i} {
-    set s [crimp statistics basic $i]
-    set min [dict get $s channel value min]
-    set max [dict get $s channel value max]
+    set statistics [crimp statistics basic $i]
+    set min        [dict get $statistics channel value min]
+    set max        [dict get $statistics channel value max]
+    return [list $min $max]
+}
+
+proc ::crimp::FLOATMEANSTDDEV {i {sigma 1.2}} {
+    set statistics [crimp statistics basic $i]
+    set mean       [dict get $statistics channel value mean]
+    set var        [dict get $statistics channel value stddev]
+    set min        [expr {$mean - $var * $sigma}]
+    set max        [expr {$mean + $var * $sigma}]
     return [list $min $max]
 }
 

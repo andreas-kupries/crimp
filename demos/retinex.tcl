@@ -5,9 +5,9 @@ def effect_retinex {
     }
     setup {
 	proc RETINEX {image} {
-	    log near/5...    ; set retinexN [SSR $image  5]
-	    log medium/27... ; set retinexM [SSR $image 27]
-	    log wide/84...   ; set retinexW [SSR $image 84]
+	    log near/5...    ; set retinexN [SSR $image  5 smoothN]
+	    log medium/27... ; set retinexM [SSR $image 27 smoothM]
+	    log wide/84...   ; set retinexW [SSR $image 84 smoothW]
 
 	    log multi-scale...
 	    # multi-scale from the single scales. nearly an arithmetic mean.
@@ -37,20 +37,24 @@ def effect_retinex {
 	    show_image [crimp montage vertical \
 			    [crimp montage horizontal \
 				 [border $image] \
+				 [border [crimp::FITFLOAT $smoothN]] \
 				 [border $retinexNa] \
 				 [border $retinexNb] \
 				] \
 			    [crimp montage horizontal \
 				 [border $image] \
+				 [border [crimp::FITFLOAT $smoothM]] \
 				 [border $retinexMa] \
 				 [border $retinexMb] \
 				] \
 			    [crimp montage horizontal \
 				 [border $image] \
+				 [border [crimp::FITFLOAT $smoothW]] \
 				 [border $retinexWa] \
 				 [border $retinexWb] \
 				] \
 			    [crimp montage horizontal \
+				 [border $image] \
 				 [border $image] \
 				 [border $retinexA] \
 				 [border $retinexB] \
@@ -65,7 +69,8 @@ def effect_retinex {
 		0 0 255
 	}
 
-	proc SSR {image sigma} {
+	proc SSR {image sigma vs} {
+	    upvar 1 $vs smooth
 	    # SSR = Single Scale Retinex.
 	    # This implementation is limited to grey8 images. I.e. no color.
 

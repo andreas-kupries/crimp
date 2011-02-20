@@ -41,10 +41,10 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	 * identically
 	 */
 
-	int sumr = 0;
-	int sumg = 0;
-	int sumb = 0;
-	int suma = 0;
+	double sumr = 0; int isumr;
+	double sumg = 0; int isumg;
+	double sumb = 0; int isumb;
+	double suma = 0; int isuma;
 
 	for (yk = 0, dy = -kh; yk < kernel->h; yk++, dy++) {
 	    for (xk = 0, dx = -kw; xk < kernel->w; xk++, dx++) {
@@ -56,10 +56,10 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	    }
 	}
 
-	sumr /= scale; sumr += offset; R (result, xo, yo) = CLAMP (0, sumr, 255);
-	sumg /= scale; sumg += offset; G (result, xo, yo) = CLAMP (0, sumg, 255);
-	sumb /= scale; sumb += offset; B (result, xo, yo) = CLAMP (0, sumb, 255);
-	suma /= scale; suma += offset; A (result, xo, yo) = CLAMP (0, suma, 255);
+	sumr /= scale; sumr += offset; isumr = sumr; R (result, xo, yo) = CLAMP (0, isumr, 255);
+	sumg /= scale; sumg += offset; isumg = sumg; G (result, xo, yo) = CLAMP (0, isumg, 255);
+	sumb /= scale; sumb += offset; isumb = sumb; B (result, xo, yo) = CLAMP (0, isumb, 255);
+	suma /= scale; suma += offset; isuma = suma; A (result, xo, yo) = CLAMP (0, isuma, 255);
     }
 }
 

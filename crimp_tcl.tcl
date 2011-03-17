@@ -254,14 +254,7 @@ namespace eval ::crimp::read {
     }
 
     # Readers implemented as Tcl procedures.
-    #
-    # Note: This is for the case of crimp getting dynamically
-    # compiled.  In the prebuild case no files will match, and the
-    # relevant files are sources as part of the package index.
-
-    foreach file [glob -nocomplain -directory $dir/reader *.tcl] {
-	source $file
-    }
+    # - Declared as tsources in crimp.tcl.
 } ::crimp::read} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
@@ -286,14 +279,7 @@ namespace eval ::crimp::write {
     }
 
     # Writers implemented as Tcl procedures.
-    #
-    # Note: This is for the case of crimp getting dynamically
-    # compiled.  In the prebuild case no files will match, and the
-    # relevant files are sources as part of the package index.
-
-    foreach file [glob -nocomplain -directory $dir/writer *.tcl] {
-	source $file
-    }
+    # - Declared as tsources in crimp.tcl.
 } ::crimp::write} [file dirname [file normalize [info script]]]
 
 proc ::crimp::write::2file {format path image} {

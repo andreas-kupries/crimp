@@ -33,8 +33,7 @@ set dir [file dirname [file normalize [info script]]]
 puts "In $dir"
 
 set triedprebuilt 0
-if {![file exists $dir/lib] ||
-    [catch {
+if {[catch {
 	set triedprebuilt 1
 
 	puts "Trying prebuild crimp package"
@@ -50,20 +49,10 @@ if {![file exists $dir/lib] ||
     if {$triedprebuilt} {
 	puts "Trying to use a prebuilt crimp package failed ($msg)."
 	puts ==\t[join [split $::errorInfo \n] \n==\t]
-	puts "Falling back to dynamic compilation via local critcl package"
+	puts "Falling back to dynamic compilation via critcl"
     }
 
     puts "Trying dynamically compiled crimp package"
-
-    set cp [file join [file dirname $dir] lib critcl.vfs lib]
-
-    puts "Looking for critcl in $cp"
-
-    # Access to critcl library from a local unwrapped critcl app.
-    lappend auto_path $cp
-    package require critcl 2
-
-    puts "Got:           [package ifneeded critcl [package present critcl]]"
 
     # Directly access the crimp package
     source [file join $dir crimp.tcl]

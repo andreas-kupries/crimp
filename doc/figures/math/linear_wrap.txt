@@ -1,0 +1,1 @@
+linear^{wrap}_{gain,offset} (x) = [ gain x + offset ] \oplus_{256} 0

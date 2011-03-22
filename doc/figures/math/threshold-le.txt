@@ -1,0 +1,6 @@
+f_{threshold} (x) = \left\{\begin{eqnarray}
+0   & x < threshold \\
+255 & x \ge threshold \\
+\end{eqnarray}\right
+
+

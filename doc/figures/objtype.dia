@@ -1,0 +1,83 @@
+# -*- tcl -*- tcl.tk//DSL diagram//EN//1.0
+
+proc gap {} { move east 15 }
+
+proc harrow {args} {
+    variable movelength
+    block {
+	set movelength [expr {$movelength / 2.5}]
+	arrow
+    } {*}$args
+}
+
+proc tbox {text args} {
+    set b [box {*}$args]
+    group { text with w at [last box w] $text }
+    return $b
+}
+
+
+set boxheight [7 mm]
+
+text "set image   \{"
+gap
+box  crimp::image::<type> width [45 mm]
+gap
+box  <w> width [10 mm]
+gap
+box  <h> width [10 mm]
+gap
+box  <meta> width [20 mm]
+gap
+box  <pixeldata> width [25 mm]
+gap
+text "\}"
+
+south
+arrow from [1st box s] s ; south ; text String
+harrow dashed color red
+circle "Type DB"
+harrow dashed color red
+set IT [block {
+    set boxwidth [50 mm]
+            tbox " size      = \#bytes/pixel"
+    set nC [tbox " channels  = \#channels"]
+            tbox " cname\[\] = channel names"
+}]
+
+arrow from [2nd box s] ; set WT [text Integer]
+arrow from [3rd box s] ; set HT [text Integer]
+arrow from [4th box s] ; text Dictionary
+arrow from [5th box s] ; text ByteArray
+harrow dashed color red ; move south [5 mm]
+block {
+    box wid [4 cm] ht [4 cm]
+    box wid [4 mm] ht [4 mm] with nw at [last box nw] color blue
+
+    #arrow from [last box e] east
+    #arrow from [last box s] south
+
+    set WD [arrow <-> from [[2nd last box nw] by 15 north] to [[2nd last box ne] by 15 north] "<w>"  above]
+    set HD [arrow <-> from [[2nd last box nw] by 15 west]  to [[2nd last box sw] by 15 west]  "<h> " rjust]
+
+    arrow <-> dashed from [last box se] se
+    group {
+	south
+	box wid [4 mm] ht [4 mm]
+	text .. ; group { east ; text "  #channels" }
+	box wid [4 mm] ht [4 mm]
+
+	set nw [2nd last box nw]
+	set se [last box se]
+	set cw [expr { 2 + [lindex $se 1 0] - [lindex $nw 1 0] }]
+	set ch [expr { 2 + [lindex $se 1 1] - [lindex $nw 1 1] }]
+
+	box with nw at [$nw - [1 1]] wid $cw ht $ch
+    }
+}
+arrow dashed color red from [$WT s] to [[last block WD] start]
+arrow dashed color red from [$HT s] to [[last block HD] start]
+arrow dashed color red from [0.75 between [[$IT nC] se] [[$IT nC] ne]] \
+    east [expr {$movelength * 2.1}]
+
+return

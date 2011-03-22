@@ -1,0 +1,54 @@
+expand_grey8_mirror
+Tcl_Obj* imageObj
+int ww
+int hn
+int we
+int hs
+
+/*
+ * Border expansion by mirroring along the edges, also called reflective
+ * expansion.
+ */
+
+crimp_image* image;
+crimp_input (imageObj, image, grey8);
+
+/*
+ * This is the simple definition. Might be better to generate macros
+ * specialized to each quadrant. Except, even they have to perform modulo
+ * arithmetic, as the border may be larger than image's width or height,
+ * causing muliple wrapping.
+ */
+
+#define FILL(xo,yo) {						   \
+	int xi = xo - ww;					   \
+	int yi = yo - hn;					   \
+	while (1) {						   \
+	    if      (xi < 0)         { xi = 0              - xi; } \
+	    else if (xi >= image->w) { xi = 2*(image->w-1) - xi; } \
+	    else break;						   \
+	}							   \
+								   \
+	while (1) {						   \
+	    if      (yi < 0)         { yi = 0              - yi; } \
+	    else if (yi >= image->h) { yi = 2*(image->h-1) - yi; } \
+	    else break;						   \
+	}							   \
+								   \
+	GREY8 (result, xo, yo) = GREY8 (image, xi, yi);		   \
+    }
+
+#define COPY(xo,yo,xi,yi) {			\
+	GREY8 (result, xo, yo) = GREY8 (image, xi, yi); \
+    }
+
+#include <expand_op.c>
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

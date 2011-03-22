@@ -1,0 +1,185 @@
+ahe_hsv
+Tcl_Obj* imageObj
+int radius
+
+/*
+ * Adaptive Histrogram Equalization. Based on the rank-order-filter code for
+ * fast calc of the histogram at each pixel, with a different transfer
+ * function.
+ *
+ * Note that the implied kernel has dimensions (2r+1)x(2r+1), reducing the
+ * result image by 2*radius in each dimension. I.e. the filter doesn't process
+ * the 'radius' border pixels along each edge.
+ */
+
+crimp_image*     result;
+crimp_image*     image;
+crimp_image*     kernel;
+int              xo, yo, xi, yi, n;
+int              rowhistogram [256];
+int*             colhistogram;
+
+crimp_input (imageObj, image, hsv);
+
+result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
+
+/*
+ * We are using the method described by Simon Perreault and Patrick Hebert in
+ * their paper 'Median Filtering In Constant Time'. This method trades memory
+ * for speed by keeping one histogram per column, plus a row histogram of the
+ * current 2r+1 columns. When moving from pixel to pixel these histograms are
+ * incrementally updated, each in constant time. The trick is that the column
+ * histograms keep history between rows.
+ *
+ * Right now we are not making use of any of the proposed optimizations, like
+ * multi-level histograms, conditional updating, or vertical striping for
+ * cache friendliness.
+ *
+ * Relationship between input and result coordinate systems:
+ *
+ * xi = xo + radius, xo in (0...w-2*radius)
+ * yi = yo + radius, yo in (0...w-2*radius)
+
+ * <other paper ref> - talking about the fast histogram via sliding window,
+ * unclear if they talk abou this method.
+ */
+
+colhistogram = NALLOC (image->w * 256, int);
+memset (colhistogram,'\0', image->w * 256 * sizeof(int));
+
+n = (2*radius+1);
+n = n * n;
+
+/*
+ * TODO :: Test different storage orders for the histograms (row vs column
+ *         major order).
+ */
+
+/*
+ * Access to the column histograms.
+ *
+ * xi = column index, in the input image coordinate system.
+ */
+#if 1
+#define CHINDEX(xi,value)   ((xi) * 256 + (value))
+#else
+#define CHINDEX(xi,value)   ((value) * image->w + (xi))
+#endif
+#define COLHIST(xi,value) colhistogram [CHINDEX (xi, value)]
+
+/*
+ * Basic operations on column histograms. Add/remove pixel values.
+ */
+#define UP(xi,value)   COLHIST (xi, value)++
+#define DOWN(xi,value) COLHIST (xi, value)--
+
+/*
+ * Basic operations on the row histogram. Add and subtract column histograms
+ * to/from it. These operations are vectorizable.
+ *
+ * xi = column index, in the input image coordinate system.
+ */
+
+#define ADD(xi) { int value ; for (value=0;value<256;value++) { rowhistogram[value] += COLHIST (xi,value);}}
+#define SUB(xi) { int value ; for (value=0;value<256;value++) { rowhistogram[value] -= COLHIST (xi,value);}}
+
+/*
+ * Higher level of column histogram change. Move a column histogram down by
+ * one row. yi is the index of the new row, and the histogram contains the
+ * data for row yi-1. This is in the input image coordinate system.
+ *
+ * xi = column index, in the input image coordinate system.
+ */
+
+#undef  SHIFT_DOWN
+#define SHIFT_DOWN(xi,yi) {				     \
+	DOWN ((xi), V (image, (xi), (yi) - radius - 1)); \
+	UP   ((xi), V (image, (xi), (yi) + radius)); }
+
+/*
+ * Higher level of row histogram change. Move the row histogram right by one
+ * column. xi is the index of the new column, and the histogram contains the
+ * data for column xi-1. This is in the input image coordinate system.
+ */
+
+#undef  SHIFT_RIGHT
+#define SHIFT_RIGHT(xi) { SUB ((xi) - radius - 1); ADD ((xi) + radius); }
+
+/*
+ * ==
+ * Initialization, and handling of result row 0
+ * ==
+ */
+
+/*
+ * Initialization I.
+ * Scan the first 2*radius+1 rows of the input image into the column
+ * histograms.
+ */
+
+for (yi = 0; yi < 2*radius+1; yi++) {
+    for (xi = 0; xi < image->w; xi++) {
+	UP (xi, V (image, xi, yi));
+    }
+}
+
+/*
+ * Initialization II.
+ * Add the first 2*radius+1 column histogram into the initial row histogram.
+ */
+
+memset (rowhistogram,'\0', 256 * sizeof(int));
+for (xi = 0 ; xi < 2*radius+1; xi++) { ADD (xi); }
+
+/*
+ * Now we can start the AHE. The initial histogram is already properly set
+ * up for (xo,yo) = (0,0). For the remaining pixels of the first row in the
+ * output we can sweep through without having to pull the column histograms
+ * down.
+ */
+
+H (result, 0, 0) = H (image, radius, radius);
+S (result, 0, 0) = S (image, radius, radius);
+V (result, 0, 0) = crimp_ahe_transfer (rowhistogram, V(image,radius,radius), n);
+for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
+    SHIFT_RIGHT (xi);
+    H (result, xo, 0) = H (image, xi, radius);
+    S (result, xo, 0) = S (image, xi, radius);
+    V (result, xo, 0) = crimp_ahe_transfer (rowhistogram, V(image,xi,radius), n);
+}
+
+/*
+ * With the first row of the result done we can now sweep the remaining lines.
+ */
+
+for (yo = 1, yi = radius+1; yo < result->h; yo++, yi++) {
+
+    /* Re-initialize the row histogram for the line */
+    memset (rowhistogram,'\0', 256 * sizeof(int));
+    for (xi = 0 ; xi < 2*radius+1; xi++) {
+	SHIFT_DOWN (xi,yi);
+	ADD (xi);
+    }
+
+    V (result, 0, yo) = crimp_ahe_transfer (rowhistogram, V(image,radius,yi), n);
+    for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
+	SHIFT_DOWN  (xi+radius,yi);
+	SHIFT_RIGHT (xi);
+	H (result, xo, yo) = H (image, xi, yi);
+	S (result, xo, yo) = S (image, xi, yi);
+	V (result, xo, yo) = crimp_ahe_transfer (rowhistogram, V(image,xi,yi), n);
+    }
+ }
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

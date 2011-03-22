@@ -1,0 +1,33 @@
+expand_grey8_const
+Tcl_Obj* imageObj
+int ww
+int hn
+int we
+int hs
+int value
+
+/*
+ * Border expansion by constant pixel value.
+ */
+
+crimp_image* image;
+crimp_input (imageObj, image, grey8);
+
+#define FILL(xo,yo) {			\
+	GREY8 (result, xo, yo) = value; \
+    }
+
+#define COPY(xo,yo,xi,yi) {				\
+	GREY8 (result, xo, yo) = GREY8 (image, xi, yi); \
+    }
+
+#include <expand_op.c>
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

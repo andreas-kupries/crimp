@@ -1,0 +1,66 @@
+alpha_blend_hsv_hsv
+Tcl_Obj* imageForeObj
+Tcl_Obj* imageBackObj
+int alpha
+
+/*
+ * Alpha-based blending of two images, foreground, and background, controlled
+ * by a scalar (and extern) alpha factor. The result's alpha is the alpha
+ * factor attenuated by the background's alpha.
+ *
+ * alpha is Opacity
+ * 255 <=> Fully opaque      <=> imageF
+ * 0   <=> Fully transparent <=> imageB
+ *
+ * => OUT = F*alpha + B*(1-alpha)
+ */
+
+crimp_image*     result;
+crimp_image*     imageF;
+crimp_image*     imageB;
+int x, y, ralpha;
+
+crimp_input (imageForeObj, imageF, hsv);
+crimp_input (imageBackObj, imageB, hsv);
+
+if (!crimp_eq_dim (imageF, imageB)) {
+    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+if (alpha == 255) {
+    Tcl_SetObjResult(interp, imageForeObj);
+    return TCL_OK;
+} else if (alpha == 0) {
+    Tcl_SetObjResult(interp, imageBackObj);
+    return TCL_OK;
+}
+
+/*
+ * True alpha mixture.
+ */
+
+ralpha = 255 - alpha;
+result = crimp_new_like (imageF);
+
+#define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+	H (result, x, y) = MIX (H (imageF, x, y), H (imageB, x, y));
+	S (result, x, y) = MIX (S (imageF, x, y), S (imageB, x, y));
+	V (result, x, y) = MIX (V (imageF, x, y), V (imageB, x, y));
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

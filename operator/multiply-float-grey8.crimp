@@ -1,0 +1,21 @@
+multiply_float_grey8
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+
+/*
+ * Pixel- and channel-wise multiplication of two images. The images have to
+ * have equal dimensions.
+ */
+
+#define BINOP(a,b) ((a)*(b))
+#include "binop_float_grey8.c"
+#undef BINOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

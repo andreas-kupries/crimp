@@ -1,0 +1,271 @@
+A bit on the design.
+====================
+
+My plan is to implement only the bare functionality at the C level,
+with a multitude of simple commands, and each command handling only a
+specific image type, or combination of types. The proper API to the
+functions is then done in Tcl, making changes to option processing,
+automatic selection of a function, etc. easy to code, and change.
+
+See http://wiki.tcl.tk/2520 (A critical mindset about policy), which
+summarizes to "No poli-C, please", or, slightly longer, "Policy issues
+must be scripted".
+
+As a simple example, consider the operation ot invert images.
+
+	We will have one command for each image type supporting the
+	operation. Currently we have three, one each for rgb, rgba,
+	and grey8. The API is then a single invert procedure which
+	queries the type of its argument and then dispatches to the
+	proper low-level command, or throws an error with a nice
+	message.
+
+	Now any changes to the error message can be done by easy
+	editing of the Tcl layer, without having to recompile the C
+	level.
+
+Similarly for importing from and exporting to files/channels/tk,
+conversion between types (where sensible or possible), etc.
+
+Side note:
+	Writing the Tcl layer should become easier the more uniform
+	the syntax of the underlying group of commands.
+
+
+Operations done and under consideration
+=======================================
+
+[]	write - Export a crimp image to other formats.
+
+	[]	write_grey16_tk
+	[]	write_grey32_tk
+	[done]	write_grey8_tk
+	[done]	write_rgb_tk
+	[done]	write_rgba_tk
+
+[]	read  - Import crimp images from other formats.
+
+	[done]	read_tk
+	[done]	read_tcl	(list of list of grey)
+
+[]	convert - convert between the various crimp image types.
+
+	[]	convert_hsv_grey16
+	[]	convert_hsv_grey32
+	[]	convert_hsv_grey8
+	[done]	convert_hsv_rgb
+	[done]	convert_hsv_rgba	- see the notes on rgb_rgba below. essentially apply here as well.
+
+	[]	convert_rgb_grey16
+	[]	convert_rgb_grey32
+	[done]	convert_rgb_grey8
+	[done]	convert_rgb_hsv
+	[]	convert_rgb_rgba	- set opaque alpha, or transparent, or via grey image ?
+					- could be done as split/join
+
+	[]	convert_rgba_grey16   - Like grey8, or should we expand to cover whole range ?
+	[]	convert_rgba_grey32   - S.a.
+	[done]	convert_rgba_grey8    - Standard luma transform (ITU-R 601-2)
+	[done]	convert_rgba_hsv
+	[]	convert_rgba_rgb
+
+[]	invert - invert colors
+
+	[]	invert_grey16
+	[]	invert_grey32
+	[done]	invert_grey8
+	[]	invert_hsv	- How is inversion defined in this colorspace ? (*)
+	[done]	invert_rgb
+	[done]	invert_rgba
+
+	(*)	I am speculating that the HUE would rotate by 180 degrees.
+		I have no idea if VALUE or SAT should change as well,
+		in a similar manner.
+
+[]	split - split the input image into its channels, i.e.
+		RGBA into 4 images, one each for R, G, B, and A.
+		Etc. for the other types.
+
+	[done]	split_rgba
+	[done]	split_rgb
+	[done]	split_hsv
+
+[]	join - join multiple grey scale images into a multi-channel
+	       (colorized) image. Complementary to split.
+
+	[done]	join_hsv
+	[done]	join_rgb
+	[done]	join_rgba
+
+[]	blank - blank (black, possibly transparent) image of a given size.
+
+	[done]	blank_grey8
+	[]	blank_grey16
+	[]	blank_grey32
+	[]	blank_hsv
+	[done]	blank_rgb
+	[done]	blank_rgba
+
+[]	over
+
+	Blending foreground and background, based on the foreground's
+	alpha.
+
+		Z = TOP*(1-alpha(TOP))+BOTTOM*alpha(TOP) - alpha from top image.
+
+	[done]	alpha_over_rgba_rgba
+	[done]	alpha_over_rgba_rgb
+
+[]	blend
+
+	Blending foreground and background, based on a scalar alpha
+	value.
+
+		Z = BACK*(1-alpha)+FORE*alpha   - alpha is scalar
+
+
+	[done]	alpha_blend_grey8_grey8
+	[]	alpha_blend_grey8_rgb  - which channel ? luma ?
+	[]	alpha_blend_grey8_rgba - which channel ? luma ?
+	[done]	alpha_blend_rgb_grey8
+	[done]	alpha_blend_rgb_rgb
+	[done]	alpha_blend_rgb_rgba
+	[done]	alpha_blend_rgba_grey8
+	[done]	alpha_blend_rgba_rgb
+	[done]	alpha_blend_rgba_rgba
+
+[]	Blending foreground and background, based on an alpha mask
+	image.
+
+	This is not a primitive. Can be had by combining 'over' above
+	with an operator to set an image's alpha channel.
+
+		compose FORE BACK MASK =
+			over [setalpha FORE MASK] BACK
+
+[]	Set/Replace/Extend/Copy an image's alpha channel from a second
+	image.
+
+	setalpha
+
+	[done]	setalpha_rgb_grey8
+	[done]	setalpha_rgb_rgba
+	[done]	setalpha_rgba_grey8
+	[done]	setalpha_rgba_rgba
+
+[]
+	[done]	lighter	       Z = max(A,B)
+	[done]	darker	       Z = min(A,B)
+	[done]	difference     Z = |A-B|
+	[done]	multiply       Z = (A*B)/255
+	[done]	screen	       Z = 1-((1-A)*(1-B))
+	[done]	add	       Z = A+B
+	[done]	subtract       Z = A-B
+
+	// The above is a group of composition/merge operations
+
+	stencil - apply a mask - could be 'set alpha channel'
+			       - but also 'set black outside mask'
+			       (blue/green screen techniques)
+		=> combination of setalpha, blend, and some blank image.
+
+[]	crop, cut, expand (various border types), solarize
+	flip/mirror v/h/, transpose, transverse
+
+	[done]
+
+
+--- leptonica - look for algorithms ---
+--- bit blit (block ops)
+
+## offset (x, y) - shift by (x,y) pixels [torus wrap around].
+
+## enhance: color, brightness, contrast, sharpness
+
+## filter:  blur, contour, detail, edge_enhance, edge_enhance_more, emboss, find_edges, smooth, smooth_more, and sharpen.
+## filter:  kernel3, kernel5, rank n, size/ min, max, median, mode(most common)
+##         (scale/offset - default: sum kernel/0)
+
+## autocontrast (max contrast, cutoff (%)) => image
+
+## colorize (grayscale, black-color, white-color) => image
+
+## deform - see transform (as basis)
+## equalize (image) of hist - non-linear map to create unform distribution of grayscale values.
+## posterize (image,bits) - reduce colors to max bits.
+
+## cmyk and back, hsv revers
+
+## stat (image ?mask?) - statistics
+##  extrema min/max per channel
+##  count - #pixels
+##  sum - sum of pixels
+## sum2 - squared sum, mean, median, root-mean-square, variance, stddev
+
+## eval (image f) - f applied to each pixel, each channel.
+##                  f called at most once per value => at most 255 times.
+##                  generators, random-ness not possible
+
+## point table|f -> f converted to table
+##                  256 values in table per channel.
+##                  table of f => replicated 3x
+## (non-)linear mapping.
+##
+## putalpha -: make data in specified channel the alpha
+##
+## bbox - region of non-zero pixels.
+## getcolors -> dict (color -> count)
+## getextrema (per channel) min/max pixel values
+## histogram (?mask?) - (per channel) dict (pixel -> count)
+
+## resize (filter), rotate(angle,expand=0,filter)
+## filters = interpolation = nearest (default), bilinear 2x2, bicubic 4x4, antialias
+
+## transform extent sz rect (4-tuple)        - crop, stretch, shrink /rectangle to square
+##          |affine sz 2x3-matrix (6-tuple)  - scale, translate, rotate, and shear
+##          |quad   sz 4-points (8-tuple)    - arbitrary deformation
+##          |mesh   sz list of (rect, quads) - s.a.
+# quad(rilateral)
+# transpose - flip_left_right, flip_top_bottom, rotate_90, rotate_180, or rotate_270
+
+
+RGB [0..1] --> CIE XYZ [0..1] (Y = luminosity)
+
+|X|      1      |0.49    0.31    0.2    |   |R|
+|Y| = ------- * |0.17697 0.81240 0.01063| * |G|
+|Z|   0.17697   |0       0.01    0.99   |   |B|
+
+ITU-R BT.709 is different
+|X|             |0.412453 0.357580 0.180423|   |R|
+|Y| =           |0.212671 0.715160 0.072169| * |G|
+|Z|             |0.019334 0.119193 0.950227|   |B|
+
+While the official definition of the CIE XYZ standard has the matrix
+normalized so that the Y value corresponding to pure red is 1, a more
+commonly used form is to omit the leading fraction, so that the second
+row sums up to one, i.e., the RGB triplet (1, 1, 1) maps to a Y value
+of 1.
+
+Chromacity:	S = X+y+Z, x=X/S, y=Y/S, z=Z/S
+
+Yxz - Represent luminosity and chromacity.
+
+
+L*a*b*
+
+L* = 116 * f (Y/Yn)			| scale 0..100
+a* = 500 * (f (X/Xn) - f (Y/Yn))	| s.a.
+b* = 200 * (f (Y/Yn) - f (Z/Zn))	| s.a.
+
+f(x) = x**(1/3)                   , x > delta**3
+       x/(3*delta**2) + 2*delta/3 , else
+       delta = 6/29
+
+f = cube root, approximated with finite slope
+
+(Xn,Yn,Zn) = white point
+
+L*u*v*
+
+The BT.709 system uses the daylight illuminant D65 as its reference
+white

@@ -1,0 +1,21 @@
+meta_get
+Tcl_Obj* imageObj
+
+crimp_image* image;
+
+crimp_input_any (imageObj, image);
+
+if (image->meta) {
+    Tcl_SetObjResult (interp, image->meta);
+}
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

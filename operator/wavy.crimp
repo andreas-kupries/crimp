@@ -1,0 +1,72 @@
+wavy
+Tcl_Obj* imageObj float offset float adj1 float adj2
+
+crimp_image*     result;
+crimp_image*     image;
+int              x, y, w, h;
+
+int              oy, ox, c, iy, ix;
+
+crimp_input (imageObj, image, rgba);
+
+w = image->w;
+h = image->h;
+
+result = crimp_new_like (image);
+
+
+for (oy = 0; oy < h; ++oy) {
+    for (ox = 0; ox < w; ++ox) {
+
+	/*
+	 * The output coordinates (ox, oy) are converted into the coordinates
+	 * in the input image from which to pull the pixel(s). I.e. this is a
+	 * special geometry deformation.
+	 */
+
+        float r = sinf(hypotf(oy - h/2, ox - w/2) * adj1/w + offset)/adj2 + 1;
+        float iyf = (oy - h / 2) * r + h/2;
+        float ixf = (ox - w / 2) * r + w/2;
+        int   iyw = iyf;
+        int   ixw = ixf;
+	float val;
+
+        iyf -= iyw;
+        ixf -= ixw;
+
+	/*
+	 * All channels in the image are handled in the same way.  A rectangle
+	 * around the chosen location in the input is scanned and the colors
+	 * added together in some weighted scheme.
+	 */
+
+        for (c = 0; c < 4; ++c) {
+
+            val = 0;
+
+            for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, h); ++iy) {
+                iyf = 1 - iyf;
+                for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, w); ++ix) {
+                    ixf = 1 - ixf;
+		    val += CH (image, c, ix, iy) * iyf * ixf;
+                }
+            }
+
+	    CH (result, c, ox, oy) = val;
+        }
+    }
+}
+
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

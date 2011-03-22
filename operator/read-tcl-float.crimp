@@ -1,0 +1,68 @@
+read_tcl_float
+Tcl_Obj* pixels
+
+/*
+ * Create a floating-point image from a list of lists of floating-point
+ * numbers. This is, in essence, a read command, just using core Tcl values
+ * instead of a Tk photo as input.
+ *
+ * Using this command should be easier than trying to work with 'list' and
+ * 'binary'. This way the result even already has the proper intrep.
+ */
+
+Tcl_Obj** rowv;
+Tcl_Obj** colv;
+crimp_image*     result;
+int              x, y, w, h, rowc, colc;
+double           value;
+
+/*
+ * Check input, i.e. verify structure and extract dimensions
+ */
+
+if (Tcl_ListObjGetElements(interp, pixels, &rowc, &rowv) != TCL_OK) {
+    return TCL_ERROR;
+}
+h = rowc;
+w = 0;
+for (y = 0; y < h; y++) {
+    if (Tcl_ListObjGetElements(interp, rowv [y], &colc, &colv) != TCL_OK) {
+	return TCL_ERROR;
+    }
+    if (colc > w) {
+	w = colc;
+    }
+    for (x = 0; x < colc; x++) {
+	if (Tcl_GetDoubleFromObj(interp, colv [x], &value) != TCL_OK) {
+	    return TCL_ERROR;
+	}
+    }
+}
+
+result = crimp_new_float (w, h);
+
+for (y = 0; y < h; y++) {
+
+    Tcl_ListObjGetElements(interp, rowv [y], &colc, &colv);
+
+    for (x = 0; x < colc; x++) {
+	Tcl_GetDoubleFromObj(interp, colv [x], &value);
+	FLOATP (result, x, y) = value;
+    }
+    for (; x < w; x++) {
+	FLOATP (result, x, y) = BLACK;
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

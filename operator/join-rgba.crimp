@@ -1,0 +1,54 @@
+join_2rgba
+Tcl_Obj* redImageObj
+Tcl_Obj* greenImageObj
+Tcl_Obj* blueImageObj
+Tcl_Obj* alphaImageObj
+
+crimp_image*     result;
+crimp_image*     red;
+crimp_image*     green;
+crimp_image*     blue;
+crimp_image*     alpha;
+int              x, y;
+
+crimp_input (redImageObj,   red,   grey8);
+crimp_input (greenImageObj, green, grey8);
+crimp_input (blueImageObj,  blue,  grey8);
+crimp_input (alphaImageObj, alpha, grey8);
+
+if (!crimp_eq_dim (red, green) ||
+    !crimp_eq_dim (red, blue) ||
+    !crimp_eq_dim (red, alpha)) {
+    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_rgba (red->w, red->h);
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+
+	/*
+	 * Assembling the pixels of each color channel from the associated
+	 * input images.
+	 */
+
+	R (result, x, y) = GREY8 (red,   x, y);
+	G (result, x, y) = GREY8 (green, x, y);
+	B (result, x, y) = GREY8 (blue,  x, y);
+	A (result, x, y) = GREY8 (alpha, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

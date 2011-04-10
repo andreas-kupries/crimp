@@ -310,6 +310,8 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
 
     imgObjPtr->internalRep.otherValuePtr = ci;
     imgObjPtr->typePtr                   = &ImageType;
+
+    return TCL_OK;
 }
 
 /*

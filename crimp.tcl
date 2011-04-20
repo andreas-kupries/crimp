@@ -48,10 +48,8 @@ critcl::csources c/fftpack/rffti1.c
 # # ## ### ##### ######## #############
 ## Image readers and writers implemented as Tcl procedures.
 
-::apply {{here} {
-    foreach f [glob -directory $here/reader *.tcl] { critcl::tsources $f }
-    foreach f [glob -directory $here/writer *.tcl] { critcl::tsources $f }
-}} [file dirname [file normalize [info script]]]
+critcl::tsources reader/r_*.tcl
+critcl::tsources writer/w_*.tcl
 
 # # ## ### ##### ######## #############
 ## Declare the Tcl layer aggregating the C primitives into useful

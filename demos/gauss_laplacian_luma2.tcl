@@ -1,22 +1,15 @@
 def op_gauss_laplacian_luma {
     label {IIR Laplacian of Gaussian Luma}
     setup {
-	variable sigma 0.2
+	variable sigma 1.5
 	variable table     {}
 
 	proc show {thesigma} {
 	    variable L
 	    if {![info exists L]} return
-	    set blurred	    [crimp::gaussian_laplacian_float $L $thesigma]
-	    set stats	    [crimp::stats_float $blurred]
-	    set offset	    [expr {- [dict get $stats value min]}]
-	    set range 	    [expr {[dict get $stats value max] 
-				   - [dict get $stats value min]}]
-	    set scale	    [expr {255.0 / $range}]
-	    set blurred	    [crimp::offset_float $blurred $offset]
-	    set blurred     [crimp::scale_float $blurred $scale]
-	    set blurred	    [crimp::convert 2grey8 $blurred]
-	    show_image	    $blurred
+	    show_image \
+		[crimp::FITFLOAT \
+		     [crimp::gaussian_laplacian_float $L $thesigma]]
 	    return
 	}
 

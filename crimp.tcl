@@ -47,13 +47,8 @@ critcl::csources c/fftpack/rfftf1.c
 critcl::csources c/fftpack/rffti.c
 critcl::csources c/fftpack/rffti1.c
 
-::apply {{here} {
-    # image readers and writers implemented
-    # as Tcl procedures.
-    foreach f [glob -directory $here/reader *.tcl] { critcl::tsources $f }
-    foreach f [glob -directory $here/writer *.tcl] { critcl::tsources $f }
-}} [file dirname [file normalize [info script]]]
-
+critcl::tsources reader/r_*.tcl
+critcl::tsources writer/w_*.tcl
 critcl::tsources plot.tcl
 
 critcl::cinit {

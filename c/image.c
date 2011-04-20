@@ -286,12 +286,14 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
     if ((crimp_get_imagetype_from_obj (interp, objv[0], &ct) != TCL_OK) ||
         (Tcl_GetIntFromObj            (interp, objv[1], &w) != TCL_OK) ||
 	(Tcl_GetIntFromObj            (interp, objv[2], &h) != TCL_OK) ||
-	(w < 0) || (h < 0))
+	(w < 0) || (h < 0)) {
 	goto invalid;
+    }
 
     pixel = Tcl_GetByteArrayFromObj (objv[4], &length);
-    if (length != (ct->size * w * h))
+    if (length != (ct->size * w * h)) {
 	goto invalid;
+    }
 
     meta = objv[3];
 

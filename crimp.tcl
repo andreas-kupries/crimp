@@ -23,6 +23,8 @@ if {![critcl::compiling]} {
 critcl::tcl 8.5
 critcl::tk
 
+critcl::cflags -DIEEE_COMPLEX_DIVIDE
+
 critcl::cheaders c/*.h cop/*.c
 critcl::csources c/*.c
 
@@ -86,6 +88,7 @@ critcl::ccode {
     #include <color.h>
     #include <util.h>
     #include <f2c.h>
+    #include <gauss.h>
 
     /* Common declarations to access the FFT functions. */
 

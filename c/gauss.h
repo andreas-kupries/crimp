@@ -29,6 +29,12 @@ extern void GaussianApplyFilter(GaussianFilterSet, int, int,
 				 * vector of data. */
 extern void GaussianDeleteFilter(GaussianFilterSet);
 				/* Delete a set of Gaussian filters */
+extern void GaussianFilter01(GaussianFilterSet filterPtr, int whichDeriv, 
+			     int height, int width, float* inputImage,
+			     float* outputImage);
+extern void GaussianFilter10(GaussianFilterSet filterPtr, int whichDeriv, 
+			     int height, int width, float* inputImage,
+			     float* outputImage);
 extern void GaussianBlur2D(GaussianFilterSet, int, int, float*, float*);
 				/* Apply a Gaussian filter to a 2-d function */
 extern void GaussianGradientX2D(GaussianFilterSet, int, int, float*, float*);

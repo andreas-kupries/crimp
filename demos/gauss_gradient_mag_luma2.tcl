@@ -2,7 +2,6 @@ def op_gauss_gradient_mag_luma {
     label {Gauss IIR Gradient Magnitude Luma}
     setup {
 	variable sigma 1.5
-	variable table     {}
 
 	proc show {thesigma} {
 	    variable L

@@ -294,6 +294,82 @@ GaussianDeleteFilter(
 /*
  *-----------------------------------------------------------------------------
  *
+ * GaussianFilter01 --
+ *
+ *	Apply a Gaussian filter or one of its derivatives across the rows
+ *	of an image.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	'outputImage' receives the filtered image.  'outputImage' should
+ *	not be the same memory as 'inputImage'.
+ *
+ *------------------------------------------------------------------------------
+ */
+
+void
+GaussianFilter01(
+    GaussianFilterSet filterPtr,
+				/* Filter to apply */
+    int whichDeriv,		/* Which derivative to apply */
+    int height,			/* Height of the images */
+    int width,			/* Width of the images */
+    float* inputImage,		/* Input image */
+    float* outputImage		/* Output image */
+) {
+    int i;
+    int area = height * width;
+    float* tempImage = ckalloc(area * sizeof(float));
+    for (i = 0; i < height; ++i) {
+	GaussianApplyFilter(filterPtr, whichDeriv, width,
+			    inputImage + i * width, 1, 
+			    outputImage + i * width, 1);
+    }
+}
+
+/*
+ *-----------------------------------------------------------------------------
+ *
+ * GaussianFilter10 --
+ *
+ *	Apply a Gaussian filter or one of its derivatives down the columns
+ *	of an image.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	'outputImage' receives the filtered image.  'outputImage' should
+ *	not be the same memory as 'inputImage'.
+ *
+ *------------------------------------------------------------------------------
+ */
+
+void
+GaussianFilter10(
+    GaussianFilterSet filterPtr,
+				/* Filter to apply */
+    int whichDeriv,		/* Which derivative to apply */
+    int height,			/* Height of the images */
+    int width,			/* Width of the images */
+    float* inputImage,		/* Input image */
+    float* outputImage		/* Output image */
+) {
+    int i;
+    int area = height * width;
+    float* tempImage = ckalloc(area * sizeof(float));
+    for (i = 0; i < width; ++i) {
+	GaussianApplyFilter(filterPtr, whichDeriv, height,
+			    inputImage + i, width, 
+			    outputImage + i, width);
+    }
+}
+
+/*
+ *-----------------------------------------------------------------------------
+ *
  * GaussianBlur2D --
  *
  *	Apply a Gaussian blur to an image.
@@ -319,7 +395,6 @@ GaussianBlur2D(
     float* outputImage		/* Output image: (height x width) array of
 				 * float's, row-major order */
 ) {
-    int i;
     int area = height * width;
     float* tempImage = ckalloc(area * sizeof(float));
 
@@ -327,15 +402,8 @@ GaussianBlur2D(
      * Filter first the rows and then the columns.
      */
 
-    for (i = 0; i < height; ++i) {
-	GaussianApplyFilter(filterPtr, 0, width,
-			    inputImage + i * width, 1, 
-			    tempImage + i * width, 1);
-    }
-    for (i = 0; i < width; ++i) {
-	GaussianApplyFilter(filterPtr, 0, height,
-			    tempImage + i, width, outputImage+i, width);
-    }
+    GaussianFilter01(filterPtr, 0, height, width, inputImage, tempImage);
+    GaussianFilter10(filterPtr, 0, height, width, tempImage, outputImage);
 
     ckfree(tempImage);
 }
@@ -377,20 +445,13 @@ GaussianGradientX2D(
      * Derivative-filter the rows.
      */
 
-    for (i = 0; i < height; ++i) {
-	GaussianApplyFilter(filterPtr, 1, width,
-			    inputImage + i * width, 1, 
-			    tempImage + i * width, 1);
-    }
+    GaussianFilter01(filterPtr, 1, height, width, inputImage, tempImage);
 
     /*
      * Gaussian-filter the columns
      */
 
-    for (i = 0; i < width; ++i) {
-	GaussianApplyFilter(filterPtr, 0, height,
-			    tempImage + i, width, outputImage+i, width);
-    }
+    GaussianFilter10(filterPtr, 0, height, width, tempImage, outputImage);
 
     ckfree(tempImage);
 }
@@ -432,20 +493,13 @@ GaussianGradientY2D(
      * Gaussian-filter the rows.
      */
 
-    for (i = 0; i < height; ++i) {
-	GaussianApplyFilter(filterPtr, 0, width,
-			    inputImage + i * width, 1, 
-			    tempImage + i * width, 1);
-    }
+    GaussianFilter01(filterPtr, 0, height, width, inputImage, tempImage);
 
     /*
      * Derivative-filter the columns
      */
 
-    for (i = 0; i < width; ++i) {
-	GaussianApplyFilter(filterPtr, 1, height,
-			    tempImage + i, width, outputImage+i, width);
-    }
+    GaussianFilter10(filterPtr, 1, height, width, tempImage, outputImage);
 
     ckfree(tempImage);
 }
@@ -526,35 +580,20 @@ GaussianLaplacian2D(
 
     /* Gaussian filter by rows */
 
-    for (i = 0; i < height; ++i) {
-	GaussianApplyFilter(filterPtr, 0, width,
-			    inputImage + i * width, 1, 
-			    tempImage1 + i * width, 1);
-    }
+    GaussianFilter01(filterPtr, 0, height, width, inputImage, tempImage1);
 
     /* Second-derivative-filter by columns */
 
-    for (i = 0; i < width; ++i) {
-	GaussianApplyFilter(filterPtr, 2, height,
-			    tempImage1 + i, width,
-			    tempImage2 + i, width);
-    }
+    GaussianFilter10(filterPtr, 2, height, width, tempImage1, tempImage2);
+
 
     /* Second-derivative filter by rows */
 
-    for (i = 0; i < height; ++i) {
-	GaussianApplyFilter(filterPtr, 2, width,
-			    inputImage + i * width, 1, 
-			    tempImage1 + i * width, 1);
-    }
+    GaussianFilter01(filterPtr, 2, height, width, inputImage, tempImage1);
 
     /* Gaussian-filter by columns */
 
-    for (i = 0; i < width; ++i) {
-	GaussianApplyFilter(filterPtr, 0, height,
-			    tempImage1 + i, width,
-			    outputImage + i, width);
-    }
+    GaussianFilter10(filterPtr, 0, height, width, tempImage1, outputImage);
 
     /* Sum the two results */
 

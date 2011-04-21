@@ -13,8 +13,6 @@
  */
 
 #include <tcl.h>
-#define ckalloc malloc
-#define ckfree free
 
 #include <math.h>
 #include <memory.h>

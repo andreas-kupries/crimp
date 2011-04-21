@@ -14,6 +14,11 @@ package require critcl 2 ;# Should actually be 2.1
 if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
+
+critcl::license \
+    {Andreas Kupries} \
+    {Under a BSD license.}
+
 #critcl::config keepsrc 1
 #critcl::debug all
 

@@ -14,6 +14,11 @@ package require critcl
 if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
+catch {
+    critcl::license \
+	{Andreas Kupries} \
+	{Under a BSD license.}
+}
 #critcl::config keepsrc 1
 
 # # ## ### ##### ######## #############

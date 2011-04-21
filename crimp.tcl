@@ -13,6 +13,7 @@ package require critcl 3
 if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
+
 critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}

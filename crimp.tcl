@@ -28,7 +28,7 @@ critcl::license \
 critcl::tcl 8.5
 critcl::tk
 
-critcl::cflags -DIEEE_COMPLEX_DIVIDE
+critcl::cflags -DIEEE_COMPLEX_DIVIDE -g
 
 critcl::cheaders c/*.h cop/*.c
 critcl::csources c/*.c

@@ -8,12 +8,15 @@
 # # ## ### ##### ######## #############
 ## Requisites
 
-#package require Tk
-package require critcl 2 ;# Should actually be 2.1
+package require critcl 3
 
 if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
+critcl::license \
+    {Andreas Kupries} \
+    {Under a BSD license.}
+
 #critcl::config keepsrc 1
 #critcl::debug all
 
@@ -25,6 +28,9 @@ critcl::tk
 
 critcl::cheaders c/*.h cop/*.c
 critcl::csources c/*.c
+
+critcl::owns demos.tcl demos/*.tcl images/*.png
+critcl::owns doc specs tools
 
 # FFT sources and dependencies.
 critcl::cheaders c/fftpack/f2c.h
@@ -95,6 +101,7 @@ critcl::ccode {
 # # ## ### ##### ######## #############
 ## Read and execute all .crimp files in the current directory.
 
+critcl::owns operator/*.crimp
 ::apply {{here} {
     foreach filename [lsort [glob -nocomplain -directory [file join $here operator] *.crimp]] {
 	set chan [open $filename]

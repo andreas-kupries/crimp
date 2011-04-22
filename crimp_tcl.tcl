@@ -488,11 +488,11 @@ namespace eval ::crimp::morph {
 }
 
 proc ::crimp::morph::erode {image} {
-    return [::crimp::filter::rank $image 1 99.99]
+    return [::crimp::filter::rank $image 1 0]
 }
 
 proc ::crimp::morph::dilate {image} {
-    return [::crimp::filter::rank $image 1 0]
+    return [::crimp::filter::rank $image 1 99.99]
 }
 
 proc ::crimp::morph::open {image} {
@@ -521,6 +521,10 @@ proc ::crimp::morph::tophatw {image} {
 
 proc ::crimp::morph::tophatb {image} {
     return [::crimp::subtract [close $image] $image]
+}
+
+proc ::crimp::morph::toggle {image} {
+    return [::crimp::add [erode $image] [dilate $image] 2]
 }
 
 # # ## ### ##### ######## #############
@@ -710,8 +714,9 @@ proc ::crimp::effect::emboss {image} {
 }
 
 proc ::crimp::effect::charcoal {image} {
-    return [::crimp::morph::gradient \
-		[::crimp::convert::2grey8 $image]]
+    return [::crimp::invert \
+		[::crimp::morph::gradient \
+		     [::crimp::convert::2grey8 $image]]]
 }
 
 # # ## ### ##### ######## #############

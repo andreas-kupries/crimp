@@ -28,7 +28,7 @@ typedef struct crimp_volume {
 #define VINDEX(iptr,x,y,z) \
     (((x)*SZ (iptr)) + \
      ((y)*SZ (iptr)*((iptr)->w)) + \
-     ((z)*SZ (iptr)*((iptr)->w)*((iptr)->h)))
+     ((z)*SZ (iptr)*((iptr)->w)*((size_t) (iptr)->h)))
 
 #define VFLOATP(iptr,x,y,z) *((float*) &((iptr)->voxel [VINDEX (iptr,x,y,z)]))
 

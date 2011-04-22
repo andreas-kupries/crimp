@@ -6,7 +6,8 @@ Tcl_Obj* result;
 Tcl_Obj* cname;
 Tcl_Obj* cdata;
 
-int x, y, w, h, n;
+size_t n;
+int x, y, w, h;
 Tcl_WideInt min, max;
 double var, stddev, mean, median, middle, sum, sumsq;
 
@@ -14,7 +15,7 @@ crimp_input (imageObj, image, grey32);
 
 w = image->w;
 h = image->h;
-n = w * h;
+n = crimp_image_area (image);
 
 /* 
  * Scan image

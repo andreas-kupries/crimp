@@ -28,7 +28,7 @@ typedef struct crimp_volume {
 #define VINDEX(iptr,x,y,z) \
     (((x)*SZ (iptr)) + \
      ((y)*SZ (iptr)*((iptr)->w)) + \
-     ((z)*SZ (iptr)*((iptr)->w)*((iptr)->h)))
+     ((z)*SZ (iptr)*((iptr)->w)*((size_t) (iptr)->h)))
 
 #define VFLOATP(iptr,x,y,z) *((float*) &((iptr)->voxel [VINDEX (iptr,x,y,z)]))
 
@@ -52,6 +52,13 @@ extern void          crimp_vdel  (crimp_volume* volume);
 #define crimp_vnew_like(volume)           (crimp_vnewm ((volume)->itype, (volume)->w, (volume)->h, (volume)->d, (volume)->meta))
 #define crimp_vnew_like_transpose(volume) (crimp_vnewm ((volume)->itype, (volume)->h, (volume)->w, (volume)->d, (volume)->meta))
 
+
+/*
+ * Volume calculations macros.
+ */
+
+#define RECT_VOLUME(w,h,d) (((size_t) (w)) * (h) * (d))
+#define crimp_volume_vol(vptr) (RECT_VOLUME ((vptr)->w, (vptr)->h, (vptr)->d))
 
 /*
  * API :: Tcl. Manage Tcl_Obj's of volumes.

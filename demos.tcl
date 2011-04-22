@@ -101,6 +101,9 @@ proc demo_init {} {
     global dir demo dcurrent demo_map
     set dcurrent {}
 
+    array unset demo     *
+    array unset demo_map *
+
     array set demo {
 	aaaaa {
 	    label       Unmodified
@@ -313,7 +316,8 @@ proc gui {} {
 proc widgets {} {
     widget::toolbar .t
 
-    .t add button exit -text Exit -command ::exit -separator 1
+    .t add button exit -text Exit   -command ::exit -separator 1
+    .t add button relo -text Reload -command reload -separator 1
 
     ttk::panedwindow .h -orient horizontal
     ttk::panedwindow .v -orient vertical
@@ -657,13 +661,18 @@ proc thebases {} {
     return $base
 }
 
+proc reload {} {
+    images_init
+    demo_init
+    after 100 {event generate .li <<ListboxSelect>>}
+    return
+}
+
 # # ## ### ##### ######## #############
 
 proc main {} {
-    images_init
-    demo_init
+    reload
     gui
-    after 100 {event generate .li <<ListboxSelect>>}
     return
     after 100 {
 	.li selection set 0

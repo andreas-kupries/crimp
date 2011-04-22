@@ -1,0 +1,73 @@
+stats_grey16
+Tcl_Obj* imageObj
+
+crimp_image* image;
+Tcl_Obj* result;
+Tcl_Obj* cname;
+Tcl_Obj* cdata;
+
+size_t n;
+int x, y, w, h, min, max;
+double var, stddev, mean, median, middle, sum, sumsq;
+
+crimp_input (imageObj, image, grey16);
+
+w = image->w;
+h = image->h;
+n = crimp_image_area (image);
+
+/* 
+ * Scan image
+ */
+
+sum = sumsq = 0;
+min = max = GREY16 (image, 0, 0);
+
+for (y = 0; y < h; y++) {
+    for (x = 0; x < w; x++) {
+	int val = GREY16 (image, x, y);
+
+	sum   += val;
+	sumsq += val*val;
+	min = MIN (min, val);
+	max = MAX (max, val);
+    }
+}
+
+mean   = sum / n;
+middle = (min + max)/2.0;
+var    = sumsq/n - mean*mean;
+stddev = sqrt (var);
+
+/*
+ * Fill the dictonary.
+ * NOTES:
+ * (1) No histogram, we currently have no efficient way of computing that for grey16.
+ * (2) No median either, as this is based on the histogram.
+ *
+ * FUTURE: Some way of sharing the string Tcl_Obj* for the fixed keys.
+ */
+
+cdata = Tcl_NewDictObj ();
+Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min",      -1), Tcl_NewIntObj (min));
+Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max",      -1), Tcl_NewIntObj (max));
+Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("mean",     -1), Tcl_NewDoubleObj (mean));
+Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("middle",   -1), Tcl_NewDoubleObj (middle));
+Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("variance", -1), Tcl_NewDoubleObj (var));
+Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("stddev",   -1), Tcl_NewDoubleObj (stddev));
+
+result = Tcl_NewDictObj ();
+Tcl_DictObjPut (NULL, result, Tcl_NewStringObj (image->itype->cname[0],-1), cdata);
+
+Tcl_SetObjResult (interp, result);
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

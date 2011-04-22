@@ -54,6 +54,13 @@ extern void          crimp_vdel  (crimp_volume* volume);
 
 
 /*
+ * Volume calculations macros.
+ */
+
+#define RECT_VOLUME(w,h,d) (((size_t) (w)) * (h) * (d))
+#define crimp_volume_vol(vptr) (RECT_VOLUME ((vptr)->w, (vptr)->h, (vptr)->d))
+
+/*
  * API :: Tcl. Manage Tcl_Obj's of volumes.
  */
 

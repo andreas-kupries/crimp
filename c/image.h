@@ -106,6 +106,13 @@ typedef struct crimp_image {
 #define TRANSPARENT 0
 
 /*
+ * Area calculations macros.
+ */
+
+#define RECT_AREA(w,h) (((size_t) (w)) * (h))
+#define crimp_image_area(iptr) (RECT_AREA ((iptr)->w, (iptr)->h))
+
+/*
  * Convenient checking of image types.
  */
 

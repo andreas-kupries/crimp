@@ -43,7 +43,7 @@ crimp_new (const crimp_imagetype* itype, int w, int h)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    int          size  = sizeof (crimp_image) + w * h * itype->size;
+    size_t       size  = sizeof (crimp_image) + RECT_AREA (w, h) * itype->size;
     crimp_image* image = (crimp_image*) ckalloc (size);
 
     image->itype = itype;
@@ -61,7 +61,7 @@ crimp_newm (const crimp_imagetype* itype, int w, int h, Tcl_Obj* meta)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    int          size  = sizeof (crimp_image) + w * h * itype->size;
+    size_t       size  = sizeof (crimp_image) + RECT_AREA (w, h) * itype->size;
     crimp_image* image = (crimp_image*) ckalloc (size);
 
     image->itype = itype;
@@ -79,7 +79,7 @@ crimp_newm (const crimp_imagetype* itype, int w, int h, Tcl_Obj* meta)
 crimp_image*
 crimp_dup (crimp_image* image)
 {
-    int          size      = sizeof (crimp_image) + image->w * image->h * image->itype->size;
+    size_t       size      = sizeof (crimp_image) + crimp_image_area (image) * image->itype->size;
     crimp_image* new_image = (crimp_image*) ckalloc (size);
 
     /*
@@ -199,7 +199,8 @@ StringOfImage (Tcl_Obj* imgObjPtr)
 
 	char* tmp;
 	char* dst;
-	int plen = ci->itype->size * ci->w * ci->h;
+	size_t sz   = ci->itype->size * crimp_image_area (ci);
+	int plen = sz; /* Tcl length for Tcl_Obj* bytes, 4g limit */
 	int expanded, i;
 
 	/*
@@ -210,7 +211,7 @@ StringOfImage (Tcl_Obj* imgObjPtr)
 	 */
 
 	expanded = 0;
-	for (i = 0; i < (ci->itype->size * ci->w * ci->h) && plen >= 0; i++) {
+	for (i = 0; (i < sz) && (plen >= 0); i++) {
 	    if ((ci->pixel[i] == 0) || (ci->pixel[i] > 127)) {
 		plen ++;
 		expanded = 1;
@@ -231,7 +232,7 @@ StringOfImage (Tcl_Obj* imgObjPtr)
 	    /*
 	     * If bytes have to be expanded we have to handle them 1-by-1.
 	     */
-	    for (i = 0; i < (ci->itype->size * ci->w * ci->h); i++) {
+	    for (i = 0; i < sz; i++) {
 		dst += Tcl_UniCharToUtf(ci->pixel[i], dst);
 	    }
 	} else {
@@ -290,7 +291,7 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
 	goto invalid;
 
     pixel = Tcl_GetByteArrayFromObj (objv[4], &length);
-    if (length != (ct->size * w * h))
+    if (length != (ct->size * RECT_AREA (w, h)))
 	goto invalid;
 
     meta = objv[3];

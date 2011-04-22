@@ -26,8 +26,8 @@ typedef struct crimp_image {
  * Pixel Access Macros. General access to a 'color' channel.
  */
 
-#define CHAN(iptr,c,x,y) ((c) + SZ(iptr) * ((x) + (y)*(iptr)->w))
-#define CH(iptr,c,x,y) (iptr)->pixel [CHAN (iptr,c,x,y)]
+#define CHAN(iptr,c,x,y) ((c) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define CH(iptr,c,x,y)   (iptr)->pixel [CHAN (iptr,c,x,y)]
 
 /*
  * Pixel Access Macros. RGBA / RGB
@@ -44,16 +44,16 @@ typedef struct crimp_image {
 
 #define SZ(iptr) ((iptr)->itype->size)
 
-#define RED(iptr,x,y)   (0 + SZ(iptr) * ((x) + (y)*(iptr)->w))
-#define GREEN(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*(iptr)->w))
-#define BLUE(iptr,x,y)  (2 + SZ(iptr) * ((x) + (y)*(iptr)->w))
-#define ALPHA(iptr,x,y) (3 + SZ(iptr) * ((x) + (y)*(iptr)->w))
+#define RED(iptr,x,y)   (0 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define GREEN(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define BLUE(iptr,x,y)  (2 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define ALPHA(iptr,x,y) (3 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
 
 #if 0 /* Unoptimized formulas */
-#define RED(iptr,x,y)   (0 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*(iptr)->w))
-#define GREEN(iptr,x,y) (1 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*(iptr)->w))
-#define BLUE(iptr,x,y)  (2 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*(iptr)->w))
-#define ALPHA(iptr,x,y) (3 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*(iptr)->w))
+#define RED(iptr,x,y)   (0 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->w)))
+#define GREEN(iptr,x,y) (1 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->w)))
+#define BLUE(iptr,x,y)  (2 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->w)))
+#define ALPHA(iptr,x,y) (3 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->w)))
 #endif
 
 #define R(iptr,x,y) (iptr)->pixel [RED   (iptr,x,y)]
@@ -70,11 +70,11 @@ typedef struct crimp_image {
 
 #define INDEX(iptr,x,y) \
     (((x)*SZ (iptr)) + \
-     ((y)*SZ (iptr)*((iptr)->w)))
+     ((y)*SZ (iptr)*(((size_t) (iptr)->w))))
 
-#define GREY8(iptr,x,y)                        (iptr)->pixel [INDEX (iptr,x,y)]
+#define GREY8(iptr,x,y)  *((unsigned char*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
 #define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [INDEX (iptr,x,y)]))
-#define GREY32(iptr,x,y) *((unsigned long*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
+#define GREY32(iptr,x,y) *((unsigned int* )  &((iptr)->pixel [INDEX (iptr,x,y)]))
 #define FLOATP(iptr,x,y) *((float*)          &((iptr)->pixel [INDEX (iptr,x,y)]))
 
 /*
@@ -87,9 +87,9 @@ typedef struct crimp_image {
  * Pixel Access Macros. HSV.
  */
 
-#define HUE(iptr,x,y) (0 + SZ(iptr) * ((x) + (y)*(iptr)->w))
-#define SAT(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*(iptr)->w))
-#define VAL(iptr,x,y) (2 + SZ(iptr) * ((x) + (y)*(iptr)->w))
+#define HUE(iptr,x,y) (0 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define SAT(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define VAL(iptr,x,y) (2 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
 
 #define H(iptr,x,y) (iptr)->pixel [HUE (iptr,x,y)]
 #define S(iptr,x,y) (iptr)->pixel [SAT (iptr,x,y)]
@@ -104,6 +104,13 @@ typedef struct crimp_image {
 
 #define OPAQUE      255
 #define TRANSPARENT 0
+
+/*
+ * Area calculations macros.
+ */
+
+#define RECT_AREA(w,h) (((size_t) (w)) * (h))
+#define crimp_image_area(iptr) (RECT_AREA ((iptr)->w, (iptr)->h))
 
 /*
  * Convenient checking of image types.

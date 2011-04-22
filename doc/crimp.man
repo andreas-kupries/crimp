@@ -1011,9 +1011,14 @@ structuring element. For grayscale, which we have here, these are,
 mathematically, max and min rank-order filters, i.e.
 
 [example {
-    dilate = filter rank 1  0.00 (min)
-    erode  = filter rank 1 99.99 (max)
+    dilate = filter rank 1 99.99 (max)
+    erode  = filter rank 1  0.00 (min)
 }]
+
+The above definitions assume that background is [const black], and
+foreground/object anything but black, usually [const white]. Then it
+is easy to see that [cmd dilate] expands the foreground/white, and
+erode expands background/black.
 
 
 [call [cmd ::crimp] [method {morph close}] [arg image]]
@@ -1071,6 +1076,9 @@ The [term {white tophat}] transformation is defined as
     $image - [open $image]
 }]
 
+See [sectref References] 3 to 5 (page 32). This is a greyscale morphology
+operation which does not properly apply to binary images.
+
 
 [call [cmd ::crimp] [method {morph tophatb}] [arg image]]
 [keywords morphology tophat {black tophat}]
@@ -1080,6 +1088,22 @@ The [term {black tophat}] transformation is defined as
 [example {
     [close $image] - $image
 }]
+
+See [sectref References] 3 to 5 (page 33). This is a greyscale morphology
+operation which does not properly apply to binary images.
+
+
+[call [cmd ::crimp] [method {morph toggle}] [arg image]]
+[keywords morphology {toggle map}]
+
+The [term {toggle map}] is defined as
+
+[example {
+    0.5 * ([erode $image] + [dilate $image])
+}]
+
+See [sectref References] 5, pages 34 and 35. This is a greyscale
+morphology operation to sharpen edges.
 
 
 [call [cmd ::crimp] [method multiply] [arg image1] [arg image2]]
@@ -2070,6 +2094,15 @@ or down, along the specified dimension, while values less than
 
 [enum] Nobuyuki Otsu, "A threshold selection method from gray-level histograms", 1979
        [uri http://en.wikipedia.org/wiki/Otsu%27s_method]
+
+[enum] Leptonica, "The Tophat and H-dome transforms",
+       [uri http://www.leptonica.com/grayscale-morphology.html#TOPHAT-HDOME]
+
+[enum] P. Peterlin, "Morphological Operations: An Overview",
+       [uri http://www.inf.u-szeged.hu/ssip/1996/morpho/morphology.html]
+
+[enum] Adrien Bousseau, "Mathematical Morphology", 
+       PDF at [uri http://artis.imag.fr/Members/Adrien.Bousseau/morphology/]
 
 [list_end]
 

@@ -44,7 +44,7 @@ crimp_vnew (const crimp_imagetype* itype, int w, int h, int d)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    int           size  = sizeof (crimp_volume) + w * h * d * itype->size;
+    size_t        size   = sizeof (crimp_volume) + RECT_VOLUME (w, h, d) * itype->size;
     crimp_volume* volume = (crimp_volume*) ckalloc (size);
 
     volume->itype = itype;
@@ -63,7 +63,7 @@ crimp_vnewm (const crimp_imagetype* itype, int w, int h, int d, Tcl_Obj* meta)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    int           size   = sizeof (crimp_volume) + w * h * d * itype->size;
+    size_t        size   = sizeof (crimp_volume) + RECT_VOLUME (w, h, d) * itype->size;
     crimp_volume* volume = (crimp_volume*) ckalloc (size);
 
     volume->itype = itype;
@@ -82,7 +82,7 @@ crimp_vnewm (const crimp_imagetype* itype, int w, int h, int d, Tcl_Obj* meta)
 crimp_volume*
 crimp_vdup (crimp_volume* volume)
 {
-    int           size      = sizeof (crimp_volume) + volume->w * volume->h * volume->d * volume->itype->size;
+    size_t        size      = sizeof (crimp_volume) + crimp_volume_vol (volume) * volume->itype->size;
     crimp_volume* new_volume = (crimp_volume*) ckalloc (size);
 
     /*
@@ -209,8 +209,8 @@ StringOfVolume (Tcl_Obj* volObjPtr)
 
 	char* tmp;
 	char* dst;
-	int sz = cv->itype->size * cv->w * cv->h * cv->d;
-	int plen = sz;
+	size_t sz = cv->itype->size * crimp_volume_vol (cv);
+	int plen = sz; /* Tcl length for Tcl_Obj* bytes, 4g limit */
 	int expanded, i;
 
 	/*
@@ -221,7 +221,7 @@ StringOfVolume (Tcl_Obj* volObjPtr)
 	 */
 
 	expanded = 0;
-	for (i = 0; i < sz && plen >= 0; i++) {
+	for (i = 0; (i < sz) && (plen >= 0); i++) {
 	    if ((cv->voxel[i] == 0) || (cv->voxel[i] > 127)) {
 		plen ++;
 		expanded = 1;
@@ -302,7 +302,7 @@ VolumeFromAny (Tcl_Interp* interp, Tcl_Obj* volObjPtr)
 	goto invalid;
 
     voxel = Tcl_GetByteArrayFromObj (objv[5], &length);
-    if (length != (ct->size * w * h))
+    if (length != (ct->size * RECT_VOLUME (w, h, d)))
 	goto invalid;
 
     meta = objv[4];

@@ -16,7 +16,8 @@ Tcl_Obj* pgmdata
 
 unsigned char* bytes;
 int            length;
-int state, lstate, israw, w, h, npix, max, value;
+size_t npix;
+int state, lstate, israw, w, h, max, value;
 unsigned char* stop;
 unsigned char* at;
 unsigned char* dst;
@@ -150,7 +151,7 @@ if (israw) {
 }
 
 result = crimp_new_grey8 (w, h);
-npix = w*h;
+npix   = RECT_AREA (w, h);
 
 /*fprintf(stderr,"raw=%d, w=%d, h=%d, max=%d /%d\n", israw,w,h,max,npix);fflush(stderr);*/
 

@@ -1,0 +1,39 @@
+connected_components_float
+Tcl_Obj* imageObj
+int eightconnected
+float bgValue
+
+/*
+ * Partition an image into connected components and return an image
+ * with their labels
+ *
+ * Copyright (c) 2011 by Kevin B. Kenny.
+ *
+ * See the file "license.terms" for information on usage and redistribution of
+ * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+ */
+
+crimp_image* image;		/* Image to segment */
+crimp_image* result;		/* Resulting label image */
+
+/* Process inputs */
+
+crimp_input(imageObj, image, float);
+
+/* Make the segmented image */
+
+result = crimp_label_connected_components(eightconnected, &bgValue, image);
+
+/* Return segmented image to caller */
+
+Tcl_SetObjResult(interp, crimp_new_image_obj(result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

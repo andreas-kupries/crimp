@@ -1,15 +1,16 @@
-def op_connected_components_grey8 {
-    label {Connected Components grey8}
+def op_connected_components {
+    label {Connected Components}
     setup {
 	proc showit {} {
 	    variable L
-	    set comps [crimp::connected_components_grey8 $L 0 0]
+	    if {![info exists L]} return
+	    set comps [crimp::connected_components $L 0]
 	    show_image [crimp::FITFLOAT [crimp convert 2float $comps]]
 	    return
 	}
     }
     setup_image {
-	variable L [crimp convert 2grey8 [base]]
+	variable L [crimp convert 2rgb [base]]
 	showit
     }
 }

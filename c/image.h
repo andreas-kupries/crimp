@@ -72,9 +72,9 @@ typedef struct crimp_image {
     (((x)*SZ (iptr)) + \
      ((y)*SZ (iptr)*((iptr)->w)))
 
-#define GREY8(iptr,x,y)                        (iptr)->pixel [INDEX (iptr,x,y)]
+#define GREY8(iptr,x,y)  *((unsigned char*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
 #define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [INDEX (iptr,x,y)]))
-#define GREY32(iptr,x,y) *((unsigned long*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
+#define GREY32(iptr,x,y) *((unsigned int* )  &((iptr)->pixel [INDEX (iptr,x,y)]))
 #define FLOATP(iptr,x,y) *((float*)          &((iptr)->pixel [INDEX (iptr,x,y)]))
 
 /*

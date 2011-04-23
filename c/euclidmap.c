@@ -1,3 +1,23 @@
+/*
+ * euclidmap.c --
+ *
+ *	Functions for producing the Euclidean distance map (or rather, its
+ *	square) on images.
+ *
+ * Copyright (c) 2011 by Kevin B. Kenny.
+ *
+ * See the file "license.terms" for information on usage and redistribution of
+ * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+ *
+ * The algorithm used here is described in: Pedro F. Felzenszwalb and
+ * Daniel P. Huttenlocher.  "Distance Transforms of Sampled
+ * Functions."  Cornell Computing and Information Science TR2004-1963
+ * (2004).  http://people.cs.uchicago.edu/~pff/papers/dt.pdf;
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+
 #include <float.h>
 #include <math.h>
 #include <tcl.h>

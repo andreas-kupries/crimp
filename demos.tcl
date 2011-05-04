@@ -49,7 +49,7 @@ if {[catch {
     if {$triedprebuilt} {
 	puts "Trying to use a prebuilt crimp package failed ($msg)."
 	puts ==\t[join [split $::errorInfo \n] \n==\t]
-	puts "Falling back to dynamic compilation via critcl"
+	puts "Falling back to dynamic compilation via critcl [package require critcl 3]"
     }
 
     puts "Trying dynamically compiled crimp package"

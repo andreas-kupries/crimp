@@ -32,6 +32,11 @@
 
 #define RANGEOK(i,n) ((0 <= (i)) && (i < (n)))
 
+#define MINVAL        (0)
+#define MAXVAL_GREY8  (255)
+#define MAXVAL_GREY16 (65535)
+#define MAXVAL_GREY32 (4294967295)
+
 /*
  * Assertions support in general, and asserting the proper range of an array
  * index especially.

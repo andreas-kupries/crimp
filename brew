@@ -51,11 +51,31 @@ proc _install {{dst {}}} {
 
     # Package: crimp
     package require critcl::app
+
+    # Build binaries
     critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -pkg $src]
     file delete -force $dst/crimp$version
     file rename        $dst/crimp $dst/crimp$version
 
     puts "Installed package:     $dst/crimp$version"
     return
+}
+proc _wrap4tea {{dst {}}} {
+    if {[llength [info level 0]] < 2} {
+	set dst [file join [pwd] tea]
+    }
+
+    set src     [file dirname $::me]/crimp.tcl
+    set version [version $src]
+
+    # Package: crimp
+    package require critcl::app
+
+    # Generate TEA directory hierarchy
+    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -tea $src]
+    file delete -force $dst/crimp$version
+    file rename        $dst/crimp $dst/crimp$version
+
+    puts "Installed package:     $dst/crimp$version"
 }
 main

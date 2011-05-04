@@ -108,11 +108,13 @@ for (y = 0, yt = origy; y < result->h; y++, yt++) {
 	    double y2 = yf * yf;
 	    double y3 = y2 * yf;
 
-	    GREY32 (result, x, y) = 
+	    double r =
 		(a00 + a01 * yf + a02 * y2 + a03 * y3)      +
 		(a10 + a11 * yf + a12 * y2 + a13 * y3) * xf +
 		(a20 + a21 * yf + a22 * y2 + a23 * y3) * x2 +
 		(a30 + a31 * yf + a32 * y2 + a33 * y3) * x3;	    
+
+	    GREY32 (result, x, y) = CLAMPT (0, int, r, MAXVAL_GREY32);
         }
     }
 }

@@ -1,0 +1,592 @@
+A Developer's Guide To CRIMP
+============================
+
+This document is a guide for developers working on the "C Raster Image
+Manipulation Package" (short CRIMP), i.e. Maintainers fixing bugs,
+extending the package's functionality, etc.
+
+
+TODO:	  Describe handling the c/*.h files (cheaders, ...)
+TODO:	  Link to the critcl FAQ/example page.
+
+
+0. TOC
+------
+
+1.      Requisites
+1a.     ....... Tcl
+1b.     ....... Fossil
+1c.     ....... Critcl
+2.      Getting CRIMP
+2a.     ....... Installing CRIMP
+3.      Playing with CRIMP
+4.      Developing for CRIMP
+4a.     ....... Directory structure
+4b.     ....... Writing a new primitive
+4c.     ....... Writing a new high-level command
+4d.     ....... Writing a new demo
+4f.     ....... Adding a new demo image
+
+TODO	data structures
+
+1. Requisites
+-------------
+
+1a. Tcl
+~~~~~~~
+
+CRIMP is a Tcl package, thus it requires a working installation of Tcl
+for development and testing. Tcl 8.5 or higher is required.
+
+An easy way to get an installation of a recent Tcl 8.5 I recommend to
+download and install ActiveState's ActiveTcl, found at
+
+        http://www.activestate.com/activetcl
+
+After installation of ActiveTcl 8.5 in a directory of your choice run
+the command
+
+        teacup update
+
+This will install a lot more packages than found in the distribution
+alone.
+
+(Disclosure: I, Andreas Kupries, work for ActiveState, maintaining
+ActiveTcl and TclDevKit).
+
+1b. Fossil
+~~~~~~~~~~
+
+CRIMP's sources are managed with the "Fossil" source code management application.
+
+Prebuilt Fossil client binaries for the major platforms (Linux, OSX,
+Windows, BSD) are available at
+
+        http://www.fossil-scm.org/download.html
+
+Installation of the "fossil" binary is done by copying it into a
+directory which is on the OS' search path for applications.
+
+1c. Critcl
+~~~~~~~~~~
+
+CRIMP uses the Critcl package and application for development and
+building its binaries.
+
+The relevant version of Critcl is 2.1, which has not been officially
+released yet. This unofficial revision of the package is managed with
+"Fossil" at
+
+         https://chiselapp.com/user/andreas_kupries/repository/CriTcl/index
+
+Yes, this is also managed with "Fossil".
+
+To get its sources do in a directory of your choice
+
+        fossil clone https://chiselapp.com/user/andreas_kupries/repository/CriTcl/index critcl.fossil
+        mkdir critcl
+        cd    critcl
+        fossil open ../critcl.fossil trunk
+
+Then, to install the critcl package and application run (in the critcl
+directory made above):
+
+        tclsh8.5 brew install
+
+This places the critcl package in a directory where the tclsh8.5 will
+find it, and place the critcl application into the same directory the
+tclsh8.5 is in.
+
+If the tclsh8.5 resides in a directory accessible only to the system's
+administrator it may be necessary to login as that administrator, or
+at least run the commands with admin privileges (on linux: su -,
+sudo).
+
+[I am pretty much assuming here that the developer knows his or her
+way around a Linux system).
+
+
+2. Getting CRIMP
+----------------
+
+CRIMP is managed with "Fossil" at
+
+         https://chiselapp.com/user/andreas_kupries/repository/crimp/index
+
+To get its sources do in a directory of your choice
+
+        fossil clone https://chiselapp.com/user/andreas_kupries/repository/crimp/index crimp.fossil
+        mkdir crimp
+        cd    crimp
+        fossil open ../crimp.fossil work-for-critcl-2.1
+
+Note the "work-for-critcl-2.1". This is essentially the trunk,
+modified to work with Critcl v2.1, which makes a few declarations and
+things easier.
+
+2a. Installing CRIMP
+~~~~~~~~~~~~~~~~~~~~
+
+During development it is actually not necessary to install CRIMP.
+
+The demos.tcl application (and demo framework) shows how it can be
+sourced directly, with critcl then compiling it on-the-fly. (1)
+
+When it is time to install CRIMP simply run (in the crimp directory
+made above):
+
+        tclsh8.5 brew install
+
+This places the CRIMP package in a directory where the tclsh8.5 will
+find it. This is pretty much identical to how Critcl was installed
+(see section 1c.).
+
+
+(Ad 1) It actually demonstrates a bit more in this respect, the
+ability to automatically switch between an installed CRIMP and
+on-thel-fly building if CRIMP is not installed.
+
+
+3. Playing with CRIMP
+---------------------
+
+For a demonstration of CRIMP's current abilities see the demos.tcl
+application. Within the crimp source directory run it as
+
+        tclsh8.5 demos.tcl
+
+After starting it opens a GUI which shows two lists on the left side,
+of the images available to the demos, and of the demos themselves. The
+latter list changed contents dynamically based on the number of images
+selected (0, 1, or 2).
+
+After selecting image and demo the result of the demo is shown on the
+right side, usually as a plain image, the result of whatever operation
+was chosen. Some demos generate a slideshow of multiple images, or
+provide additional GUI elements, i.e. buttons, sliders, etc. for
+interactive manipulation of the demo.
+
+A few demos do not generate images, but print information to the log
+window, which is shown on the left, above the lists for images and
+demos.
+
+The size of the areas allocated to log window, selection lists, and
+demo results can be modified using the mouse, by dragging the panel
+separators.
+
+
+4. Developing for CRIMP
+-----------------------
+
+4a. Directory structure
+~~~~~~~~~~~~~~~~~~~~~~~
+
+        demos.tcl
+                This is the demo application & framework.
+        demos/
+                This directory is searched by demos.tcl
+                for the demos to make available to its
+                user.
+        images/
+                This directory is searched by demos.tcl
+                for the images to make available to its
+                user and the demos.
+
+        tools/
+                This directory contain helper scripts.
+
+        tools/makedoc.sh
+                This helper script, when run, (re)generates the
+                embedded documentation from the documentation sources.
+
+                This requires the applications "mimetex", "convert",
+                "dtplite", and "dia". The latter is, for example,
+                installed by ActiveTcl.
+
+                TODO:   convert - ImageMagick
+                TODO:   mimetex - Where, install, build, ...
+                TODO:   dia, dtplite ...
+
+        doc/
+                This directory contains the documentation sources.
+                The texts are written in [doctools] format, whereas
+                the figures are a mixture of TeX (math formulas), and
+                tklib's "dia"(gram) package and application.
+
+        embedded/
+                This directory contains the documentation converted
+                to regular manpages (nroff) and HTML.
+
+                It is called embedded because these files, while
+                derived, are part of the fossil repository,
+                i.e. embedded into it. This enables fossil to access
+                and display these files when serving the repositories'
+                web interface. The "Command Reference" link at
+
+                http://chiselapp.com/user/andreas_kupries/repository/crimp/home
+
+                is, for example, accessing this generated HTML.
+
+        specs/
+                This directory contains specifications of the image
+                file formats for which CRIMP provides readers and
+                writers.
+
+                Currently this is only PGM and PPM, i.e "Portable Grey
+                Map" and "Portable Pix Map" respectively.
+
+        crimp.tcl
+                This is the master file of the package.
+                Based on "critcl" it contains all the
+                necessary declarations to build the package.
+
+                This file reads the primitives to implement from the
+                files in the operator/ sub-directory.
+
+        crimp_tcl.tcl
+                This is the companion to "crimp.tcl" which implements
+                the higher-level interfaces on top of the C-based
+                primitive operations.
+
+                The documentation (see doc/) mainly describes this
+                higher-level API, plus the few primitives which are
+                passed through unchanged, i.e. without getting wrapped
+                into Tcl procedures.
+
+        plot.tcl
+                This is a companion Tcl file to "crimp.tcl" and
+                "crimp_tcl.tcl" which implements a simple plot
+                widget. It essentially wraps Tklib's Plotchart package
+                into a simpler interface.
+
+                The main user of this functionality is currently the
+                demo framework, "demos.tcl".
+
+        operator/
+                This directory contain the sources of the C-level
+                primitives implemented by CRIMP.
+
+                The master file "crimp.tcl" reads all the .crimp files
+                found in this directory, converting them into proper
+                critcl::cprocs.
+
+        cop/    (speak: C op ;)
+                For a few of the primitives in operator/ (see above)
+                the implementations were very similar. This directory
+                contains "templates" for these implementations, with
+                the actual primitives #include'ing them. The templates
+                are configured through a number a C #define's for the
+                parts where the primitives differ.
+
+                This is a first attempt at templating some of the C
+                code. It works, but isn't really very nicely done.
+
+                While I (AK) have the general ida of using Tcl and
+                Tcl-based macro-processors (like "expand", see Wiki)
+                bouncing around in my head for a better templating and
+                C code generation mechanism there is nothing concrete
+                yet.
+
+        c/
+                This directory contain the C sources for common/shared
+                functionality, mainly the Tcl_ObjType's for "image
+                type"-values and "image"-values, and complex functions
+                I really did not wish to duplicate in the C primitives
+                (AHE support, Rank-Order Filter support, geometry
+                functions, FFT).
+
+        reader/,
+        writer/
+
+                These directories contain the read and write
+                procedures for image formats done in pure Tcl.
+
+                Currently Richard Suchenwirth's strimj'es (read) and
+                PPM, PGM, PFM (portable grey/pix/float maps, write).
+
+                Note that the readers for PGM and PPM are not written
+                in Tcl, but C, for speed.
+
+                The files in these directories are declared as Tcl
+                companion files of "crimp.tcl", causing them to be
+                sourced automatically by the critcl framework when
+                CRIMP is loaded.
+
+4b. Writing a new primitive
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The individual primitive C level operations of CRIMP are found in the
+sub-directory operator/.
+
+Each primitive is handled by a single file with the extension
+".crimp".
+
+Note that all files found in the directory and which do not have the
+extension ".crimp" are ignored when "crimp.tcl" loads and processes
+the primitives.
+
+To write a new primitive simply add a new file with the extension
+".crimp" to the directory and fill it with content according to the
+rules below, which specify the format of ".crimp" files.
+
+(1) A .crimp file is a plain text file.
+
+(2) The first line in the file contains the name of the primitive it
+    implements.
+
+(2) All following lines, until the first empty line (*), describe the
+    arguments of the primitive, i.e. their types and names.
+
+(2a) Each line in the argument block describes a single argument.
+
+(3) All lines after the empty line terminating the argument block, to
+    the end of the file, contain the C code implementing the
+    primitive.
+
+(*) A line containing only whitespace (space and tab characters) is
+    NOT empty.
+
+As an example, here are the contents of the ".crimp" file for one of
+the primitives with one of the smallest implementations:
+
+        ******************************************************
+[1]     width
+[2]     Tcl_Obj* imageObj
+[3]
+[4]     crimp_image* image;
+[5]
+[6]     crimp_input_any (imageObj, image);
+[7]
+[8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (image->w));
+[9]     return TCL_OK;
+        ******************************************************
+
+Line [1] is the name, "width".
+Line [2] is the first line of the argument block.
+Line [3] terminates this argument block.
+Lines [4] to [9] are the implementation.
+
+The primitive extracts the width from the image it was given as
+argument and returns it as its result.
+
+
+4c. Writing a new high-level command
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The high-level commands wrapping around most of the C level primitives
+reside in the file "crimp_tcl.tcl".
+
+They usually have one of the following purposes:
+
+(1) Aggregating a group of related primitives into a single command
+    which chooses the primitive to use automatically, based on the
+    type(s) of its image argument(s).
+
+    "::crimp max" is an example of this, choosing and dispatching to
+    the group of max_*_* primitives.
+
+(2) A nicer (more tcl-ish) interface to a (group of) primitive(s).
+
+    "::crimp meta" is an example of that, implementing a dict-like API
+    on top of the raw "meta_set" and "meta_get" primitives.
+
+(3) Convenience methods which aggregate other commands, not
+    necessarily primitives, into a larger functionality.
+
+    The group of "::crimper filter sobel" methods is an example of
+    this, wrapping around "::crimp filter convolve" (itself an example
+    of (1)) and the commands for creating convolution kernels,
+    implementing a specific well-known filter with a fixed kernel.
+
+(3) Implementing functionality fully in Tcl, where primitives are not
+    needed, or mostly not.
+
+    The "::crimp transform" and "::crimp table" are examples,
+    computing projective transformations and pixel mapping tables.
+
+    A better example might be the "::crimp pyramid" methods which
+    encapsulate the higher-order structure of image pyramid
+    processing, leaving the details callback commands.
+
+Their implementation has to obey the following rules:
+
+(1) The CRIMP package has the namespace "::crimp" reserved for its
+    use. All new procedures have to be defined in this namespace, or
+    sub-ordinate namespaces.
+
+(2) New procedures extending an existing ensemble have to be defined
+    in the namespace of that ensemble. (Rule (1) above could have been
+    subsumed into this, because the main command, "::crimp", is an
+    ensemble).
+
+(3) Any new command defined directly in the "::crimp" namespace,
+    i.e. at the top-level of the hierarchy, has to be listed in the
+    "namespace export" clauses at the bottom of file "crimp_tcl.tcl".
+
+(4) Public procedures have to have a name starting with a lowercase
+    character.
+
+(5) Internal procedures have to have a name starting with an uppercase
+    character.
+
+
+
+TODO    Document patterns among the existing commands ?
+TODO    Document the most important helper functions (TypeOf, Has, List)
+
+(1) Explicit dispatch - (extract image type -> search primitive for
+    the type -> call primitive, or throw error).
+
+(2) Implicit dispatch through ensemble, with image type information
+    part of the method name (namespace path).
+(2a) Generated ensemble, using image type in the namespace name, and
+     code with placeholders.
+
+4d. Writing a new demo
+~~~~~~~~~~~~~~~~~~~~~~
+
+The individual demos used by "demos.tcl" reside in the directory
+demos/.
+
+Each demo is handled by a single file with the extension ".tcl".
+
+Note that all files found in the directory and which do not have the
+extension ".tcl" are ignored when "demos.tcl" looks for demos it can use.
+
+To write a new demo simply add a new file with the extension
+".tcl" to the directory and fill it with content according to the
+rules below, which specify the format of the demo files.
+
+(1) A demo file is a Tcl script. As such it is a plain text file.
+
+(2) A demo file contains a single command "def", taking two arguments,
+    the name of the demo, and a Tcl dictionary describing it.
+
+(3) The dictionary describing the demo may contain the keys and values
+    listed below. Some of the keys must exist, others are optional.
+    Both will be noted in the desciptions of the keys, below.
+
+    label
+        Must exist. Its value is the name of the demo, as shown to
+        and seen by the user of "demos.tcl".
+
+    active
+        Optional. Its value is a script which will be executed by
+        demos.tcl whenever it has to decide which demos to show in the
+        list, based on the selection of images. The result has to be a
+        boolean value, with True signaling that the demo is suitable
+        for the selection, and False that it should not be shown.
+
+    setup
+        Optional. Its value is a script which is run whenever this
+        demo has been chosen by the user. It is expected to create
+        any commands and state it may need during the processing
+        of an image.
+
+    shutdown
+        Optional. Its value is a script which is run whenever this
+        demo has been de-selected by the user (and possibly some other
+        demo chosen). It is expected to clean up any dynamic resources
+        the demo may have aquired (like timers, open files, etc.).
+
+        The script does not have to care about procedures and state in
+        the ::DEMO namespace. These are automatically destroyed by the
+        framework.
+
+    setup_image
+
+        Optional, technically. Its value is a script which is run
+        whenever the image for the demo has changed. Its
+        responsibility is to apply the demo to the image and show any
+        results. As such leaving this key out of the description makes
+        pretty much no sense at all.
+
+(4) All scripts (see demo description, above) are executed within the
+    ::DEMO namespace and have access to its variables and commands
+
+(5) The demo framework exports a number of supporting commands for use
+    by the scripts in the individual demos. These are:
+
+    crimp
+        Of course, as demos have to have access to CRIMP's
+        functionality.
+
+    base ?N?
+        Returns the N'th image selected by the user. Counted from 0.
+        If not specified 'N' defaults 0.
+
+    bases
+        Returns the number of selected images. Most useful to the
+        'active' script.
+
+    thebases
+        Returns a list containing all selected images.
+
+    show_image I
+        Takes an image I and displays it in the demo result area for
+        the user to see.
+
+    show_slides LI
+        Takes a list of images and displays them in the demo result
+        area for the user to see, as a slideshow which cycles through
+        the images. The user gets a bevy of buttons to start/stop the
+        cycling, change cycle interval, and direction.
+
+    log T
+        Writes the text T to the demo log window, followed by a newline
+
+    log* T
+        Writes the text T to the demo log window. No newline is added
+        after the text.
+
+(6) The demo framework has a number of hook points in the GUI for use
+    by demos. These are:
+
+    .left
+    .right
+    .top
+    .bottom
+
+    These widgets are ttk::frames placed to the left, right, top and
+    bottom of the demo result area and usually empty. The demo can put
+    its own interface elements there, buttons, sliders, plots, etc. pp.
+
+    When non-empty the layout roughly looks like:
+
+        +-------------------------------------------------------+
+        |                                                       |
+        |       .top                                            |
+        |                                                       |
+        +-------+---------------------------------------+-------+
+        |       |                                       |       |
+        |       |       demo result area                |       |
+        | .left |                                       | .right|
+        |       |                                       |       |
+        |       |                                       |       |
+        |       |                                       |       |
+        +-------+---------------------------------------+-------+
+        |                                                       |
+        |       .bottom                                         |
+        |                                                       |
+        +-------------------------------------------------------+
+
+    The demo's UI elements underneath these hooks are automatically
+    destroyed when the demo is shut down, before its 'shutdown' script
+    is run.
+
+4f. Adding a new demo image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The individual demonstration images used by "demos.tcl" reside in the
+directory image/.
+
+Each image is handled by a single file with the extension ".png",
+whose contents have to be in the PNG image file format.
+
+Note that all files found in the directory and which do not have the
+extension ".png" are ignored when "demos.tcl" looks for images it can
+use.
+
+To add a new image simply copy the image file into the directory,
+assuming that it has the correct extension and file format. Otherwise
+convert the image to PNG and change the extension to suit.

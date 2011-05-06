@@ -92,6 +92,8 @@ critcl::ccode {
     #include <util.h>
     #include <f2c.h>
     #include <gauss.h>
+    #include <labelcc.h>
+    #include <linearmaps.h>
 
     /* Common declarations to access the FFT functions. */
 

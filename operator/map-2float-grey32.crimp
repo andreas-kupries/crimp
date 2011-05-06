@@ -1,10 +1,10 @@
-map_2grey8_grey8
+map_2float_grey32
 Tcl_Obj* inImageObj
 Tcl_Obj* mapObj
 
 /*
- * Converter that applies a piecewise linear map from an input grey8 image
- * to an output grey8 image.
+ * Converter that applies a piecewise linear map from an input grey32 image
+ * to an output floating point image.
  *
  * Copyright (c) 2011 by Kevin B. Kenny.
  *
@@ -12,16 +12,17 @@ Tcl_Obj* mapObj
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
 
-#define INTYPENAME grey8
-#define INTYPE unsigned char
-#define OUTTYPENAME grey8
-#define OUTTYPE unsigned char
+#define INTYPENAME grey32
+#define INTYPE unsigned int
+#define OUTTYPENAME float
+#define OUTTYPE float
 
 #include "map_scalar.c"
 
-#undef OTYPE
+#undef OUTTYPE
 #undef OUTTYPENAME
 #undef INTYPENAME
+#undef INTYPE
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

@@ -11,7 +11,6 @@
  *-----------------------------------------------------------------------------
  */
 
-#include "crimp.h"
-
-extern crimp_image* crimp_label_connected_components (int, unsigned char*,
+#include "image.h"
+extern crimp_image* crimp_label_connected_components (int, void*,
 						      crimp_image*);

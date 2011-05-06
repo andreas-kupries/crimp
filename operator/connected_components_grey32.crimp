@@ -1,7 +1,7 @@
 connected_components_grey32
 Tcl_Obj* imageObj
 int eightconnected
-unsigned bgValue
+int bgValue
 
 /*
  * Partition an image into connected components and return an image

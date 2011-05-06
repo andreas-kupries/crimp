@@ -20,8 +20,7 @@
 /*
  * FIXME:
  * 
- * Type of a CRIMP grey32 image - Andreas means to change this to
- * 'unsigned'
+ * Type of a CRIMP grey32 image - Andreas means to change this to 'unsigned'
  */
 
 #define RANK_TYPE unsigned
@@ -158,7 +157,7 @@ crimp_label_connected_components (
 				 * and generates more compact components
 				 * (at the expense of generating more of 
 				 * them). */
-    const unsigned char* bgValue,
+    const void* bgValue,
 				/* Pointer to the pixel value that will be
 				 * used as background. All background pixels
 				 * are coalesced into a single component.

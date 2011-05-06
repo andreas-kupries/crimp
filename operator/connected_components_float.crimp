@@ -22,7 +22,8 @@ crimp_input(imageObj, image, float);
 
 /* Make the segmented image */
 
-result = crimp_label_connected_components(eightconnected, &bgValue, image);
+result = crimp_label_connected_components(eightconnected,
+					  (unsigned char *)&bgValue, image);
 
 /* Return segmented image to caller */
 

@@ -16,7 +16,6 @@ int percentile
 
 crimp_image*     result;
 crimp_image*     image;
-crimp_image*     kernel;
 int              xo, yo, xi, yi, n;
 int              rowhistogramh [256];
 int              rowhistograms [256];

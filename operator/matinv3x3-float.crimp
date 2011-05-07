@@ -5,13 +5,8 @@ Tcl_Obj* matObj
  * Invert a 3x3 float matrix A.
  */
 
-crimp_image*     mat;
-crimp_image*     result;
-int              x, y;
-
-double cofactor [3][3];
-double det = 0;
-double sign = 1;
+crimp_image* mat;
+crimp_image* result;
 
 crimp_input (matObj, mat, float);
 

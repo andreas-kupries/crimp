@@ -3,7 +3,7 @@ Tcl_Obj* imageObj float offset float adj1 float adj2
 
 crimp_image*     result;
 crimp_image*     image;
-int              x, y, w, h;
+int              w, h;
 
 int              oy, ox, c, iy, ix;
 

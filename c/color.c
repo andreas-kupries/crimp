@@ -8,6 +8,7 @@
  */
 
 #include <color.h>
+#include <math.h>
 #include <util.h>
 
 /*
@@ -72,6 +73,7 @@ void
 crimp_color_hsv_to_rgb (int h, int s, int v, int* r, int* g, int* b)
 {
     int red, green, blue;
+    red = green = blue = 0;
 
     if (!s) {
 	/*

@@ -322,6 +322,8 @@ VolumeFromAny (Tcl_Interp* interp, Tcl_Obj* volObjPtr)
 
     volObjPtr->internalRep.otherValuePtr = cv;
     volObjPtr->typePtr                   = &VolumeType;
+
+    return TCL_OK;
 }
 
 /*

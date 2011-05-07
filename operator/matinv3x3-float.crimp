@@ -1,0 +1,36 @@
+matinv3x3_float
+Tcl_Obj* matObj
+
+/*
+ * Invert a 3x3 float matrix A.
+ */
+
+crimp_image* mat;
+crimp_image* result;
+
+crimp_input (matObj, mat, float);
+
+if (!crimp_require_dim (mat, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_la_invert_matrix_3x3 (mat);
+
+if (!result) {
+    Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

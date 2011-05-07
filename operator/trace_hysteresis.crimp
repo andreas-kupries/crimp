@@ -1,0 +1,84 @@
+trace_hysteresis
+Tcl_Obj* imageObj
+double lowT
+double highT
+
+/*
+ * Hysteresis-based tracing of magnitude ridges. Only ridges starting higher
+ * than highT are followed, until they sink below lowT, or join another ridge
+ * already traced , whichever comes first.
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          x, y;
+
+crimp_input (imageObj, image, float);
+
+result = crimp_new_grey8 (image->w, image->h);
+
+/*
+ * Fill with black
+ */
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+	GREY8(result, x, y) = BLACK;
+    }
+}
+
+/*
+ * Look for high-threshold ridges, then follow these until they sink below
+ * suitability
+ */
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+	if (!GREY8 (result, x, y)  && FLOATP(image, x,y) >= highT) {
+	    /*
+	     * Found a good candidate. We now follow neighbours until they are
+	     * insignificant or joining a ridge already traced out.
+	     */
+	    int xi, x0, x2, x1 = x;
+	    int yi, y0, y2, y1 = y;
+	    do {
+	    next:
+		GREY8(result, x1, y1) = WHITE;
+
+		x0 = (x1 == 0)             ? x1 : x1 - 1;
+		x2 = (x1 == (result->w-1)) ? x1 : x1 + 1;
+		y0 = (y1 == 0)             ? y1 : y1 - 1;
+		y2 = (y1 == (result->h-1)) ? y1 : y1 + 1;
+
+		for (yi = y0; yi <= y2; yi++) {
+		    for (xi = x0; xi <= x2; xi++) {
+			if ((yi != y1 || xi != x1) &&
+			    !GREY8 (result, xi, yi) &&
+			    FLOATP (image, xi, yi) >= lowT) {
+			    /*
+			     * Tail call the loop with the current sweeper
+			     * location as the new spot to check and follow.
+			     */
+			    x1 = xi;
+			    y1 = yi;
+			    goto next;
+			}
+		    }
+		}
+	    } while (0);
+	}
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

@@ -1,0 +1,219 @@
+rof_rgb
+Tcl_Obj* imageObj
+int radius
+int percentile
+
+/*
+ * Generic rank-order filter. Depending on the chosen rank this a min, max, or
+ * median filter, or anything in between.
+ *
+ * The percentile is 0...10000, i.e. percent with a resolution of 1/100.
+ *
+ * Note that the implied kernel has dimensions (2r+1)x(2r+1), reducing the
+ * result image by 2*radius in each di1mension. I.e. the filter doesn't process
+ * the 'radius' border pixels along each edge.
+ */
+
+crimp_image*     result;
+crimp_image*     image;
+int              xo, yo, xi, yi, n;
+int              rowhistogramr [256];
+int              rowhistogramg [256];
+int              rowhistogramb [256];
+int*             colhistogramr;
+int*             colhistogramg;
+int*             colhistogramb;
+
+crimp_input (imageObj, image, rgb);
+
+if ((percentile < 0) || (percentile > 10000)) {
+    Tcl_SetResult(interp, "bad percentile, expected integer in (0..10000)", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
+
+/*
+ * We are using the method described by Simon Perreault and Patrick Hebert in
+ * their paper 'Median Filtering In Constant Time'. This method trades memory
+ * for speed by keeping one histogram per column, plus a row histogram of the
+ * current 2r+1 columns. When moving from pixel to pixel these histograms are
+ * incrementally updated, each in constant time. The trick is that the column
+ * histograms keep history between rows.
+ *
+ * Right now we are not making use of any of the proposed optimizations, like
+ * multi-level histograms, conditional updating, or vertical striping for
+ * cache friendliness.
+ *
+ * Relationship between input and result coordinate systems:
+ *
+ * xi = xo + radius, xo in (0...w-2*radius)
+ * yi = yo + radius, yo in (0...w-2*radius)
+ */
+
+colhistogramr = NALLOC (image->w * 256, int); memset (colhistogramr,'\0', image->w * 256 * sizeof(int));
+colhistogramg = NALLOC (image->w * 256, int); memset (colhistogramg,'\0', image->w * 256 * sizeof(int));
+colhistogramb = NALLOC (image->w * 256, int); memset (colhistogramb,'\0', image->w * 256 * sizeof(int));
+
+n = (2*radius+1);
+n = n * n;
+
+/*
+ * TODO :: Test different storage orders for the histograms (row vs column
+ *         major order).
+ */
+
+/*
+ * Access to the column histograms.
+ *
+ * xi = column index, in the input image coordinate system.
+ */
+#if 1
+#define CHINDEX(xi,value)   ((xi) * 256 + (value))
+#else
+#define CHINDEX(xi,value)   ((value) * image->w + (xi))
+#endif
+#define COLHISTR(xi,value) colhistogramr [CHINDEX (xi, value)]
+#define COLHISTG(xi,value) colhistogramg [CHINDEX (xi, value)]
+#define COLHISTB(xi,value) colhistogramb [CHINDEX (xi, value)]
+
+/*
+ * Basic operations on column histograms. Add/remove pixel values.
+ */
+#define UPR(xi,value)   COLHISTR (xi, value)++
+#define DOWNR(xi,value) COLHISTR (xi, value)--
+#define UPG(xi,value)   COLHISTG (xi, value)++
+#define DOWNG(xi,value) COLHISTG (xi, value)--
+#define UPB(xi,value)   COLHISTB (xi, value)++
+#define DOWNB(xi,value) COLHISTB (xi, value)--
+
+/*
+ * Basic operations on the row histogram. Add and subtract column histograms
+ * to/from it. These operations are vectorizable.
+ *
+ * xi = column index, in the input image coordinate system.
+ */
+
+#define ADDR(xi) { int value ; for (value=0;value<256;value++) { rowhistogramr[value] += COLHISTR (xi,value);}}
+#define SUBR(xi) { int value ; for (value=0;value<256;value++) { rowhistogramr[value] -= COLHISTR (xi,value);}}
+#define ADDG(xi) { int value ; for (value=0;value<256;value++) { rowhistogramg[value] += COLHISTG (xi,value);}}
+#define SUBG(xi) { int value ; for (value=0;value<256;value++) { rowhistogramg[value] -= COLHISTG (xi,value);}}
+#define ADDB(xi) { int value ; for (value=0;value<256;value++) { rowhistogramb[value] += COLHISTB (xi,value);}}
+#define SUBB(xi) { int value ; for (value=0;value<256;value++) { rowhistogramb[value] -= COLHISTB (xi,value);}}
+
+/*
+ * Higher level of column histogram change. Move a column histogram down by
+ * one row. yi is the index of the new row, and the histogram contains the
+ * data for row yi-1. This is in the input image coordinate system.
+ *
+ * xi = column index, in the input image coordinate system.
+ */
+
+#undef  SHIFT_DOWN
+#define SHIFT_DOWN(xi,yi) {			          \
+	DOWNR ((xi), R (image, (xi), (yi) - radius - 1)); \
+	UPR   ((xi), R (image, (xi), (yi) + radius));     \
+	DOWNG ((xi), G (image, (xi), (yi) - radius - 1)); \
+	UPG   ((xi), G (image, (xi), (yi) + radius));     \
+	DOWNB ((xi), B (image, (xi), (yi) - radius - 1)); \
+	UPB   ((xi), B (image, (xi), (yi) + radius));     }
+
+/*
+ * Higher level of row histogram change. Move the row histogram right by one
+ * column. xi is the index of the new column, and the histogram contains the
+ * data for column xi-1. This is in the input image coordinate system.
+ */
+
+#undef  SHIFT_RIGHT
+#define SHIFT_RIGHT(xi) { \
+	SUBR ((xi) - radius - 1); ADDR ((xi) + radius); \
+	SUBG ((xi) - radius - 1); ADDG ((xi) + radius); \
+	SUBB ((xi) - radius - 1); ADDB ((xi) + radius); }
+
+/*
+ * ==
+ * Initialization, and handling of result row 0
+ * ==
+ */
+
+/*
+ * Initialization I.
+ * Scan the first 2*radius+1 rows of the input image into the column
+ * histograms.
+ */
+
+for (yi = 0; yi < 2*radius+1; yi++) {
+    for (xi = 0; xi < image->w; xi++) {
+	UPR (xi, R (image, xi, yi));
+	UPG (xi, G (image, xi, yi));
+	UPB (xi, B (image, xi, yi));
+    }
+}
+
+/*
+ * Initialization II.
+ * Add the first 2*radius+1 column histogram into the initial row histogram.
+ */
+
+memset (rowhistogramr,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDR (xi); }
+memset (rowhistogramg,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDG (xi); }
+memset (rowhistogramb,'\0', 256 * sizeof(int)); for (xi = 0 ; xi < 2*radius+1; xi++) { ADDB (xi); }
+
+/*
+ * Now we can start filtering. The initial histogram is already properly set
+ * up for (xo,yo) = (0,0). For the remaining pixels of the first row in the
+ * output we can sweep through without having to pull the column histograms
+ * down.
+ */
+
+R (result, 0, 0) = crimp_rank (rowhistogramr, percentile, n);
+G (result, 0, 0) = crimp_rank (rowhistogramg, percentile, n);
+B (result, 0, 0) = crimp_rank (rowhistogramb, percentile, n);
+for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
+    SHIFT_RIGHT (xi);
+    R (result, xo, 0) = crimp_rank (rowhistogramr, percentile, n);
+    G (result, xo, 0) = crimp_rank (rowhistogramg, percentile, n);
+    B (result, xo, 0) = crimp_rank (rowhistogramb, percentile, n);
+}
+
+/*
+ * With the first row of the result done we can now sweep the remaining lines.
+ */
+
+for (yo = 1, yi = radius+1; yo < result->h; yo++, yi++) {
+
+    /* Re-initialize the row histogram for the line */
+    memset (rowhistogramr,'\0', 256 * sizeof(int));
+    memset (rowhistogramg,'\0', 256 * sizeof(int));
+    memset (rowhistogramb,'\0', 256 * sizeof(int));
+    for (xi = 0 ; xi < 2*radius+1; xi++) {
+	SHIFT_DOWN (xi,yi);
+	ADDR (xi);
+	ADDG (xi);
+	ADDB (xi);
+    }
+
+    R (result, 0, yo) = crimp_rank (rowhistogramr, percentile, n);
+    G (result, 0, yo) = crimp_rank (rowhistogramg, percentile, n);
+    B (result, 0, yo) = crimp_rank (rowhistogramb, percentile, n);
+    for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
+	SHIFT_DOWN  (xi+radius,yi);
+	SHIFT_RIGHT (xi);
+	R (result, xo, yo) = crimp_rank (rowhistogramr, percentile, n);
+	G (result, xo, yo) = crimp_rank (rowhistogramg, percentile, n);
+	B (result, xo, yo) = crimp_rank (rowhistogramb, percentile, n);
+    }
+ }
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

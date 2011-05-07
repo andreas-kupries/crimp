@@ -11,7 +11,7 @@ double highT
 
 crimp_image* image;
 crimp_image* result;
-int          x, y, xo, yo;
+int          x, y;
 
 crimp_input (imageObj, image, float);
 

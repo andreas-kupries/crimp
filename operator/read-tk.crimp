@@ -3,7 +3,6 @@ char* photo
 
 Tk_PhotoHandle     handle = Tk_FindPhoto (interp, photo);
 Tk_PhotoImageBlock pib;
-Tcl_Obj*           imageObj;
 crimp_image*       image;
 
 if (!handle) {

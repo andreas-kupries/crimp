@@ -3,12 +3,11 @@ Tcl_Obj* imageObj
 
 crimp_image* image;
 Tcl_Obj* result;
-Tcl_Obj* cname;
 Tcl_Obj* cdata;
 
 size_t n;
 int x, y, w, h, min, max;
-double var, stddev, mean, median, middle, sum, sumsq;
+double var, stddev, mean, middle, sum, sumsq;
 
 crimp_input (imageObj, image, grey16);
 

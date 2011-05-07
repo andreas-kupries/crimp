@@ -52,7 +52,7 @@ stop = bytes + length;
 #define PGM_DIGIT(c) (('0' <= (c)) && ((c) <= '9'))
 #define PGM_SPACE(c) (((c) == ' ') || ((c) == '\n') || ((c) == '\r') || ((c) == '\t'))
 
-w = h = max = value = israw = 0;
+lstate = w = h = max = value = israw = 0;
 for (at = bytes, state = GETP; (at < stop) && (state != STOP); at ++) {
 
     /*fprintf(stderr,"H [%4d] s%d '%c'\n",at-bytes,state,*at);fflush(stderr);*/

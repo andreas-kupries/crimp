@@ -87,7 +87,6 @@ crimp_image*
 crimp_la_multiply_matrix_3x3 (crimp_image* a, crimp_image* b)
 {
     crimp_image* result;
-    int x, y, w;
 
     ASSERT_IMGTYPE (a, float);
     ASSERT_IMGTYPE (b, float);

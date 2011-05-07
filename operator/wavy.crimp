@@ -3,7 +3,7 @@ Tcl_Obj* imageObj float offset float adj1 float adj2
 
 crimp_image*     result;
 crimp_image*     image;
-int              x, y, w, h;
+int              w, h;
 
 int              oy, ox, c, iy, ix;
 
@@ -24,7 +24,7 @@ for (oy = 0; oy < h; ++oy) {
 	 * special geometry deformation.
 	 */
 
-        float r = sinf(hypotf(oy - h/2, ox - w/2) * adj1/w + offset)/adj2 + 1;
+        float r = sin(hypot(oy - h/2, ox - w/2) * adj1/w + offset)/adj2 + 1;
         float iyf = (oy - h / 2) * r + h/2;
         float ixf = (ox - w / 2) * r + w/2;
         int   iyw = iyf;

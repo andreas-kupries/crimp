@@ -8,7 +8,7 @@ Tcl_Obj* imageObj
 
 crimp_image* image;
 crimp_image* result;
-int          x, y, h, s, v;
+int          x, y;
 
 crimp_input (imageObj, image, rgba);
 

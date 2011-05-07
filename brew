@@ -12,7 +12,7 @@ proc main {} {
     exit 0
 }
 proc usage {{status 1}} {
-    #puts stderr $::errorInfo;exit
+    puts stderr $::errorInfo;exit
     global argv0
     puts stderr "Usage: $argv0 ?install ?dst?|starkit ?dst? ?interp?|starpack prefix ?dst?|help|recipes?"
     exit $status

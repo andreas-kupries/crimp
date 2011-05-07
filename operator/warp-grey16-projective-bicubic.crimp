@@ -15,7 +15,7 @@ crimp_image* image;
 crimp_image* forward;
 crimp_image* backward;
 crimp_image* result;
-int x, y, xt, yt, origx, origy, pixel, xl, xr, yu, yd;
+int x, y, xt, yt, origx, origy;
 double xf, yf;
 
 crimp_input (imageObj,   image,   grey16);

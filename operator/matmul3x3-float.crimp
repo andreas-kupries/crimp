@@ -6,13 +6,12 @@ Tcl_Obj* matBObj
  * Multiply two 3x3 float matrices A and B. Returns A*B.
  */
 
-crimp_image*     matA;
-crimp_image*     matB;
-crimp_image*     result;
-int              w, x, y;
+crimp_image* matA;
+crimp_image* matB;
+crimp_image* result;
 
-crimp_input (matAObj,    matA, float);
-crimp_input (matBObj,    matB, float);
+crimp_input (matAObj, matA, float);
+crimp_input (matBObj, matB, float);
 
 if (!crimp_require_dim (matA, 3, 3)) {
     Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);

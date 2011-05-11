@@ -93,6 +93,10 @@ critcl::ccode {
     #include <util.h>
     #include <f2c.h>
 
+    #ifndef M_PI
+    #define M_PI (3.141592653589793238462643)
+    #endif
+
     /* Common declarations to access the FFT functions. */
 
     extern int rffti_ (integer *n, real *wsave);

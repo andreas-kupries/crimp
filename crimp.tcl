@@ -109,11 +109,9 @@ critcl::ccode {
 ## not provide it via their libc and/or libm.
 
 if {[critcl::util::checkfun lrint]} {
-    puts -nonewline "(native lrint()) "
-    flush stdout
+    critcl::msg -nonewline "(native lrint()) "
 } else {
-    puts -nonewline "(+ compat/lrint.c) "
-    flush stdout
+    critcl::msg -nonewline "(+ compat/lrint.c) "
     critcl::csources compat/lrint.c
 }
 

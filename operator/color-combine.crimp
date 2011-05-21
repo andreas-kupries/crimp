@@ -31,9 +31,9 @@ if (!crimp_require_dim (combine, 3, 1)) {
     return TCL_ERROR;
 }
 
-wr = CH (image, 0, x, y);
-wg = CH (image, 1, x, y);
-wb = CH (image, 2, x, y);
+wr = FLOATP (combine, 0, 0);
+wg = FLOATP (combine, 1, 0);
+wb = FLOATP (combine, 2, 0);
 
 result = crimp_new_grey8 (image->w, image->h);
 

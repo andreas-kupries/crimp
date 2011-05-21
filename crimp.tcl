@@ -10,6 +10,7 @@
 
 #package require Tk
 package require critcl 2 ;# Should actually be 2.1
+package require critcl::util 1
 
 if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
@@ -95,11 +96,32 @@ critcl::ccode {
     #include <labelcc.h>
     #include <linearmaps.h>
 
+    #ifndef M_PI
+    #define M_PI (3.141592653589793238462643)
+    #endif
+
+    #ifndef M_PI
+    #define M_PI (3.141592653589793238462643)
+    #endif
+
     /* Common declarations to access the FFT functions. */
 
     extern int rffti_ (integer *n, real *wsave);
     extern int rfftf_ (integer *n, real* r, real *wsave);
     extern int rfftb_ (integer *n, real* r, real *wsave);
+}
+
+# # ## ### ##### ######## #############
+## Define a compatibility implementation of lrint() on systems which do
+## not provide it via their libc and/or libm.
+
+if {[critcl::util::checkfun lrint]} {
+    puts -nonewline "(native lrint()) "
+    flush stdout
+} else {
+    puts -nonewline "(+ compat/lrint.c) "
+    flush stdout
+    critcl::csources compat/lrint.c
 }
 
 # # ## ### ##### ######## #############

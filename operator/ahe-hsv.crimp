@@ -14,7 +14,6 @@ int radius
 
 crimp_image*     result;
 crimp_image*     image;
-crimp_image*     kernel;
 int              xo, yo, xi, yi, n;
 int              rowhistogram [256];
 int*             colhistogram;

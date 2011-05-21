@@ -12,7 +12,7 @@ proc ::crimp::List {pattern} {
 }
 
 proc ::crimp::Has {name} {
-    return [llength [info commands ::crimp::$name]]
+    expr {[namespace which -command ::crimp::$name] ne {}}
 }
 
 proc ::crimp::P {fqn} {
@@ -740,7 +740,7 @@ proc ::crimp::threshold::global::otsu {image} {
     set stat [::crimp::statistics::otsu [::crimp::statistics::basic $image]]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp::map threshold below \
+	    [::crimp::map threshold above \
 		 [dict get $stat channel $c otsu]]
     }
     return [::crimp::remap $image {*}$maps]
@@ -751,7 +751,7 @@ proc ::crimp::threshold::global::middle {image} {
     set stat [::crimp::statistics::basic $image]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp::map threshold below \
+	    [::crimp::map threshold above \
 		 [dict get $stat channel $c middle]]
     }
     return [::crimp::remap $image {*}$maps]
@@ -762,7 +762,7 @@ proc ::crimp::threshold::global::mean {image} {
     set stat [::crimp::statistics::basic $image]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp::map threshold below \
+	    [::crimp::map threshold above \
 		 [dict get $stat channel $c mean]]
     }
     return [::crimp::remap $image {*}$maps]
@@ -773,7 +773,7 @@ proc ::crimp::threshold::global::median {image} {
     set stat [::crimp::statistics::basic $image]
     foreach c [dict get $stat channels] {
 	lappend maps \
-	    [::crimp::map threshold below \
+	    [::crimp::map threshold above \
 		 [dict get $stat channel $c median]]
     }
     return [::crimp::remap $image {*}$maps]
@@ -3099,14 +3099,14 @@ namespace eval ::crimp::table::threshold {
 
 proc ::crimp::table::threshold::below {threshold} {
     for {set x 0} {$x < 256} {incr x} {
-	lappend table [expr {($x < $threshold) ? 0 : 255}]
+	lappend table [expr {($x <= $threshold) ? 255 : 0}]
     }
     return $table
 }
 
 proc ::crimp::table::threshold::above {threshold} {
     for {set x 0} {$x < 256} {incr x} {
-	lappend table [expr {($x < $threshold) ? 255 : 0}]
+	lappend table [expr {($x > $threshold) ? 255 : 0}]
     }
     return $table
 }
@@ -3116,14 +3116,14 @@ proc ::crimp::table::threshold::above {threshold} {
 
 proc ::crimp::table::threshold::inside {min max} {
     for {set x 0} {$x < 256} {incr x} {
-	lappend table [expr {($min < $x) && ($x < $max) ? 0 : 255}]
+	lappend table [expr {($min <= $x) && ($x <= $max) ? 255 : 0}]
     }
     return $table
 }
 
 proc ::crimp::table::threshold::outside {min max} {
     for {set x 0} {$x < 256} {incr x} {
-	lappend table [expr {($min < $x) && ($x < $max) ? 255 : 0}]
+	lappend table [expr {($min <= $x) && ($x <= $max) ? 0 : 255}]
     }
     return $table
 }

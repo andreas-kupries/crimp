@@ -29,6 +29,8 @@ critcl::license \
 critcl::tcl 8.5
 critcl::tk
 
+critcl::cflags -DIEEE_COMPLEX_DIVIDE -g
+
 critcl::cheaders c/*.h cop/*.c
 critcl::csources c/*.c
 
@@ -90,6 +92,13 @@ critcl::ccode {
     #include <color.h>
     #include <util.h>
     #include <f2c.h>
+    #include <gauss.h>
+    #include <labelcc.h>
+    #include <linearmaps.h>
+
+    #ifndef M_PI
+    #define M_PI (3.141592653589793238462643)
+    #endif
 
     #ifndef M_PI
     #define M_PI (3.141592653589793238462643)

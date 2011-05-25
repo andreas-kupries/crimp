@@ -34,6 +34,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "util.h"
 #include "iir_order2.h"
 
 /*

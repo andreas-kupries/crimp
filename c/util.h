@@ -41,7 +41,7 @@
 #define M_PI (3.141592653589793238462643)
 #endif
 
-#ifdef _MSVC_VER
+#ifdef _MSC_VER
 #define inline __inline
 #endif
 

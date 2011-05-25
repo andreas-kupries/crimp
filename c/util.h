@@ -41,6 +41,10 @@
 #define M_PI (3.141592653589793238462643)
 #endif
 
+#ifdef _MSVC_VER
+#define inline __inline
+#endif
+
 /*
  * Assertions support in general, and asserting the proper range of an array
  * index especially.

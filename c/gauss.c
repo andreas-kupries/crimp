@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <f2c.h>	/* f2c.h must come after the system includes */
 
+#include "util.h"
 #include "gauss.h"
 #include "fir.h"
 #include "iir_order2.h"

@@ -37,6 +37,10 @@
 #define MAXVAL_GREY16 (65535)
 #define MAXVAL_GREY32 (4294967295)
 
+#ifndef M_PI
+#define M_PI (3.141592653589793238462643)
+#endif
+
 /*
  * Assertions support in general, and asserting the proper range of an array
  * index especially.

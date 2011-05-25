@@ -5,6 +5,8 @@
  * (C) 2010.
  */
 
+#include "crimp_config.h"
+
 /*
  * Convenience macros for the allocation of structures and arrays.
  */
@@ -43,6 +45,31 @@
 
 #ifdef _MSC_VER
 #define inline __inline
+#endif
+
+/*
+ * - - -- --- ----- -------- ------------- ---------------------
+ * Handle the environment configuration as supplied by crimp_config.h
+ */
+
+#ifndef C_HAVE_HYPOTF
+#define hypotf(x,y) hypot(x,y)
+#endif
+
+#ifndef C_HAVE_SINF
+#define sinf(x) sin(x)
+#endif
+
+#ifndef C_HAVE_COSF
+#define cosf(x) cos(x)
+#endif
+
+#ifndef C_HAVE_EXPF
+#define expf(x) exp(x)
+#endif
+
+#ifndef C_HAVE_SQRTF
+#define sqrtf(x) sqrt(x)
 #endif
 
 /*

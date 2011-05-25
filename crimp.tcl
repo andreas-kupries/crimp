@@ -95,6 +95,7 @@ critcl::ccode {
     #include <gauss.h>
     #include <labelcc.h>
     #include <linearmaps.h>
+    #include <crimp_config.h>
 
     /* Common declarations to access the FFT functions. */
 
@@ -115,6 +116,33 @@ if {[critcl::util::checkfun lrint]} {
     flush stdout
     critcl::csources compat/lrint.c
 }
+
+::apply {{} {
+    # Check the presence of a number of math functions the compiler
+    # may or may not have. Any C89 compiler should provide these.
+
+    # This works because the package's C code is compiled after the
+    # .tcl has been fully processed, regardless of relative location.
+    # This enables us to dynamically create/modify a header file
+    # needed by the C code.
+
+    foreach f {
+	hypotf sinf cosf sqrtf expf
+    } {
+	set fd [string range $f 0 end-1]
+	set d  C_HAVE_[string toupper $f]
+
+	if {[critcl::util::checkfun $f]} {
+	    critcl::util::def crimp_config.h $d
+	    puts -nonewline "(have $f) "
+	    flush stdout
+	} else {
+	    critcl::util::undef crimp_config.h $d
+	    puts -nonewline "($f -> $fd) "
+	    flush stdout
+	}
+    }
+}}
 
 # # ## ### ##### ######## #############
 ## Read and execute all .crimp files in the current directory.

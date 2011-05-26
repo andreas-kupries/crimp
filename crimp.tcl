@@ -28,6 +28,8 @@ critcl::license \
 critcl::tcl 8.5
 critcl::tk
 
+critcl::cflags -DIEEE_COMPLEX_DIVIDE -g
+
 critcl::cheaders c/*.h cop/*.c
 critcl::csources c/*.c
 
@@ -92,10 +94,10 @@ critcl::ccode {
     #include <color.h>
     #include <util.h>
     #include <f2c.h>
-
-    #ifndef M_PI
-    #define M_PI (3.141592653589793238462643)
-    #endif
+    #include <gauss.h>
+    #include <labelcc.h>
+    #include <linearmaps.h>
+    #include <crimp_config.h>
 
     /* Common declarations to access the FFT functions. */
 
@@ -114,6 +116,33 @@ if {[critcl::util::checkfun lrint]} {
     critcl::msg -nonewline "(+ compat/lrint.c) "
     critcl::csources compat/lrint.c
 }
+
+::apply {{} {
+    # Check the presence of a number of math functions the compiler
+    # may or may not have. Any C89 compiler should provide these.
+
+    # This works because the package's C code is compiled after the
+    # .tcl has been fully processed, regardless of relative location.
+    # This enables us to dynamically create/modify a header file
+    # needed by the C code.
+
+    foreach f {
+	hypotf sinf cosf sqrtf expf
+    } {
+	set fd [string range $f 0 end-1]
+	set d  C_HAVE_[string toupper $f]
+
+	if {[critcl::util::checkfun $f]} {
+	    critcl::util::def crimp_config.h $d
+	    puts -nonewline "(have $f) "
+	    flush stdout
+	} else {
+	    critcl::util::undef crimp_config.h $d
+	    puts -nonewline "($f -> $fd) "
+	    flush stdout
+	}
+    }
+}}
 
 # # ## ### ##### ######## #############
 ## Read and execute all .crimp files in the current directory.

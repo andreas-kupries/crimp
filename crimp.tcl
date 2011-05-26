@@ -134,12 +134,10 @@ if {[critcl::util::checkfun lrint]} {
 
 	if {[critcl::util::checkfun $f]} {
 	    critcl::util::def crimp_config.h $d
-	    puts -nonewline "(have $f) "
-	    flush stdout
+	    critcl::msg -nonewline "(have $f) "
 	} else {
 	    critcl::util::undef crimp_config.h $d
-	    puts -nonewline "($f -> $fd) "
-	    flush stdout
+	    critcl::msg -nonewline "($f -> $fd) "
 	}
     }
 }}
@@ -150,6 +148,7 @@ if {[critcl::util::checkfun lrint]} {
 critcl::owns operator/*.crimp
 ::apply {{here} {
     foreach filename [lsort [glob -nocomplain -directory [file join $here operator] *.crimp]] {
+	#critcl::msg -nonewline " \[[file rootname [file tail $filename]]\]"
 	set chan [open $filename]
 	set name [gets $chan]
 	set params "Tcl_Interp* interp"

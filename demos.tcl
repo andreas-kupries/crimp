@@ -651,6 +651,7 @@ proc thebases {} {
 }
 
 proc reload {} {
+    catch { demo_close }
     images_init
     demo_init
     after 100 {event generate .li <<ListboxSelect>>}

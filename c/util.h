@@ -46,6 +46,9 @@
 #ifdef _MSC_VER
 #define inline __inline
 #endif
+#ifdef _AIX
+#define inline
+#endif
 
 /*
  * - - -- --- ----- -------- ------------- ---------------------

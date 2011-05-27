@@ -43,8 +43,8 @@ def op_magnifier {
 	    set ih [crimp height $i]
 
 	    # Completely outside.
-	    if {($x > $iw) ||
-		($y > $ih) ||
+	    if {($x >= $iw) ||
+		($y >= $ih) ||
 		(($x+$w) < 0) ||
 		(($y+$h) < 0)} {
 		return [crimp blank [crimp::TypeOf $i] $w $h 0 0 0]
@@ -68,7 +68,7 @@ def op_magnifier {
 	    }
 	    if {($y+$h) >= $ih} {
 		set  b [expr {($y+$h) - $ih}]
-		incr w -$b
+		incr h -$b
 	    }
 
 	    #puts "$x,$y ${w}x$h in ${iw}x${ih}"
@@ -105,9 +105,6 @@ def op_magnifier {
 	    # the magnifier image overlay.
 	    log "@ $x $y"
 
-	    set px $x
-	    set py $y
-
 	    # =============================================
 	    # each magnification step is 2x. 3 thus 8x
 
@@ -115,12 +112,12 @@ def op_magnifier {
 		[magnify 3 [get [base] $x $y 16]]
 
 	    # Move the magnifier on top of the crosshair.
-	    set dx [expr {$px - $mx}]
-	    set dy [expr {$py - $my}]
+	    set dx [expr {$x - $mx}]
+	    set dy [expr {$y - $my}]
 
 	    .c move magnifier $dx $dy
-	    set mx $px
-	    set my $py
+	    set mx $x
+	    set my $y
 	}
     }
 }

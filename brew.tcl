@@ -105,6 +105,7 @@ proc _install {{dst {}}} {
 
     # Package: crimp
     package require critcl::app
+    file delete -force [pwd]/BUILD
     critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -pkg $src]
     file delete -force $dst/crimp$version
     file rename        $dst/crimp $dst/crimp$version

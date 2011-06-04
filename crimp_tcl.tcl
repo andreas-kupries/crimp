@@ -161,7 +161,7 @@ proc ::crimp::BORDER {imagetype spec} {
 	}
 	default {
 	    if {[llength $values]} {
-		return -code error "wrong\#args: no values accepted by \"$bordertype\" borders"
+		return -code error "wrong#args: no values accepted by \"$bordertype\" borders"
 	    }
 	}
     }
@@ -781,7 +781,7 @@ proc ::crimp::threshold::global::median {image} {
 
 proc ::crimp::threshold::local {image args} {
     if {![llength $args]} {
-	return -code error "wrong\#args: expected image map..."
+	return -code error "wrong#args: expected image map..."
     }
 
     set itype [::crimp::TypeOf $image]
@@ -2114,6 +2114,125 @@ proc ::crimp::filter::prewitt::y {image} {
 
 # # ## ### ##### ######## #############
 
+namespace eval ::crimp::filter::roberts {
+    namespace export x y
+    namespace ensemble create
+}
+
+proc ::crimp::filter::roberts::x {image} {
+    
+
+    return [::crimp::filter::convolve $image \
+		      [::crimp::kernel::fpmake {
+			  {0  -1  0}
+		      {1   0  0}
+	          {0   0  0}  
+			} 0] ]
+		}
+
+proc ::crimp::filter::roberts::y {image} {
+   
+    return [::crimp::filter::convolve $image \
+		       [::crimp::kernel::fpmake {
+				{-1  0  0} 
+				{ 0  1  0}
+	            { 0  0  0} 
+			} 0 ]]
+		
+}
+
+
+# # ## ### ##### ######## #############
+
+namespace eval ::crimp::filter::canny {
+    namespace export sobel deriche
+    namespace ensemble create
+}
+
+proc ::crimp::filter::canny::sobel {image {high 100} {low 50} {sigma 1}   } {
+ 
+  	set imagegrey [::crimp::filter::gauss::discrete \
+	              [::crimp::convert::2float \
+				  [::crimp::convert::2grey8 $image]] $sigma ]
+	
+	set Kx [::crimp::kernel::fpmake {
+	    {1  0 -1}
+	    {2  0 -2}
+	    {1  0 -1}} 0]
+		
+    set Ky  [::crimp::kernel::transpose $Kx]
+	set imagex   [::crimp::filter::convolve $imagegrey $Kx]
+	set imagey   [::crimp::filter::convolve $imagegrey $Ky]
+	
+	set imagexy  [::crimp::hypot $imagex $imagey  ]
+    set imagetan [::crimp::atan2 $imagey $imagex ]
+	set imagexy  [::crimp::expand_float_const $imagexy  1 1 1 1 0]
+    set imagetan [::crimp::expand_float_const $imagetan 1 1 1 1 0]
+    set imagecan [::crimp::cannyinternal $imagexy $imagetan $high $low]
+    set imagecan [::crimp::crop_float $imagecan 1 1 1 1]
+
+	return  [::crimp::convert::2grey8 $imagecan ]
+}
+
+proc ::crimp::filter::canny::deriche {image {high 150} {low 100} {sigma 0.1}   } {
+    
+	set imagegrey [::crimp::convert::2float \
+	              [::crimp::convert::2grey8 $image]]
+    
+	set imagexy [::crimp::gaussian_gradient_mag_float $imagegrey $sigma]
+   
+   
+    set imagey [::crimp::gaussian_01_float \
+			   [::crimp::gaussian_10_float $imagegrey 1 $sigma] 0 $sigma]
+    
+    set imagex [::crimp::gaussian_10_float \
+			   [::crimp::gaussian_01_float $imagegrey 1 $sigma] 0 $sigma]	
+	
+     set imagetan  [::crimp::atan2  $imagey   $imagex ] 
+	 
+	 
+	 set imagexy  [::crimp::expand_float_const $imagexy  1 1 1 1 0]
+     set imagetan [::crimp::expand_float_const $imagetan 1 1 1 1 0]
+     set imagecan [::crimp::cannyinternal $imagexy $imagetan $high $low]
+     set imagecan [::crimp::crop_float $imagecan 1 1 1 1]
+
+     return  [::crimp::convert::2grey8 $imagecan ]  	
+
+
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::filter::cleanup {image {sigma1 3.5 } {high 200} {low 150} {sigma2 1}   } {
+
+    set L [crimp convert 2float [crimp convert 2grey8 $image]]
+			
+    
+	set map [list \
+			  [binary format ff 0.0 0.0] \
+			  [binary format cucu 0 255]]
+					 
+     
+	 set overlay [::crimp::morph::gradient \
+			     [::crimp::map_2grey8_float \
+				  [::crimp::gaussian_laplacian_float \
+				       $L $sigma1] \
+				  $map]]
+				  
+				  
+	set b 	 [::crimp::filter::canny::sobel $image $high $low $sigma2] 
+
+	set overlay [::crimp::expand const $overlay  1 1 1 1 0]
+	set b       [::crimp::expand const $b        1 1 1 1 0]
+		
+		
+	return   [::crimp::crop [::crimp::cleanup_internal $overlay  $b ] 1 1 1 1]
+					 
+}
+
+# # ## ### ##### ######## #############
+
+
 namespace eval ::crimp::gradient {
     namespace export {[a-z]*}
     namespace ensemble create
@@ -2138,6 +2257,12 @@ proc ::crimp::gradient::prewitt {image} {
 		[::crimp::filter::prewitt::x $image] \
 		[::crimp::filter::prewitt::y $image]]
 }
+proc ::crimp::gradient::roberts {image} {
+    return [list \
+		[::crimp::filter::roberts::x $image] \
+		[::crimp::filter::roberts::y $image]]
+}
+
 
 proc ::crimp::gradient::polar {cgradient} {
     # cgradient = list (Gx Gy), c for cartesian
@@ -3433,7 +3558,7 @@ namespace eval ::crimp {
     namespace export invert solarize gamma degamma remap map atan2
     namespace export wavy psychedelia matrix blank filter crop
     namespace export alpha histogram max min screen add pixel
-    namespace export subtract difference multiply pyramid mapof
+    namespace export subtract difference multiply pyramid mapof 
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold gradient effect
     namespace export statistics rotate montage morph integrate

@@ -1,0 +1,94 @@
+cleanup_internal
+Tcl_Obj* imageForeObj
+Tcl_Obj* imageBackObj
+
+
+
+crimp_image*     imageF;
+crimp_image*     imageB;
+crimp_image*     result;
+int x, y,sum1,sum2;
+
+crimp_input (imageForeObj, imageF, grey8);
+crimp_input (imageBackObj, imageB, grey8);
+
+if (!crimp_eq_dim (imageF, imageB)) {
+    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_like (imageB);
+
+/*
+ * Initialization, of border pixels not written to by the
+ * later phases.
+ */
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+         GREY8 (result , x, y) = BLACK;
+	}
+}
+     /*  The zeros of the L-of-G have the convenient property that they are
+         always simple closed curves.  THIS procedure follows these curves
+         and did Canny thresholding, deleting the entire curve if no point along
+         it meets Canny's criterion .
+		 
+		 Currently the area under process is obtain by leaving 6 pixel from each side
+		 this is due to to fact that the boundary pixel somehow gets carried along
+		 and increases the clutter.
+		 
+		 
+     */
+
+for (y = 6; y < result->h - 6; y++) {
+    for (x = 5; x < result->w - 6; x++) {
+	        if ( GREY8 (imageF, x, y) == WHITE ) {
+				sum1 = GREY8 (imageB, x, y) ;
+				    		   
+			    sum2 = GREY8 (result, x-1, y-1) + GREY8 (result, x-1, y)   + 
+				       GREY8 (result, x, y-1)   + GREY8 (result, x+1, y-1) ; 		    
+ 			        
+				if ( (sum1 >= WHITE) || (sum2 >= WHITE ))
+				    GREY8 (result, x, y) = WHITE ;	
+			} 
+		 } 
+    }
+	
+
+	
+	
+for (y = result->h - 7; y > 5 ; y--) {
+    for (x = result->w - 7 ; x > 5 ; x--) {
+	        if ( GREY8 (imageF, x, y) == WHITE ) {
+				sum1  = GREY8 (imageB, x, y) ;
+						   
+			    sum2 = GREY8 (result, x-1, y+1) + GREY8 (result, x, y+1)   + 
+					   GREY8 (result, x+1, y)   + GREY8 (result, x+1, y+1) ; 		    
+ 			        
+				if ( (sum1 >= WHITE) || (sum2 >= WHITE) )
+				    GREY8 (result, x, y) = WHITE ;	
+			} 
+		 } 
+    }
+	
+
+	
+	
+	
+		
+	
+	
+	
+	
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

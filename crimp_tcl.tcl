@@ -2232,7 +2232,70 @@ proc ::crimp::filter::cleanup {image {sigma1 3.5 } {high 200} {low 150} {sigma2 
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::filter::wiener {image {radius 2}   } {
 
+    set length  [expr $radius*2+1] 
+    set itype   [::crimp::TypeOf  $image]    
+   
+    if { ($itype eq "rgb")  || 
+	     ($itype eq "rgba") || 
+		 ($itype eq "hsv" ) } {
+	  return -code error "Wiener filtering is not supported for image type \"$itype\" must be grey8, grey16 or grey32"
+	}
+	
+    set image   [::crimp::convert 2float $image ]
+ 
+    
+	
+    # calcucation of Local MEAN for later use
+    set localmean [::crimp::filter mean $image $radius]
+	
+	# calcucation of Local Variance for later use
+	set Kmatrix [lrepeat $length [lrepeat $length 1]]
+    set kernel  [crimp::kernel::fpmake  $Kmatrix 0]  
+	set convolvedimage [crimp::filter::convolve \
+	                     [::crimp::square $image ] $kernel]
+    set divisorimage   [::crimp::blank float \
+					    {*}[::crimp::dimensions $convolvedimage] \
+					    [expr $length*$length] ]
+    set localvar [::crimp::subtract \
+                   [::crimp::divide $convolvedimage $divisorimage ] \
+					    [::crimp::square $localmean ] ]
+	
+	# Setup for noise calculation and a blank BLACK image
+    
+	set stat     [::crimp::statistics basic $localvar ]
+	set chname   [lindex [dict get $stat   channels] 0]
+	set noise    [dict get \
+	                [dict get \
+				      [dict get $stat channel] \
+				    $chname]  mean]
+	set  noiseimage     [::crimp::blank float \
+					    {*}[::crimp::dimensions $convolvedimage] $noise ]
+	
+	set zeros     [::crimp::blank float \
+					    {*}[::crimp::dimensions $image] 0 ]			
+	
+	#  Calculate result
+    #  Calculation is split up to minimize use of memory
+    #  for temp arrays.
+	
+	set  f        [::crimp::subtract $image    $localmean ]
+    set  image    [::crimp::subtract $localvar $noiseimage]
+    set  image    [::crimp::max      $image    $zeros     ]
+    set  localvar [::crimp::max      $localvar $noiseimage]
+    set  f        [::crimp::divide   $f        $localvar  ]
+    set  f        [::crimp::multiply $f        $image     ]
+    set  f        [::crimp::add      $f        $localmean ]
+   
+   
+    return [crimp convert 2$itype  $f ]
+
+
+
+}
+
+# # ## ### ##### ######## #############
 namespace eval ::crimp::gradient {
     namespace export {[a-z]*}
     namespace ensemble create

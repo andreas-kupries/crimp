@@ -2147,6 +2147,12 @@ proc ::crimp::filter::roberts::y {image} {
 namespace eval ::crimp::filter::canny {
     namespace export sobel deriche
     namespace ensemble create
+
+#	References
+#  1. Rafael C. Gonzalez , Richards E. Woods ,Digital Image Processing (Third Edition ) 
+#	  In Point, Line and Edge Detection ,pages 719-723 
+#  2. http://en.wikipedia.org/wiki/Connected_Component_Labeling 
+
 }
 
 proc ::crimp::filter::canny::sobel {image {high 100} {low 50} {sigma 1}   } {
@@ -2234,12 +2240,15 @@ proc ::crimp::filter::cleanup {image {sigma1 3.5 } {high 200} {low 150} {sigma2 
 
 proc ::crimp::filter::wiener {image {radius 2}   } {
 
-    set length  [expr $radius*2+1] 
+#	Reference
+#  1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
+#	  In Image Restoration and Reconstruction , pages 352-357 
+
+
+    set length  [expr {$radius*2+1 }] 
     set itype   [::crimp::TypeOf  $image]    
    
-    if { ($itype eq "rgb")  || 
-	     ($itype eq "rgba") || 
-		 ($itype eq "hsv" ) } {
+    if { $itype in { rgb rgba hsv } } {
 	  return -code error "Wiener filtering is not supported for image type \"$itype\" must be grey8, grey16 or grey32"
 	}
 	
@@ -2265,12 +2274,8 @@ proc ::crimp::filter::wiener {image {radius 2}   } {
 	# Setup for noise calculation and a blank BLACK image
     
 	set stat     [::crimp::statistics basic $localvar ]
-	set chname   [lindex [dict get $stat   channels] 0]
-	set noise    [dict get \
-	                [dict get \
-				      [dict get $stat channel] \
-				    $chname]  mean]
-	set  noiseimage     [::crimp::blank float \
+	set noise    [dict get $stat channel value mean]
+	set noiseimage     [::crimp::blank float \
 					    {*}[::crimp::dimensions $convolvedimage] $noise ]
 	
 	set zeros     [::crimp::blank float \

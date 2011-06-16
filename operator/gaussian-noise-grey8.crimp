@@ -1,0 +1,39 @@
+gaussian_noise_grey8
+Tcl_Obj* imageXObj
+Tcl_Obj* imageYObj
+double mean
+double variance
+ 
+
+crimp_image* imageX;
+crimp_image* imageY;
+crimp_image* result;
+int          x, y;
+double      rand_no ;
+crimp_input (imageXObj, imageX, grey8);
+crimp_input (imageYObj, imageY, float);
+result = crimp_new_float (imageX->w, imageX->h);
+
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+	    rand_no = FLOATP (imageY ,x,y) ;
+		rand_no = sqrt( (-2.0f ) * log(rand_no) ) * sin( 6.2832f * rand_no ) ;
+		FLOATP (result ,x,y) = (GREY8 (imageX ,x,y) / 255.0f ) 
+                        		+ ( sqrt(variance) * rand_no ) + mean  ;  
+	}
+}
+
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

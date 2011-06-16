@@ -1,0 +1,39 @@
+salt_pepper_grey8
+Tcl_Obj* imageXObj
+double value 
+
+crimp_image* imageX;
+crimp_image* result;
+int          x, y;
+double       randval ;
+crimp_input (imageXObj, imageX, grey8);
+result = crimp_new_grey8 (imageX->w, imageX->h);
+
+srand(time(NULL));
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+	    randval= ( rand() / ( RAND_MAX + 1.0f ))  ;
+		if ( (randval >= 0.0f ) && ( randval < (value/2) )  )
+		GREY8 (result, x, y) = BLACK  ;
+		
+		else if ( (randval >= (value/2) ) && ( randval < value )   )
+		GREY8 (result, x, y) = WHITE ;
+		
+		else
+		GREY8 (result, x, y) = GREY8 (imageX , x ,y);
+	}
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

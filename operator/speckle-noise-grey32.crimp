@@ -1,0 +1,37 @@
+speckle_noise_grey32
+Tcl_Obj* imageXObj
+Tcl_Obj* imageYObj
+double variance
+ 
+
+crimp_image* imageX;
+crimp_image* imageY;
+crimp_image* result;
+int          x, y;
+double      temp ;
+crimp_input (imageXObj, imageX, grey32);
+crimp_input (imageYObj, imageY, float);
+result = crimp_new_float (imageX->w, imageX->h);
+
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+	   	temp = GREY32 (imageX ,x,y) / 4294967295.0f ;
+		FLOATP (result ,x,y) =  temp + ( sqrt(10.0f * variance ) 
+		                        * temp * ( FLOATP (imageY ,x,y) - 0.5f )  ) ;  
+	}
+}
+
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

@@ -2241,21 +2241,16 @@ proc ::crimp::filter::cleanup {image {sigma1 3.5 } {high 200} {low 150} {sigma2 
 proc ::crimp::filter::wiener {image {radius 2}   } {
 
 #	Reference
-#  1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
+#    1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
 #	  In Image Restoration and Reconstruction , pages 352-357 
 
 
     set length  [expr {$radius*2+1 }] 
     set itype   [::crimp::TypeOf  $image]    
    
-    if { $itype in { rgb rgba hsv } } {
-	  return -code error "Wiener filtering is not supported for image type \"$itype\" must be grey8, grey16 or grey32"
-	}
-	
-    set image   [::crimp::convert 2float $image ]
- 
-    
-	
+    if { $itype in { grey8 grey16 grey32 } } {
+	set image   [::crimp::convert 2float $image ]
+ 	
     # calcucation of Local MEAN for later use
     set localmean [::crimp::filter mean $image $radius]
 	
@@ -2293,9 +2288,23 @@ proc ::crimp::filter::wiener {image {radius 2}   } {
     set  f        [::crimp::multiply $f        $image     ]
     set  f        [::crimp::add      $f        $localmean ]
    
+    return [crimp::convert::2$itype  $f ]
    
-    return [crimp convert 2$itype  $f ]
-
+   } elseif { $itype in { rgb rgba hsv } } {
+	  set CHAN   [::crimp::split $image]
+	     set R   [::crimp::filter::wiener [lindex $CHAN 0] $radius ] 
+         set G   [::crimp::filter::wiener [lindex $CHAN 1] $radius ] 
+         set B   [::crimp::filter::wiener [lindex $CHAN 2] $radius ] 
+    
+	    if { $itype eq "rgba"} {
+            return  [::crimp::join_2rgba $R $G $B [lindex $CHAN 3] ]
+	    } else {
+		    return  [::crimp::join_2rgb $R $G $B ] 
+	    }
+	}	
+   else {
+	  return -code error "Wiener filtering is not supported for image type \"$itype\" must be grey8, grey16 or grey32"
+	}
 
 
 }
@@ -2351,6 +2360,124 @@ proc ::crimp::gradient::visual {pgradient} {
     set v [::crimp::FITFLOAT $m]
     return [::crimp::convert::2rgb [::crimp::join::2hsv $h $s $v]]
 }
+# # ## ### ##### ######## #############
+
+
+namespace eval ::crimp::noise {
+    namespace export {[a-z]*}
+    namespace ensemble create
+
+}
+proc ::crimp::noise::saltpepper { image {value 0.05} } {
+
+    #	Reference
+    #    1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
+    #	  In Image Restoration and Reconstruction , pages 316-317 
+    #     Also known as IMPULSE Noise
+	#     THE Parameter Value Ranges Between 0 - 1 ,
+	#     Changes about VALUE * total no of PIXELS
+
+
+   if { ($value < 0 ) || ( $value > 1 ) } {
+    return -code error "THE Range Of Value MUST be between ( 0 - 1 ) For SALT PEPPER NOISE  "
+   }   
+	
+    set itype   [::crimp::TypeOf  $image]    
+    if { $itype in { grey8 grey16 grey32 rgb rgba  } } {
+	  return [::crimp::salt_pepper_$itype  $image $value ]
+	} else {
+	  return -code error "SALT PEPPER NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+	}
+
+}
+
+proc ::crimp::noise::gaussian { image {mean 0} {variance 0.05}} {
+
+    #	Reference
+    #    1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
+    #	  In Image Restoration and Reconstruction , pages 314-315 
+    #     Adds Gaussian Noise of given MEAN and VARIANCE 
+
+
+
+    set itype     [::crimp::TypeOf  $image]    
+   
+    set ranimage  [::crimp::rangen [::crimp::height $image ] [::crimp::width $image ] ]
+    if { $itype in { grey8 grey16 grey32 } } {
+	  return [::crimp::convert::2$itype \
+	          [::crimp::FITFLOAT  \
+			     [::crimp::gaussian_noise_$itype  $image $ranimage $mean $variance ] ] ]
+	} elseif { $itype in { rgb rgba  } } {
+	     set CHAN   [::crimp::split $image]
+	     set R  [::crimp::convert::2grey8 \
+	              [::crimp::FITFLOAT  \
+			         [::crimp::gaussian_noise_grey8 [lindex $CHAN 0] $ranimage $mean $variance ]]] 
+    
+	     set G  [::crimp::convert::2grey8 \
+	               [::crimp::FITFLOAT  \
+			          [::crimp::gaussian_noise_grey8 [lindex $CHAN 1] $ranimage $mean $variance ]]] 
+    
+         set B  [::crimp::convert::2grey8 \
+	               [::crimp::FITFLOAT  \
+			          [::crimp::gaussian_noise_grey8 [lindex $CHAN 2] $ranimage $mean $variance ]]] 
+    
+	    if { $itype eq "rgba"} {
+            return  [::crimp::join_2rgba $R $G $B [lindex $CHAN 3] ]
+	    } else {
+		    return  [::crimp::join_2rgb $R $G $B ]
+	    }
+  	} else {
+	  return -code error "GAUSSIAN NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+	}
+
+}
+
+
+proc ::crimp::noise::speckle { image {variance 0.05}} {
+
+
+    #	Reference
+    #    1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
+    #	  In Image Restoration and Reconstruction , pages 315-316
+    #	 Also Known As multiplicative noise 
+	#    It's in direct proportion to the grey level PIXEL VALUE in any area
+    #    Adds RANDOM Noise of ZERO MEAN and Given VARIANCE 
+
+
+    set itype     [::crimp::TypeOf  $image]    
+   
+    set ranimage  [::crimp::rangen [::crimp::height $image ] [::crimp::width $image ] ]
+    if { $itype in { grey8 grey16 grey32 } } {
+	  return [::crimp::convert::2$itype \
+	          [::crimp::FITFLOAT  \
+			     [::crimp::speckle_noise_$itype  $image $ranimage $variance ] ] ]
+	} elseif { $itype in { rgb rgba  } } {
+	     set CHAN   [::crimp::split $image]
+	     set R  [::crimp::convert::2grey8 \
+	               [::crimp::FITFLOAT  \
+			          [::crimp::speckle_noise_grey8 [lindex $CHAN 0] $ranimage $variance ]]] 
+    
+	     set G  [::crimp::convert::2grey8 \
+	               [::crimp::FITFLOAT  \
+			          [::crimp::speckle_noise_grey8 [lindex $CHAN 1] $ranimage $variance ]]] 
+    
+         set B  [::crimp::convert::2grey8 \
+	               [::crimp::FITFLOAT  \
+			          [::crimp::speckle_noise_grey8 [lindex $CHAN 2] $ranimage $variance ]]] 
+    
+	     if { $itype eq "rgba"} {
+            return  [::crimp::join_2rgba $R $G $B [lindex $CHAN 3] ]
+	     } else {
+		    return  [::crimp::join_2rgb $R $G $B ]
+	     }
+  	} else {
+	  return -code error "SPECKLE NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+	}
+
+}
+
+
+
 
 # # ## ### ##### ######## #############
 ## Commands for the creation and manipulation of transformation
@@ -3630,7 +3757,7 @@ namespace eval ::crimp {
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold gradient effect
     namespace export statistics rotate montage morph integrate
-    namespace export fft square meta resize warp transform contrast
+    namespace export fft square meta resize warp transform contrast noise
     #
     namespace ensemble create
 }

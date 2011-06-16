@@ -1,0 +1,29 @@
+rangen
+int row 
+int column 
+
+
+crimp_image* result;
+int          x, y;
+result = crimp_new_float (column, row);
+
+
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+		FLOATP (result, x, y) =  ( rand() / ( RAND_MAX + 1.0f ) ) ;
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

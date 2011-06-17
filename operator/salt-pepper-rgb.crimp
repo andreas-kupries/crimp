@@ -1,19 +1,21 @@
 salt_pepper_rgb
-Tcl_Obj* imageXObj
+Tcl_Obj* imageObj
+Tcl_Obj* imageRANObj
 double value 
 
-crimp_image* imageX;
+crimp_image* image;
+crimp_image* image_random;
 crimp_image* result;
 int          x, y;
 double       randval ;
-crimp_input (imageXObj, imageX, rgb);
-result = crimp_new_rgb (imageX->w, imageX->h);
+crimp_input (imageObj   , image       , rgb);
+crimp_input (imageRANObj, image_random, float);
+result = crimp_new_rgb (image->w, image->h);
 
-srand(time(NULL));
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	    randval= ( rand() / ( RAND_MAX + 1.0f ))  ;
+	    randval= FLOATP (image_random , x ,y);
 		
 		if ( (randval >= 0.0f ) && ( randval < (value/2) )  ) {
 		     R (result, x, y) = BLACK  ;
@@ -28,9 +30,9 @@ for (y = 0; y < result->h; y++) {
 		}
 		
 		else {
-		     R (result, x, y) = R (imageX , x ,y);
-		     G (result, x, y) = G (imageX , x ,y);
-		     B (result, x, y) = B (imageX , x ,y);
+		     R (result, x, y) = R (image , x ,y);
+		     G (result, x, y) = G (image , x ,y);
+		     B (result, x, y) = B (image , x ,y);
 		}
 		
     }

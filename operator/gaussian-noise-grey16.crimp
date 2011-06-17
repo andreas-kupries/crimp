@@ -1,25 +1,25 @@
 gaussian_noise_grey16
-Tcl_Obj* imageXObj
-Tcl_Obj* imageYObj
+Tcl_Obj* imageObj
+Tcl_Obj* imageRANObj
 double mean
 double variance
  
 
-crimp_image* imageX;
-crimp_image* imageY;
+crimp_image* image;
+crimp_image* imageRan;
 crimp_image* result;
 int          x, y;
 double      rand_no ;
-crimp_input (imageXObj, imageX, grey16);
-crimp_input (imageYObj, imageY, float );
-result = crimp_new_float (imageX->w, imageX->h);
+crimp_input (imageObj   , image   , grey16);
+crimp_input (imageRANObj, imageRan, float );
+result = crimp_new_float (image->w, image->h);
 
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	    rand_no = FLOATP (imageY ,x,y) ;
-		rand_no = sqrt( (-2.0f ) * log(rand_no) ) * sin( 6.2832f * rand_no ) ;
-		FLOATP (result ,x,y) = (GREY16 (imageX ,x,y) / 65536.0f ) 
+	    rand_no = FLOATP (imageRan ,x,y) ;
+		rand_no = sqrt( (-2.0f ) * log(rand_no) ) * sin( 2 * M_PI * rand_no ) ;
+		FLOATP (result ,x,y) = (GREY16 (image ,x,y) / 65536.0f ) 
                         		+ ( sqrt(variance) * rand_no ) + mean  ;  
 	}
 }

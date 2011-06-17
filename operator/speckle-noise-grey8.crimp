@@ -1,24 +1,24 @@
 speckle_noise_grey8
-Tcl_Obj* imageXObj
-Tcl_Obj* imageYObj
+Tcl_Obj* imageObj
+Tcl_Obj* imageRANObj
 double variance
  
 
-crimp_image* imageX;
-crimp_image* imageY;
+crimp_image* image;
+crimp_image* imageRan;
 crimp_image* result;
 int          x, y;
-double      temp ;
-crimp_input (imageXObj, imageX, grey8);
-crimp_input (imageYObj, imageY, float);
-result = crimp_new_float (imageX->w, imageX->h);
+double       temp ;
+crimp_input (imageObj   , image   , grey8);
+crimp_input (imageRANObj, imageRan, float);
+result = crimp_new_float (image->w, image->h);
 
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	   	temp = GREY8 (imageX ,x,y) / 255.0f ;
+	   	temp = GREY8 (image ,x,y) / 255.0f ;
 		FLOATP (result ,x,y) =  temp + ( sqrt(10.0f * variance ) 
-		                        * temp * ( FLOATP (imageY ,x,y) - 0.5f )  ) ;  
+		                        * temp * ( FLOATP (imageRan ,x,y) - 0.5f )  ) ;  
 	}
 }
 

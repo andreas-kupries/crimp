@@ -1,20 +1,22 @@
 salt_pepper_grey32
-Tcl_Obj* imageXObj
+Tcl_Obj* imageObj
+Tcl_Obj* imageRANObj
 double value 
 
-crimp_image* imageX;
+crimp_image* image;
+crimp_image* image_random;
 crimp_image* result;
 int          x, y;
 double       randval ;
-crimp_input (imageXObj, imageX, grey32);
-result = crimp_new_grey32 (imageX->w, imageX->h);
+crimp_input (imageObj   , image       , grey32);
+crimp_input (imageRANObj, image_random, float);
+result = crimp_new_grey32 (image->w, image->h);
 
-srand(time(NULL));
+
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	    randval= ( rand() / ( RAND_MAX + 1.0f ))  ;
-		
+	    randval = FLOATP (image_random , x ,y);
 		if ( (randval >= 0.0f ) && ( randval < (value/2) )  )
 		GREY32 (result, x, y) = BLACK  ;
 		
@@ -22,7 +24,7 @@ for (y = 0; y < result->h; y++) {
 		GREY32 (result, x, y) = WHITE ;
 		
 		else
-		GREY32 (result, x, y) = GREY32 (imageX , x ,y);
+		GREY32 (result, x, y) = GREY32 (image , x ,y);
 	}
 }
 

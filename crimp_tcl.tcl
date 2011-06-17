@@ -2290,23 +2290,22 @@ proc ::crimp::filter::wiener {image {radius 2}   } {
    
     return [crimp::convert::2$itype  $f ]
    
-   } elseif { $itype in { rgb rgba hsv } } {
-	  set CHAN   [::crimp::split $image]
-	     set R   [::crimp::filter::wiener [lindex $CHAN 0] $radius ] 
-         set G   [::crimp::filter::wiener [lindex $CHAN 1] $radius ] 
-         set B   [::crimp::filter::wiener [lindex $CHAN 2] $radius ] 
-    
-	    if { $itype eq "rgba"} {
-            return  [::crimp::join_2rgba $R $G $B [lindex $CHAN 3] ]
-	    } else {
-		    return  [::crimp::join_2rgb $R $G $B ] 
-	    }
-	}	
-   else {
-	  return -code error "Wiener filtering is not supported for image type \"$itype\" must be grey8, grey16 or grey32"
+   } elseif { $itype in { rgb rgba } } {
+	   set CHAN [::crimp::split $image]
+       set filtered {}
+       foreach chan [lrange $CHAN 0 2] {
+
+              lappend filtered [::crimp::filter::wiener $chan $radius]
+       }
+       if { $itype eq "rgba"} {
+               lappend filtered [lindex $CHAN 3]
+
+       }
+       return [::crimp::join_2$itype {*}$filtered]
+
+	} else {
+	  return -code error "Wiener filtering is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb, rgba "
 	}
-
-
 }
 
 # # ## ### ##### ######## #############
@@ -2377,16 +2376,18 @@ proc ::crimp::noise::saltpepper { image {value 0.05} } {
 	#     THE Parameter Value Ranges Between 0 - 1 ,
 	#     Changes about VALUE * total no of PIXELS
 
-
+   set itype     [::crimp::TypeOf  $image]    
+   
    if { ($value < 0 ) || ( $value > 1 ) } {
     return -code error "THE Range Of Value MUST be between ( 0 - 1 ) For SALT PEPPER NOISE  "
    }   
-	
-    set itype   [::crimp::TypeOf  $image]    
-    if { $itype in { grey8 grey16 grey32 rgb rgba  } } {
-	  return [::crimp::salt_pepper_$itype  $image $value ]
-	} else {
-	  return -code error "SALT PEPPER NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+   
+    set ranimage  [::crimp::rangen [::crimp::height $image ] [::crimp::width $image ] ]
+   
+	if {[::crimp::Has salt_pepper_$itype]} {
+       return [::crimp::salt_pepper_$itype  $image $ranimage $value]
+   } else {
+	 return -code error "SALT PEPPER NOISE is not supported for image type \"$itype\" "
 	}
 
 }
@@ -2398,8 +2399,6 @@ proc ::crimp::noise::gaussian { image {mean 0} {variance 0.05}} {
     #	  In Image Restoration and Reconstruction , pages 314-315 
     #     Adds Gaussian Noise of given MEAN and VARIANCE 
 
-
-
     set itype     [::crimp::TypeOf  $image]    
    
     set ranimage  [::crimp::rangen [::crimp::height $image ] [::crimp::width $image ] ]
@@ -2408,25 +2407,20 @@ proc ::crimp::noise::gaussian { image {mean 0} {variance 0.05}} {
 	          [::crimp::FITFLOAT  \
 			     [::crimp::gaussian_noise_$itype  $image $ranimage $mean $variance ] ] ]
 	} elseif { $itype in { rgb rgba  } } {
-	     set CHAN   [::crimp::split $image]
-	     set R  [::crimp::convert::2grey8 \
-	              [::crimp::FITFLOAT  \
-			         [::crimp::gaussian_noise_grey8 [lindex $CHAN 0] $ranimage $mean $variance ]]] 
-    
-	     set G  [::crimp::convert::2grey8 \
-	               [::crimp::FITFLOAT  \
-			          [::crimp::gaussian_noise_grey8 [lindex $CHAN 1] $ranimage $mean $variance ]]] 
-    
-         set B  [::crimp::convert::2grey8 \
-	               [::crimp::FITFLOAT  \
-			          [::crimp::gaussian_noise_grey8 [lindex $CHAN 2] $ranimage $mean $variance ]]] 
-    
-	    if { $itype eq "rgba"} {
-            return  [::crimp::join_2rgba $R $G $B [lindex $CHAN 3] ]
-	    } else {
-		    return  [::crimp::join_2rgb $R $G $B ]
-	    }
-  	} else {
+	
+	   set CHAN [::crimp::split $image]
+       set filtered {}
+       foreach chan [lrange $CHAN 0 2] {
+		  lappend filtered  [::crimp::convert::2grey8 \
+	                          [::crimp::FITFLOAT  \
+			                     [::crimp::gaussian_noise_grey8 $chan $ranimage $mean $variance ]]] 
+		}
+       if { $itype eq "rgba"} {
+               lappend filtered [lindex $CHAN 3]
+       }
+       return [::crimp::join_2$itype {*}$filtered]
+	
+	} else {
 	  return -code error "GAUSSIAN NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
 	}
 
@@ -2452,32 +2446,24 @@ proc ::crimp::noise::speckle { image {variance 0.05}} {
 	          [::crimp::FITFLOAT  \
 			     [::crimp::speckle_noise_$itype  $image $ranimage $variance ] ] ]
 	} elseif { $itype in { rgb rgba  } } {
-	     set CHAN   [::crimp::split $image]
-	     set R  [::crimp::convert::2grey8 \
-	               [::crimp::FITFLOAT  \
-			          [::crimp::speckle_noise_grey8 [lindex $CHAN 0] $ranimage $variance ]]] 
-    
-	     set G  [::crimp::convert::2grey8 \
-	               [::crimp::FITFLOAT  \
-			          [::crimp::speckle_noise_grey8 [lindex $CHAN 1] $ranimage $variance ]]] 
-    
-         set B  [::crimp::convert::2grey8 \
-	               [::crimp::FITFLOAT  \
-			          [::crimp::speckle_noise_grey8 [lindex $CHAN 2] $ranimage $variance ]]] 
-    
-	     if { $itype eq "rgba"} {
-            return  [::crimp::join_2rgba $R $G $B [lindex $CHAN 3] ]
-	     } else {
-		    return  [::crimp::join_2rgb $R $G $B ]
-	     }
-  	} else {
+	 
+	   set CHAN [::crimp::split $image]
+       set filtered {}
+       foreach chan [lrange $CHAN 0 2] {
+		  lappend filtered  [::crimp::convert::2grey8 \
+            	               [::crimp::FITFLOAT  \
+			                     [::crimp::speckle_noise_grey8 $chan $ranimage $variance ]]] 
+		}
+       if { $itype eq "rgba"} {
+               lappend filtered [lindex $CHAN 3]
+       }
+       return [::crimp::join_2$itype {*}$filtered]
+	
+	} else {
 	  return -code error "SPECKLE NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
 	}
 
 }
-
-
-
 
 # # ## ### ##### ######## #############
 ## Commands for the creation and manipulation of transformation

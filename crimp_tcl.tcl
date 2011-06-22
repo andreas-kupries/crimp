@@ -2665,6 +2665,28 @@ proc ::crimp::transform::CHECK {transform {prefix {}}} {
 }
 
 # # ## ### ##### ######## #############
+
+proc ::crimp::transform::logpolar { image xwidth xheight { xcenter 0} { ycenter 0} { corners 1} } {
+
+
+ set itype     [::crimp::TypeOf  $image]    
+
+ set width     [::crimp::width  $image]
+ set height    [::crimp::height $image]
+ set hcenter   [expr { $width  / 2 + $xcenter  }  ]
+ set vcenter   [expr { $height / 2 + $ycenter  }  ]
+ 
+ 
+if {[::crimp::Has lpt_$itype]} {
+       return [::crimp::lpt_$itype  $image $width $height $hcenter $vcenter $xwidth $xheight $corners]
+   } else {
+	 return -code error "LOG POLAR is not supported for image type \"$itype\" "
+	}
+
+}
+
+# # ## ### ##### ######## #############
+
 ## warping images
 
 namespace eval ::crimp::warp {

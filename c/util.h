@@ -75,6 +75,14 @@
 #define sqrtf(x) sqrt(x)
 #endif
 
+#ifndef C_HAVE_ATAN2F
+#define atan2f(x,y) atan(x,y)
+#endif
+
+#ifndef C_HAVE_LOGF
+#define logf(x) log(x)
+#endif
+
 /*
  * Assertions support in general, and asserting the proper range of an array
  * index especially.

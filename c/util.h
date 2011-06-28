@@ -5,7 +5,17 @@
  * (C) 2010.
  */
 
+#include "common.h"
 #include "crimp_config.h"
+#include <f2c.h>
+
+/*
+ * Common declarations to access the FFT functions (fftpack).
+ */
+
+extern int rffti_ (integer *n, real *wsave);
+extern int rfftf_ (integer *n, real* r, real *wsave);
+extern int rfftb_ (integer *n, real* r, real *wsave);
 
 /*
  * Convenience macros for the allocation of structures and arrays.
@@ -31,8 +41,6 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define CLAMP(min, v, max) ((v) < (min) ? (min) : (v) < (max) ? (v) : (max))
 #define CLAMPT(min, t, v, max) ((v) < (min) ? (min) : (v) < (max) ? ((t) (v)) : (max))
-
-#define RANGEOK(i,n) ((0 <= (i)) && (i < (n)))
 
 #define MINVAL        (0)
 #define MAXVAL_GREY8  (255)
@@ -73,24 +81,6 @@
 
 #ifndef C_HAVE_SQRTF
 #define sqrtf(x) sqrt(x)
-#endif
-
-/*
- * Assertions support in general, and asserting the proper range of an array
- * index especially.
- */
-
-#undef  CRIMP_DEBUG
-#define CRIMP_DEBUG 1
-
-#ifdef CRIMP_DEBUG
-#define XSTR(x) #x
-#define STR(x) XSTR(x)
-#define ASSERT(x,msg) if (!(x)) { Tcl_Panic (msg " (" #x "), in file " __FILE__ " @line " STR(__LINE__));}
-#define ASSERT_BOUNDS(i,n) ASSERT (RANGEOK(i,n),"array index out of bounds: " STR(i) " > " STR(n))
-#else
-#define ASSERT(x,msg)
-#define ASSERT_BOUNDS(i,n)
 #endif
 
 

@@ -57,22 +57,22 @@ if (!crimp_require_dim (alphaMap, 256, 256)) {
     return TCL_ERROR;
 }
 
-if (!RANGEOK (redControlChannel,3)) {
+if (!CRIMP_RANGEOK (redControlChannel,3)) {
     Tcl_SetResult(interp, "bad control for red map, expected index in (0...3)", TCL_STATIC);
     return TCL_ERROR;
 }
 
-if (!RANGEOK (greenControlChannel,3)) {
+if (!CRIMP_RANGEOK (greenControlChannel,3)) {
     Tcl_SetResult(interp, "bad control for green map, expected index in (0...3)", TCL_STATIC);
     return TCL_ERROR;
 }
 
-if (!RANGEOK (blueControlChannel,3)) {
+if (!CRIMP_RANGEOK (blueControlChannel,3)) {
     Tcl_SetResult(interp, "bad control for blue map, expected index in (0...3)", TCL_STATIC);
     return TCL_ERROR;
 }
 
-if (!RANGEOK (alphaControlChannel,3)) {
+if (!CRIMP_RANGEOK (alphaControlChannel,3)) {
     Tcl_SetResult(interp, "bad control for alpha map, expected index in (0...3)", TCL_STATIC);
     return TCL_ERROR;
 }

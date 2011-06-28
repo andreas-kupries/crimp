@@ -25,8 +25,8 @@ double* nwi;
 
 crimp_input (imageObj, image, grey8);
 
-ASSERT (sigma_space >= 1, "Cannot use sigma/s < 1");
-ASSERT (sigma_range >= 1, "Cannot use sigma/r < 1");
+CRIMP_ASSERT (sigma_space >= 1, "Cannot use sigma/s < 1");
+CRIMP_ASSERT (sigma_range >= 1, "Cannot use sigma/r < 1");
 
 result = crimp_new_like (image);
 

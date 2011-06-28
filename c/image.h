@@ -1,12 +1,12 @@
 #ifndef CRIMP_IMAGE_H
 #define CRIMP_IMAGE_H
 /*
- * CRIMP :: Image Declarations, and API.
- * (C) 2010.
+ * CRIMP :: Image Declarations, and API :: PUBLIC
+ * (C) 2010 - 2011
  */
 
+#include <common.h>
 #include <image_type.h>
-#include <util.h>
 
 /*
  * Structures describing images.
@@ -26,8 +26,8 @@ typedef struct crimp_image {
  * Pixel Access Macros. General access to a 'color' channel.
  */
 
-#define CHAN(iptr,c,x,y) ((c) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
-#define CH(iptr,c,x,y)   (iptr)->pixel [CHAN (iptr,c,x,y)]
+#define CRIMP_CHAN(iptr,c,x,y) ((c) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define CH(iptr,c,x,y)   (iptr)->pixel [CRIMP_CHAN (iptr,c,x,y)]
 
 /*
  * Pixel Access Macros. RGBA / RGB
@@ -68,20 +68,20 @@ typedef struct crimp_image {
  *       bytes exactly, by definition.
  */
 
-#define INDEX(iptr,x,y) \
+#define CRIMP_INDEX(iptr,x,y) \
     (((x)*SZ (iptr)) + \
      ((y)*SZ (iptr)*(((size_t) (iptr)->w))))
 
-#define GREY8(iptr,x,y)  *((unsigned char*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
-#define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [INDEX (iptr,x,y)]))
-#define GREY32(iptr,x,y) *((unsigned int* )  &((iptr)->pixel [INDEX (iptr,x,y)]))
-#define FLOATP(iptr,x,y) *((float*)          &((iptr)->pixel [INDEX (iptr,x,y)]))
+#define GREY8(iptr,x,y)  *((unsigned char*)  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define GREY32(iptr,x,y) *((unsigned int* )  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define FLOATP(iptr,x,y) *((float*)          &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
 
 /*
  * Pixel as 2-complement numbers (-128..127, instead of unsigned 0..255).
  */
 
-#define SGREY8(iptr,x,y) *((signed char*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
+#define SGREY8(iptr,x,y) *((signed char*)  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
 
 /*
  * Pixel Access Macros. HSV.
@@ -109,20 +109,8 @@ typedef struct crimp_image {
  * Area calculations macros.
  */
 
-#define RECT_AREA(w,h) (((size_t) (w)) * (h))
-#define crimp_image_area(iptr) (RECT_AREA ((iptr)->w, (iptr)->h))
-
-/*
- * Convenient checking of image types.
- */
-
-#define ASSERT_IMGTYPE(image,imtype) \
-    ASSERT ((image)->itype == crimp_imagetype_find ("crimp::image::" STR(imtype)), \
-	    "expected image type " STR(imtype))
-
-#define ASSERT_NOTIMGTYPE(image,imtype) \
-    ASSERT ((image)->itype != crimp_imagetype_find ("crimp::image::" STR(imtype)), \
-	    "unexpected image type " STR(imtype))
+#define CRIMP_RECT_AREA(w,h) (((size_t) (w)) * (h))
+#define crimp_image_area(iptr) (CRIMP_RECT_AREA ((iptr)->w, (iptr)->h))
 
 /*
  * API :: Core. Image lifecycle management.
@@ -157,7 +145,7 @@ extern int      crimp_get_image_from_obj (Tcl_Interp*   interp,
     if (crimp_get_image_from_obj (interp, (objvar), &(imagevar)) != TCL_OK) { \
 	return TCL_ERROR; \
     } \
-    ASSERT_IMGTYPE (imagevar, itype)
+    CRIMP_ASSERT_IMGTYPE (imagevar, itype)
 
 #define crimp_input_any(objvar,imagevar) \
     if (crimp_get_image_from_obj (interp, (objvar), &(imagevar)) != TCL_OK) { \

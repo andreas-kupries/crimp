@@ -1,12 +1,12 @@
 #ifndef CRIMP_VOLUME_H
 #define CRIMP_VOLUME_H
 /*
- * CRIMP :: Volume Declarations, and API.
- * (C) 2010.
+ * CRIMP :: Volume Declarations, and API :: PUBLIC
+ * (C) 2010 - 2011
  */
 
+#include <common.h>
 #include <image_type.h>
-#include <util.h>
 
 /*
  * Structures describing volumes.
@@ -25,12 +25,12 @@ typedef struct crimp_volume {
  * Voxel Access Macros.
  */
 
-#define VINDEX(iptr,x,y,z) \
+#define CRIMP_VINDEX(iptr,x,y,z) \
     (((x)*SZ (iptr)) + \
      ((y)*SZ (iptr)*((iptr)->w)) + \
      ((z)*SZ (iptr)*((iptr)->w)*((size_t) (iptr)->h)))
 
-#define VFLOATP(iptr,x,y,z) *((float*) &((iptr)->voxel [VINDEX (iptr,x,y,z)]))
+#define VFLOATP(iptr,x,y,z) *((float*) &((iptr)->voxel [CRIMP_VINDEX (iptr,x,y,z)]))
 
 /*
  * API :: Core. Volume lifecycle management.
@@ -57,8 +57,8 @@ extern void          crimp_vdel  (crimp_volume* volume);
  * Volume calculations macros.
  */
 
-#define RECT_VOLUME(w,h,d) (((size_t) (w)) * (h) * (d))
-#define crimp_volume_vol(vptr) (RECT_VOLUME ((vptr)->w, (vptr)->h, (vptr)->d))
+#define CRIMP_RECT_VOLUME(w,h,d) (((size_t) (w)) * (h) * (d))
+#define crimp_volume_vol(vptr) (CRIMP_RECT_VOLUME ((vptr)->w, (vptr)->h, (vptr)->d))
 
 /*
  * API :: Tcl. Manage Tcl_Obj's of volumes.
@@ -73,7 +73,7 @@ extern int      crimp_get_volume_from_obj (Tcl_Interp*    interp,
     if (crimp_get_volume_from_obj (interp, (objvar), &(volumevar)) != TCL_OK) { \
 	return TCL_ERROR; \
     } \
-    ASSERT_IMGTYPE (volumevar, itype)
+    CRIMP_ASSERT_IMGTYPE (volumevar, itype)
 
 #define crimp_vinput_any(objvar,volumevar) \
     if (crimp_get_volume_from_obj (interp, (objvar), &(volumevar)) != TCL_OK) { \

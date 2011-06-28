@@ -84,6 +84,7 @@ critcl::ccode {
     #include <math.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <util.h>   /* crimp internal utilities and configuration */
     #include <image_type.h>
     #include <image.h>
     #include <volume.h>
@@ -93,18 +94,10 @@ critcl::ccode {
     #include <geometry.h>
     #include <color.h>
     #include <util.h>
-    #include <f2c.h>
     #include <gauss.h>
     #include <labelcc.h>
     #include <linearmaps.h>
-    #include <crimp_config.h>
-
-    /* Common declarations to access the FFT functions. */
-
-    extern int rffti_ (integer *n, real *wsave);
-    extern int rfftf_ (integer *n, real* r, real *wsave);
-    extern int rfftb_ (integer *n, real* r, real *wsave);
-}
+ }
 
 # # ## ### ##### ######## #############
 ## Define a compatibility implementation of lrint() on systems which do

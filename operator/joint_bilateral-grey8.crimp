@@ -36,8 +36,8 @@ if (!crimp_eq_dim (image, wimage)) {
     return TCL_ERROR;
 }
 
-ASSERT (sigma_space >= 1, "Cannot use sigma/s < 1");
-ASSERT (sigma_range >= 1, "Cannot use sigma/r < 1");
+CRIMP_ASSERT (sigma_space >= 1, "Cannot use sigma/s < 1");
+CRIMP_ASSERT (sigma_range >= 1, "Cannot use sigma/r < 1");
 
 result = crimp_new_like (image);
 

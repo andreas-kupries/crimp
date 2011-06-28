@@ -8,9 +8,11 @@
 #include <tcl.h>
 
 /*
- * Structures describing crimp image types. They are identified by
- * name. Stored information is the size of a pixel in bytes for all
- * images of that type.
+ * Structure describing crimp image types. They are identified by name. Stored
+ * information is the size of a pixel in bytes for all images of that type,
+ * plus the number and names of channels a pixel is split into. The number of
+ * bytes per pixel has to be an integral multiple of the number of channels
+ * per pixel.
  */
 
 typedef struct crimp_imagetype {
@@ -20,27 +22,6 @@ typedef struct crimp_imagetype {
     const char** cname;    /* Names of the color channels */
 } crimp_imagetype;
 
-/*
- * API :: Initialization.
- */
-
-extern void crimp_imagetype_init (void);
-
-/*
- * API :: Core. Manage a mapping of types to names.
- */
-
-extern void                   crimp_imagetype_def  (const crimp_imagetype* imagetype);
-extern const crimp_imagetype* crimp_imagetype_find (const char* name);
-
-/*
- * API :: Tcl. Manage Tcl_Obj's references to crimp image types.
- */
-
-extern Tcl_Obj* crimp_new_imagetype_obj      (const crimp_imagetype*  imagetype);
-extern int      crimp_get_imagetype_from_obj (Tcl_Interp*       interp,
-					      Tcl_Obj*          imagetypeObj,
-					      crimp_imagetype** imagetype);
 
 /*
  * Local Variables:

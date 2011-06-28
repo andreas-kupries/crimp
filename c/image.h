@@ -113,13 +113,8 @@ typedef struct crimp_image {
 #define crimp_image_area(iptr) (CRIMP_RECT_AREA ((iptr)->w, (iptr)->h))
 
 /*
- * API :: Core. Image lifecycle management.
+ * Convenience macros for the creation of images with predefined image types.
  */
-
-extern crimp_image* crimp_new  (const crimp_imagetype* type, int w, int h);
-extern crimp_image* crimp_newm (const crimp_imagetype* type, int w, int h, Tcl_Obj* meta);
-extern crimp_image* crimp_dup  (crimp_image* image);
-extern void         crimp_del  (crimp_image* image);
 
 #define crimp_new_hsv(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),    (w), (h)))
 #define crimp_new_rgba(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),   (w), (h)))
@@ -133,13 +128,8 @@ extern void         crimp_del  (crimp_image* image);
 #define crimp_new_like_transpose(image) (crimp_newm ((image)->itype, (image)->h, (image)->w, (image)->meta))
 
 /*
- * API :: Tcl. Manage Tcl_Obj's of images.
+ * Convenience macros for input image handling.
  */
-
-extern Tcl_Obj* crimp_new_image_obj      (crimp_image*  image);
-extern int      crimp_get_image_from_obj (Tcl_Interp*   interp,
-					  Tcl_Obj*      imageObj,
-					  crimp_image** image);
 
 #define crimp_input(objvar,imagevar,itype) \
     if (crimp_get_image_from_obj (interp, (objvar), &(imagevar)) != TCL_OK) { \

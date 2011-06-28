@@ -107,6 +107,7 @@ proc _install {{dst {}}} {
     set src     [file dirname $::me]/crimp.tcl
     set version [version $src]
 
+    file delete -force             [pwd]/BUILD
     critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -pkg $src]
     file delete -force $dst/crimp$version
     file rename        $dst/crimp $dst/crimp$version
@@ -121,7 +122,8 @@ proc _install {{dst {}}} {
     set src     [file dirname $::me]/crimptk.tcl
     set version [version $src]
 
-    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -pkg crimp::tk $src]
+    file delete -force             [pwd]/BUILDTK
+    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -pkg crimp::tk $src]
     file delete -force $dst/crimptk$version
     file rename        $dst/crimptk $dst/crimptk$version
 
@@ -204,6 +206,7 @@ proc _wrap4tea {{dst {}}} {
     set src     [file dirname $::me]/crimp.tcl
     set version [version $src]
 
+    file delete -force             [pwd]/BUILD
     critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -tea $src]
     file delete -force $dst/crimp$version
     file rename        $dst/crimp $dst/crimp$version
@@ -216,7 +219,8 @@ proc _wrap4tea {{dst {}}} {
     set src     [file dirname $::me]/crimptk.tcl
     set version [version $src]
 
-    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -tea crimp::tk $src]
+    file delete -force             [pwd]/BUILDTK
+    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -tea crimp::tk $src]
     file delete -force $dst/crimptk$version
     file rename        $dst/crimptk $dst/crimptk$version
 

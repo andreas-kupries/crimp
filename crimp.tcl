@@ -19,14 +19,10 @@ critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
 
-#critcl::config keepsrc 1
-#critcl::debug all
-
 # # ## ### ##### ######## #############
 ## Implementation.
 
 critcl::tcl 8.5
-critcl::tk
 
 critcl::cflags -DIEEE_COMPLEX_DIVIDE
 
@@ -164,11 +160,6 @@ critcl::api function int crimp_get_volume_from_obj {
 }
 
 # # ## ### ##### ######## #############
-## Chart helpers.
-
-critcl::tsources plot.tcl
-
-# # ## ### ##### ######## #############
 ## Main C section.
 
 critcl::cinit {
@@ -235,6 +226,9 @@ if {[critcl::util::checkfun lrint]} {
 critcl::owns operator/*.crimp
 ::apply {{here} {
     foreach filename [lsort [glob -nocomplain -directory [file join $here operator] *.crimp]] {
+	# Ignore the Tk related operators.
+	if {[string match *tk* $filename]} continue
+
 	#critcl::msg -nonewline " \[[file rootname [file tail $filename]]\]"
 	set chan [open $filename]
 	set name [gets $chan]

@@ -1,8 +1,8 @@
 #ifndef CRIMP_IMAGE_TYPE_H
 #define CRIMP_IMAGE_TYPE_H
 /*
- * CRIMP :: Image Type Declarations, and API.
- * (C) 2010.
+ * CRIMP :: Image Type Declarations, and API :: PUBLIC
+ * (C) 2010 - 2011
  */
 
 #include <tcl.h>

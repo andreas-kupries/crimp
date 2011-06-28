@@ -19,10 +19,10 @@ double wr, wg, wb;
  */
 
 crimp_input_any (imageObj, image);
-ASSERT_NOTIMGTYPE (image, float);
-ASSERT_NOTIMGTYPE (image, grey8);
-ASSERT_NOTIMGTYPE (image, grey16);
-ASSERT_NOTIMGTYPE (image, grey32);
+CRIMP_ASSERT_NOTIMGTYPE (image, float);
+CRIMP_ASSERT_NOTIMGTYPE (image, grey8);
+CRIMP_ASSERT_NOTIMGTYPE (image, grey16);
+CRIMP_ASSERT_NOTIMGTYPE (image, grey32);
 
 crimp_input (combineMatrixObj, combine, float);
 

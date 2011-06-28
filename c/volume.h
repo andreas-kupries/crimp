@@ -33,13 +33,8 @@ typedef struct crimp_volume {
 #define VFLOATP(iptr,x,y,z) *((float*) &((iptr)->voxel [CRIMP_VINDEX (iptr,x,y,z)]))
 
 /*
- * API :: Core. Volume lifecycle management.
+ * Convenience macros for the creation of volumes with predefined image types.
  */
-
-extern crimp_volume* crimp_vnew  (const crimp_imagetype* type, int w, int h, int d);
-extern crimp_volume* crimp_vnewm (const crimp_imagetype* type, int w, int h, int d, Tcl_Obj* meta);
-extern crimp_volume* crimp_vdup  (crimp_volume* volume);
-extern void          crimp_vdel  (crimp_volume* volume);
 
 #define crimp_vnew_hsv(w,h,d)    (crimp_vnew (crimp_imagetype_find ("crimp::image::hsv"),    (w), (h), (d)))
 #define crimp_vnew_rgba(w,h,d)   (crimp_vnew (crimp_imagetype_find ("crimp::image::rgba"),   (w), (h), (d)))
@@ -52,7 +47,6 @@ extern void          crimp_vdel  (crimp_volume* volume);
 #define crimp_vnew_like(volume)           (crimp_vnewm ((volume)->itype, (volume)->w, (volume)->h, (volume)->d, (volume)->meta))
 #define crimp_vnew_like_transpose(volume) (crimp_vnewm ((volume)->itype, (volume)->h, (volume)->w, (volume)->d, (volume)->meta))
 
-
 /*
  * Volume calculations macros.
  */
@@ -61,13 +55,8 @@ extern void          crimp_vdel  (crimp_volume* volume);
 #define crimp_volume_vol(vptr) (CRIMP_RECT_VOLUME ((vptr)->w, (vptr)->h, (vptr)->d))
 
 /*
- * API :: Tcl. Manage Tcl_Obj's of volumes.
+ * Convenience macros for input volume handling.
  */
-
-extern Tcl_Obj* crimp_new_volume_obj      (crimp_volume*  volume);
-extern int      crimp_get_volume_from_obj (Tcl_Interp*    interp,
-					   Tcl_Obj*       volumeObj,
-					   crimp_volume** volume);
 
 #define crimp_vinput(objvar,volumevar,itype) \
     if (crimp_get_volume_from_obj (interp, (objvar), &(volumevar)) != TCL_OK) { \

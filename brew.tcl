@@ -96,17 +96,17 @@ proc _recipes {} {
     return
 }
 proc _install {{dst {}}} {
-    set src     [file dirname $::me]/crimp.tcl
-    set version [version $src]
-
     if {[llength [info level 0]] < 2} {
 	set dst [info library]
     }
 
-    # Package: crimp
     package require critcl::app
 
+    # Package: crimp
     # Build binaries
+    set src     [file dirname $::me]/crimp.tcl
+    set version [version $src]
+
     critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -pkg $src]
     file delete -force $dst/crimp$version
     file rename        $dst/crimp $dst/crimp$version
@@ -114,6 +114,20 @@ proc _install {{dst {}}} {
     puts -nonewline "Installed package:     "
     tag ok
     puts $dst/crimp$version
+
+
+    # Package: crimp::tk
+    # Build binaries
+    set src     [file dirname $::me]/crimptk.tcl
+    set version [version $src]
+
+    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -pkg crimp::tk $src]
+    file delete -force $dst/crimptk$version
+    file rename        $dst/crimptk $dst/crimptk$version
+
+    puts -nonewline "Installed package:     "
+    tag ok
+    puts $dst/crimptk$version
     return
 }
 proc _gui {} {
@@ -183,17 +197,30 @@ proc _wrap4tea {{dst {}}} {
 	set dst [file join [pwd] tea]
     }
 
+    package require critcl::app
+
+    # Package: crimp
+    # Generate TEA directory hierarchy
     set src     [file dirname $::me]/crimp.tcl
     set version [version $src]
 
-    # Package: crimp
-    package require critcl::app
-
-    # Generate TEA directory hierarchy
     critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -tea $src]
     file delete -force $dst/crimp$version
     file rename        $dst/crimp $dst/crimp$version
 
     puts "Installed package:     $dst/crimp$version"
+
+
+    # Package: crimp::tk
+    # Generate TEA directory hierarchy
+    set src     [file dirname $::me]/crimptk.tcl
+    set version [version $src]
+
+    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -tea crimp::tk $src]
+    file delete -force $dst/crimptk$version
+    file rename        $dst/crimptk $dst/crimptk$version
+
+    puts "Installed package:     $dst/crimptk$version"
+    return
 }
 main

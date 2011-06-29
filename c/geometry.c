@@ -9,6 +9,7 @@
 
 #include <geometry.h>
 #include <linearalgebra.h>
+#include <util.h>
 
 /*
  * Definitions :: Core.

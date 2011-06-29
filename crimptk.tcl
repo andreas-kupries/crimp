@@ -11,6 +11,8 @@
 package require critcl       3
 package require critcl::util 1
 
+# # ## ### ##### ######## #############
+
 if {![critcl::compiling]} {
     error "Unable to build CRIMP::TK, no proper compiler found."
 }
@@ -43,6 +45,15 @@ critcl::tsources plot.tcl
 critcl::api import crimp 0
 
 # # ## ### ##### ######## #############
+## Main C section.
+
+critcl::ccode {
+    #include <math.h>
+    #include <stdlib.h>
+    #include <string.h>
+}
+
+# # ## ### ##### ######## #############
 ## Read and execute the tk-specific .crimp files in the current directory.
 
 critcl::owns operator/*tk*.crimp
@@ -68,16 +79,16 @@ critcl::owns operator/*tk*.crimp
 }} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
+
+package provide crimp::tk 0
+
+# # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.
 
 if {![critcl::load]} {
     error "Building and loading CRIMP::TK failed."
 }
 
-# # ## ### ##### ######## #############
-## Fully Ready. Export.
-
-package provide crimp::tk 0
 return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

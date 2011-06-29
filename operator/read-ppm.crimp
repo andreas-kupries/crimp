@@ -152,7 +152,7 @@ if (israw) {
 }
 
 result = crimp_new_rgb (w, h);
-npix   = RECT_AREA (w, h) * 3;
+npix   = CRIMP_RECT_AREA (w, h) * 3;
 
 /*fprintf(stderr,"raw=%d, w=%d, h=%d, max=%d /%d\n", israw,w,h,max,npix);fflush(stderr);*/
 

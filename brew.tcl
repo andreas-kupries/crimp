@@ -98,6 +98,9 @@ proc _recipes {} {
 proc _install {{dst {}}} {
     if {[llength [info level 0]] < 2} {
 	set dst [info library]
+	set idir [file dirname [file dirname $dst]]/include
+    } else {
+	set idir [file dirname $dst]/include
     }
 
     package require critcl::app
@@ -108,7 +111,7 @@ proc _install {{dst {}}} {
     set version [version $src]
 
     file delete -force             [pwd]/BUILD
-    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -pkg $src]
+    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -includedir $idir -pkg $src]
     file delete -force $dst/crimp$version
     file rename        $dst/crimp $dst/crimp$version
 
@@ -123,7 +126,7 @@ proc _install {{dst {}}} {
     set version [version $src]
 
     file delete -force             [pwd]/BUILDTK
-    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -pkg crimp::tk $src]
+    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -includedir $idir -pkg crimp::tk $src]
     file delete -force $dst/crimptk$version
     file rename        $dst/crimptk $dst/crimptk$version
 

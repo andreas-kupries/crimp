@@ -126,7 +126,8 @@ proc _install {{dst {}}} {
     set version [version $src]
 
     file delete -force             [pwd]/BUILDTK
-    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -includedir $idir -pkg crimp::tk $src]
+    puts ""
+    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -includedir $idir -pkg $src]
     file delete -force $dst/crimptk$version
     file rename        $dst/crimptk $dst/crimptk$version
 

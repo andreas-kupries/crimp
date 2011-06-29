@@ -11,6 +11,8 @@
 package require critcl       3
 package require critcl::util 1
 
+# # ## ### ##### ######## #############
+
 if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
@@ -98,7 +100,7 @@ critcl::api function int crimp_get_imagetype_from_obj {
 
 # API :: Core. Image lifecycle management.
 critcl::api function crimp_image* crimp_new {
-    {const crimp_imagetype* type}
+    {const crimp_imagetype*} type
     int w
     int h
 }
@@ -136,7 +138,7 @@ critcl::api function crimp_volume* crimp_vnew {
     int d
 }
 critcl::api function crimp_volume* crimp_vnewm {
-    {const crimp_imagetype* type}
+    {const crimp_imagetype*} type
     int w
     int h
     int d
@@ -172,7 +174,7 @@ critcl::ccode {
     #include <math.h>
     #include <stdlib.h>
     #include <string.h>
-    #include <util.h>   /* crimp internal utilities and configuration */
+    #include <util.h>
     #include <ahe.h>
     #include <rank.h>
     #include <linearalgebra.h>
@@ -182,7 +184,7 @@ critcl::ccode {
     #include <gauss.h>
     #include <labelcc.h>
     #include <linearmaps.h>
- }
+}
 
 # # ## ### ##### ######## #############
 ## Define a compatibility implementation of lrint() on systems which do
@@ -249,16 +251,16 @@ critcl::owns operator/*.crimp
 }} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
+
+package provide crimp 0
+
+# # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.
 
 if {![critcl::load]} {
     error "Building and loading CRIMP failed."
 }
 
-# # ## ### ##### ######## #############
-## Fully Ready. Export.
-
-package provide crimp 0
 return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

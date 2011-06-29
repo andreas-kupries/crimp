@@ -44,7 +44,7 @@ crimp_vnew (const crimp_imagetype* itype, int w, int h, int d)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    size_t        size   = sizeof (crimp_volume) + RECT_VOLUME (w, h, d) * itype->size;
+    size_t        size   = sizeof (crimp_volume) + CRIMP_RECT_VOLUME (w, h, d) * itype->size;
     crimp_volume* volume = (crimp_volume*) ckalloc (size);
 
     volume->itype = itype;
@@ -63,7 +63,7 @@ crimp_vnewm (const crimp_imagetype* itype, int w, int h, int d, Tcl_Obj* meta)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    size_t        size   = sizeof (crimp_volume) + RECT_VOLUME (w, h, d) * itype->size;
+    size_t        size   = sizeof (crimp_volume) + CRIMP_RECT_VOLUME (w, h, d) * itype->size;
     crimp_volume* volume = (crimp_volume*) ckalloc (size);
 
     volume->itype = itype;
@@ -302,7 +302,7 @@ VolumeFromAny (Tcl_Interp* interp, Tcl_Obj* volObjPtr)
 	goto invalid;
 
     voxel = Tcl_GetByteArrayFromObj (objv[5], &length);
-    if (length != (ct->size * RECT_VOLUME (w, h, d)))
+    if (length != (ct->size * CRIMP_RECT_VOLUME (w, h, d)))
 	goto invalid;
 
     meta = objv[4];

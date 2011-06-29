@@ -79,16 +79,15 @@ critcl::owns operator/*tk*.crimp
 }} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
-
-package provide crimp::tk 0
-
-# # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.
 
 if {![critcl::load]} {
     error "Building and loading CRIMP::TK failed."
 }
 
+# # ## ### ##### ######## #############
+
+package provide crimp::tk 0
 return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

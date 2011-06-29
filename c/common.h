@@ -1,5 +1,5 @@
-#ifndef CRIMP_UTIL_H
-#define CRIMP_UTIL_H
+#ifndef CRIMP_COMMON_H
+#define CRIMP_COMMON_H
 /*
  * CRIMP :: Common Declarations :: PUBLIC
  * (C) 2011.
@@ -45,4 +45,4 @@
  * fill-column: 78
  * End:
  */
-#endif /* CRIMP_UTIL_H */
+#endif /* CRIMP_COMMON_H */

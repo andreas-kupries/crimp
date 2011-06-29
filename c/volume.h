@@ -5,8 +5,8 @@
  * (C) 2010 - 2011
  */
 
-#include <common.h>
-#include <image_type.h>
+#include "common.h"
+#include "image_type.h"
 
 /*
  * Structures describing volumes.

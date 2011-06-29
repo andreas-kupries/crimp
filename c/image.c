@@ -43,7 +43,7 @@ crimp_new (const crimp_imagetype* itype, int w, int h)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    size_t       size  = sizeof (crimp_image) + RECT_AREA (w, h) * itype->size;
+    size_t       size  = sizeof (crimp_image) + CRIMP_RECT_AREA (w, h) * itype->size;
     crimp_image* image = (crimp_image*) ckalloc (size);
 
     image->itype = itype;
@@ -61,7 +61,7 @@ crimp_newm (const crimp_imagetype* itype, int w, int h, Tcl_Obj* meta)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    size_t       size  = sizeof (crimp_image) + RECT_AREA (w, h) * itype->size;
+    size_t       size  = sizeof (crimp_image) + CRIMP_RECT_AREA (w, h) * itype->size;
     crimp_image* image = (crimp_image*) ckalloc (size);
 
     image->itype = itype;
@@ -292,7 +292,7 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
     }
 
     pixel = Tcl_GetByteArrayFromObj (objv[4], &length);
-    if (length != (ct->size * RECT_AREA (w, h))) {
+    if (length != (ct->size * CRIMP_RECT_AREA (w, h))) {
 	goto invalid;
     }
 

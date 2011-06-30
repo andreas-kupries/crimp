@@ -165,10 +165,10 @@ critcl::api function int crimp_get_volume_from_obj {
 ## Main C section.
 
 critcl::cinit {
-    extern void crimp_imagetype_init (void); /* c/image_type.c */
-
     crimp_imagetype_init ();
-} {}
+} {
+    extern void crimp_imagetype_init (void); /* c/image_type.c */
+}
 
 critcl::ccode {
     #include <math.h>

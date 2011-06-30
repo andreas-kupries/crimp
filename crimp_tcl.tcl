@@ -1611,7 +1611,11 @@ proc ::crimp::divide {a b {scale 1} {offset 0}} {
     if {![Has $f]} {
 	return -code error "Division is not supported for the combination of \"$atype\" and \"$btype\""
     }
-    return [$f $a $b $scale $offset]
+	if {$atype eq "fpcomplex" } {
+	return [$f $a $b ]
+    } else {
+	return [$f $a $b $scale $offset]
+	}
 }
 
 # # ## ### ##### ######## #############
@@ -2466,6 +2470,53 @@ proc ::crimp::noise::speckle { image {variance 0.05}} {
 }
 
 # # ## ### ##### ######## #############
+namespace eval ::crimp::fpcomop {
+    namespace export {[a-z]*}
+    namespace ensemble create
+
+}
+proc ::crimp::fpcomop::magnitude {image } {
+
+  set type     [::crimp::TypeOf  $image]    
+  if { $type ne "fpcomplex" } {
+   return -code error "Magnitude of Complex Image is not supported for image type \"$itype\" must be fpcomplex "
+  } else {
+   return [crimp::magnitude_fpcomplex $image ]
+  }
+  
+}
+
+proc ::crimp::fpcomop::2fpcomplex {image } {
+
+  set type     [::crimp::TypeOf  $image]    
+  if { $type ne "float" } {
+   return -code error "Conversion to fpcomplex is not supported for image type \"$itype\" must be float "
+  } else {
+   return [crimp::float2fpcomplex $image ]
+  }
+}
+
+proc ::crimp::fpcomop::real {image } {
+
+  set type     [::crimp::TypeOf  $image]    
+  if { $type ne "fpcomplex" } {
+   return -code error "Real part only exit for fpcomplex images "
+  } else {
+   return [crimp::fpcomplex2real $image ]
+  }
+}
+
+proc ::crimp::fpcomop::imaginary {image } {
+
+  set type     [::crimp::TypeOf  $image]    
+  if { $type ne "fpcomplex" } {
+   return -code error "Imaginary part only exit for fpcomplex images "
+  } else {
+   return [crimp::fpcomplex2imaginary $image ]
+  }
+}
+
+# # ## ### ##### ######## #############
 ## Commands for the creation and manipulation of transformation
 ## matrices. We are using 3x3 matrices to allow the full range of
 ## projective transforms, i.e. perspective.
@@ -2926,11 +2977,21 @@ proc ::crimp::fft::forward {image} {
     # we directly call on the appropriate primitives without the need
     # for dynamic dispatch.
 
-    return [::crimp::flip_transpose_float \
+	if {  $type eq "fpcomplex"  } {
+       return [::crimp::flip_transpose_fpcomplex \
+		[::crimp::fftx_fpcomplex \
+		     [::crimp::flip_transpose_fpcomplex \
+			  [::crimp::fftx_fpcomplex $image]]]]
+	} else {
+	return [::crimp::flip_transpose_float \
 		[::crimp::fftx_float \
 		     [::crimp::flip_transpose_float \
-			  [::crimp::$f $image]]]]
+			  [::crimp::$f $image]]]] 
+	}
+	
 }
+
+
 
 proc ::crimp::fft::backward {image} {
     set type [::crimp::TypeOf $image]
@@ -2948,10 +3009,17 @@ proc ::crimp::fft::backward {image} {
     # we directly call on the appropriate primitives without the need
     # for dynamic dispatch.
 
+	if {  $type eq "fpcomplex" } {
+       return [::crimp::flip_transpose_fpcomplex \
+		[::crimp::ifftx_fpcomplex \
+		     [::crimp::flip_transpose_fpcomplex \
+			  [::crimp::ifftx_fpcomplex $image]]]]
+	} else {
     return [::crimp::flip_transpose_float \
 		[::crimp::ifftx_float \
 		     [::crimp::flip_transpose_float \
 			  [::crimp::$f $image]]]]
+	}		  
 }
 
 # # ## ### ##### ######## #############
@@ -3764,7 +3832,7 @@ namespace eval ::crimp {
     namespace export subtract difference multiply pyramid mapof 
     namespace export downsample upsample decimate interpolate
     namespace export kernel expand threshold gradient effect
-    namespace export statistics rotate montage morph integrate
+    namespace export statistics rotate montage morph integrate divide
     namespace export fft square meta resize warp transform contrast noise
     #
     namespace ensemble create

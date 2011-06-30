@@ -1,0 +1,39 @@
+magnitude_fpcomplex
+Tcl_Obj* imageAObj
+
+
+/*
+ * Pixel wise Magnitude if a image. 
+ */
+
+crimp_image*     result;
+crimp_image*     imageA;
+
+int x, y;
+
+crimp_input (imageAObj, imageA,fpcomplex);
+
+result = crimp_new_float (imageA->w,imageA->h);
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+
+	RE (result, x, y) = sqrt( pow( RE (imageA, x, y),2) 
+	                        + pow ( IM (imageA, x, y),2 ) ) ;
+	
+	}
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */
+ 
+ 

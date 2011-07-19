@@ -2479,7 +2479,7 @@ proc ::crimp::fpcomop::magnitude {image } {
 
   set type     [::crimp::TypeOf  $image]    
   if { $type ne "fpcomplex" } {
-   return -code error "Magnitude of Complex Image is not supported for image type \"$itype\" must be fpcomplex "
+   return -code error "Magnitude of Complex Image is not supported for image type \"$type\" must be fpcomplex "
   } else {
    return [crimp::magnitude_fpcomplex $image ]
   }
@@ -2490,7 +2490,7 @@ proc ::crimp::fpcomop::2fpcomplex {image } {
 
   set type     [::crimp::TypeOf  $image]    
   if { $type ne "float" } {
-   return -code error "Conversion to fpcomplex is not supported for image type \"$itype\" must be float "
+   return -code error "Conversion to fpcomplex is not supported for image type \"$type\" must be float "
   } else {
    return [crimp::float2fpcomplex $image ]
   }
@@ -2514,6 +2514,89 @@ proc ::crimp::fpcomop::imaginary {image } {
   } else {
    return [crimp::fpcomplex2imaginary $image ]
   }
+}
+
+
+# # ## ### ##### ######## #############
+proc ::crimp::imregs { image1 image2   } {
+
+set image1  [::crimp::convert::2grey8 $image1] 
+set image2  [::crimp::convert::2grey8 $image2] 
+   
+   
+   # ZERO pading to make both images of the same size 
+   
+   if { [::crimp::width  $image1 ] > [::crimp::width  $image2 ] } {
+    set image2 [::crimp expand const $image2 \
+	                [expr { ( [::crimp::width  $image1] - [::crimp::width  $image2 ] ) / 2  } ] \
+					0    \
+					[expr { ( [::crimp::width  $image1] - [::crimp::width  $image2 ] ) / 2  } ] \
+					0    0]
+   	} else {
+	set image1 [::crimp expand const $image1 \
+	                [expr { ( [::crimp::width  $image2] - [::crimp::width  $image1 ] ) / 2  } ] \
+					0    \
+					[expr { ( [::crimp::width  $image2] - [::crimp::width  $image1 ] ) / 2  } ] \
+					0    0]
+	}    	
+   
+   if { [::crimp::height  $image1 ] > [::crimp::height  $image2 ] } {
+   set image2 [::crimp expand const $image2 \
+                    0 \
+	                [expr { ( [::crimp::height  $image1] - [::crimp::height  $image2 ] ) / 2  } ] \
+					0    \
+					[expr { ( [::crimp::height  $image1] - [::crimp::height  $image2 ] ) / 2  } ] \
+					0   ]
+	} else {
+	set image1 [::crimp expand const $image1 \
+                    0 \
+	                [expr { ( [::crimp::height  $image2] - [::crimp::height  $image1 ] ) / 2  } ] \
+					0    \
+					[expr { ( [::crimp::height  $image2] - [::crimp::height  $image1 ] ) / 2  } ] \
+					0   ]
+	}    	
+  
+   
+   # Converting the images to LOG POLAR Axis
+   set lpt1   [::crimp::transform::logpolar $image1 360 400 ]
+   set lpt2   [::crimp::transform::logpolar $image2 360 400 ]
+ 
+   # Converting to fpcomplex type images for FFT computation 
+   set fft1 [::crimp::fft::forward \
+               [::crimp::fpcomop::2fpcomplex \
+                  [::crimp::convert::2float $lpt1 ] ] ]
+   set fft2 [::crimp::fft::forward \
+               [::crimp::fpcomop::2fpcomplex \
+                  [::crimp::convert::2float $lpt2 ] ] ]
+
+   set ratio [::crimp::divide $fft2 $fft1]
+   set ifft  [crimp::fft::backward $ratio]
+   
+   set immag   [crimp::fpcomop::magnitude $ifft]
+   
+   # finding the Co-Ordinates of the brightest pixel 
+   set stat   [::crimp::statistics basic $immag ]
+   set max    [dict get $stat channel value max]
+   set min    [dict get $stat channel value min]
+   set val    [::crimp::find $immag $max $min ] 
+  
+   #computing the angle and scale difference of the two images 
+   #angle is taken clockwise   
+   #
+   set angle      [expr {round ($val  / 1000 ) }]
+   set rawscale   [expr {int   ($val) % 1000 }  ]
+  
+   set PI    3.1415926535897
+  
+   if {$rawscale < [expr {400 - $rawscale }  ] } {
+   set scale [expr { exp ($rawscale * 2 * $PI / 360) } ]
+   } else {
+   set scale [expr { 1 / (exp  ((400 - $rawscale ) * 2* $PI / 360 )) }  ] 
+   }
+  
+  return [ dict create angle $angle scale $scale ] 
+  
+
 }
 
 # # ## ### ##### ######## #############

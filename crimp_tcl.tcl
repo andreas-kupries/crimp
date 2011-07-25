@@ -2518,7 +2518,15 @@ proc ::crimp::fpcomop::imaginary {image } {
 
 
 # # ## ### ##### ######## #############
-proc ::crimp::imregs { image1 image2   } {
+
+
+
+namespace eval ::crimp::imregs {
+    namespace export {[a-z]*}
+    namespace ensemble create
+
+}
+proc ::crimp::imregs::translation { image1 image2   } {
 
 set image1  [::crimp::convert::2grey8 $image1] 
 set image2  [::crimp::convert::2grey8 $image2] 
@@ -2532,14 +2540,15 @@ set image2  [::crimp::convert::2grey8 $image2]
 					0    \
 					[expr { ( [::crimp::width  $image1] - [::crimp::width  $image2 ] ) / 2  } ] \
 					0    0]
-   	} else {
+   	} elseif { [::crimp::width  $image1 ] < [::crimp::width  $image2 ] } {
 	set image1 [::crimp expand const $image1 \
 	                [expr { ( [::crimp::width  $image2] - [::crimp::width  $image1 ] ) / 2  } ] \
 					0    \
 					[expr { ( [::crimp::width  $image2] - [::crimp::width  $image1 ] ) / 2  } ] \
 					0    0]
-	}    	
-   
+	} 
+
+	   
    if { [::crimp::height  $image1 ] > [::crimp::height  $image2 ] } {
    set image2 [::crimp expand const $image2 \
                     0 \
@@ -2547,7 +2556,7 @@ set image2  [::crimp::convert::2grey8 $image2]
 					0    \
 					[expr { ( [::crimp::height  $image1] - [::crimp::height  $image2 ] ) / 2  } ] \
 					0   ]
-	} else {
+	} elseif { [::crimp::height  $image1 ] < [::crimp::height  $image2 ] } {
 	set image1 [::crimp expand const $image1 \
                     0 \
 	                [expr { ( [::crimp::height  $image2] - [::crimp::height  $image1 ] ) / 2  } ] \
@@ -2556,18 +2565,25 @@ set image2  [::crimp::convert::2grey8 $image2]
 					0   ]
 	}    	
   
+   if { [::crimp::width  $image1 ] > [::crimp::width  $image2 ] } {
+    set image2 [::crimp expand const $image2 0	0  1  0  0]
+   	} elseif { [::crimp::width  $image1 ] < [::crimp::width  $image2 ] } {
+	set image1 [::crimp expand const $image1 0	0  1  0  0]
+	} 
+  
+   if { [::crimp::height  $image1 ] > [::crimp::height  $image2 ] } {
+    set image2 [::crimp expand const $image2 0	0  0  1  0]
+	} elseif { [::crimp::height  $image1 ] < [::crimp::height  $image2 ] } {
+	set image1 [::crimp expand const $image1 0	0  0  1  0]
+	}    	
    
-   # Converting the images to LOG POLAR Axis
-   set lpt1   [::crimp::transform::logpolar $image1 360 400 ]
-   set lpt2   [::crimp::transform::logpolar $image2 360 400 ]
- 
    # Converting to fpcomplex type images for FFT computation 
    set fft1 [::crimp::fft::forward \
                [::crimp::fpcomop::2fpcomplex \
-                  [::crimp::convert::2float $lpt1 ] ] ]
+                  [::crimp::convert::2float $image1 ] ] ]
    set fft2 [::crimp::fft::forward \
                [::crimp::fpcomop::2fpcomplex \
-                  [::crimp::convert::2float $lpt2 ] ] ]
+                  [::crimp::convert::2float $image2 ] ] ]
 
    set ratio [::crimp::divide $fft2 $fft1]
    set ifft  [crimp::fft::backward $ratio]
@@ -2580,11 +2596,72 @@ set image2  [::crimp::convert::2grey8 $image2]
    set min    [dict get $stat channel value min]
    set val    [::crimp::find $immag $max $min ] 
   
-   #computing the angle and scale difference of the two images 
-   #angle is taken clockwise   
-   #
-   set angle      [expr {round ($val  / 1000 ) }]
-   set rawscale   [expr {int   ($val) % 1000 }  ]
+   return [ dict create Xshift [lindex $val 0 ] \
+                       Yshift [lindex $val 1 ] ] 
+}
+
+
+
+# # ## ### ##### ######## #############
+proc ::crimp::imregs::rotscale { image1 image2   } {
+
+set image1  [::crimp::convert::2grey8 $image1] 
+set image2  [::crimp::convert::2grey8 $image2] 
+   
+   
+   # ZERO pading to make both images of the same size 
+   
+   if { [::crimp::width  $image1 ] > [::crimp::width  $image2 ] } {
+    set image2 [::crimp expand const $image2 \
+	                [expr { ( [::crimp::width  $image1] - [::crimp::width  $image2 ] ) / 2  } ] \
+					0    \
+					[expr { ( [::crimp::width  $image1] - [::crimp::width  $image2 ] ) / 2  } ] \
+					0    0]
+   	} elseif { [::crimp::width  $image1 ] < [::crimp::width  $image2 ] } {
+	set image1 [::crimp expand const $image1 \
+	                [expr { ( [::crimp::width  $image2] - [::crimp::width  $image1 ] ) / 2  } ] \
+					0    \
+					[expr { ( [::crimp::width  $image2] - [::crimp::width  $image1 ] ) / 2  } ] \
+					0    0]
+	}    	
+   
+   
+   if { [::crimp::height  $image1 ] > [::crimp::height  $image2 ] } {
+   set image2 [::crimp expand const $image2 \
+                    0 \
+	                [expr { ( [::crimp::height  $image1] - [::crimp::height  $image2 ] ) / 2  } ] \
+					0    \
+					[expr { ( [::crimp::height  $image1] - [::crimp::height  $image2 ] ) / 2  } ] \
+					0   ]
+	} elseif { [::crimp::height  $image1 ] < [::crimp::height  $image2 ] } {
+	set image1 [::crimp expand const $image1 \
+                    0 \
+	                [expr { ( [::crimp::height  $image2] - [::crimp::height  $image1 ] ) / 2  } ] \
+					0    \
+					[expr { ( [::crimp::height  $image2] - [::crimp::height  $image1 ] ) / 2  } ] \
+					0   ]
+	}    	
+   
+    if { [::crimp::width  $image1 ] > [::crimp::width  $image2 ] } {
+    set image2 [::crimp expand const $image2 0	0  1  0  0]
+   	} elseif { [::crimp::width  $image1 ] < [::crimp::width  $image2 ] } {
+	set image1 [::crimp expand const $image1 0	0  1  0  0]
+	} 
+   
+    if { [::crimp::height  $image1 ] > [::crimp::height  $image2 ] } {
+    set image2 [::crimp expand const $image2 0	0  0  1  0]
+	} elseif { [::crimp::height  $image1 ] < [::crimp::height  $image2 ] } {
+	set image1 [::crimp expand const $image1 0	0  0  1  0]
+	}    
+   
+   # Converting the images to LOG POLAR Axis
+   set lpt1   [::crimp::transform::logpolar $image1 360 400 ]
+   set lpt2   [::crimp::transform::logpolar $image2 360 400 ]
+ 
+   set stats  [::crimp::imregs::translation $lpt1 $lpt2] 
+  
+   set angle      [dict get $stats Xshift ]
+   set rawscale   [dict get $stats Yshift ]
   
    set PI    3.1415926535897
   
@@ -2594,11 +2671,33 @@ set image2  [::crimp::convert::2grey8 $image2]
    set scale [expr { 1 / (exp  ((400 - $rawscale ) * 2* $PI / 360 )) }  ] 
    }
   
-  return [ dict create angle $angle scale $scale ] 
-  
-
+  return [ dict create angle [expr {[format %.2f $angle ]}] \
+                       scale [expr {[format %.2f $scale ]}] ] 
 }
 
+proc ::crimp::imregs::complete { image1 image2   } {
+
+   set image1  [::crimp::convert::2grey8 $image1] 
+   set image2  [::crimp::convert::2grey8 $image2] 
+   
+   set statsrotate   [::crimp::imregs::rotscale $image1 $image2] 
+   
+   set transcale   [::crimp::transform scale \
+                      [expr {1 / [dict get $statsrotate scale ] } ] \
+                      [expr {1 / [dict get $statsrotate scale ] } ] ]
+   set image2      [::crimp::warp::projective $image2 $transcale ]
+
+   set tranrotate  [::crimp::transform rotate [dict get $statsrotate angle ] ]
+   set image2      [::crimp::warp::projective $image2 $tranrotate ]
+   
+   set statstrans   [::crimp::imregs::translation $image1 $image2] 
+   
+   
+   return [ dict append statstrans \
+            angle [dict get $statsrotate angle ] \
+            scale [dict get $statsrotate scale ] ]
+ }
+ 
 # # ## ### ##### ######## #############
 ## Commands for the creation and manipulation of transformation
 ## matrices. We are using 3x3 matrices to allow the full range of

@@ -7,7 +7,8 @@ double min
 crimp_image* image ;
 int  x ,y ;
 int maxX , maxY ;
-double send ,value;
+double value;
+Tcl_Obj* list [2];
 
 value = abs(max) > abs(min) ? max : min ;
 
@@ -23,10 +24,11 @@ for (y = 0; y < image->h; y++) {
 	}
 }   
 
-send = (maxX*1000) + maxY ;
 
+list [0] = Tcl_NewIntObj (maxX);
+list [1] = Tcl_NewIntObj (maxY);
 
-Tcl_SetObjResult (interp, Tcl_NewDoubleObj (send));
+Tcl_SetObjResult (interp, Tcl_NewListObj (2, list));
 return TCL_OK;
 
 

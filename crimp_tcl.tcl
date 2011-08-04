@@ -2516,25 +2516,37 @@ proc ::crimp::fpcomop::imaginary {image } {
   }
 }
 
+proc ::crimp::fpcomop::conjugate {image } {
+
+  set type     [::crimp::TypeOf  $image]    
+  if { $type ne "fpcomplex" } {
+   return -code error "Conjugate can only be find for fpcomplex images "
+  } else {
+   return [crimp::conjugate_fpcomplex $image ]
+  }
+}
+# # ## ### ##### ######## #############
+
+proc ::crimp::window { image }  {
+
+ set itype     [::crimp::TypeOf  $image]    
+    if {[::crimp::Has window_$itype]} {
+       return [::crimp::window_$itype  $image ]
+    } else {
+	   return -code error "Window function is not supported for image type \"$itype\" "
+	}
+
+}
+
 
 # # ## ### ##### ######## #############
 
 
 
-namespace eval ::crimp::imregs {
-    namespace export {[a-z]*}
-    namespace ensemble create
+proc ::crimp::samesize { image1 image2 } {
 
-}
-proc ::crimp::imregs::translation { image1 image2   } {
 
-set image1  [::crimp::convert::2grey8 $image1] 
-set image2  [::crimp::convert::2grey8 $image2] 
-   
-   
-   # ZERO pading to make both images of the same size 
-   
-   if { [::crimp::width  $image1 ] > [::crimp::width  $image2 ] } {
+if { [::crimp::width  $image1 ] > [::crimp::width  $image2 ] } {
     set image2 [::crimp expand const $image2 \
 	                [expr { ( [::crimp::width  $image1] - [::crimp::width  $image2 ] ) / 2  } ] \
 					0    \
@@ -2576,6 +2588,33 @@ set image2  [::crimp::convert::2grey8 $image2]
 	} elseif { [::crimp::height  $image1 ] < [::crimp::height  $image2 ] } {
 	set image1 [::crimp expand const $image1 0	0  0  1  0]
 	}    	
+
+	return [ dict create image1 $image1 image2 $image2 ] 
+	
+}
+
+
+# # ## ### ##### ######## #############
+
+
+
+namespace eval ::crimp::imregs {
+    namespace export {[a-z]*}
+    namespace ensemble create
+
+}
+proc ::crimp::imregs::translation { image1 image2   } {
+
+set image1  [::crimp::convert::2grey8 $image1] 
+set image2  [::crimp::convert::2grey8 $image2] 
+   
+   
+   # ZERO pading to make both images of the same size 
+   
+   set data    [::crimp::samesize $image1 $image2 ] 
+  
+   set image1   [dict get $data image1 ]
+   set image2   [dict get $data image2 ]
    
    # Converting to fpcomplex type images for FFT computation 
    set fft1 [::crimp::fft::forward \
@@ -2611,48 +2650,10 @@ set image2  [::crimp::convert::2grey8 $image2]
    
    # ZERO pading to make both images of the same size 
    
-   if { [::crimp::width  $image1 ] > [::crimp::width  $image2 ] } {
-    set image2 [::crimp expand const $image2 \
-	                [expr { ( [::crimp::width  $image1] - [::crimp::width  $image2 ] ) / 2  } ] \
-					0    \
-					[expr { ( [::crimp::width  $image1] - [::crimp::width  $image2 ] ) / 2  } ] \
-					0    0]
-   	} elseif { [::crimp::width  $image1 ] < [::crimp::width  $image2 ] } {
-	set image1 [::crimp expand const $image1 \
-	                [expr { ( [::crimp::width  $image2] - [::crimp::width  $image1 ] ) / 2  } ] \
-					0    \
-					[expr { ( [::crimp::width  $image2] - [::crimp::width  $image1 ] ) / 2  } ] \
-					0    0]
-	}    	
-   
-   
-   if { [::crimp::height  $image1 ] > [::crimp::height  $image2 ] } {
-   set image2 [::crimp expand const $image2 \
-                    0 \
-	                [expr { ( [::crimp::height  $image1] - [::crimp::height  $image2 ] ) / 2  } ] \
-					0    \
-					[expr { ( [::crimp::height  $image1] - [::crimp::height  $image2 ] ) / 2  } ] \
-					0   ]
-	} elseif { [::crimp::height  $image1 ] < [::crimp::height  $image2 ] } {
-	set image1 [::crimp expand const $image1 \
-                    0 \
-	                [expr { ( [::crimp::height  $image2] - [::crimp::height  $image1 ] ) / 2  } ] \
-					0    \
-					[expr { ( [::crimp::height  $image2] - [::crimp::height  $image1 ] ) / 2  } ] \
-					0   ]
-	}    	
-   
-    if { [::crimp::width  $image1 ] > [::crimp::width  $image2 ] } {
-    set image2 [::crimp expand const $image2 0	0  1  0  0]
-   	} elseif { [::crimp::width  $image1 ] < [::crimp::width  $image2 ] } {
-	set image1 [::crimp expand const $image1 0	0  1  0  0]
-	} 
-   
-    if { [::crimp::height  $image1 ] > [::crimp::height  $image2 ] } {
-    set image2 [::crimp expand const $image2 0	0  0  1  0]
-	} elseif { [::crimp::height  $image1 ] < [::crimp::height  $image2 ] } {
-	set image1 [::crimp expand const $image1 0	0  0  1  0]
-	}    
+   set data    [::crimp::samesize $image1 $image2 ] 
+  
+   set image1   [dict get $data image1 ]
+   set image2   [dict get $data image2 ]
    
    # Converting the images to LOG POLAR Axis
    set lpt1   [::crimp::transform::logpolar $image1 360 400 ]
@@ -2682,22 +2683,126 @@ proc ::crimp::imregs::complete { image1 image2   } {
    
    set statsrotate   [::crimp::imregs::rotscale $image1 $image2] 
    
-   set transcale   [::crimp::transform scale \
+    set transcale   [::crimp::transform scale \
                       [expr {1 / [dict get $statsrotate scale ] } ] \
                       [expr {1 / [dict get $statsrotate scale ] } ] ]
-   set image2      [::crimp::warp::projective $image2 $transcale ]
-
-   set tranrotate  [::crimp::transform rotate [dict get $statsrotate angle ] ]
-   set image2      [::crimp::warp::projective $image2 $tranrotate ]
-   
+    set tranrotate  [::crimp::transform rotate [dict get $statsrotate angle ] ]
+    set transform   [::crimp::transform::chain $tranrotate $transcale]
+    set image2      [::crimp::warp::projective $image2 $transform]
+	   
    set statstrans   [::crimp::imregs::translation $image1 $image2] 
    
-   
-   return [ dict append statstrans \
-            angle [dict get $statsrotate angle ] \
-            scale [dict get $statsrotate scale ] ]
+   return [dict merge $statstrans $statsrotate]
+  
  }
  
+ 
+ proc ::crimp::imregs::findobject { image1 image2   } {
+ 
+   
+   set image1  [::crimp::convert::2grey8 \
+                  [::crimp::window $image1] ]
+   set image2  [::crimp::convert::2grey8 \
+                  [::crimp::window $image2] ]
+   set silhouette    $image2 
+   
+  
+   set paddedimages   [::crimp::samesize $image1 $image2 ] 
+   set image1   [dict get $paddedimages image1 ]
+   set image2   [dict get $paddedimages image2 ]
+ 
+   # Converting to fpcomplex type images for FFT computation 
+   # FFT both images, resulting in complex images in the spatial frequency domain.
+   set fft1 [::crimp::fft::forward \
+               [::crimp::fpcomop::2fpcomplex \
+                  [::crimp::convert::2float $image1 ] ] ]
+   set fft2 [::crimp::fft::forward \
+               [::crimp::fpcomop::2fpcomplex \
+                  [::crimp::convert::2float $image2 ] ] ]
+				  
+   #4 Take the absolute values, pixel-by-pixel, of both transformed images.
+    set fft1mag [::crimp::fpcomop::magnitude $fft1]
+    set fft2mag [::crimp::fpcomop::magnitude $fft2]
+	
+	#5 Take the LPT of both absolute-value images.
+   set lpt1   [::crimp::transform::logpolar $fft1mag 360 400 ]
+   set lpt2   [::crimp::transform::logpolar $fft2mag 360 400 ]
+ 
+   ########################
+   
+   # 6. Take the FFT of both LPT's, giving two complex images.
+   set fft21 [::crimp::fft::forward \
+               [::crimp::fpcomop::2fpcomplex $lpt1 ] ] 
+   set fft22 [::crimp::fft::forward \
+               [::crimp::fpcomop::2fpcomplex $lpt2 ] ]
+
+   # Form the correlation of the two FFT-LPT-FFT's by   multiplying the pixels of one by the complex conjugate   of the pixels of the other.			  
+   set correlation [::crimp::multiply $fft21 \
+                      [::crimp::fpcomop::conjugate $fft22 ] ]
+   
+   #8. Inverse-FFT the correlation image.
+   set ifft  [crimp::fft::backward $correlation]
+   
+   set immag   [crimp::fpcomop::magnitude $ifft]
+   
+   # finding the Co-Ordinates of the brightest pixel 
+   set stat   [::crimp::statistics basic $immag ]
+   set max    [dict get $stat channel value max]
+   set min    [dict get $stat channel value min]
+   set val    [::crimp::find $immag $max $min ] 
+  
+   set angle      [expr { [lindex $val 0 ]  / [::crimp::height $immag] *360 } ]
+   set rawscale   [lindex $val 1 ]
+  
+   set PI    3.1415926535897
+  
+   if {$rawscale < [expr {[::crimp::height $immag] - $rawscale }  ] } {
+   set scale [expr { exp ($rawscale * 2 * $PI / 360) } ]
+   } else {
+   set scale [expr { 1 / (exp  (([::crimp::height $immag] - $rawscale ) * 2* $PI / 360 )) }  ] 
+   }
+  
+    #set statsrotate [ dict create angle [expr {[format %.2f $angle ]}] \
+    #                             scale [expr {[format %.2f $scale ]}] ] 
+
+   set transcale   [::crimp::transform scale \
+                      [expr {1 / [expr {[format %.2f $scale ]}] } ] \
+                      [expr {1 / [expr {[format %.2f $scale ]}] } ] ]
+    set tranrotate  [::crimp::transform rotate [expr {[format %.2f $angle ]}] ]
+    set transform   [::crimp::transform::chain $tranrotate $transcale]
+    set image2      [::crimp::warp::projective $silhouette $transform]
+					   
+	# Scale and rotate the silhouette's FFT by the same amount  
+	# (alternatively, scale and rotate the silhouette and FFT it again.)				   
+    
+	set paddedimages   [::crimp::samesize $image1 $image2 ] 
+    set image1   [dict get $paddedimages image1 ]
+    set image2   [dict get $paddedimages image2 ]
+	
+	
+	set fft2 [::crimp::fft::forward \
+               [::crimp::fpcomop::2fpcomplex \
+                  [::crimp::convert::2float $image2 ] ] ]
+				  
+	set correlation [::crimp::multiply $fft2 \
+                      [::crimp::fpcomop::conjugate $fft1 ] ]			  
+    set ifft  [crimp::fft::backward $correlation]
+   
+   set immag   [crimp::fpcomop::magnitude $ifft]
+   
+   # finding the Co-Ordinates of the brightest pixel 
+   set stat   [::crimp::statistics basic $immag ]
+   set max    [dict get $stat channel value max]
+   set min    [dict get $stat channel value min]
+   set val    [::crimp::find $immag $max $min ] 
+  
+   return [dict create Xshift [lindex $val 0 ] \
+                       Yshift [lindex $val 1 ] ] 	 
+ 
+    }
+	
+	
+	
 # # ## ### ##### ######## #############
 ## Commands for the creation and manipulation of transformation
 ## matrices. We are using 3x3 matrices to allow the full range of

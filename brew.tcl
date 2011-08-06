@@ -223,8 +223,9 @@ proc _wrap4tea {{dst {}}} {
     set src     [file dirname $::me]/crimptk.tcl
     set version [version $src]
 
+    puts ""
     file delete -force             [pwd]/BUILDTK
-    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -tea crimp::tk $src]
+    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -tea $src]
     file delete -force $dst/crimptk$version
     file rename        $dst/crimptk $dst/crimptk$version
 

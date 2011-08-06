@@ -139,6 +139,7 @@ crimp_color_hsv_to_rgb (int h, int s, int v, int* r, int* g, int* b)
 
 #undef A
 #undef B
+
 #define T  (0.00885645167903563081) /* = (6/29)^3 */
 #define Ti (0.20689655172413793103) /* = (6/29) = sqrt (T) */
 #define A  (7.78703703703703703702) /* = (1/3)(29/6)^2 */

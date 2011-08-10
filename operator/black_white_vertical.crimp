@@ -1,0 +1,37 @@
+black_white_vertical
+
+
+
+crimp_image* result;
+int          x, y;
+
+
+result = crimp_new_grey8 (256, 256);
+
+
+for (y = 0; y < 256; y++) {
+        for (x = 0; x < 256; x++) {
+        if( ((x%32)< 16 ) && ((y%32) >= 16) )
+		    GREY8 (result ,x ,y ) = BLACK ;
+	    else if ( ((x%32)>= 16 ) && ((y%32) < 16) )
+		    GREY8 (result ,x ,y ) = BLACK ;
+		else 
+		    GREY8 (result ,x ,y ) = WHITE ;
+			
+	    }
+}
+
+
+	
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

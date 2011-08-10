@@ -2605,10 +2605,9 @@ namespace eval ::crimp::imregs {
 }
 proc ::crimp::imregs::translation { image1 image2   } {
 
-set image1  [::crimp::convert::2grey8 $image1] 
-set image2  [::crimp::convert::2grey8 $image2] 
-   
-   
+set image1  [::crimp::convert::2grey8 $image1 ] 
+set image2  [::crimp::convert::2grey8 $image2 ] 
+    
    # ZERO pading to make both images of the same size 
    
    set data    [::crimp::samesize $image1 $image2 ] 
@@ -2624,8 +2623,18 @@ set image2  [::crimp::convert::2grey8 $image2]
                [::crimp::fpcomop::2fpcomplex \
                   [::crimp::convert::2float $image2 ] ] ]
 
-   set ratio [::crimp::divide $fft2 $fft1]
-   set ifft  [crimp::fft::backward $ratio]
+    
+    set correlation [::crimp::divide \
+                       [::crimp::multiply \
+					      $fft2 [::crimp::fpcomop::conjugate $fft1 ] ] \
+					   [::crimp::multiply \
+					      [::crimp::fpcomop::2fpcomplex \
+						     [crimp::fpcomop::magnitude $fft1 ] ] \
+						  [::crimp::fpcomop::2fpcomplex \
+						     [crimp::fpcomop::magnitude $fft2 ] ] ] ]
+							 
+   
+   set ifft  [crimp::fft::backward $correlation]
    
    set immag   [crimp::fpcomop::magnitude $ifft]
    
@@ -2635,8 +2644,8 @@ set image2  [::crimp::convert::2grey8 $image2]
    set min    [dict get $stat channel value min]
    set val    [::crimp::find $immag $max $min ] 
   
-   return [ dict create Xshift [lindex $val 0 ] \
-                       Yshift [lindex $val 1 ] ] 
+   return [ dict create Xshift [lindex $val 0 ]  \
+                        Yshift [lindex $val 1 ] ]
 }
 
 
@@ -2644,8 +2653,8 @@ set image2  [::crimp::convert::2grey8 $image2]
 # # ## ### ##### ######## #############
 proc ::crimp::imregs::rotscale { image1 image2   } {
 
-set image1  [::crimp::convert::2grey8 $image1] 
-set image2  [::crimp::convert::2grey8 $image2] 
+set image1  [::crimp::convert::2grey8 $image1 ]
+set image2  [::crimp::convert::2grey8 $image2 ] 
    
    
    # ZERO pading to make both images of the same size 
@@ -2661,7 +2670,7 @@ set image2  [::crimp::convert::2grey8 $image2]
  
    set stats  [::crimp::imregs::translation $lpt1 $lpt2] 
   
-   set angle      [dict get $stats Xshift ]
+   set angle      [expr { 360- [dict get $stats Xshift ] } ]
    set rawscale   [dict get $stats Yshift ]
   
    set PI    3.1415926535897
@@ -2678,19 +2687,20 @@ set image2  [::crimp::convert::2grey8 $image2]
 
 proc ::crimp::imregs::complete { image1 image2   } {
 
-   set image1  [::crimp::convert::2grey8 $image1] 
-   set image2  [::crimp::convert::2grey8 $image2] 
    
-   set statsrotate   [::crimp::imregs::rotscale $image1 $image2] 
+    set image1  [::crimp::convert::2grey8 $image1 ]
+    set image2  [::crimp::convert::2grey8 $image2 ]
+	
+    set statsrotate   [::crimp::imregs::rotscale $image1 $image2] 
    
     set transcale   [::crimp::transform scale \
-                      [expr {1 / [dict get $statsrotate scale ] } ] \
-                      [expr {1 / [dict get $statsrotate scale ] } ] ]
-    set tranrotate  [::crimp::transform rotate [dict get $statsrotate angle ] ]
+                       [expr {1 / [dict get $statsrotate scale ] } ]  \
+                       [expr {1 / [dict get $statsrotate scale ] } ] ]
+    set tranrotate  [::crimp::transform rotate [expr { 360 - [dict get $statsrotate angle ] } ] ]
     set transform   [::crimp::transform::chain $tranrotate $transcale]
     set image2      [::crimp::warp::projective $image2 $transform]
 	   
-   set statstrans   [::crimp::imregs::translation $image1 $image2] 
+    set statstrans   [::crimp::imregs::translation $image1 $image2] 
    
    return [dict merge $statstrans $statsrotate]
   
@@ -2699,11 +2709,8 @@ proc ::crimp::imregs::complete { image1 image2   } {
  
  proc ::crimp::imregs::findobject { image1 image2   } {
  
-   
-   set image1  [::crimp::convert::2grey8 \
-                  [::crimp::window $image1] ]
-   set image2  [::crimp::convert::2grey8 \
-                  [::crimp::window $image2] ]
+   set image1  [::crimp::convert::2grey8 $image1  ]
+   set image2  [::crimp::convert::2grey8 $image2  ]
    set silhouette    $image2 
    
   
@@ -2728,8 +2735,7 @@ proc ::crimp::imregs::complete { image1 image2   } {
    set lpt1   [::crimp::transform::logpolar $fft1mag 360 400 ]
    set lpt2   [::crimp::transform::logpolar $fft2mag 360 400 ]
  
-   ########################
-   
+  
    # 6. Take the FFT of both LPT's, giving two complex images.
    set fft21 [::crimp::fft::forward \
                [::crimp::fpcomop::2fpcomplex $lpt1 ] ] 
@@ -2737,8 +2743,14 @@ proc ::crimp::imregs::complete { image1 image2   } {
                [::crimp::fpcomop::2fpcomplex $lpt2 ] ]
 
    # Form the correlation of the two FFT-LPT-FFT's by   multiplying the pixels of one by the complex conjugate   of the pixels of the other.			  
-   set correlation [::crimp::multiply $fft21 \
-                      [::crimp::fpcomop::conjugate $fft22 ] ]
+   set correlation [::crimp::divide \
+                       [::crimp::multiply \
+					      $fft22 [::crimp::fpcomop::conjugate $fft21 ] ] \
+					   [::crimp::multiply \
+					      [::crimp::fpcomop::2fpcomplex \
+						     [crimp::fpcomop::magnitude $fft21 ] ] \
+						  [::crimp::fpcomop::2fpcomplex \
+						     [crimp::fpcomop::magnitude $fft22 ] ] ] ]
    
    #8. Inverse-FFT the correlation image.
    set ifft  [crimp::fft::backward $correlation]
@@ -2784,8 +2796,15 @@ proc ::crimp::imregs::complete { image1 image2   } {
                [::crimp::fpcomop::2fpcomplex \
                   [::crimp::convert::2float $image2 ] ] ]
 				  
-	set correlation [::crimp::multiply $fft2 \
-                      [::crimp::fpcomop::conjugate $fft1 ] ]			  
+	set correlation [::crimp::divide \
+                       [::crimp::multiply \
+					      $fft2 [::crimp::fpcomop::conjugate $fft1 ] ] \
+					   [::crimp::multiply \
+					      [::crimp::fpcomop::2fpcomplex \
+						     [crimp::fpcomop::magnitude $fft1 ] ] \
+						  [::crimp::fpcomop::2fpcomplex \
+						     [crimp::fpcomop::magnitude $fft2 ] ] ] ]
+							 
     set ifft  [crimp::fft::backward $correlation]
    
    set immag   [crimp::fpcomop::magnitude $ifft]

@@ -45,6 +45,11 @@ if {[catch {
 
 	puts "Using prebuilt crimp [package present crimp]"
 	puts "At [package ifneeded crimp [package present crimp]]"
+
+	package require crimp::tk
+
+	puts "Using prebuilt crimp::tk [package present crimp::tk]"
+	puts "At [package ifneeded crimp::tk [package present crimp::tk]]"
     } msg]} {
 
     if {$triedprebuilt} {
@@ -58,7 +63,12 @@ if {[catch {
     # Directly access the crimp package
     source [file join $dir crimp.tcl]
 
-    puts "Using dynamically compiled crimp package"
+    puts "Trying dynamically compiled crimp::tk package"
+
+    # Directly access the crimp::tk package
+    source [file join $dir crimptk.tcl]
+
+    puts "Using dynamically compiled crimp and crimp::tk packages"
 }
 
 puts "Starting up ..."
@@ -840,7 +850,10 @@ proc reload {} {
     catch { demo_close }
     images_init
     demo_init
-    after 100 {event generate .li <<ListboxSelect>>}
+    after 100 {
+	log [join [info loaded] \n]
+	event generate .li <<ListboxSelect>>
+    }
     return
 }
 

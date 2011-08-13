@@ -13,17 +13,13 @@ namespace eval ::crimp {}
 ## Implement the reader directly. The ensemble already exists, and is
 ## automatically extended.
 
-namespace eval ::crimp::read {}
-
-proc ::crimp::read::2tk {detail} {
-    ::crimp::read_2tk $detail
+proc ::crimp::read::tk {detail} {
+    ::crimp::read_tk $detail
 }
 
 # # ## ### ##### ######## #############
 ## Implement the writer directly. The ensemble already exists, and is
 ## automatically extended.
-
-namespace eval ::crimp::write {}
 
 proc ::crimp::write::2tk {dst image} {
     set type [::crimp::TypeOf $image]

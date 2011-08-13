@@ -32,7 +32,7 @@ critcl::tk
 ## commands. After the Tcl-based readers and writers to properly pick
 ## them up too in the ensembles.
 
-critcl::tsources crimptk_tcl.tcl
+critcl::tsources policytk.tcl
 
 # # ## ### ##### ######## #############
 ## Chart helpers.
@@ -87,7 +87,7 @@ if {![critcl::load]} {
 
 # # ## ### ##### ######## #############
 
-package provide crimp::tk 0
+package provide crimp::tk 0.1
 return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

@@ -64,7 +64,7 @@ critcl::tsources writer/w_*.tcl
 ## commands. After the Tcl-based readers and writers to properly pick
 ## them up too in the ensembles.
 
-critcl::tsources crimp_tcl.tcl
+critcl::tsources policy.tcl
 
 # # ## ### ##### ######## #############
 ## C-level API (i.e. types and stubs)
@@ -259,7 +259,7 @@ if {![critcl::load]} {
 
 # # ## ### ##### ######## #############
 
-package provide crimp 0
+package provide crimp 0.1
 return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

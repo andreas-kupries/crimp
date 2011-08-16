@@ -3,7 +3,7 @@
 exec tclsh "$0" ${1+"$@"}
 package require Tcl 8.5
 set me [file normalize [info script]]
-set packages {crimp_core crimp crimptk}
+set packages {crimp_core crimp crimp_tk}
 proc main {} {
     global argv tcl_platform tag
     set tag {}
@@ -264,16 +264,16 @@ proc _wrap4tea {{dst {}}} {
 
     # Package: crimp::tk
     # Generate TEA directory hierarchy
-    set src     [file dirname $::me]/crimptk.tcl
+    set src     [file dirname $::me]/crimp_tk.tcl
     set version [version $src]
 
     puts ""
     file delete -force             [pwd]/BUILDTK
     critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -tea $src]
-    file delete -force $dst/crimptk$version
-    file rename        $dst/crimptk $dst/crimptk$version
+    file delete -force $dst/crimp_tk$version
+    file rename        $dst/crimp_tk $dst/crimp_tk$version
 
-    puts "Installed package:     $dst/crimptk$version"
+    puts "Installed package:     $dst/crimp_tk$version"
     return
 }
 main

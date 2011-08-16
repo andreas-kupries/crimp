@@ -84,7 +84,7 @@ proc grep {file pattern} {
 proc version {file} {
     #puts GREP\t[join [grep $file {*package provide *}] \nGREP\t]
     set v [lindex [grep $file {*package provide *}] 0 3]
-    puts Version:\t$v
+    puts "Version:  $v"
     return $v
 }
 proc _help {} {
@@ -243,37 +243,27 @@ proc Debug {} {
     return
 }
 proc _wrap4tea {{dst {}}} {
+    global packages
     if {[llength [info level 0]] < 2} {
 	set dst [file join [pwd] tea]
     }
 
     package require critcl::app
 
-    # Package: crimp
-    # Generate TEA directory hierarchy
-    set src     [file dirname $::me]/crimp.tcl
-    set version [version $src]
+    # Generate TEA directory hierarchies
 
-    file delete -force             [pwd]/BUILD
-    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -tea $src]
-    file delete -force $dst/crimp$version
-    file rename        $dst/crimp $dst/crimp$version
+    foreach p $packages {
+	set src     [file dirname $::me]/$p.tcl
+	set version [version $src]
 
-    puts "Installed package:     $dst/crimp$version"
+	file delete -force             [pwd]/BUILD.$p
+	critcl::app::main [list -cache [pwd]/BUILD.$p -libdir $dst -tea $src]
+	file delete -force $dst/$p$version
+	file rename        $dst/$p $dst/$p$version
 
-
-    # Package: crimp::tk
-    # Generate TEA directory hierarchy
-    set src     [file dirname $::me]/crimp_tk.tcl
-    set version [version $src]
-
-    puts ""
-    file delete -force             [pwd]/BUILDTK
-    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -tea $src]
-    file delete -force $dst/crimp_tk$version
-    file rename        $dst/crimp_tk $dst/crimp_tk$version
-
-    puts "Installed package:     $dst/crimp_tk$version"
+	puts "Installed package:     $dst/$p$version"
+	puts ""
+    }
     return
 }
 main

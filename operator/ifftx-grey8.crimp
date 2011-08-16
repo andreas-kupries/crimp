@@ -12,7 +12,7 @@ crimp_input (imageObj, image, grey8);
 result = crimp_new_float (image->w, image->h);
 
 n = image->w;
-workspace = NALLOC (2*image->w+15, real);
+workspace = CRIMP_ALLOC_ARRAY (2*image->w+15, real);
 rffti_ (&n, workspace);
 
 for (y = 0; y < image->h; y++) {

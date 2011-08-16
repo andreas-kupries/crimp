@@ -1,0 +1,98 @@
+stats_multi
+Tcl_Obj* imageObj
+
+crimp_image* image;
+Tcl_Obj* result;
+Tcl_Obj* cdata;
+Tcl_Obj* lv [2];
+
+size_t n;
+int c, x, y, w, h, min[4], max[4];
+double var, stddev, mean, middle, sum[4], sumsq[4];
+int maxx[4], minx[4], maxy[4], miny[4];
+
+crimp_input_any (imageObj, image);
+ASSERT_NOTIMGTYPE(image,grey32);
+ASSERT_NOTIMGTYPE(image,float);
+
+w = image->w;
+h = image->h;
+n = crimp_image_area (image);
+
+/* 
+ * Scan image
+ */
+
+for (c = 0; c < image->itype->channels; c++) {
+    sum[c] = sumsq[c] = 0;
+    min[c] = max[c] = CH (image, c, 0, 0);
+    minx[c] = miny[c] = maxx[c] = maxy[c] = 0;
+}
+
+for (y = 0; y < h; y++) {
+    for (x = 0; x < w; x++) {
+	for (c = 0; c < image->itype->channels; c++) {
+	    int val = CH (image, c, x, y);
+
+	    sum[c]   += val;
+	    sumsq[c] += val*val;
+
+	    if (val < min[c]) {
+		min[c] = val;
+		minx[c] = x;
+		miny[c] = y;
+	    }
+	    if (val > max[c]) {
+		max[c] = val;
+		maxx[c] = x;
+		maxy[c] = y;
+	    }
+	}
+    }
+}
+
+/*
+ * Fill the dictonary.
+ * NOTES:
+ * (1) The histogram can be computed and filled by the caller.
+ * (2) Ditto for the median either, based on the histogram.
+ */
+
+result = Tcl_NewDictObj ();
+for (c = 0; c < image->itype->channels; c++) {
+    mean   = sum[c] / n;
+    middle = (min[c] + max[c])/2.0;
+    var    = sumsq[c]/n - mean*mean;
+    stddev = sqrt (var);
+
+    cdata = Tcl_NewDictObj ();
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min",      -1), Tcl_NewIntObj (min[c]));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max",      -1), Tcl_NewIntObj (max[c]));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("mean",     -1), Tcl_NewDoubleObj (mean));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("middle",   -1), Tcl_NewDoubleObj (middle));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("variance", -1), Tcl_NewDoubleObj (var));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("stddev",   -1), Tcl_NewDoubleObj (stddev));
+
+    lv[0] = Tcl_NewIntObj (minx[c]);
+    lv[1] = Tcl_NewIntObj (miny[c]);
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max@",   -1), Tcl_NewListObj (2, lv));
+
+    lv[0] = Tcl_NewIntObj (maxx[c]);
+    lv[1] = Tcl_NewIntObj (maxy[c]);
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min@",   -1), Tcl_NewListObj (2, lv));
+
+    Tcl_DictObjPut (NULL, result, Tcl_NewStringObj (image->itype->cname[c],-1), cdata);
+}
+
+Tcl_SetObjResult (interp, result);
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

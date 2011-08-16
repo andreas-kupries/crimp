@@ -11,7 +11,7 @@ def op_segment_gauss_laplacian_luma {
 	    variable M
 	    variable map
 	    if {![info exists L]} return
-	    set overlay [crimp morph gradient \
+	    set overlay [crimp morph igradient \
 			     [crimp::map_2grey8_float \
 				  [crimp::gaussian_laplacian_float \
 				       $L $thesigma] \
@@ -35,7 +35,7 @@ def op_segment_gauss_laplacian_luma {
 	}
 
 	scale .left.s -variable ::DEMO::sigma \
-	    -from 0.5 -to 15 -resolution 0.5 -length 450 \
+	    -from 0.5 -to 15 -resolution 0.1 -length 450 \
 	    -orient vertical \
 	    -command ::DEMO::show
 

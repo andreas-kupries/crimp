@@ -2605,47 +2605,52 @@ namespace eval ::crimp::imregs {
 }
 proc ::crimp::imregs::translation { image1 image2   } {
 
-set image1  [::crimp::convert::2grey8 $image1 ] 
-set image2  [::crimp::convert::2grey8 $image2 ] 
+    set image1  [::crimp::convert::2grey8 $image1 ] 
+    set image2  [::crimp::convert::2grey8 $image2 ] 
     
-   # ZERO pading to make both images of the same size 
-   
-   set data    [::crimp::samesize $image1 $image2 ] 
-  
-   set image1   [dict get $data image1 ]
-   set image2   [dict get $data image2 ]
-   
-   # Converting to fpcomplex type images for FFT computation 
-   set fft1 [::crimp::fft::forward \
-               [::crimp::fpcomop::2fpcomplex \
-                  [::crimp::convert::2float $image1 ] ] ]
-   set fft2 [::crimp::fft::forward \
-               [::crimp::fpcomop::2fpcomplex \
-                  [::crimp::convert::2float $image2 ] ] ]
-
+    # ZERO pading to make both images of the same size 
+    
+    set data    [::crimp::samesize $image1 $image2 ] 
+    
+    set image1   [dict get $data image1 ]
+    set image2   [dict get $data image2 ]
+    
+    # Converting to fpcomplex type images for FFT computation 
+    set fft1 [::crimp::fft::forward \
+		  [::crimp::fpcomop::2fpcomplex \
+		       [::crimp::convert::2float $image1 ] ] ]
+    set fft2 [::crimp::fft::forward \
+		  [::crimp::fpcomop::2fpcomplex \
+		       [::crimp::convert::2float $image2 ] ] ]
+    
     
     set correlation [::crimp::divide \
-                       [::crimp::multiply \
-					      $fft2 [::crimp::fpcomop::conjugate $fft1 ] ] \
-					   [::crimp::multiply \
-					      [::crimp::fpcomop::2fpcomplex \
-						     [crimp::fpcomop::magnitude $fft1 ] ] \
-						  [::crimp::fpcomop::2fpcomplex \
-						     [crimp::fpcomop::magnitude $fft2 ] ] ] ]
-							 
-   
-   set ifft  [crimp::fft::backward $correlation]
-   
-   set immag   [crimp::fpcomop::magnitude $ifft]
-   
-   # finding the Co-Ordinates of the brightest pixel 
-   set stat   [::crimp::statistics basic $immag ]
-   set max    [dict get $stat channel value max]
-   set min    [dict get $stat channel value min]
-   set val    [::crimp::find $immag $max $min ] 
-  
-   return [ dict create Xshift [lindex $val 0 ]  \
-                        Yshift [lindex $val 1 ] ]
+			 [::crimp::multiply \
+			      $fft2 [::crimp::fpcomop::conjugate $fft1 ] ] \
+			 [::crimp::multiply \
+			      [::crimp::fpcomop::2fpcomplex \
+				   [crimp::fpcomop::magnitude $fft1 ] ] \
+			      [::crimp::fpcomop::2fpcomplex \
+				   [crimp::fpcomop::magnitude $fft2 ] ] ] ]
+    
+    
+    set ifft  [crimp::fft::backward $correlation]
+    
+    set immag   [crimp::fpcomop::magnitude $ifft]
+    
+    # finding the Co-Ordinates of the brightest pixel 
+    set stat   [::crimp::statistics basic $immag ]
+    set max    [dict get $stat channel value max]
+    set min    [dict get $stat channel value min]
+    lassign    [::crimp::find $immag $max $max ] xshift yshift
+    lassign [crimp dimensions $immag] width height
+    if {$xshift >= $width/2} { 
+	set xshift [expr {$xshift - $width}]
+    }
+    if {$yshift >= $height/2} { 
+	set yshift [expr {$yshift - $height}]
+    }
+    return [dict create Xshift $xshift Yshift $yshift]
 }
 
 

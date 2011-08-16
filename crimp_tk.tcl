@@ -32,7 +32,7 @@ critcl::tk
 ## commands. After the Tcl-based readers and writers to properly pick
 ## them up too in the ensembles.
 
-critcl::tsources policytk.tcl
+critcl::tsources policy_tk.tcl
 
 # # ## ### ##### ######## #############
 ## Chart helpers.
@@ -42,7 +42,7 @@ critcl::tsources plot.tcl
 # # ## ### ##### ######## #############
 ## C-level API (i.e. stubs and types)
 
-critcl::api import crimp 0
+critcl::api import crimp::core 0.1
 
 # # ## ### ##### ######## #############
 ## Main C section.

@@ -7,7 +7,7 @@ int          i;
 
 crimp_input_any (imageObj, image);
 
-listv = NALLOC (image->itype->channels, Tcl_Obj*);
+listv = CRIMP_ALLOC_ARRAY (image->itype->channels, Tcl_Obj*);
 for (i=0; i < image->itype->channels; i++) {
     listv[i] = Tcl_NewStringObj (image->itype->cname [i], -1);
 }

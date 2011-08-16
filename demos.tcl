@@ -35,40 +35,40 @@ puts "In $dir"
 
 set triedprebuilt 0
 if {[catch {
-	set triedprebuilt 1
+    set triedprebuilt 1
 
-	puts "Trying prebuild crimp package"
+    puts "Trying prebuild packages"
 
-	# Use crimp as prebuilt package
-	lappend auto_path $dir/lib
-	package require crimp
+    # Use crimp as prebuilt package
+    lappend auto_path $dir/lib
 
-	puts "Using prebuilt crimp [package present crimp]"
-	puts "At [package ifneeded crimp [package present crimp]]"
+    foreach p {
+	crimp::core
+	crimp
+	crimp::tk
+    } {
+	package require $p
+	puts "Using prebuilt $p [package present $p]"
+	puts "At [package ifneeded $p [package present $p]]"
 
-	package require crimp::tk
-
-	puts "Using prebuilt crimp::tk [package present crimp::tk]"
-	puts "At [package ifneeded crimp::tk [package present crimp::tk]]"
-    } msg]} {
-
+    }
+} msg]} {
     if {$triedprebuilt} {
-	puts "Trying to use a prebuilt crimp package failed ($msg)."
+	puts "Trying to use prebuilt packages failed ($msg)."
 	puts ==\t[join [split $::errorInfo \n] \n==\t]
 	puts "Falling back to dynamic compilation via critcl [package require critcl 3]"
     }
 
-    puts "Trying dynamically compiled crimp package"
-
-    # Directly access the crimp package
-    source [file join $dir crimp.tcl]
-
-    puts "Trying dynamically compiled crimp::tk package"
-
-    # Directly access the crimp::tk package
-    source [file join $dir crimptk.tcl]
-
-    puts "Using dynamically compiled crimp and crimp::tk packages"
+    foreach {f p} {
+	crimp_core.tcl crimp::core
+	crimp.tcl      crimp
+	crimptk.tcl    crimp::tk
+    } {
+	puts "Trying dynamically compiled package \"$p\""
+	# Directly access the package
+	source [file join $dir $f]
+	puts "Using dynamically compiled package \"$p\""
+    }
 }
 
 puts "Starting up ..."

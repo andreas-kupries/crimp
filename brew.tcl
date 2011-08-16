@@ -3,6 +3,7 @@
 exec tclsh "$0" ${1+"$@"}
 package require Tcl 8.5
 set me [file normalize [info script]]
+set packages {crimp_core crimp crimp_tk}
 proc main {} {
     global argv tcl_platform tag
     set tag {}
@@ -81,7 +82,10 @@ proc grep {file pattern} {
     return [lsearch -all -inline -glob $lines $pattern]
 }
 proc version {file} {
-    return [lindex [grep $file {*package provide*}] 0 3]
+    #puts GREP\t[join [grep $file {*package provide *}] \nGREP\t]
+    set v [lindex [grep $file {*package provide *}] 0 3]
+    puts "Version:  $v"
+    return $v
 }
 proc _help {} {
     usage 0
@@ -95,45 +99,59 @@ proc _recipes {} {
     puts [lsort -dict $r]
     return
 }
-proc _install {{dst {}}} {
+proc _install {{ldir {}}} {
+    global packages
     if {[llength [info level 0]] < 2} {
-	set dst [info library]
-	set idir [file dirname [file dirname $dst]]/include
+	set ldir [info library]
+	set idir [file dirname [file dirname $ldir]]/include
     } else {
-	set idir [file dirname $dst]/include
+	set idir [file dirname $ldir]/include
     }
 
     package require critcl::app
 
-    # Package: crimp
-    # Build binaries
-    set src     [file dirname $::me]/crimp.tcl
-    set version [version $src]
+    foreach p $packages {
+	set src     [file dirname $::me]/$p.tcl
+	set version [version $src]
 
-    file delete -force             [pwd]/BUILD
-    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -includedir $idir -pkg $src]
-    file delete -force $dst/crimp$version
-    file rename        $dst/crimp $dst/crimp$version
+	file delete -force             [pwd]/BUILD
+	critcl::app::main [list -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src]
 
-    puts -nonewline "Installed package:     "
-    tag ok
-    puts $dst/crimp$version
+	file delete -force $ldir/$p$version
+	file rename        $ldir/$p $ldir/$p$version
 
+	puts -nonewline "Installed package:     "
+	tag ok
+	puts $ldir/$p$version
+	puts ""
+    }
+    return
+}
+proc _debug {{ldir {}}} {
+    global packages
+    if {[llength [info level 0]] < 2} {
+	set ldir [info library]
+	set idir [file dirname [file dirname $ldir]]/include
+    } else {
+	set idir [file dirname $ldir]/include
+    }
 
-    # Package: crimp::tk
-    # Build binaries
-    set src     [file dirname $::me]/crimptk.tcl
-    set version [version $src]
+    package require critcl::app
 
-    file delete -force             [pwd]/BUILDTK
-    puts ""
-    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -includedir $idir -pkg $src]
-    file delete -force $dst/crimptk$version
-    file rename        $dst/crimptk $dst/crimptk$version
+    foreach p $packages {
+	set src     [file dirname $::me]/$p.tcl
+	set version [version $src]
 
-    puts -nonewline "Installed package:     "
-    tag ok
-    puts $dst/crimptk$version
+	file delete -force [pwd]/BUILD.$p
+	critcl::app::main [list -keep -debug symbols -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src]
+
+	file delete -force $ldir/$p$version
+	file rename        $ldir/$p $ldir/$p$version
+
+	puts -nonewline "Installed package:     "
+	tag ok
+	puts $ldir/$p$version
+    }
     return
 }
 proc _gui {} {
@@ -144,6 +162,7 @@ proc _gui {} {
     label  .l -text {Install Path: }
     entry  .e -textvariable ::INSTALLPATH
     button .i -command Install -text Install
+    button .d -command Install -text Debug
 
     widget::scrolledwindow .st -borderwidth 1 -relief sunken
     text   .t
@@ -180,6 +199,7 @@ proc _gui {} {
 proc Install {} {
     global INSTALLPATH
     .i configure -state disabled
+    .d configure -state disabled
 
     set fail [catch {
 	_install $INSTALLPATH
@@ -190,6 +210,7 @@ proc Install {} {
     } e o]
 
     .i configure -state normal
+    .d configure -state normal
     .i configure -command ::_exit -text Exit -bg green
 
     if {$fail} {
@@ -198,38 +219,51 @@ proc Install {} {
     }
     return
 }
+proc Debug {} {
+    global INSTALLPATH
+    .i configure -state disabled
+    .d configure -state disabled
+
+    set fail [catch {
+	_debug $INSTALLPATH
+
+	puts ""
+	tag ok
+	puts DONE
+    } e o]
+
+    .i configure -state normal
+    .d configure -state normal
+    .d configure -command ::_exit -text Exit -bg green
+
+    if {$fail} {
+	# rethrow
+	return {*}$o $e
+    }
+    return
+}
 proc _wrap4tea {{dst {}}} {
+    global packages
     if {[llength [info level 0]] < 2} {
 	set dst [file join [pwd] tea]
     }
 
     package require critcl::app
 
-    # Package: crimp
-    # Generate TEA directory hierarchy
-    set src     [file dirname $::me]/crimp.tcl
-    set version [version $src]
+    # Generate TEA directory hierarchies
 
-    file delete -force             [pwd]/BUILD
-    critcl::app::main [list -cache [pwd]/BUILD -libdir $dst -tea $src]
-    file delete -force $dst/crimp$version
-    file rename        $dst/crimp $dst/crimp$version
+    foreach p $packages {
+	set src     [file dirname $::me]/$p.tcl
+	set version [version $src]
 
-    puts "Installed package:     $dst/crimp$version"
+	file delete -force             [pwd]/BUILD.$p
+	critcl::app::main [list -cache [pwd]/BUILD.$p -libdir $dst -tea $src]
+	file delete -force $dst/$p$version
+	file rename        $dst/$p $dst/$p$version
 
-
-    # Package: crimp::tk
-    # Generate TEA directory hierarchy
-    set src     [file dirname $::me]/crimptk.tcl
-    set version [version $src]
-
-    puts ""
-    file delete -force             [pwd]/BUILDTK
-    critcl::app::main [list -cache [pwd]/BUILDTK -libdir $dst -tea $src]
-    file delete -force $dst/crimptk$version
-    file rename        $dst/crimptk $dst/crimptk$version
-
-    puts "Installed package:     $dst/crimptk$version"
+	puts "Installed package:     $dst/$p$version"
+	puts ""
+    }
     return
 }
 main

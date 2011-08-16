@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <tcl.h>
 
-#include "image.h"
+#include <crimp_core/crimp_coreDecls.h>
 
 /*
  * FIXME:

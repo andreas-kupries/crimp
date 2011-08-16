@@ -28,8 +28,22 @@ critcl::tcl 8.5
 
 critcl::cflags -DIEEE_COMPLEX_DIVIDE
 
+# Algorithm sources and dependencies
 critcl::cheaders c/*.h cop/*.c
-critcl::csources c/*.c
+critcl::csources c/ahe.c
+critcl::csources c/cabs.c
+critcl::csources c/color.c
+critcl::csources c/euclidmap.c
+critcl::csources c/fir.c c/gauss.c
+critcl::csources c/geometry.c
+critcl::csources c/iir_order2.c
+critcl::csources c/labelcc.c
+critcl::csources c/linearalgebra.c
+critcl::csources c/linearmaps.c
+critcl::csources c/rank.c
+critcl::csources c/z_abs.c
+critcl::csources c/z_div.c
+critcl::csources c/z_recip.c
 
 critcl::owns demos.tcl demos/*.tcl images/*.png
 critcl::owns doc specs tools
@@ -69,106 +83,10 @@ critcl::tsources policy.tcl
 # # ## ### ##### ######## #############
 ## C-level API (i.e. types and stubs)
 
-critcl::api header c/common.h
-critcl::api header c/image_type.h
-critcl::api header c/image.h
-critcl::api header c/volume.h
-
-# - -- --- ----- -------- -------------
-## image_type.h
-
-#  API :: Core. Manage a mapping of types to names.
-critcl::api function {const crimp_imagetype*} crimp_imagetype_find {
-    {const char*} name
-}
-critcl::api function void crimp_imagetype_def {
-    {const crimp_imagetype*} imagetype
-}
-
-# API :: Tcl. Manage Tcl_Obj's of image types.
-critcl::api function Tcl_Obj* crimp_new_imagetype_obj {
-    {const crimp_imagetype*} imagetype
-}
-critcl::api function int crimp_get_imagetype_from_obj {
-    Tcl_Interp*       interp
-    Tcl_Obj*          imagetypeObj
-    crimp_imagetype** imagetype
-}
-
-# - -- --- ----- -------- -------------
-## image.h
-
-# API :: Core. Image lifecycle management.
-critcl::api function crimp_image* crimp_new {
-    {const crimp_imagetype*} type
-    int w
-    int h
-}
-critcl::api function crimp_image* crimp_newm {
-    {const crimp_imagetype*} type
-    int w
-    int h
-    Tcl_Obj* meta
-}
-critcl::api function crimp_image* crimp_dup  {
-    crimp_image* image
-}
-critcl::api function void crimp_del {
-    crimp_image* image
-}
-
-#  API :: Tcl. Manage Tcl_Obj's of images.
-critcl::api function Tcl_Obj* crimp_new_image_obj {
-    crimp_image* image
-}
-critcl::api function int crimp_get_image_from_obj {
-    Tcl_Interp*   interp
-    Tcl_Obj*      imageObj
-    crimp_image** image
-}
-
-# - -- --- ----- -------- -------------
-## volume.h
-
-# API :: Core. Volume lifecycle management.
-critcl::api function crimp_volume* crimp_vnew {
-    {const crimp_imagetype*} type
-    int w
-    int h
-    int d
-}
-critcl::api function crimp_volume* crimp_vnewm {
-    {const crimp_imagetype*} type
-    int w
-    int h
-    int d
-    Tcl_Obj* meta
-}
-critcl::api function crimp_volume* crimp_vdup {
-    crimp_volume* volume
-}
-critcl::api function void crimp_vdel {
-    crimp_volume* volume
-}
-
-#  API :: Tcl. Manage Tcl_Obj's of volumes
-critcl::api function Tcl_Obj* crimp_new_volume_obj {
-    crimp_volume* volume
-}
-critcl::api function int crimp_get_volume_from_obj {
-    Tcl_Interp*    interp
-    Tcl_Obj*       volumeObj
-    crimp_volume** volume
-}
+critcl::api import crimp::core 0.1
 
 # # ## ### ##### ######## #############
 ## Main C section.
-
-critcl::cinit {
-    crimp_imagetype_init ();
-} {
-    extern void crimp_imagetype_init (void); /* c/image_type.c */
-}
 
 critcl::ccode {
     #include <math.h>

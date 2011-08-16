@@ -32,7 +32,7 @@ if (largegrey) {
     maxv = 256;
 }
 
-histogram = NALLOC (maxv * image->itype->channels, int);
+histogram = CRIMP_ALLOC_ARRAY (maxv * image->itype->channels, int);
 memset (histogram, '\0', maxv * image->itype->channels * sizeof (int));
 
 /*

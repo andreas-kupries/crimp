@@ -44,6 +44,7 @@ critcl::cheaders c/coreInt.h
 critcl::csources c/image.c
 critcl::csources c/volume.c
 critcl::csources c/image_type.c
+critcl::csources c/buffer.c
 
 # # ## ### ##### ######## #############
 ## C-level API (i.e. types and stubs)
@@ -52,6 +53,7 @@ critcl::api header c/common.h
 critcl::api header c/image_type.h
 critcl::api header c/image.h
 critcl::api header c/volume.h
+critcl::api header c/buffer.h
 
 # - -- --- ----- -------- -------------
 ## image_type.h
@@ -138,6 +140,64 @@ critcl::api function int crimp_get_volume_from_obj {
     Tcl_Interp*    interp
     Tcl_Obj*       volumeObj
     crimp_volume** volume
+}
+
+# - -- --- ----- -------- -------------
+## buffer.h
+
+critcl::api function void crimp_buf_init {
+    crimp_buffer* b
+    Tcl_Obj*      obj
+}
+
+critcl::api function int crimp_buf_has {
+    crimp_buffer* b
+    int           n
+}
+
+critcl::api function int crimp_buf_tell {
+    crimp_buffer* b
+}
+
+critcl::api function void crimp_buf_moveto {
+    crimp_buffer* b
+    int           location
+}
+
+critcl::api function void crimp_buf_skip {
+    crimp_buffer* b
+    int           n
+}
+
+critcl::api function int crimp_buf_match {
+    crimp_buffer* b
+    int           n
+    char*         str
+}
+
+critcl::api function void crimp_buf_read_uint8 {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint16le {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint32le {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint16be {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint32be {
+    crimp_buffer*   b
+    {unsigned int*} value
 }
 
 # # ## ### ##### ######## #############

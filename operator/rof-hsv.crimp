@@ -51,9 +51,9 @@ result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
  * yi = yo + radius, yo in (0...w-2*radius)
  */
 
-colhistogramh = NALLOC (image->w * 256, int); memset (colhistogramh,'\0', image->w * 256 * sizeof(int));
-colhistograms = NALLOC (image->w * 256, int); memset (colhistograms,'\0', image->w * 256 * sizeof(int));
-colhistogramv = NALLOC (image->w * 256, int); memset (colhistogramh,'\0', image->w * 256 * sizeof(int));
+colhistogramh = CRIMP_ALLOC_ARRAY (image->w * 256, int); memset (colhistogramh,'\0', image->w * 256 * sizeof(int));
+colhistograms = CRIMP_ALLOC_ARRAY (image->w * 256, int); memset (colhistograms,'\0', image->w * 256 * sizeof(int));
+colhistogramv = CRIMP_ALLOC_ARRAY (image->w * 256, int); memset (colhistogramh,'\0', image->w * 256 * sizeof(int));
 
 n = (2*radius+1);
 n = n * n;

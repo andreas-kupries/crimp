@@ -2,7 +2,7 @@
 #define CRIMP_UTIL_H
 /*
  * CRIMP :: Utility Declarations.
- * (C) 2010.
+ * (C) 2010-2011.
  */
 
 #include "common.h"
@@ -23,15 +23,6 @@ extern int rfftb_ (integer *n, real* r, real *wsave);
 
 #define DUPSTR(str)    ((char *) strcpy (ckalloc (strlen (str)+1), str))
 #define DUP(p,type)    ((type *) memcpy (ALLOC (type), p, sizeof (type)))
-#define ALLOC(type)    ((type *) ckalloc (sizeof (type)))
-#define NALLOC(n,type) ((type *) ckalloc ((n) * sizeof (type)))
-
-#define FreeIntRep(objPtr) \
-    if ((objPtr)->typePtr != NULL && \
-	    (objPtr)->typePtr->freeIntRepProc != NULL) { \
-	(objPtr)->typePtr->freeIntRepProc(objPtr); \
-	(objPtr)->typePtr = NULL; \
-    }
 
 /*
  * General math support.

@@ -37,6 +37,13 @@
 #define CRIMP_ASSERT_BOUNDS(i,n)
 #endif
 
+/*
+ * Heap allocation helpers.
+ */
+
+#define CRIMP_ALLOC(type)         ((type *) ckalloc (sizeof (type)))
+#define CRIMP_ALLOC_ARRAY(n,type) ((type *) ckalloc ((n) * sizeof (type)))
+
 
 /*
  * Local Variables:

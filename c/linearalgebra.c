@@ -7,6 +7,7 @@
  * Import declarations.
  */
 
+#include <crimp_core/crimp_coreDecls.h>
 #include <linearalgebra.h>
 
 /*

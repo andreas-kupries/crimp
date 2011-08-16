@@ -1,16 +1,13 @@
 /*
  * CRIMP :: Image Type Definitions (Implementation).
- * (C) 2010.
+ * (C) 2010-2011.
  */
 
 /*
  * Import declarations.
  */
 
-#include <image_type.h>
-#include <util.h>
-#include <tcl.h>
-#include <string.h>
+#include "coreInt.h"
 
 /*
  * Internal declarations.
@@ -102,7 +99,7 @@ crimp_imagetype_init (void)
 void
 crimp_imagetype_def (const crimp_imagetype* imagetype)
 {
-    knowntype* kt = ALLOC (knowntype);
+    knowntype* kt = CRIMP_ALLOC (knowntype);
     kt->type   = imagetype;
     kt->next   = knowntypes;
     knowntypes = kt;
@@ -182,7 +179,7 @@ StringOfImageType (Tcl_Obj* imagetypeObjPtr)
     int              len = strlen (cit->name);
 
     imagetypeObjPtr->length = len;
-    imagetypeObjPtr->bytes  = NALLOC (len+1,char);
+    imagetypeObjPtr->bytes  = CRIMP_ALLOC_ARRAY (len+1,char);
     strcpy (imagetypeObjPtr->bytes, cit->name);
 }
 

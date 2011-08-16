@@ -32,7 +32,7 @@ critcl::tk
 ## commands. After the Tcl-based readers and writers to properly pick
 ## them up too in the ensembles.
 
-critcl::tsources policytk.tcl
+critcl::tsources policy_tk.tcl
 
 # # ## ### ##### ######## #############
 ## Chart helpers.

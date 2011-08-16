@@ -42,7 +42,7 @@ critcl::tsources plot.tcl
 # # ## ### ##### ######## #############
 ## C-level API (i.e. stubs and types)
 
-critcl::api import crimp 0
+critcl::api import crimp::core 0.1
 
 # # ## ### ##### ######## #############
 ## Main C section.

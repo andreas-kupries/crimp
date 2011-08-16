@@ -1,18 +1,13 @@
 /*
  * CRIMP :: Volume Definitions (Implementation).
- * (C) 2010.
+ * (C) 2010-2011.
  */
 
 /*
  * Import declarations.
  */
 
-#include <volume.h>
-#include <image.h>
-#include <util.h>
-#include <tcl.h>
-#include <string.h>
-#include <limits.h> /* HAVE_LIMITS_H check ? */
+#include "coreInt.h"
 
 /*
  * Internal declarations.
@@ -237,7 +232,7 @@ StringOfVolume (Tcl_Obj* volObjPtr)
 	 * a 0-terminated string, and the voxels aren't
 	 */
 
-	dst = tmp = NALLOC (plen+1, char);
+	dst = tmp = CRIMP_ALLOC_ARRAY (plen+1, char);
 	if (expanded) {
 	    /*
 	     * If bytes have to be expanded we have to handle them 1-by-1.
@@ -265,7 +260,7 @@ StringOfVolume (Tcl_Obj* volObjPtr)
 
     length = Tcl_DStringLength (&ds);
 
-    volObjPtr->bytes  = NALLOC (length+1, char);
+    volObjPtr->bytes  = CRIMP_ALLOC_ARRAY (length+1, char);
     volObjPtr->length = length;
 
     memcpy (volObjPtr->bytes, Tcl_DStringValue (&ds), length+1);

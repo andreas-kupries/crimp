@@ -9,12 +9,6 @@
 
 #include <crimp_core/crimp_coreDecls.h>
 
-/* Compression types */
-#define BI_RGB          0
-#define BI_RLE8         1
-#define BI_RLE4         2
-#define BI_BITFIELDS    3
-
 /* Structure for reading bit masks for compression type BI_BITFIELDS */
 typedef struct {
   unsigned int mask;
@@ -22,13 +16,47 @@ typedef struct {
   unsigned int shiftout;
 } BitmapChannel;
 
-extern int
-bmp_read_header (crimp_buffer* buf,
-		 int* w, int* h,
-		 unsigned char **colorMap,
-		 int* numBits, int* numCols, int* comp,
-		 unsigned int* mask);
+/*
+ * Compression types
+ */
+typedef enum {
+    bc_rgb,      /* Uncompressed pixels */
+    bc_rle4,     /* RLE-encoding for 4 bits/pixel */
+    bc_rle8,     /* RLE-encoding for 8 bits/pixel */
+    bc_bitfield, /* Packed RGB (or 1d huffman) */
+    bc_jpeg,     /* Embedded JPEG, or RLE-24 -- NOT SUPPORTED */
+    bc_png,      /* Embedded PNG             -- NOT SUPPORTED */
+    bc_alphabit  /*                          -- NOT SUPPORTED */
+} bmp_compression;
 
+/*
+ * bmp decoder information.
+ */
+
+typdef struct bmp_info {
+    unsigned int    w;             /* Image width */
+    unsigned int    h;             /* Image height */
+    unsigned char*  colorMap;      /* Palette, NULL if not used */
+    unsigned int    numColors;     /* #colors in the palette */
+    unsigned int    numBits;       /* bits/pixel */
+    bmp_compression mode;          /* Pixel compression method, s.a. */
+    int             topdown;       /* Direction of scan-line storage */
+    unsigned int    numPixelBytes; /* #bytes of pixel data */
+    crimp_buffer*   input;         /* buffer holding the BMP */
+} bmp_info;
+
+/*
+ * Main functions.
+ */
+
+extern int
+bmp_read_header (Tcl_Interp*     interp,
+		 crimp_buffer*   buf,
+		 bmp_info*       info);
+
+extern void
+bmp_read_pixels (bmp_info*      info,
+		 crimp_image*   destination);
 
 /*
  * Local Variables:

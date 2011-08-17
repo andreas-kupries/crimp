@@ -155,8 +155,17 @@ critcl::api function int crimp_buf_has {
     int           n
 }
 
+critcl::api function int crimp_buf_size {
+    crimp_buffer* b
+}
+
 critcl::api function int crimp_buf_tell {
     crimp_buffer* b
+}
+
+critcl::api function int crimp_buf_check {
+    crimp_buffer* b
+    int           location
 }
 
 critcl::api function void crimp_buf_moveto {

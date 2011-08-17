@@ -7,7 +7,7 @@
  * Copyright (c) 2002      Andreas Kupries <andreas_kupries@users.sourceforge.net>
  */
 
-#include "buf.h"
+#include <crimp_core/crimp_coreDecls.h>
 
 /* Compression types */
 #define BI_RGB          0
@@ -23,11 +23,11 @@ typedef struct {
 } BitmapChannel;
 
 extern int
-crimp_bmp_process_header (Buf* buf,
-			  int* w, int* h,
-			  unsigned char **colorMap,
-			  int* numBits, int* numCols, int* comp,
-			  unsigned int* mask);
+bmp_read_header (crimp_buffer* buf,
+		 int* w, int* h,
+		 unsigned char **colorMap,
+		 int* numBits, int* numCols, int* comp,
+		 unsigned int* mask);
 
 
 /*

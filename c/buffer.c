@@ -28,9 +28,21 @@ crimp_buf_has (crimp_buffer* buf, int n)
 }
 
 int
+crimp_buf_size (crimp_buffer* buf)
+{
+    return buf->length;
+}
+
+int
 crimp_buf_tell (crimp_buffer* buf)
 {
     return (buf->here - buf->buf);
+}
+
+int
+crimp_buf_check (crimp_buffer* buf, int location)
+{
+    return (0 <= location) && (location < buf->length);
 }
 
 void

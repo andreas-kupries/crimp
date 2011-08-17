@@ -178,6 +178,11 @@ critcl::api function void crimp_buf_skip {
     int           n
 }
 
+critcl::api function void crimp_buf_align {
+    crimp_buffer* b
+    int           n
+}
+
 critcl::api function int crimp_buf_match {
     crimp_buffer* b
     int           n
@@ -207,6 +212,31 @@ critcl::api function void crimp_buf_read_uint16be {
 critcl::api function void crimp_buf_read_uint32be {
     crimp_buffer*   b
     {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_int8 {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int16le {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int32le {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int16be {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int32be {
+    crimp_buffer*   b
+    int*            value
 }
 
 # # ## ### ##### ######## #############

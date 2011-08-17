@@ -65,6 +65,17 @@ crimp_buf_skip (crimp_buffer* buf, int n)
     buf->here += n;
 }
 
+void
+crimp_buf_align (crimp_buffer* buf, int n)
+{
+   int loc = (buf->here - buf->buf);
+   int off = loc % n;
+
+   if (!off) return;
+
+   crimp_buf_skip (buf, n-off);
+}
+
 int
 crimp_buf_match (crimp_buffer* buf, int n, char* str)
 {
@@ -142,6 +153,63 @@ crimp_buf_read_uint32be (crimp_buffer* buf, unsigned int* res)
     buf->here += 4;
 }
 
+void
+crimp_buf_read_int8 (crimp_buffer* buf, int* res)
+{
+    CRIMP_ASSERT_BOUNDS (1,(buf->sentinel - buf->here));
+
+    *res = buf->here[0];
+
+    buf->here ++;
+}
+
+void
+crimp_buf_read_int16le (crimp_buffer* buf, int* res)
+{
+    CRIMP_ASSERT_BOUNDS (2,(buf->sentinel - buf->here));
+
+    *res = (buf->here[0] |
+	    buf->here[1] << 8);
+
+    buf->here += 2;
+}
+
+void
+crimp_buf_read_int32le (crimp_buffer* buf, int* res)
+{
+    CRIMP_ASSERT_BOUNDS (4,(buf->sentinel - buf->here));
+
+    *res = (buf->here[0] |
+	    buf->here[1] << 8 |
+	    buf->here[2] << 16 |
+	    buf->here[3] << 24);
+
+    buf->here += 4;
+}
+
+void
+crimp_buf_read_int16be (crimp_buffer* buf, int* res)
+{
+    CRIMP_ASSERT_BOUNDS (2,(buf->sentinel - buf->here));
+
+    *res = (buf->here[1] |
+	    buf->here[0] << 8);
+
+    buf->here += 2;
+}
+
+void
+crimp_buf_read_int32be (crimp_buffer* buf, int* res)
+{
+    CRIMP_ASSERT_BOUNDS (4,(buf->sentinel - buf->here));
+
+    *res = (buf->here[3] |
+	    buf->here[2] << 8 |
+	    buf->here[1] << 16 |
+	    buf->here[0] << 24);
+
+    buf->here += 4;
+}
 
 /*
  * Local Variables:

@@ -8,105 +8,58 @@
  * Import declarations.
  */
 
-#include <buf.h>
-#include <bmp.h>
+#include "bmp.h"
 
 /*
  * Definitions :: Core.
  */
 
 int
-crimp_bmp_process_header (Buf* buf,
-			  int* w, int* h,
-			  unsigned char **colorMap,
-			  int* numBits, int* numCols, int* comp,
-			  unsigned int* mask)
+bmp_read_header (crimp_buffer* buf,
+		 int* w, int* h,
+		 unsigned char **colorMap,
+		 int* numBits, int* numCols, int* comp,
+		 unsigned int* mask)
 {
+    unsigned int fsize, pixOffset, c;
+
     unsigned int x;
-    int c, i, compression, nBits, clrUsed, offBits;
+    int i, compression, nBits, clrUsed, offBits;
 
     /*
-     * See http://en.wikipedia.org/wiki/BMP_file_format
+     * Reference
+     *	http://en.wikipedia.org/wiki/BMP_file_format
      *
-     * Header
-     *  0.. 1 - 2 - magic "BM" (ascii).
-     *  2.. 5 - 4 - size of file in bytes
-     *  6.. 7 - 2 - reserved
-     *  8.. 9 - 2 - reserved
-     * 10..13 - 4 - offset to pixel data
-     *
-     * DIB Header (multiple variants).
+     * Win Header
+     *  0.. 1 | 2 : magic "BM" (ascii).
+     *  2.. 5 | 4 : size of file in bytes
+     *  6.. 7 | 2 : reserved (creator-id 1)
+     *  8.. 9 | 2 : reserved (creator-id 2)
+     * 10..13 | 4 : offset to pixel data, relative to start of file.
      */
 
-    if (!crimp_buf_require (buf, 26))   { return 0; } /* 0..26 */
-    if (!crimp_buf_strn (buf, 2, "BM")) { return 0; } /* 0..1 */
+    if (!crimp_buf_has   (buf, 14))      { return 0; } /* Space for Win Header */
+    if (!crimp_buf_match (buf, 2, "BM")) { return 0; } /* BMP magic value */
 
-    crimp_buf_uint32le (buf, &fSize);
-    crimp_buf_skip     (buf, 4); /* reserved */
-    crimp_buf_uint32le (buf, &fSize);
+    crimp_buf_read_uint32le (buf, &fsize);             /* BMP file size */
+    crimp_buf_skip          (buf, 4);                  /* reserved */
+    crimp_buf_read_uint32le (buf, &pixOffset);         /* offset to pixel data */
 
+    /* Check internal consistency of the data retrieved so far */
+    if ((crimp_buf_size (buf) != fsize) ||
+	(pixOffset % 4 != 0) ||
+	!crimp_buf_check (buf, pixOffset)) { return 0; }
 
+    /*
+     * DIB Header (multiple variants, distinguishable by size).
+     *  0..3 | 4 : DIB header size, common to all variants.
+     */
 
+    if (!crimp_buf_has      (buf, 4))      { return 0; } /* Space for DIB Header size */
+    crimp_buf_read_uint32le (buf, &c);                   /* DIB header size */
+    if (!crimp_buf_has      (buf, c-4))    { return 0; } /* Space for remaining DIB Header */
 
-
-
-
-
-    /* ? what header fields */
-    crimp_buf_seek (buf, 13);
-    crimp_buf_uint8 (buf, &x) ; if (!x) { return 0; } /* 13 */
-    crimp_buf_uint8 (buf, &x) ; if (!x) { return 0; } /* 14 */
-    crimp_buf_uint8 (buf, &x) ; if (!x) { return 0; } /* 15 -> 16*/
-
-    crimp_buf_seek (buf, -16);
-    crimp_buf_seek (buf, 8);
-
-    crimp_buf_uint32le (buf, &offBits); /* 8..11 */
-    crimp_buf_uint8    (buf, &c);       /* 12 -> 13 */
-
-    crimp_buf_seek (buf, -13);
-
-    if ((c == 40) || (c == 64)) {
-
-	crimp_buf_seek (buf, 16);
-	crimp_buf_uint32le (buf, w); /* 16..19 */
-	crimp_buf_uint32le (buf, h); /* 20..23 */
-
-	if (!crimp_buf_require (buf, 24))   { return 0; }
-	/* 0..23 = 26..49 */
-
-	crimp_buf_seek (buf, 2);
-	crimp_buf_uint8 (buf, &nBits);       /* 2 */
-	crimp_buf_seek (buf, 1);
-	crimp_buf_uint8 (buf, compression);       /* 4 */
-
-	crimp_buf_seek (buf, -5);
-	crimp_buf_seek (buf, 20);
-
-	crimp_buf_uint16le (buf, &clrUsed); /* 20..21 */
-        offBits -= c+14;
-
-	crimp_buf_seek (buf, -22);
-
-    } else if (c == 12) {
-
-	crimp_buf_seek (buf, 16);
-	crimp_buf_uint16le (buf, w); /* 16..17 */
-	crimp_buf_uint16le (buf, h); /* 18..19 */
-
-	crimp_buf_seek (buf, -20);
-	crimp_buf_seek (buf, 22);
-
-	crimp_buf_uint8 (buf, &nBits);  /* 22 */
-
-        compression = BI_RGB;
-        clrUsed = 0;
-    } else {
-        return 0;
-    }
-
-
-
+#error TODO DIB header processing.
 
     return 1;
 }

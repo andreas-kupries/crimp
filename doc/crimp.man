@@ -126,6 +126,13 @@ The package currently knows the following types:
 	[def Bit-depth]		4 byte/channel.
 	[def Pixel-size]	4 byte.
 	[list_end]
+[def [const fpcomplex]]
+	[list_begin definitions]
+	[def Colorspace]	N.A / Floating Point.
+	[def Channels]		2, named "real" ,and "imaginary".
+	[def Bit-depth]		4 byte/channel.
+	[def Pixel-size]	8 byte.
+	[list_end]
 [list_end]
 
 Support for the various types varies by operation. The exact image
@@ -501,7 +508,7 @@ dimensions.  The [arg value]s after the dimensions are the pixel
 values to fill the pixels in the image's channels with, per its type.
 
 [para] This method currently support only the types [const rgb],
-[const rgba], and [const grey8].
+[const rgba],[const fpcomplex], and [const grey8].
 
 
 [call [cmd ::crimp] [method crop] [arg image] [arg ww] [arg hn] [arg we] [arg hs]]
@@ -668,8 +675,8 @@ These two methods implement 2D FFT (forward) and inverse FFT (backward).
 
 [para]
 The input is restricted to images of the single-channel types,
-i.e. [const float] and [const "grey\{8,16,32\}"]. The result is always
-of type [const float].
+i.e. [const float] , [const "grey\{8,16,32\}"] and [const "fpcomplex"]. The result is always
+of type [const float] for input images other than [const fpcomplex] .
 
 [para]
 The former means that it is necessary to split [const rgb],
@@ -811,7 +818,13 @@ tradeoff, handling multi-channel images, but dropping precision.
 [call [cmd ::crimp] [method {filter scharr y}] [arg image]]
 [call [cmd ::crimp] [method {filter prewitt x}] [arg image]]
 [call [cmd ::crimp] [method {filter prewitt y}] [arg image]]
-[keywords filter sobel scharr prewitt edge-detection gradient]
+[call [cmd ::crimp] [method {filter roberts x}] [arg image]]
+[call [cmd ::crimp] [method {filter roberts y}] [arg image]]
+[call [cmd ::crimp] [method {filter canny sobel}] [arg image]]
+[call [cmd ::crimp] [method {filter canny deriche}] [arg image]]
+
+
+[keywords filter sobel scharr prewitt edge-detection roberts canny gradient]
 
 These methods are convenience methods implementing a number of standard
 convolution filters using for edge detection and calculation of image
@@ -825,6 +838,11 @@ Also note that the [method x] methods emphasize gradient in the horizontal
 direction, and thus highlight [emph vertical] lines, and vice versa for
 [method y].
 
+[call [cmd ::crimp] [method {filter wiener}] [arg image] [arg radius]]
+
+This method filters an image that has been degraded by constant power additive
+noise. It uses a pixelwise adaptive Filter method based on statistics estimated 
+from a local neighborhood of each pixel. The default value for radius is 2
 
 [call [cmd ::crimp] [method gamma] [arg image] [arg y]]
 
@@ -841,6 +859,8 @@ This method supports all image types supported by the method
 [call [cmd ::crimp] [method {gradient sobel}] [arg image]]
 [call [cmd ::crimp] [method {gradient scharr}] [arg image]]
 [call [cmd ::crimp] [method {gradient prewitt}] [arg image]]
+[call [cmd ::crimp] [method {gradient roberts}] [arg image]]
+
 [keywords sobel scharr prewitt edge-detection gradient]
 
 These methods generate two gradient images for the input image, in the
@@ -1113,6 +1133,21 @@ performing a pixelwise multiplication. Note that the result of each
 multiplication is divided by [const 255] to scale it back into the
 range [lb]0...255[rb].
 
+[para]
+[call [cmd ::crimp] [method {noise saltpepper} ] [arg image] [arg value]]
+[call [cmd ::crimp] [method {noise gaussian} ] [arg image] [arg mean] [arg variance]]
+[call [cmd ::crimp] [method {noise speckle} ] [arg image] [arg variance]]
+ 
+These methods add noises of different types to the given image.
+
+[para] [emph saltpepper]  adds salt and pepper noise to the image , where value
+is the noise density ,whose default value is 0.05 ,range [lb]0...1[rb].
+
+[para] [emph gaussian] adds gaussian noise of given mean and variance to the image , 
+the default values for mean and variance are 0 and 0.05 respectively and  range [lb]0...1[rb].
+
+[para] [emph speckle] adds multiplicative noise of variance to the image , 
+the default value for variance is 0.05 , range [lb]0...1[rb]. 
 
 [call [cmd ::crimp] [method psychedelia] [arg width] [arg height] [arg frames]]
 
@@ -1235,6 +1270,10 @@ single-byte channels, i.e. all but [const grey16], [const grey32],
 [const float], and [const bw].
 
 
+[call [cmd ::crimp] [method samesize] [arg image1] [arg image2]]
+
+This method takes two images and returns a dictonary having keys image1 
+and image2 which are of same dimensions.
 
 [call [cmd ::crimp] [method screen] [arg image1] [arg image2]]
 
@@ -1242,7 +1281,6 @@ This method combines the two input images by inverting the
 multiplication of the inverted input images. I.e.
 
 [para][image screen][para]
-
 
 [call [cmd ::crimp] [method solarize] [arg image] [arg threshold]]
 [keywords solarization {sabattier effect}]
@@ -1492,6 +1530,11 @@ situation the result will contain the physical coordinates of the
 conceptual origin point in its meta data, under the hierarchical key
 [const {crimp origin}].
 
+[call [cmd ::crimp] [method {window}] [arg image]]
+
+This method takes an image, and apply a window function
+to it so that it fades to black at the edges
+
 [list_end]
 
 
@@ -1529,6 +1572,31 @@ and [method {join rgba}].
 
 At last, the conversion to [const rgb] accepts both [const rgba] and
 [const hsv] images as input.
+
+[call [cmd ::crimp] [method {fpcomp magnitude}] [arg image]]
+
+This Method take fpcomplex image as input and return image of 
+type float consisting of magnitude of each pixel,
+
+[call [cmd ::crimp] [method {fpcomp 2fpcomplex}] [arg image]]
+
+This Method take float image as input and return image of 
+type fpcomplex where REAL part consist of input image.
+
+[call [cmd ::crimp] [method {fpcomp imaginary}] [arg image]]
+
+This Method take fpcomplex image as input and return image of 
+type float consisting of imaginary part of input image.
+
+[call [cmd ::crimp] [method {fpcomp real}] [arg image]]
+
+This Method take fpcomplex image as input and return image of 
+type float consisting of REAL part of input image.
+
+[call [cmd ::crimp] [method {fpcomp conjugate}] [arg image]]
+
+This Method take fpcomplex image as input and return image of 
+type float consisting of conjugate each pixel of input image.
 
 
 [call [cmd ::crimp] [method {join 2hsv}] [arg hueImage] [arg satImage] [arg valImage]]
@@ -1707,6 +1775,29 @@ values in the range 0...255 whereas for the types [method rgb] and
 [method hsv] the arguments are triples (3-element lists) specifying
 the R, G, and B (and H, S, and V respectively) values.
 
+[call [cmd ::crimp] [method {imregs translation}] [arg image1] [arg image2]]
+
+This method takes two images which are translated copy of each other 
+and returns a dictonary having two keys Xshift Yshift which contains the value of
+translation respectively.
+
+[call [cmd ::crimp] [method {imregs translation}] [arg image1] [arg image2]]
+
+This method takes two images which are translated copy of each other 
+and returns a dictonary having two keys Xshift ,Yshift which contains the value of
+translation respectively.
+
+[call [cmd ::crimp] [method {imregs rotscale}] [arg image1] [arg image2]]
+
+This method takes two images which are Rotated and Scaled  copy of each other 
+and returns a dictonary having two keys angle ,scale which contains the value of
+Rotation and scaling factor respectively.
+
+[call [cmd ::crimp] [method {imregs complete}] [arg image1] [arg image2]]
+
+This method takes two images and combines the above two functions 
+and returns a dictonary having four keys Xshift, Yshift, angle, and scale which
+contains the value of Translation ,Rotation and scaling factor respectively.
 
 [call [cmd ::crimp] [method {kernel make}] [arg matrix] [opt [arg scale]] [opt [arg offset]]]
 
@@ -2028,6 +2119,18 @@ first, then the one before it, etc.
 This method computes and returns the inverse of the specified
 projective [arg transform]ation.
 
+[call [cmd ::crimp] [method {transform logpolar}]  [arg image] [arg xwidth] [arg xheight] [arg xcenter] [arg ycenter] [arg corners]]
+
+This method converts an image in a coordinate system in two dimensions,
+where a point is identified by two numbers, one for the logarithm of the
+distance to a certain point, and one for an angle .Here Angle is taken on
+X axis and Logarithm of distance is taken on Y axis. Here xwidth and xheight
+are the dimensions of the output image , xcenter and ycenter being the center 
+point where angle and Logarithm of distance is zero ,and conners = 1 if 
+corners of the image are to be included, 0 if they are to be suppressed. 
+The default values for xcenter ,ycenter ,corners are 0 , 0 , 1 respectively. 
+
+logpolar { image xwidth xheight { xcenter 0} { ycenter 0} { corners 1} }
 [call [cmd ::crimp] [method {transform projective}]  [arg a] [arg b] [arg c] [arg d] [arg e] [arg f] [arg g] [arg h]]
 
 This method returns the projective transformation specified by the 3x3

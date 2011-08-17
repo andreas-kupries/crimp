@@ -10,27 +10,22 @@ Tcl_Obj* bmpdata
  * Original code derived from TkImg bmp/bmp.c, modified to suit (no Tk!).
  */
 
-Buf buf;
+crimp_buffer   buf;
+bmp_info       bmp;
 crimp_image*   result;
-int w, h, nbites, ncols, comp;
-unsigned char* cmap;
-unsigned int* mask;
 
 /*
  * Check input, i.e. verify structure and extract dimensions
  */
 
-crimp_buf_new (&buf, bmpdata);
-
-if (!crimp_bmp_process_header (&buf, &w, &h, &cmap,
-			       &nbits, &ncols, &comp, &mask)) {
-    Tcl_SetResult(interp, "Not a BMP image", TCL_STATIC);
+crimp_buf_init (&buf, bmpdata);
+if (!bmp_read_header (interp, buf, &bmp)) {
     return TCL_ERROR;
 }
 
 result = crimp_new_rgb (w, h);
 
-#error TODO ...
+bmp_read_pixels (&bmp, result);
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;

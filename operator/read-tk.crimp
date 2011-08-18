@@ -1,4 +1,4 @@
-read_tk
+read::tk
 char* photo
 
 Tk_PhotoHandle     handle = Tk_FindPhoto (interp, photo);

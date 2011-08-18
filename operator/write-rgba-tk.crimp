@@ -1,4 +1,4 @@
-write_2tk_rgba
+write::Tk_rgba
 char* photo Tcl_Obj* imageObj
 
 Tk_PhotoHandle     handle = Tk_FindPhoto(interp, photo);

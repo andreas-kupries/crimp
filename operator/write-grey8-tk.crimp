@@ -1,4 +1,4 @@
-write_2tk_grey8
+write::Tk_grey8
 char* photo Tcl_Obj* imageObj
 
 Tk_PhotoHandle     handle = Tk_FindPhoto(interp, photo);

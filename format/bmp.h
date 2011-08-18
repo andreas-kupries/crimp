@@ -54,7 +54,7 @@ bmp_read_header (Tcl_Interp*     interp,
 		 crimp_buffer*   buf,
 		 bmp_info*       info);
 
-extern void
+extern int
 bmp_read_pixels (bmp_info*      info,
 		 crimp_image*   destination);
 

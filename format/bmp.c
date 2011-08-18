@@ -10,11 +10,11 @@
 
 #include "bmp.h"
 
-static void decode_2   (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
-static void decode_4   (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
-static void decode_16  (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
-static void decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
-static void decode_rgb (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
+static int decode_2   (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
+static int decode_4   (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
+static int decode_16  (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
+static int decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
+static int decode_rgb (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
 
 static void map_color (unsigned char* colorMap, int index, unsigned char* pix);
 
@@ -47,7 +47,7 @@ bmp_read_header (Tcl_Interp*     interp,
 
     if (!crimp_buf_has   (buf, 14) ||
 	!crimp_buf_match (buf, 2, "BM")) {
-	Tcl_SetResult(interp, "Not a BMP image", TCL_STATIC);
+	Tcl_SetResult (interp, "Not a BMP image", TCL_STATIC);
 	return 0;
     }
 
@@ -62,7 +62,7 @@ bmp_read_header (Tcl_Interp*     interp,
     if ((crimp_buf_size (buf) != fsize) ||
 	(pixOffset % 4 != 0) ||
 	!crimp_buf_check (buf, pixOffset)) {
-	Tcl_SetResult(interp, "Bad BMP image", TCL_STATIC);
+	Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
 	return 0;
     }
 
@@ -75,12 +75,12 @@ bmp_read_header (Tcl_Interp*     interp,
      */
 
     if (!crimp_buf_has (buf, 4)) {         /* Space for DIB Header size */
-	Tcl_SetResult(interp, "Bad BMP image", TCL_STATIC);
+	Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
 	return 0;
     }
     crimp_buf_read_uint32le (buf, &c);     /* DIB header size */
     if (!crimp_buf_has      (buf, c-4)) {  /* Space for remaining DIB Header */
-	Tcl_SetResult(interp, "Bad BMP image", TCL_STATIC);
+	Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
 	return 0;
     }
 
@@ -115,9 +115,9 @@ bmp_read_header (Tcl_Interp*     interp,
 	/*
 	 * - BitCount
 	 *   1 : 2 Colors.   Bit unset => Color 0, Bit set => color 1.
-	 *   2 : 4 Colors.   Compressible
-	 *   4 : 8 Colors.   Compressible.
-	 *   8 : 256 Colors.
+	 *   2 : 4 Colors.
+	 *   4 : 16 Colors.   Compressible (RLE4).
+	 *   8 : 256 Colors.  Compressible (RLE8).
 	 *  24 : RGB storage, no color table.
 	 *  -- - ----------------------------------------------
 	 *  16 : Packed RGB storage, no color table, have channel bitmasks
@@ -134,12 +134,12 @@ bmp_read_header (Tcl_Interp*     interp,
 	case 4:
 	case 8:
 	    /*
-	     * Paletted pixel formats.
+	     * Indexed pixel formats.
 	     */
 	    if (!nColors) {
 		nColors = 1 << nBits;
 	    } else if (nColors > (1 << nBits)) {
-		Tcl_SetResult(interp, "Bad BMP image", TCL_STATIC);
+		Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
 		return 0;
 	    }
 
@@ -150,14 +150,14 @@ bmp_read_header (Tcl_Interp*     interp,
 	    /*
 	     * Packed RGB formats, currently not supported. TODO.
 	     */
-	    Tcl_SetResult(interp, "Packed RGB BMP image not supported", TCL_STATIC);
+	    Tcl_SetResult (interp, "Packed RGB BMP image not supported", TCL_STATIC);
 	    return 0;
 	case 24:
 	    /*
 	     * RGB formats.
 	     */
 	    if (nColors) {
-		Tcl_SetResult(interp, "Bad BMP image", TCL_STATIC);
+		Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
 		return 0;
 	    }
 	    break;
@@ -183,20 +183,20 @@ bmp_read_header (Tcl_Interp*     interp,
 
 	if (compression) {
 	    if (compression > bc_bitfield) {
-		Tcl_SetResult(interp, "Unsupported BMP image compression method", TCL_STATIC);
+		Tcl_SetResult (interp, "Unsupported BMP image compression method", TCL_STATIC);
 		return 0;
 	    }
-	    if (((compression != bc_rel4)     && (nBits == 4)) ||
+	    if (((compression != bc_rle4)     && (nBits == 4)) ||
 		((compression != bc_rle8)     && (nBits == 8)) ||
 		((compression != bc_bitfield) && ((nBits == 16) || (nBits == 32)))) {
-		Tcl_SetResult(interp, "Bad BMP image, bits/compression mismatch", TCL_STATIC);
+		Tcl_SetResult (interp, "Bad BMP image, bits/compression mismatch", TCL_STATIC);
 		return 0;
 	    }
 	}
 	if (!nPix) {
 	    if ((compression == bc_rle4) ||
 		(compression == bc_rle8)) {
-		Tcl_SetResult(interp, "Bad BMP image", TCL_STATIC);
+		Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
 		return 0;
 	    }
 
@@ -226,7 +226,7 @@ bmp_read_header (Tcl_Interp*     interp,
 	break;
 
     default:
-	Tcl_SetResult(interp, "Unsupported BMP DIB image header", TCL_STATIC);
+	Tcl_SetResult (interp, "Unsupported BMP DIB image header", TCL_STATIC);
 	return 0;
     }
 
@@ -236,7 +236,7 @@ bmp_read_header (Tcl_Interp*     interp,
 
     crimp_buf_moveto (buf, pixOffset);
     if (!crimp_buf_has (buf, nPix)) {
-	Tcl_SetResult(interp, "Bad BMP image", TCL_STATIC);
+	Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
 	return TCL_ERROR;
     }
 
@@ -257,8 +257,7 @@ bmp_read_header (Tcl_Interp*     interp,
     return 1;
 }
 
-
-void
+int
 bmp_read_pixels (bmp_info*      info,
 		 crimp_image*   destination)
 {
@@ -281,59 +280,551 @@ bmp_read_pixels (bmp_info*      info,
 	CRIMP_ASSERT (info->colorMap,       "Expected colorMap for pixel-packed BMP");
 	CRIMP_ASSERT (info->numColors <= 2, "Too many colors");
 
-	decode_2 (info, buf, destination);
+	return decode_2 (info, buf, destination);
 	break;
     case 2:
 	CRIMP_ASSERT (info->colorMap,       "Expected colorMap for pixel-packed BMP");
 	CRIMP_ASSERT (info->numColors <= 4, "Too many colors");
 
-	decode_4 (info, buf, destination);
+	return decode_4 (info, buf, destination);
 	break;
     case 4:
 	CRIMP_ASSERT (info->colorMap,        "Expected colorMap for pixel-packed BMP");
 	CRIMP_ASSERT (info->numColors <= 16, "Too many colors");
 
-	decode_16 (info, buf, destination);
+	return decode_16 (info, buf, destination);
 	break;
     case 8:
 	CRIMP_ASSERT (info->colorMap,         "Expected colorMap for pixel-packed BMP");
 	CRIMP_ASSERT (info->numColors <= 256, "Too many colors");
 
-	decode_256 (info, buf, destination);
+	return decode_256 (info, buf, destination);
 	break;
     case 24:
 	CRIMP_ASSERT (!info->colorMap,"");
 
-	decode_rgb (info, buf, destination);
+	return decode_rgb (info, buf, destination);
 	break;
     default:
 	CRIMP_ASSERT (0,"Unsupported number of bits/pixel");
     }
 }
 
-static void
-decode_2   (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
+#define CHECK_SPACE(n)				\
+    if (!crimp_buf_has (buf, (n))) { return 0; }
+
+#define CHECK_INDEX(v) \
+    if (info->numColors < (v)) { return 0; }
+
+#define GET_INDEX(v)			\
+    CHECK_SPACE (1);			\
+    crimp_buf_read_uint8 (buf, &(v));
+
+#define GET_CHECK_INDEX(v)	\
+    GET_INDEX   (v);		\
+    CHECK_INDEX (v);
+
+#define NEXTX \
+    x++ ; if (info->w <= x) break
+
+static int
+decode_2 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 {
+    /*
+     * Indexed data at 8 pixel/byte (Each pixel is 1 bit). Left to right is
+     * MSB to LSB. Each scan-line is 4 aligned. For each octet we make sure
+     * that we have not run over the buffer-end, and for each pixel that the
+     * color index found is within the limits declared by the bitmap header.
+     */
+
+    int x, y;
+    unsigned int v, va, vb, vc, vd, ve, vf, vg, vh;
+
+    CRIMP_ASSERT (info->numBits == 2, "Bad format");
+
+    if (info->topdown) {
+	/*
+	 * Store the scan-lines from the top down.
+	 */
+	for (y = 0; y < info->h; y++) {
+	    for (x = 0; x < info->w; x++) {
+		GET_INDEX (v);
+
+		va  = (v & 0x80) >> 7;
+		CHECK_INDEX (va);
+		map_color (info->colorMap, va, &R (destination, x, y));
+		NEXTX;
+
+		vb  = (v & 0x40) >> 6;
+		CHECK_INDEX (vb);
+		map_color (info->colorMap, vb, &R (destination, x, y));
+		NEXTX;
+
+		vc  = (v & 0x20) >> 5;
+		CHECK_INDEX (vc);
+		map_color (info->colorMap, vc, &R (destination, x, y));
+		NEXTX;
+
+		vd  = (v & 0x10) >> 4;
+		CHECK_INDEX (vd);
+		map_color (info->colorMap, vd, &R (destination, x, y));
+		NEXTX;
+
+		ve  = (v & 0x08) >> 3;
+		CHECK_INDEX (ve);
+		map_color (info->colorMap, ve, &R (destination, x, y));
+		NEXTX;
+
+		vf  = (v & 0x04) >> 2;
+		CHECK_INDEX (vf);
+		map_color (info->colorMap, vf, &R (destination, x, y));
+		NEXTX;
+
+		vg  = (v & 0x02) >> 1;
+		CHECK_INDEX (vg);
+		map_color (info->colorMap, vg, &R (destination, x, y));
+		NEXTX;
+
+		vh  = (v & 0x01);
+		CHECK_INDEX (vh);
+		map_color (info->colorMap, vh, &R (destination, x, y));
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    } else {
+	/*
+	 * Store the scan-lines from the bottom up (default, regular)
+	 */
+	for (y = info->h - 1; y >= 0; y--) {
+	    for (x = 0; x < info->w; x++) {
+		GET_INDEX (v);
+
+		va  = (v & 0x80) >> 7;
+		CHECK_INDEX (va);
+		map_color (info->colorMap, va, &R (destination, x, y));
+		NEXTX;
+
+		vb  = (v & 0x40) >> 6;
+		CHECK_INDEX (vb);
+		map_color (info->colorMap, vb, &R (destination, x, y));
+		NEXTX;
+
+		vc  = (v & 0x20) >> 5;
+		CHECK_INDEX (vc);
+		map_color (info->colorMap, vc, &R (destination, x, y));
+		NEXTX;
+
+		vd  = (v & 0x10) >> 4;
+		CHECK_INDEX (vd);
+		map_color (info->colorMap, vd, &R (destination, x, y));
+		NEXTX;
+
+		ve  = (v & 0x08) >> 3;
+		CHECK_INDEX (ve);
+		map_color (info->colorMap, ve, &R (destination, x, y));
+		NEXTX;
+
+		vf  = (v & 0x04) >> 2;
+		CHECK_INDEX (vf);
+		map_color (info->colorMap, vf, &R (destination, x, y));
+		NEXTX;
+
+		vg  = (v & 0x02) >> 1;
+		CHECK_INDEX (vg);
+		map_color (info->colorMap, vg, &R (destination, x, y));
+		NEXTX;
+
+		vh  = (v & 0x01);
+		CHECK_INDEX (vh);
+		map_color (info->colorMap, vh, &R (destination, x, y));
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    }
+
+    return 1;
 }
 
-static void
-decode_4   (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
+static int
+decode_4 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 {
+    /*
+     * Indexed data at 4 pixel/byte (Each pixel is 2 bits). Left to right is
+     * MSB to LSB. Each scan-line is 4 aligned. For each quad-pixel we make
+     * sure that we have not run over the buffer-end, and for each pixel that
+     * the color index found is within the limits declared by the bitmap
+     * header.
+     */
+
+    int x, y;
+    unsigned int v, va, vb, vc, vd;
+
+    CRIMP_ASSERT (info->numBits == 2, "Bad format");
+
+    if (info->topdown) {
+	/*
+	 * Store the scan-lines from the top down.
+	 */
+	for (y = 0; y < info->h; y++) {
+	    for (x = 0; x < info->w; x++) {
+		GET_INDEX (v);
+
+		va  = (v & 0xC0) >> 6;
+		CHECK_INDEX (va);
+		map_color (info->colorMap, va, &R (destination, x, y));
+		NEXTX;
+
+		vb  = (v & 0x30) >> 4;
+		CHECK_INDEX (vb);
+		map_color (info->colorMap, vb, &R (destination, x, y));
+		NEXTX;
+
+		vc  = (v & 0x0C) >> 2;
+		CHECK_INDEX (vc);
+		map_color (info->colorMap, vc, &R (destination, x, y));
+		NEXTX;
+
+		vd  = (v & 0x03);
+		CHECK_INDEX (vd);
+		map_color (info->colorMap, vd, &R (destination, x, y));
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    } else {
+	/*
+	 * Store the scan-lines from the bottom up (default, regular)
+	 */
+	for (y = info->h - 1; y >= 0; y--) {
+	    for (x = 0; x < info->w; x++) {
+		GET_INDEX (v);
+
+		va  = (v & 0xC0) >> 6;
+		CHECK_INDEX (va);
+		map_color (info->colorMap, va, &R (destination, x, y));
+		NEXTX;
+
+		vb  = (v & 0x30) >> 4;
+		CHECK_INDEX (vb);
+		map_color (info->colorMap, vb, &R (destination, x, y));
+		NEXTX;
+
+		vc  = (v & 0x0C) >> 2;
+		CHECK_INDEX (vc);
+		map_color (info->colorMap, vc, &R (destination, x, y));
+		NEXTX;
+
+		vd  = (v & 0x03);
+		CHECK_INDEX (vd);
+		map_color (info->colorMap, vd, &R (destination, x, y));
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    }
+
+    return 1;
 }
 
-static void
-decode_16  (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
+static int
+decode_16 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 {
+    /*
+     * Indexed data at 2 pixel/byte (Each pixel is 4 bits). Left to right is
+     * MSB to LSB. Each scan-line is 4 aligned. For each double-pixel we make
+     * sure that we have not run over the buffer-end, and for each pixel that
+     * the color index found is within the limits declared by the bitmap
+     * header.
+     *
+     * May be compressed using RLE4 encoding.
+     */
+
+    int x, y;
+    unsigned int l, v, va, vb;
+
+    CRIMP_ASSERT (info->numBits == 4, "Bad format");
+
+        if (info->mode) {
+	int stop = 0;
+	int base = crimp_buf_tell (buf);
+
+	CRIMP_ASSERT (info->mode == bc_rle4, "Bad format");
+
+	/*
+	 * Run-length encoded pixel data. The data is essentially instructions
+	 * for a small virtual machine to set pixels.
+	 */
+
+#error TODO: Each byte is data for two pixels, used in alternation.
+
+	x = 0;
+	y = info->topdown ? 0 : info->h - 1;
+
+	while (!stop && ((crimp_buf_tell(buf) - base) < info->numPixelBytes)) {
+	    CHECK_SPACE (2);
+	    crimp_buf_read_uint8 (buf, &l);
+	    switch (l) {
+	    case 0:
+		/* Escape clause.
+		 */
+		crimp_buf_read_uint8 (buf, &v);
+		switch (v) {
+		case 0: /* End of line */
+		    x = 0;
+		    y += info->topdown ? 1 : -1;
+		    break;
+		case 1: /* End of bitmap */
+		    stop = 1;
+		    break;
+		case 2: /* Jump */
+		    CHECK_SPACE (2);
+		    crimp_buf_read_uint8 (buf, &l); x+= l;
+		    crimp_buf_read_uint8 (buf, &v); y+= v;
+		    break;
+		default:
+		    /* Absolute mode: 3-255. l = length of pixel
+		     * sequence. Convert that many indices.
+		     */
+		    l = v;
+		    while (l) {
+			GET_CHECK_INDEX (v);
+			map_color (info->colorMap, v, &R (destination, x, y));
+			l --;
+			x ++;
+			if (x < info->w) continue;
+			x = 0;
+			y += info->topdown ? 1 : -1;
+		    }
+		    crimp_buf_align (buf, 2);
+		    break;
+		}
+		break;
+	    default:
+		/* Run-code. l = length of run. Get index to map and store this many times.
+		 */
+		crimp_buf_read_uint8 (buf, &v);
+		CHECK_INDEX (v);
+		while (l) {
+		    map_color (info->colorMap, v, &R (destination, x, y));
+		    l --;
+		    x ++;
+		    if (x < info->w) continue;
+		    x = 0;
+		    y += info->topdown ? 1 : -1;
+		}
+		break;
+	    }
+	}
+    } else if (info->topdown) {
+	/*
+	 * Store the scan-lines from the top down.
+	 */
+
+	CRIMP_ASSERT (info->mode == bc_rgb, "Bad format");
+	for (y = 0; y < info->h; y++) {
+	    for (x = 0; x < info->w; x++) {
+		GET_INDEX (v);
+
+		va  = (v & 0xF0) >> 4;
+		CHECK_INDEX (va);
+		map_color (info->colorMap, va, &R (destination, x, y));
+
+		NEXTX;
+
+		vb = (v & 0x0F);
+		CHECK_INDEX (vb);
+
+		map_color (info->colorMap, vb, &R (destination, x, y));
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    } else {
+	/*
+	 * Store the scan-lines from the bottom up (default, regular)
+	 */
+
+	CRIMP_ASSERT (info->mode == bc_rgb, "Bad format");
+	for (y = info->h - 1; y >= 0; y--) {
+	    for (x = 0; x < info->w; x++) {
+		GET_INDEX (v);
+
+		va  = (v & 0xF0) >> 4;
+		CHECK_INDEX (va);
+		map_color (info->colorMap, va, &R (destination, x, y));
+
+		NEXTX;
+
+		vb = (v & 0x0F);
+		CHECK_INDEX (vb);
+
+		map_color (info->colorMap, vb, &R (destination, x, y));
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    }
+
+    return 1;
 }
 
-static void
+static int
 decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 {
+    /*
+     * Indexed data at 1 byte/pixel. Each scan-line is 4 aligned. For each
+     * pixel we make sure that we have not run over the buffer-end, and that
+     * the color index found is within the limits declared by the bitmap
+     * header.
+     *
+     * May be compressed using RLE8 encoding.
+     */
+
+    int x, y;
+    unsigned int v;
+
+    CRIMP_ASSERT (info->numBits == 8, "Bad format");
+
+    if (info->mode) {
+	int stop = 0;
+	int base = crimp_buf_tell (buf);
+
+	CRIMP_ASSERT (info->mode == bc_rle8, "Bad format");
+
+	/*
+	 * Run-length encoded pixel data. The data is essentially instructions
+	 * for a small virtual machine to set pixels.
+	 */
+
+	x = 0;
+	y = info->topdown ? 0 : info->h - 1;
+
+	while (!stop && ((crimp_buf_tell(buf) - base) < info->numPixelBytes)) {
+	    CHECK_SPACE (2);
+	    crimp_buf_read_uint8 (buf, &l);
+	    switch (l) {
+	    case 0:
+		/* Escape clause.
+		 */
+		crimp_buf_read_uint8 (buf, &v);
+		switch (v) {
+		case 0: /* End of line */
+		    x = 0;
+		    y += info->topdown ? 1 : -1;
+		    break;
+		case 1: /* End of bitmap */
+		    stop = 1;
+		    break;
+		case 2: /* Jump */
+		    CHECK_SPACE (2);
+		    crimp_buf_read_uint8 (buf, &l); x+= l;
+		    crimp_buf_read_uint8 (buf, &v); y+= v;
+		    break;
+		default:
+		    /* Absolute mode: 3-255. l = length of pixel
+		     * sequence. Convert that many indices.
+		     */
+		    l = v;
+		    while (l) {
+			GET_CHECK_INDEX (v);
+			map_color (info->colorMap, v, &R (destination, x, y));
+			l --;
+			x ++;
+			if (x < info->w) continue;
+			x = 0;
+			y += info->topdown ? 1 : -1;
+		    }
+		    crimp_buf_align (buf, 2);
+		    break;
+		}
+		break;
+	    default:
+		/* Run-code. l = length of run. Get index to map and store this many times.
+		 */
+		crimp_buf_read_uint8 (buf, &v);
+		CHECK_INDEX (v);
+		while (l) {
+		    map_color (info->colorMap, v, &R (destination, x, y));
+		    l --;
+		    x ++;
+		    if (x < info->w) continue;
+		    x = 0;
+		    y += info->topdown ? 1 : -1;
+		}
+		break;
+	    }
+	}
+    } else if (info->topdown) {
+	/*
+	 * Store the scan-lines from the top down.
+	 */
+
+	CRIMP_ASSERT (info->mode == bc_rgb, "Bad format");
+	for (y = 0; y < info->h; y++) {
+	    for (x = 0; x < info->w; x++) {
+		GET_CHECK_INDEX (v);
+		map_color (info->colorMap, v, &R (destination, x, y));
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    } else {
+	/*
+	 * Store the scan-lines from the bottom up (default, regular)
+	 */
+
+	CRIMP_ASSERT (info->mode == bc_rgb, "Bad format");
+	for (y = info->h - 1; y >= 0; y--) {
+	    for (x = 0; x < info->w; x++) {
+		GET_CHECK_INDEX (v);
+		map_color (info->colorMap, v, &R (destination, x, y));
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    }
+
+    return 1;
 }
 
-static void
+static int
 decode_rgb (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 {
+    /*
+     * Uncompressed RGB data. Each pixel is represented by 3 bytes holding
+     * red, green, and blue, in this order. Each scan-line is 4-aligned.
+     */
+
+    int x, y;
+    unsigned int v;
+
+    CRIMP_ASSERT (info->numBits == 24, "Bad format");
+
+    if (info->topdown) {
+	/*
+	 * Store the scan-lines from the top down.
+	 */
+	for (y = 0; y < info->h; y++) {
+	    for (x = 0; x < info->w; x++) {
+		CHECK_SPACE (3);
+
+		crimp_buf_read_uint8 (buf, &v);  R (destination, x, y) = v;
+		crimp_buf_read_uint8 (buf, &v);  G (destination, x, y) = v;
+		crimp_buf_read_uint8 (buf, &v);  B (destination, x, y) = v;
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    } else {
+	/*
+	 * Store the scan-lines from the bottom up (default, regular)
+	 */
+	for (y = info->h - 1; y >= 0; y--) {
+	    for (x = 0; x < info->w; x++) {
+		CHECK_SPACE (3);
+
+		crimp_buf_read_uint8 (buf, &v);  R (destination, x, y) = v;
+		crimp_buf_read_uint8 (buf, &v);  G (destination, x, y) = v;
+		crimp_buf_read_uint8 (buf, &v);  B (destination, x, y) = v;
+	    }
+	    crimp_buf_align (buf, 4);
+	}
+    }
+
+    return 1;
 }
 
 static void

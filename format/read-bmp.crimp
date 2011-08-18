@@ -25,7 +25,10 @@ if (!bmp_read_header (interp, buf, &bmp)) {
 
 result = crimp_new_rgb (w, h);
 
-bmp_read_pixels (&bmp, result);
+if (!bmp_read_pixels (&bmp, result)) {
+    Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
+    return TCL_ERROR;
+}
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;

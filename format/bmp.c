@@ -193,24 +193,6 @@ bmp_read_header (Tcl_Interp*     interp,
 		return 0;
 	    }
 	}
-	if (!nPix) {
-	    if ((compression == bc_rle4) ||
-		(compression == bc_rle8)) {
-		Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
-		return 0;
-	    }
-
-	    /*
-	     * nPix = height * bytes/line.
-	     * where
-	     *     bytes/line = (width * 8/nBits), 4-aligned, nBits <= 8.
-	     * or
-	     *     bytes/line = width * (nBits/8), 4-aligned, nBits > 8.
-	     */
-
-#error TODO ...
-
-	}
 
 	/*
 	 * Pixel data is normally stored bottom up, i.e. bottom line first. A
@@ -221,6 +203,32 @@ bmp_read_header (Tcl_Interp*     interp,
 	if (h < 0) {
 	    h   = -h;
 	    top = 1;
+	}
+
+	/* ASSERT h >= 0; */
+
+	if (!nPix) {
+	    /*
+	     * Derive the size of the pixel data array from the dimensions and
+	     * bits/pixel. We cannot do this if one of the RLEx compression
+	     * methods is specified.
+	     */
+
+	    int rlength;
+	    if ((compression == bc_rle4) ||
+		(compression == bc_rle8)) {
+		Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);
+		return 0;
+	    }
+
+	    /*
+	     * rowLength = ceil ((nBits*width)/32) * 4;
+	     * nPix = height * rowLength;
+	     */
+
+	    rlength = (nBits * w) /32;
+	    if (rlength % 4 != 0) { rlength += 4 - (rlength % 4); }
+	    nPix = h * rlength * 4;
 	}
 
 	break;
@@ -274,6 +282,10 @@ bmp_read_pixels (bmp_info*      info,
      *
      * 'bmp_read_header', see above, ensures these conditions.
      */
+
+    if (!crimp_buf_has (buf, info->numPixelBytes)) {
+	return 0;
+    }
 
     switch (info->numBits) {
     case 1:
@@ -613,6 +625,10 @@ decode_16 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 		break;
 	    }
 	}
+
+	if ((crimp_buf_tell(buf) - base) != info->numPixelBytes) {
+	    return 0;
+	}
     } else if (info->topdown) {
 	/*
 	 * Store the scan-lines from the top down.
@@ -749,6 +765,10 @@ decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 		}
 		break;
 	    }
+	}
+
+	if ((crimp_buf_tell(buf) - base) != info->numPixelBytes) {
+	    return 0;
 	}
     } else if (info->topdown) {
 	/*

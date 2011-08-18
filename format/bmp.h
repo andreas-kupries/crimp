@@ -21,12 +21,12 @@ typedef struct {
  */
 typedef enum {
     bc_rgb,      /* Uncompressed pixels */
-    bc_rle4,     /* RLE-encoding for 4 bits/pixel */
     bc_rle8,     /* RLE-encoding for 8 bits/pixel */
+    bc_rle4,     /* RLE-encoding for 4 bits/pixel */
     bc_bitfield, /* Packed RGB (or 1d huffman) */
     bc_jpeg,     /* Embedded JPEG, or RLE-24 -- NOT SUPPORTED */
     bc_png,      /* Embedded PNG             -- NOT SUPPORTED */
-    bc_alphabit  /*                          -- NOT SUPPORTED */
+    bc_alphabit  /* Bitfields with alpha     -- NOT SUPPORTED */
 } bmp_compression;
 
 /*

@@ -32,20 +32,22 @@ critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
 
-critcl::summary {The core data structures of all CRIMP packages}
+critcl::summary \
+    {The core data structures of all CRIMP packages}
+
 critcl::description {
-    This package provides the core data structures, functions, and
-    macros for images and image types. It is the core shared/used by
-    all other CRIMP packages. The provided API is at the C-level, a
-    stubs table without any Tcl bindings. For these we have the
-    other packages in the CRIMP eco-system.
+    This package is the core shared/used by all other CRIMP packages.
+
+    At the C-level it provides the core data structures, functions, and macros
+    for images and image types.
+
+    These are reflected in the Tcl level API as well, via the fundamental
+    accessors and basic image conversion from and to Tcl data structures
+    (nested lists).
 }
 
-critcl::subject {data structures}
-critcl::subject {core functionality}
-critcl::subject {image data type}
-critcl::subject {image-type data type}
-critcl::subject {data types}
+critcl::subject image {image type} {image accessors} {image construction}
+critcl::subject {data structures} {data type}
 
 # # ## ### ##### ######## #############
 ## Implementation.

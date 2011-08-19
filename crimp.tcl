@@ -33,6 +33,22 @@ critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
 
+critcl::summary \
+    {Main CRIMP package containing all the image processing goodies}
+
+critcl::description {
+    This package provides the CRIMP eco-system with all the image
+    processing goodies. Note that this package does not contain
+    image IO functionality. It indirectly provides only what it
+    inherited from "crimp::core". For display of the images handled
+    here use "crimp::tk". For reading and writing image files use
+    the various other crimp packages, like "crimp::ppm", etc.
+}
+
+# subjects ... Try to find a way of getting these from the .crimp
+# files, put the burden of maintaining the information local to the
+# algorithms.
+
 # # ## ### ##### ######## #############
 ## Implementation.
 

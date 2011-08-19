@@ -31,6 +31,18 @@ critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
 
+critcl::summary \
+    {Extension of the CRIMP core to handle import and export of PPM images}
+
+critcl::description {
+    This package provides the CRIMP eco-system with the functionality to handle
+    images stored as Portable PixMap (PPM). It can read and write both plain
+    and raw formats.
+}
+
+critcl::subject image {PPM image} {Portable PixMap} {PPM import} {PPM export}
+critcl::subject image {image import} {image export}
+
 # # ## ### ##### ######## #############
 ## Implementation.
 

@@ -33,7 +33,8 @@ proc ::crimp::P {fqn} {
 # # ## ### ##### ######## ############# #####################
 ## Importing images into the CRIMP eco-system is handled by the 'read'
 ## ensemble command. It will have one method per format, handling image
-## data in that format. Here we just define the ensemble.
+## data in that format. Here we just define the ensemble, and a
+## command for the most basic import (Tcl lists).
 #
 ## A package implementing the importing of images stored in a file
 ## format FOO has to provide a command '::crimp::read::FOO', causing
@@ -42,6 +43,14 @@ proc ::crimp::P {fqn} {
 namespace eval ::crimp::read {
     namespace export {[a-z0-9]*}
     namespace ensemble create
+}
+
+proc ::crimp::read::tcl {format detail} {
+    set fun read::Tcl_$format
+    if {![::crimp::Has $fun]} {
+	return -code error "Unable to generate images of type \"$format\" from Tcl values"
+    }
+    return [::crimp::$fun $detail]
 }
 
 # # ## ### ##### ######## #############
@@ -100,6 +109,94 @@ proc ::crimp::write::2string {format image} {
 	return -code error "Unable to write images of type \"$type\" to strings for \"$format\""
     }
     return [::crimp::$fun $image]
+}
+
+# # ## ### ##### ######## #############
+# Writing images in the Tcl format (List of lists of pixels (list of values))
+
+proc ::crimp::write::Str_tcl_grey8 {image} {
+    # assert TypeOf (image) == grey8
+    set w [::crimp::width $image]
+    set res {}
+    set line {}
+    set n $w
+    foreach c [::split [::crimp::pixel $image] {}] {
+	binary scan $c cu g
+	lappend line $g
+	incr n -1
+	if {$n > 0} continue
+	lappend res $line
+	set line {}
+	set n $w
+    }
+    return $res
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::write::Str_tcl_rgb {image} {
+    # assert TypeOf (image) == rgb
+    set w [::crimp::width $image]
+    set res {}
+    set line {}
+    set n $w
+    foreach {r g b} [::split [::crimp::pixel $image] {}] {
+	binary scan $r cu r
+	binary scan $g cu g
+	binary scan $b cu b
+	lappend line [list $r $g $b]
+	incr n -1
+	if {$n > 0} continue
+	lappend res $line
+	set line {}
+	set n $w
+    }
+    return $res
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::write::Str_tcl_rgba {image} {
+    # assert TypeOf (image) == rgba
+    set w [::crimp::width $image]
+    set res {}
+    set line {}
+    set n $w
+    foreach {r g b a} [::split [::crimp::pixel $image] {}] {
+	binary scan $r cu r
+	binary scan $g cu g
+	binary scan $b cu b
+	binary scan $a cu a
+	lappend line [list $r $g $b $a]
+	incr n -1
+	if {$n > 0} continue
+	lappend res $line
+	set line {}
+	set n $w
+    }
+    return $res
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::write::Str_tcl_hsv {image} {
+    # assert TypeOf (image) == hsv
+    set w [::crimp::width $image]
+    set res {}
+    set line {}
+    set n $w
+    foreach {h s v} [::split [::crimp::pixel $image] {}] {
+	binary scan $h cu h
+	binary scan $s cu s
+	binary scan $v cu v
+	lappend line [list $h $s $v]
+	incr n -1
+	if {$n > 0} continue
+	lappend res $line
+	set line {}
+	set n $w
+    }
+    return $res
 }
 
 # # ## ### ##### ######## #############

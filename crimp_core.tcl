@@ -16,6 +16,18 @@ if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
 
+# # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+
+::apply {{here} {
+    source $here/support.tcl
+}} [file dirname [file normalize [info script]]]
+
+# # ## ### ##### ######## #############
+## Administrivia
+
 critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
@@ -253,7 +265,11 @@ critcl::cinit {
     extern void crimp_imagetype_init (void); /* c/image_type.c */
 }
 
-critcl::ccode {}
+# # ## ### ##### ######## #############
+## Pull in the implementations of the basic accessor commands.
+
+critcl::owns        core/*.crimp
+crimp_source_cproc {core/*.crimp}
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

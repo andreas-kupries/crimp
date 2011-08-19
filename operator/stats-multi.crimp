@@ -12,8 +12,8 @@ double var, stddev, mean, middle, sum[4], sumsq[4];
 int maxx[4], minx[4], maxy[4], miny[4];
 
 crimp_input_any (imageObj, image);
-ASSERT_NOTIMGTYPE(image,grey32);
-ASSERT_NOTIMGTYPE(image,float);
+CRIMP_ASSERT_NOTIMGTYPE(image,grey32);
+CRIMP_ASSERT_NOTIMGTYPE(image,float);
 
 w = image->w;
 h = image->h;

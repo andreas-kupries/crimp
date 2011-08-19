@@ -1,4 +1,4 @@
-read_tcl_float
+read::Tcl_float
 Tcl_Obj* pixels
 
 /*

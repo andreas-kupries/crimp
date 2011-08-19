@@ -1,4 +1,4 @@
-read_tcl_grey8
+read::Tcl_grey8
 Tcl_Obj* pixels
 
 /*

@@ -82,8 +82,8 @@ proc ::crimp::write::2file {format path image} {
 
 proc ::crimp::write::2chan {format chan image} {
     set type [::crimp::TypeOf $image]
+    set fun  write::Chan_${format}_${type}
 
-    set fun write::Chan_${format}_${type}
     if {![::crimp::Has $fun]} {
 	puts -nonewline $chan [2string $format $image]
 	return

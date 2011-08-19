@@ -9,7 +9,7 @@
 
 # # ## ### ##### ######## #############
 
-proc crimp_source_cproc {accept reject} {
+proc crimp_source_cproc {accept {reject {}}} {
     set here [file dirname [file normalize [info script]]]
 
     foreach pa $accept {

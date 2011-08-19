@@ -156,8 +156,8 @@ if {[critcl::util::checkfun lrint]} {
 ## Pull in the processing primitives.
 ## We ignore the Tk dependent pieces.
 
-critcl::owns operator/*.crimp
-crimp_source_cproc {operator/*.crimp} {*tk*}
+critcl::owns        operator/*.crimp
+crimp_source_cproc {operator/*.crimp}
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

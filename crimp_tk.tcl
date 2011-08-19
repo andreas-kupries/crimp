@@ -68,8 +68,8 @@ critcl::ccode {
 # # ## ### ##### ######## #############
 ## Pull in the Tk-specific pieces. These are fit under the read/write namespaces.
 
-critcl::owns        operator/*tk*.crimp
-crimp_source_cproc {operator/*tk*.crimp}
+critcl::owns        format/*tk*.crimp
+crimp_source_cproc {format/*tk*.crimp}
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

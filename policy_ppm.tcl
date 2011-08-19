@@ -3,9 +3,7 @@
 # # ## ### ##### ######## ############# #####################
 ## Requirements
 
-package require crimp ; # Using "crimp convert xxx",
-                        #       "crimp::dimensions",
-                        #       "crimp::pixel"
+package require crimp ; # Using "crimp convert xxx"
 
 # # ## ### ##### ######## ############# #####################
 

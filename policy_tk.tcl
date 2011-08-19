@@ -20,7 +20,7 @@ proc ::crimp::write::2tk {dst image} {
     if {![::crimp::Has $fun]} {
 	return -code error "Unable to write images of type \"$type\" to \"tk\""
     }
-    return [::crimp::$f $dst $image]
+    return [::crimp::$fun $dst $image]
 }
 
 # # ## ### ##### ######## #############

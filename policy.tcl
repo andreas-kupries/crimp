@@ -234,17 +234,6 @@ namespace eval ::crimp::read {
 }
 
 ::apply {{dir} {
-    # Readers implemented as C primitives
-    foreach fun [::crimp::List read_*] {
-	# Ignore the read_tcl_ primitives. They have their own setup
-	# in a moment.
-	if {[string match *::read_tcl_* $fun]} continue
-
-	proc [::crimp::P $fun] {detail} [string map [list @ $fun] {
-	    @ $detail
-	}]
-    }
-
     proc tcl {format detail} {
 	set f read_tcl_$format
 	if {![::crimp::Has $f]} {
@@ -281,36 +270,6 @@ namespace eval ::crimp::write {
     # Writers implemented as Tcl procedures.
     # - Declared as tsources in crimp.tcl.
 } ::crimp::write} [file dirname [file normalize [info script]]]
-
-proc ::crimp::write::2file {format path image} {
-    set chan [open $path w]
-    fconfigure $chan -encoding binary
-    2chan $format $chan $image
-    close $chan
-    return
-}
-
-proc ::crimp::write::2chan {format chan image} {
-    set type [::crimp::TypeOf $image]
-    set f    writec_${format}_${type}
-
-    if {![::crimp::Has $f]} {
-	puts -nonewline $chan [2string $format $image]
-	return
-    }
-    ::crimp::$f $chan $image
-    return
-}
-
-proc ::crimp::write::2string {format image} {
-    set type [::crimp::TypeOf $image]
-    set f    writes_${format}_${type}
-
-    if {![::crimp::Has $f]} {
-	return -code error "Unable to write images of type \"$type\" to strings for \"$format\""
-    }
-    return [::crimp::$f $image]
-}
 
 # # ## ### ##### ######## #############
 

@@ -46,6 +46,7 @@ if {[catch {
 	crimp::core
 	crimp
 	crimp::tk
+	crimp::ppm
     } {
 	package require $p
 	puts "Using prebuilt $p [package present $p]"
@@ -62,7 +63,8 @@ if {[catch {
     foreach {f p} {
 	crimp_core.tcl crimp::core
 	crimp.tcl      crimp
-	crimptk.tcl    crimp::tk
+	crimp_tk.tcl   crimp::tk
+	crimp_ppm.tcl  crimp::ppm
     } {
 	puts "Trying dynamically compiled package \"$p\""
 	# Directly access the package

@@ -3,7 +3,7 @@
 exec tclsh "$0" ${1+"$@"}
 package require Tcl 8.5
 set me [file normalize [info script]]
-set packages {crimp_core crimp crimp_tk crimp_ppm}
+set packages {crimp_core crimp crimp_tk crimp_ppm crimp_pgm}
 proc main {} {
     global argv tcl_platform tag
     set tag {}

@@ -33,6 +33,19 @@ critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
 
+critcl::summary \
+    {Extension of the CRIMP core to handle import and export of Tk photos}
+
+critcl::description {
+    This package provides the CRIMP eco-system with the functionality to handle
+    images stored in Tk photo images. This means that this package is dependent
+    on Tk, and thus the presence of a windowing system, like X11, or Aqua.
+}
+
+critcl::subject image {Tk photo image} {Tk photo} {Tk photo import} {Tk photo export}
+critcl::subject image {image import} {image export}
+critcl::subject photo {photo import} {photo export}
+
 # # ## ### ##### ######## #############
 ## Implementation.
 

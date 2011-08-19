@@ -211,31 +211,6 @@ proc ::crimp::meta {cmd image args} {
 
 # # ## ### ##### ######## #############
 
-namespace eval ::crimp::write {
-    namespace export *
-    namespace ensemble create
-}
-
-::apply {{dir} {
-    # Writers implemented as C primitives
-    foreach fun [::crimp::List write_*] {
-	proc [lindex [::crimp::P $fun] 0] {dst image} \
-	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
-		set type [::crimp::TypeOf $image]
-		set f    write_@_${type}
-		if {![::crimp::Has $f]} {
-		    return -code error "Unable to write images of type \"$type\" to \"@\""
-		}
-		return [::crimp::$f $dst $image]
-	    }]
-    }
-
-    # Writers implemented as Tcl procedures.
-    # - Declared as tsources in crimp.tcl.
-} ::crimp::write} [file dirname [file normalize [info script]]]
-
-# # ## ### ##### ######## #############
-
 namespace eval ::crimp::convert {
     namespace export *
     namespace ensemble create

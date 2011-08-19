@@ -99,7 +99,6 @@ critcl::csources c/fftpack/rffti1.c
 ## Image readers and writers implemented as Tcl procedures.
 
 critcl::tsources reader/r_*.tcl
-critcl::tsources writer/w_*.tcl
 
 # # ## ### ##### ######## #############
 ## Declare the Tcl layer aggregating the C primitives into useful

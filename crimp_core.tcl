@@ -47,9 +47,7 @@ critcl::csources c/image_type.c
 critcl::csources c/buffer.c
 
 # # ## ### ##### ######## #############
-## Declare the Tcl layer aggregating the C primitives into useful
-## commands. After the Tcl-based readers and writers to properly pick
-## them up too in the ensembles.
+## Declare the Tcl layer of the package.
 
 critcl::tsources policy_core.tcl
 

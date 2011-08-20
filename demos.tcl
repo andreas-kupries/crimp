@@ -49,6 +49,7 @@ if {[catch {
 	crimp::ppm
 	crimp::pgm
 	crimp::pfm
+	crimp::bmp
     } {
 	package require $p
 	puts "Using prebuilt $p [package present $p]"
@@ -69,6 +70,7 @@ if {[catch {
 	crimp_ppm.tcl  crimp::ppm   {Read/write portable pix maps}
 	crimp_pgm.tcl  crimp::pgm   {Read/write portable grey maps}
 	crimp_pfm.tcl  crimp::pfm   {Read/write portable float maps}
+	crimp_bmp.tcl  crimp::bmp   {Read/write Windows bitmaps}
     } {
 	puts "Trying dynamically compiled package \"$p\""
 	# Directly access the package

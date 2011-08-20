@@ -3,7 +3,7 @@
 exec tclsh "$0" ${1+"$@"}
 package require Tcl 8.5
 set me [file normalize [info script]]
-set packages {crimp_core crimp crimp_tk crimp_ppm crimp_pgm crimp_pfm}
+set packages {crimp_core crimp crimp_tk crimp_ppm crimp_pgm crimp_pfm crimp_bmp}
 proc main {} {
     global argv tcl_platform tag
     set tag {}
@@ -29,7 +29,7 @@ proc usage {{status 1}} {
     }
 
     global argv0
-    puts stderr "Usage: $argv0 ?install ?dst?|starkit ?dst? ?interp?|starpack prefix ?dst?|help|recipes? ?gui?"
+    puts stderr "Usage: $argv0 ?install ?dst?|drop ?dst?|starkit ?dst? ?interp?|starpack prefix ?dst?|help|recipes? ?gui?"
     exit $status
 }
 proc tag {t} {
@@ -97,6 +97,26 @@ proc _recipes {} {
 	lappend r [string range $c 1 end]
     }
     puts [lsort -dict $r]
+    return
+}
+proc _drop {{ldir {}}} {
+    global packages
+    if {[llength [info level 0]] < 2} {
+	set ldir [info library]
+	set idir [file dirname [file dirname $ldir]]/include
+    } else {
+	set idir [file dirname $ldir]/include
+    }
+
+    foreach p $packages {
+	set src     [file dirname $::me]/$p.tcl
+	set version [version $src]
+
+	file delete -force $ldir/$p$version
+	puts -nonewline "Removed package:     "
+	tag ok
+	puts $ldir/$p$version
+    }
     return
 }
 proc _install {{ldir {}}} {

@@ -1,6 +1,8 @@
 /*
  * CRIMP :: BMP functions Definitions (Implementation).
- * See http://en.wikipedia.org/wiki/BMP_file_format
+ * Reference
+ *	http://en.wikipedia.org/wiki/BMP_file_format
+ *	http://msdn.microsoft.com/en-us/library/dd183376
  * (C) 2011.
  */
 
@@ -197,10 +199,16 @@ bmp_read_header (Tcl_Interp*     interp,
 	/*
 	 * Pixel data is normally stored bottom up, i.e. bottom line first. A
 	 * negative image height (<0) indicates that the lines are stored
-	 * top-down instead.
+	 * top-down instead. Top-down images cannot be compressed.
 	 */
 
 	if (h < 0) {
+	    if ((compression != bc_rgb) &&
+		(compression != bc_bitfield)) {
+		Tcl_SetResult (interp, "Bad BMP image, height/compression mismatch", TCL_STATIC);
+		return 0;
+	    }
+
 	    h   = -h;
 	    top = 1;
 	}
@@ -565,10 +573,8 @@ decode_16 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 	 * for a small virtual machine to set pixels.
 	 */
 
-#error TODO: Each byte is data for two pixels, used in alternation.
-
 	x = 0;
-	y = info->topdown ? 0 : info->h - 1;
+	y = info->h - 1;
 
 	while (!stop && ((crimp_buf_tell(buf) - base) < info->numPixelBytes)) {
 	    CHECK_SPACE (2);
@@ -581,15 +587,15 @@ decode_16 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 		switch (v) {
 		case 0: /* End of line */
 		    x = 0;
-		    y += info->topdown ? 1 : -1;
+		    y --;
 		    break;
 		case 1: /* End of bitmap */
 		    stop = 1;
 		    break;
 		case 2: /* Jump */
 		    CHECK_SPACE (2);
-		    crimp_buf_read_uint8 (buf, &l); x+= l;
-		    crimp_buf_read_uint8 (buf, &v); y+= v;
+		    crimp_buf_read_uint8 (buf, &l); x += l;
+		    crimp_buf_read_uint8 (buf, &v); y -= v; /* bottom-up! */
 		    break;
 		default:
 		    /* Absolute mode: 3-255. l = length of pixel
@@ -597,13 +603,33 @@ decode_16 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 		     */
 		    l = v;
 		    while (l) {
-			GET_CHECK_INDEX (v);
-			map_color (info->colorMap, v, &R (destination, x, y));
+			GET_INDEX (v);
+
+			va = (v & 0xF0) >> 4;
+			CHECK_INDEX (va);
+			map_color (info->colorMap, va, &R (destination, x, y));
+
 			l --;
 			x ++;
-			if (x < info->w) continue;
-			x = 0;
-			y += info->topdown ? 1 : -1;
+
+			if (x >= info->w) {;
+			    x = 0;
+			    y --;
+			}
+
+			if (!l) break;
+
+			vb = (v & 0x0F);
+			CHECK_INDEX (vb);
+			map_color (info->colorMap, vb, &R (destination, x, y));
+
+			l --;
+			x ++;
+
+			if (x >= info->w) {;
+			    x = 0;
+			    y --;
+			}
 		    }
 		    crimp_buf_align (buf, 2);
 		    break;
@@ -614,13 +640,25 @@ decode_16 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 		 */
 		crimp_buf_read_uint8 (buf, &v);
 		CHECK_INDEX (v);
+		va = (v & 0xF0) >> 4;	CHECK_INDEX (va);
+		vb = (v & 0x0F);	CHECK_INDEX (vb);
+
 		while (l) {
-		    map_color (info->colorMap, v, &R (destination, x, y));
+		    map_color (info->colorMap, va, &R (destination, x, y));
 		    l --;
 		    x ++;
-		    if (x < info->w) continue;
-		    x = 0;
-		    y += info->topdown ? 1 : -1;
+		    if (x >= info->w) {
+			x = 0;
+			y --;
+		    }
+		    if (!l) break;
+		    map_color (info->colorMap, vb, &R (destination, x, y));
+		    l --;
+		    x ++;
+		    if (x >= info->w) {
+			x = 0;
+			y --;
+		    }
 		}
 		break;
 	    }
@@ -709,7 +747,7 @@ decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 	 */
 
 	x = 0;
-	y = info->topdown ? 0 : info->h - 1;
+	y = info->h - 1;
 
 	while (!stop && ((crimp_buf_tell(buf) - base) < info->numPixelBytes)) {
 	    CHECK_SPACE (2);
@@ -722,15 +760,15 @@ decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 		switch (v) {
 		case 0: /* End of line */
 		    x = 0;
-		    y += info->topdown ? 1 : -1;
+		    y --;
 		    break;
 		case 1: /* End of bitmap */
 		    stop = 1;
 		    break;
 		case 2: /* Jump */
 		    CHECK_SPACE (2);
-		    crimp_buf_read_uint8 (buf, &l); x+= l;
-		    crimp_buf_read_uint8 (buf, &v); y+= v;
+		    crimp_buf_read_uint8 (buf, &l); x += l;
+		    crimp_buf_read_uint8 (buf, &v); y -= v; /* bottom-up! */
 		    break;
 		default:
 		    /* Absolute mode: 3-255. l = length of pixel
@@ -744,7 +782,7 @@ decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 			x ++;
 			if (x < info->w) continue;
 			x = 0;
-			y += info->topdown ? 1 : -1;
+			y --;
 		    }
 		    crimp_buf_align (buf, 2);
 		    break;
@@ -761,7 +799,7 @@ decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 		    x ++;
 		    if (x < info->w) continue;
 		    x = 0;
-		    y += info->topdown ? 1 : -1;
+		    y --;
 		}
 		break;
 	    }

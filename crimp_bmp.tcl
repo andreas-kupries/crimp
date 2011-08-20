@@ -24,6 +24,17 @@ critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
 
+critcl::summary \
+    {Extension of the CRIMP core to handle import and export of BMP images}
+
+critcl::description {
+    This package provides the CRIMP eco-system with the functionality to handle
+    images stored as Windows Bitmap (BMP).
+}
+
+critcl::subject image {BMP image} {Portable PixMap} {BMP import} {BMP export}
+critcl::subject image {image import} {image export}
+
 # # ## ### ##### ######## #############
 ## Implementation.
 

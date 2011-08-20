@@ -1,4 +1,4 @@
-read_bmp
+read::bmp
 Tcl_Obj* bmpdata
 
 #include "buf.h"

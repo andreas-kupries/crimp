@@ -1,18 +1,14 @@
-## -*- tcl -*-
-# # ## ### ##### ######## #############
-## This file defines a number of commands on top of the C primitives
-## which are easier to use than directly calling on the latter.
+# -*- tcl -*- 
+## Tcl level definitions for crimp::bmp
+# # ## ### ##### ######## ############# #####################
+## Requirements
 
-package require Tcl 8.5
-package require Tk  8.5
-package require crimp::core
+# # ## ### ##### ######## ############# #####################
+## Reading BMP images is handled at the C level, and the command is
+## directly fit into the ::crimp::read ensemble.
 
-# # ## ### ##### ######## #############
-## Map the new reader primitive into the existing ensemble.
+# # ## ### ##### ######## ############# #####################
+## Writing BMP images is not supported yet.
 
-proc ::crimp::read::bmp {bmpdata} {
-    ::crimp::read_bmp $bmpdata
-}
-
-# # ## ### ##### ######## #############
+# # ## ### ##### ######## ############# #####################
 return

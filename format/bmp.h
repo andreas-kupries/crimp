@@ -33,7 +33,7 @@ typedef enum {
  * bmp decoder information.
  */
 
-typdef struct bmp_info {
+typedef struct bmp_info {
     unsigned int    w;             /* Image width */
     unsigned int    h;             /* Image height */
     unsigned char*  colorMap;      /* Palette, NULL if not used */

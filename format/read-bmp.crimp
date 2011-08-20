@@ -1,7 +1,6 @@
 read::bmp
 Tcl_Obj* bmpdata
 
-#include "buf.h"
 #include "bmp.h"
 
 /*
@@ -19,11 +18,11 @@ crimp_image*   result;
  */
 
 crimp_buf_init (&buf, bmpdata);
-if (!bmp_read_header (interp, buf, &bmp)) {
+if (!bmp_read_header (interp, &buf, &bmp)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_rgb (w, h);
+result = crimp_new_rgb (bmp.w, bmp.h);
 
 if (!bmp_read_pixels (&bmp, result)) {
     Tcl_SetResult (interp, "Bad BMP image", TCL_STATIC);

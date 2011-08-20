@@ -33,7 +33,7 @@ bmp_read_header (Tcl_Interp*     interp,
     unsigned int   nBits, compression, nPix, nColors;
     int            h;
     int            topdown = 0; /* bottom-up storage, default */
-    unsigned char* palette = 0;
+    unsigned char* colorMap = 0;
 
     /*
      * Reference
@@ -209,8 +209,8 @@ bmp_read_header (Tcl_Interp*     interp,
 		return 0;
 	    }
 
-	    h   = -h;
-	    top = 1;
+	    h       = -h;
+	    topdown = 1;
 	}
 
 	/* ASSERT h >= 0; */
@@ -277,7 +277,7 @@ int
 bmp_read_pixels (bmp_info*      info,
 		 crimp_image*   destination)
 {
-    crimp_buffer* buf = info->buf;
+    crimp_buffer* buf = info->input;
 
     CRIMP_ASSERT_IMGTYPE (destination, rgb);
     CRIMP_ASSERT ((info->w == destination->w) &&
@@ -731,7 +731,7 @@ decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
      */
 
     int x, y;
-    unsigned int v;
+    unsigned int v, l;
 
     CRIMP_ASSERT (info->numBits == 8, "Bad format");
 
@@ -899,7 +899,7 @@ map_color (unsigned char* colorMap, int index, unsigned char* pix)
 
     pix [0] = colorMap [index + 2]; /* Red */
     pix [1] = colorMap [index + 1]; /* Green */
-    pix [2] = colorMap [index + 0]; /* Blue *
+    pix [2] = colorMap [index + 0]; /* Blue */
 }
 
 /*

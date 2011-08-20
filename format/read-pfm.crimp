@@ -50,12 +50,6 @@ stop = bytes + length;
 #define SEPH  (6) /* Expecting separator (spaces) */
 #define STOP  (7) /* End of header */
 
-#define GETS  (8)  /* Optional sign of floating point value */
-#define GETM  (9)  /* Reading floating point mantissa */
-#define GETF  (10) /* Reading floating point fraction */
-#define GETT  (11) /* Optional exponent sign */
-#define GETE  (12) /* Reading fp exponent */
-
 #define PFM_DIGIT(c) (('0' <= (c)) && ((c) <= '9'))
 #define PFM_SPACE(c) (((c) == ' ') || ((c) == '\n') || ((c) == '\r') || ((c) == '\t'))
 
@@ -91,7 +85,6 @@ for (at = bytes, state = GETP; (at < stop) && (state != STOP); at ++) {
     case SEP:
     case SEPW:
     case SEPH:
-    case SEPM:
 	if (PFM_SPACE (*at)) continue;
 	/*fprintf(stderr,"\tnot space\n");fflush(stderr);*/
 	at --;

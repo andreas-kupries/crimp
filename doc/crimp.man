@@ -1595,8 +1595,8 @@ type float consisting of REAL part of input image.
 
 [call [cmd ::crimp] [method {fpcomp conjugate}] [arg image]]
 
-This Method take fpcomplex image as input and return image of 
-type fpcomplex consisting of conjugate each pixel of input image.
+This Method take fpcomplex image as input and return image of type 
+fpcomplex consisting of conjugate each pixel of input image.
 
 
 [call [cmd ::crimp] [method {join 2hsv}] [arg hueImage] [arg satImage] [arg valImage]]

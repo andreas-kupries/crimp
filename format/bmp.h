@@ -37,6 +37,7 @@ typedef struct bmp_info {
     unsigned int    w;             /* Image width */
     unsigned int    h;             /* Image height */
     unsigned char*  colorMap;      /* Palette, NULL if not used */
+    unsigned int    mapEntrySize;  /* #bytes per colorMap entry */
     unsigned int    numColors;     /* #colors in the palette */
     unsigned int    numBits;       /* bits/pixel */
     bmp_compression mode;          /* Pixel compression method, s.a. */

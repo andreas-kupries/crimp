@@ -1,4 +1,4 @@
-read_ppm
+read::ppm
 Tcl_Obj* ppmdata
 
 /*

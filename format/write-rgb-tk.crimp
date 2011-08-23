@@ -1,4 +1,4 @@
-write_2tk_rgba
+write::Tk_rgb
 char* photo Tcl_Obj* imageObj
 
 Tk_PhotoHandle     handle = Tk_FindPhoto(interp, photo);
@@ -11,7 +11,7 @@ if (!handle) {
     return TCL_ERROR;
 }
 
-crimp_input (imageObj, image, rgba);
+crimp_input (imageObj, image, rgb);
 
 /*
  * Fill the Tk image block to match our structure.
@@ -20,12 +20,12 @@ crimp_input (imageObj, image, rgba);
 pib.pixelPtr  = image->pixel;
 pib.width     = image->w;
 pib.height    = image->h;
-pib.pixelSize = 4;
-pib.pitch     = 4 * pib.width;
+pib.pixelSize = 3;
+pib.pitch     = 3 * pib.width;
 pib.offset[0] = 0;
 pib.offset[1] = 1;
 pib.offset[2] = 2;
-pib.offset[3] = 3;
+pib.offset[3] = 0;
 
 /*
  * ... and push into the destination tk photo

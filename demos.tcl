@@ -46,10 +46,14 @@ if {[catch {
 	crimp::core
 	crimp
 	crimp::tk
+	crimp::ppm
+	crimp::pgm
+	crimp::pfm
+	crimp::bmp
     } {
 	package require $p
 	puts "Using prebuilt $p [package present $p]"
-	puts "At [package ifneeded $p [package present $p]]"
+	puts "At [lindex [package ifneeded $p [package present $p]] end]"
 
     }
 } msg]} {
@@ -59,10 +63,14 @@ if {[catch {
 	puts "Falling back to dynamic compilation via critcl [package require critcl 3]"
     }
 
-    foreach {f p} {
-	crimp_core.tcl crimp::core
-	crimp.tcl      crimp
-	crimptk.tcl    crimp::tk
+    foreach {f p l} {
+	crimp_core.tcl crimp::core  {System foundation}
+	crimp.tcl      crimp        {Main set of image processing algorithms}
+	crimp_tk.tcl   crimp::tk    {Conversion to Tk photo and back}
+	crimp_ppm.tcl  crimp::ppm   {Read/write portable pix maps}
+	crimp_pgm.tcl  crimp::pgm   {Read/write portable grey maps}
+	crimp_pfm.tcl  crimp::pfm   {Read/write portable float maps}
+	crimp_bmp.tcl  crimp::bmp   {Read/write Windows bitmaps}
     } {
 	puts "Trying dynamically compiled package \"$p\""
 	# Directly access the package

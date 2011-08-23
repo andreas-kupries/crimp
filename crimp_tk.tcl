@@ -1,8 +1,8 @@
 # -*- tcl -*-
 # CRIMP :: Tk == C Runtime Image Manipulation Package :: Tk Photo Conversion.
 #
-# (c) 2010 Andrew M. Goth  http://wiki.tcl.tk/andy%20goth
-# (c) 2010 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
+# (c) 2010      Andrew M. Goth  http://wiki.tcl.tk/andy%20goth
+# (c) 2010-2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
 #
 
 # # ## ### ##### ######## #############
@@ -17,9 +17,34 @@ if {![critcl::compiling]} {
     error "Unable to build CRIMP::TK, no proper compiler found."
 }
 
+# # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+
+::apply {{here} {
+    source $here/support.tcl
+}} [file dirname [file normalize [info script]]]
+
+# # ## ### ##### ######## #############
+## Administrivia
+
 critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
+
+critcl::summary \
+    {Extension of the CRIMP core to handle import and export of Tk photos}
+
+critcl::description {
+    This package provides the CRIMP eco-system with the functionality to handle
+    images stored in Tk photo images. This means that this package is dependent
+    on Tk, and thus the presence of a windowing system, like X11, or Aqua.
+}
+
+critcl::subject image {Tk photo image} {Tk photo} {Tk photo import} {Tk photo export}
+critcl::subject image {image import} {image export}
+critcl::subject photo {photo import} {photo export}
 
 # # ## ### ##### ######## #############
 ## Implementation.
@@ -54,29 +79,10 @@ critcl::ccode {
 }
 
 # # ## ### ##### ######## #############
-## Read and execute the tk-specific .crimp files in the current directory.
+## Pull in the Tk-specific pieces. These are fit under the read/write namespaces.
 
-critcl::owns operator/*tk*.crimp
-::apply {{here} {
-    foreach filename [lsort [glob -nocomplain -directory [file join $here operator] *tk*.crimp]] {
-	#critcl::msg -nonewline " \[[file rootname [file tail $filename]]\]"
-	set chan [open $filename]
-	set name [gets $chan]
-	set params "Tcl_Interp* interp"
-	set number 2
-	while {1} {
-	    incr number
-	    set line [gets $chan]
-	    if {$line eq ""} {
-		break
-	    }
-	    append params " $line"
-	}
-	set body "\n#line $number \"[file tail $filename]\"\n[read $chan]"
-	close $chan
-	namespace eval ::crimp [list ::critcl::cproc $name $params ok $body]
-    }
-}} [file dirname [file normalize [info script]]]
+critcl::owns        format/*tk*.crimp
+crimp_source_cproc {format/*tk*.crimp}
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

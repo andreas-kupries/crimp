@@ -18,7 +18,12 @@ static int decode_16  (bmp_info* info, crimp_buffer* buf, crimp_image* destinati
 static int decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
 static int decode_rgb (bmp_info* info, crimp_buffer* buf, crimp_image* destination);
 
+static int decode_pack16 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image* destination);
+static int decode_pack32 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image* destination);
+
 static void map_color (unsigned char* colorMap, int entrySize, int index, unsigned char* pix);
+
+static void define_mask (bmp_maskinfo* mi, unsigned int mask);
 
 /*
  * Debugging Help. Mainly the RLE decoders.
@@ -126,7 +131,7 @@ bmp_read_header (Tcl_Interp*     interp,
 
 	if ((nBits == 16) ||
 	    (nBits == 32)) {
-	    Tcl_SetResult (interp, "Bad BMP image (Invalid bpp for OS/2)", TCL_STATIC);
+	    Tcl_SetResult (interp, "Bad BMP image (Invalid bpp for OS/2, packed RGB not supported)", TCL_STATIC);
 	    return 0;
 	}
 
@@ -187,8 +192,9 @@ bmp_read_header (Tcl_Interp*     interp,
      *  24 : RGB storage, no color table.
      *  -- - ----------------------------------------------
      *  16 : Packed RGB storage, no color table, have channel bitmasks
-     *  32 : instead.
-     *  -- - ----------------------------------------------
+     *  32 : instead. For bc_rgb the masks are fixed, otherwise (bc_bitfield)
+     *       they are stored in place of the color map.
+     * -- - ----------------------------------------------
      *
      * - NumColors != 0 overrides the default number of colors derived
      *   from the BitCount.
@@ -214,13 +220,16 @@ bmp_read_header (Tcl_Interp*     interp,
     case 16:
     case 32:
 	/*
-	 * Packed RGB formats, currently not supported. TODO.
+	 * Packed RGB formats use the colorMap pointer to communicate the
+	 * channel masks, although if and only if bitfield compression is
+	 * specified.
 	 */
-	Tcl_SetResult (interp, "Packed RGB BMP image not supported", TCL_STATIC);
-	return 0;
+	if (compression == bc_bitfield) {
+	    colorMap = crimp_buf_at (buf);
+	}
     case 24:
 	/*
-	 * RGB formats.
+	 * RGB formats, packed (16, 32) and unpacked (24).
 	 */
 	if (nColors) {
 	    Tcl_SetResult (interp, "Bad BMP image (color/RGB mismatch)", TCL_STATIC);
@@ -337,6 +346,7 @@ bmp_read_pixels (bmp_info*      info,
 		 crimp_image*   destination)
 {
     crimp_buffer* buf = info->input;
+    bmp_maskinfo mi [3];
 
     CRIMP_ASSERT_IMGTYPE (destination, rgb);
     CRIMP_ASSERT ((info->w == destination->w) &&
@@ -384,6 +394,48 @@ bmp_read_pixels (bmp_info*      info,
 
 	return decode_rgb (info, buf, destination);
 	break;
+
+    case 16:
+	if (info->mode == bc_bitfield) {
+	    /* Stored masks
+	     */
+	    unsigned int* masks;
+	    CRIMP_ASSERT (info->colorMap,"colormap is channel masks");
+	    masks = (unsigned int*) info->colorMap;
+	    define_mask (&mi[0], masks[0]); /* Blue  */
+	    define_mask (&mi[1], masks[1]); /* Green */
+	    define_mask (&mi[2], masks[2]); /* Red   */
+	} else {
+	    /* Fixed masks (5-5-5, 1 bit wasted)
+	     */
+	    CRIMP_ASSERT (!info->colorMap,"");
+	    define_mask (&mi[0], 0x7c00); /* Blue  */
+	    define_mask (&mi[1], 0x03e0); /* Green */
+	    define_mask (&mi[2], 0x001f); /* Red   */
+	}
+	return decode_pack16 (info, mi, buf, destination);
+	break;
+    case 32:
+	if (info->mode == bc_bitfield) {
+	    /* Stored masks
+	     */
+	    unsigned int* masks;
+	    CRIMP_ASSERT (info->colorMap,"colormap is channel masks");
+	    masks = (unsigned int*) info->colorMap;
+	    define_mask (&mi[0], masks[0]); /* Blue  */
+	    define_mask (&mi[1], masks[1]); /* Green */
+	    define_mask (&mi[2], masks[2]); /* Red   */
+	} else {
+	    /* Fixed masks (8-8-8, 8 bit wasted)
+	     */
+	    CRIMP_ASSERT (!info->colorMap,"");
+	    define_mask (&mi[0], 0xff000000); /* Blue  */
+	    define_mask (&mi[1], 0x00ff0000); /* Green */
+	    define_mask (&mi[2], 0x0000ff00); /* Red   */
+	}
+	return decode_pack32 (info, mi, buf, destination);
+	break;
+
     default:
 	CRIMP_ASSERT (0,"Unsupported number of bits/pixel");
     }
@@ -1004,6 +1056,106 @@ decode_rgb (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
     return 1;
 }
 
+static int
+decode_pack16 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image* destination)
+{
+    /*
+     * Packed RGB data. Each pixel is represented by 2 bytes. The channel
+     * values are extracted using the specified masks. Each scan-line is
+     * 4-aligned.
+     */
+
+    int x, y;
+    unsigned int v;
+    int base = crimp_buf_tell (buf);
+
+    CRIMP_ASSERT (info->numBits == 16, "Bad format");
+
+    if (info->topdown) {
+	/*
+	 * Store the scan-lines from the top down.
+	 */
+	for (y = 0; y < info->h; y++) {
+	    for (x = 0; x < info->w; x++) {
+		CHECK_SPACE (2);
+		crimp_buf_read_uint16le (buf, &v);
+
+		R (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
+		G (destination, x, y) = ((v & mi[1].mask) >> mi[1].shiftin) << mi[1].shiftout;
+		B (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
+	    }
+	    crimp_buf_alignr (buf, base, 4);
+	}
+    } else {
+	/*
+	 * Store the scan-lines from the bottom up (default, regular)
+	 */
+	for (y = info->h - 1; y >= 0; y--) {
+	    for (x = 0; x < info->w; x++) {
+		CHECK_SPACE (2);
+		crimp_buf_read_uint16le (buf, &v);
+
+		R (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
+		G (destination, x, y) = ((v & mi[1].mask) >> mi[1].shiftin) << mi[1].shiftout;
+		B (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
+	    }
+	    crimp_buf_alignr (buf, base, 4);
+	}
+    }
+
+    return 1;
+}
+
+static int
+decode_pack32 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image* destination)
+{
+    /*
+     * Packed RGB data. Each pixel is represented by 4 bytes. The channel
+     * values are extracted using the specified masks. Each scan-line is
+     * 4-aligned.
+     */
+
+    int x, y;
+    unsigned int v;
+    int base = crimp_buf_tell (buf);
+
+    CRIMP_ASSERT (info->numBits == 32, "Bad format");
+
+    if (info->topdown) {
+	/*
+	 * Store the scan-lines from the top down.
+	 */
+	for (y = 0; y < info->h; y++) {
+	    for (x = 0; x < info->w; x++) {
+		CHECK_SPACE (2);
+		crimp_buf_read_uint32le (buf, &v);
+
+		R (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
+		G (destination, x, y) = ((v & mi[1].mask) >> mi[1].shiftin) << mi[1].shiftout;
+		B (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
+	    }
+	    crimp_buf_alignr (buf, base, 4);
+	}
+    } else {
+	/*
+	 * Store the scan-lines from the bottom up (default, regular)
+	 */
+	for (y = info->h - 1; y >= 0; y--) {
+	    for (x = 0; x < info->w; x++) {
+		CHECK_SPACE (2);
+		crimp_buf_read_uint32le (buf, &v);
+
+		R (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
+		G (destination, x, y) = ((v & mi[1].mask) >> mi[1].shiftin) << mi[1].shiftout;
+		B (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
+	    }
+	    crimp_buf_alignr (buf, base, 4);
+	}
+    }
+
+    return 1;
+}
+
 static void
 map_color (unsigned char* colorMap, int entrySize, int index, unsigned char* pix)
 {
@@ -1019,6 +1171,36 @@ map_color (unsigned char* colorMap, int entrySize, int index, unsigned char* pix
     pix [0] = colorMap [index + 2]; /* Red */
     pix [1] = colorMap [index + 1]; /* Green */
     pix [2] = colorMap [index + 0]; /* Blue */
+}
+
+static void
+define_mask (bmp_maskinfo* mi, unsigned int mask)
+{
+    int nbits, offset, bit;
+
+    /* Save the mask first ... */
+
+    mi->mask = mask;
+
+    /* ... then compute the shift values needed to extract from or write to
+     * the packed color channel.
+     */
+
+    nbits  = 0;
+    offset = -1;
+
+    for (bit = 0; bit < 32; bit++) {
+	if (mask & 1) {
+	    nbits++;
+	    if (offset == -1) {
+		offset = bit;
+	    }
+	}
+	mask = mask >> 1;
+    }
+
+    mi->shiftin  = offset;
+    mi->shiftout = 8 - nbits;
 }
 
 /*

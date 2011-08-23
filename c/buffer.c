@@ -24,7 +24,7 @@ crimp_buf_init (crimp_buffer* buf, Tcl_Obj* data)
 int
 crimp_buf_has (crimp_buffer* buf, int n)
 {
-    return n < (buf->sentinel - buf->here);
+    return n <= (buf->sentinel - buf->here);
 }
 
 int
@@ -57,9 +57,9 @@ void
 crimp_buf_skip (crimp_buffer* buf, int n)
 {
     if (n > 0) {
-	CRIMP_ASSERT_BOUNDS (n,(buf->sentinel - buf->here));
+	CRIMP_ASSERT_BOUNDS (n-1,(buf->sentinel - buf->here));
     } else if (n < 0) {
-	CRIMP_ASSERT_BOUNDS ((buf->here - buf->buf),-n);
+	CRIMP_ASSERT_BOUNDS ((buf->here - buf->buf),-n+1);
     } else return;
 
     buf->here += n;
@@ -69,6 +69,17 @@ void
 crimp_buf_align (crimp_buffer* buf, int n)
 {
    int loc = (buf->here - buf->buf);
+   int off = loc % n;
+
+   if (!off) return;
+
+   crimp_buf_skip (buf, n-off);
+}
+
+void
+crimp_buf_alignr (crimp_buffer* buf, int base, int n)
+{
+   int loc = (buf->here - buf->buf) - base;
    int off = loc % n;
 
    if (!off) return;
@@ -98,7 +109,7 @@ crimp_buf_match (crimp_buffer* buf, int n, char* str)
 void
 crimp_buf_read_uint8 (crimp_buffer* buf, unsigned int* res)
 {
-    CRIMP_ASSERT_BOUNDS (1,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (0,(buf->sentinel - buf->here));
 
     *res = buf->here[0];
 
@@ -108,7 +119,7 @@ crimp_buf_read_uint8 (crimp_buffer* buf, unsigned int* res)
 void
 crimp_buf_read_uint16le (crimp_buffer* buf, unsigned int* res)
 {
-    CRIMP_ASSERT_BOUNDS (2,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (1,(buf->sentinel - buf->here));
 
     *res = (buf->here[0] |
 	    buf->here[1] << 8);
@@ -119,7 +130,7 @@ crimp_buf_read_uint16le (crimp_buffer* buf, unsigned int* res)
 void
 crimp_buf_read_uint32le (crimp_buffer* buf, unsigned int* res)
 {
-    CRIMP_ASSERT_BOUNDS (4,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (3,(buf->sentinel - buf->here));
 
     *res = (buf->here[0] |
 	    buf->here[1] << 8 |
@@ -132,7 +143,7 @@ crimp_buf_read_uint32le (crimp_buffer* buf, unsigned int* res)
 void
 crimp_buf_read_uint16be (crimp_buffer* buf, unsigned int* res)
 {
-    CRIMP_ASSERT_BOUNDS (2,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (1,(buf->sentinel - buf->here));
 
     *res = (buf->here[1] |
 	    buf->here[0] << 8);
@@ -143,7 +154,7 @@ crimp_buf_read_uint16be (crimp_buffer* buf, unsigned int* res)
 void
 crimp_buf_read_uint32be (crimp_buffer* buf, unsigned int* res)
 {
-    CRIMP_ASSERT_BOUNDS (4,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (3,(buf->sentinel - buf->here));
 
     *res = (buf->here[3] |
 	    buf->here[2] << 8 |
@@ -156,7 +167,7 @@ crimp_buf_read_uint32be (crimp_buffer* buf, unsigned int* res)
 void
 crimp_buf_read_int8 (crimp_buffer* buf, int* res)
 {
-    CRIMP_ASSERT_BOUNDS (1,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (0,(buf->sentinel - buf->here));
 
     *res = buf->here[0];
 
@@ -166,7 +177,7 @@ crimp_buf_read_int8 (crimp_buffer* buf, int* res)
 void
 crimp_buf_read_int16le (crimp_buffer* buf, int* res)
 {
-    CRIMP_ASSERT_BOUNDS (2,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (1,(buf->sentinel - buf->here));
 
     *res = (buf->here[0] |
 	    buf->here[1] << 8);
@@ -177,7 +188,7 @@ crimp_buf_read_int16le (crimp_buffer* buf, int* res)
 void
 crimp_buf_read_int32le (crimp_buffer* buf, int* res)
 {
-    CRIMP_ASSERT_BOUNDS (4,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (3,(buf->sentinel - buf->here));
 
     *res = (buf->here[0] |
 	    buf->here[1] << 8 |
@@ -190,7 +201,7 @@ crimp_buf_read_int32le (crimp_buffer* buf, int* res)
 void
 crimp_buf_read_int16be (crimp_buffer* buf, int* res)
 {
-    CRIMP_ASSERT_BOUNDS (2,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (1,(buf->sentinel - buf->here));
 
     *res = (buf->here[1] |
 	    buf->here[0] << 8);
@@ -201,7 +212,7 @@ crimp_buf_read_int16be (crimp_buffer* buf, int* res)
 void
 crimp_buf_read_int32be (crimp_buffer* buf, int* res)
 {
-    CRIMP_ASSERT_BOUNDS (4,(buf->sentinel - buf->here));
+    CRIMP_ASSERT_BOUNDS (3,(buf->sentinel - buf->here));
 
     *res = (buf->here[3] |
 	    buf->here[2] << 8 |

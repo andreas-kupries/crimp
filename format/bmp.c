@@ -21,6 +21,17 @@ static int decode_rgb (bmp_info* info, crimp_buffer* buf, crimp_image* destinati
 static void map_color (unsigned char* colorMap, int index, unsigned char* pix);
 
 /*
+ * Debugging Help. Mainly the RLE decoders.
+ */
+
+/*#define RLE_TRACE 1*/
+#ifdef RLE_TRACE
+#define TRACE(x) { printf x ; fflush (stdout); }
+#else
+#define TRACE(x)
+#endif
+
+/*
  * Definitions :: Core.
  */
 
@@ -94,7 +105,7 @@ bmp_read_header (Tcl_Interp*     interp,
     case 40:
 	/*
 	 * BITMAPINFOHEADER, aka DIB Header
-	 * Most common 40-byte variant.
+	 * The most common variant, 40 byte long.
 	 *
 	 * 18..21 | 4 : Image width
 	 * 22..25 | 4 : Image height
@@ -246,6 +257,7 @@ bmp_read_header (Tcl_Interp*     interp,
 	break;
 
     default:
+	TRACE (("DIB Header %u",c));
 	Tcl_SetResult (interp, "Unsupported BMP DIB image header", TCL_STATIC);
 	return 0;
     }
@@ -585,9 +597,18 @@ decode_16 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 	x = 0;
 	y = info->h - 1;
 
+	TRACE (("RLE4 Base  %d\n",base));
+	TRACE (("RLE4 Stop  %d\n",crimp_buf_tell(buf)));
+	TRACE (("RLE4 Delta %d\n",crimp_buf_tell(buf) - base));
+	TRACE (("RLE4 Size  %u\n",info->numPixelBytes));
+	TRACE (("RLE4 @ (  x   y)\n"));
+
 	while (!stop && ((crimp_buf_tell(buf) - base) < info->numPixelBytes)) {
 	    CHECK_SPACE (2);
 	    crimp_buf_read_uint8 (buf, &l);
+
+	    TRACE (("RLE4 @ (%3d %3d) /%3u ", x, y, l));
+
 	    switch (l) {
 	    case 0:
 		/* Escape clause.
@@ -595,85 +616,110 @@ decode_16 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 		crimp_buf_read_uint8 (buf, &v);
 		switch (v) {
 		case 0: /* End of line */
+		    TRACE (("/%3u EOL\n", v));
 		    x = 0;
 		    y --;
 		    break;
 		case 1: /* End of bitmap */
+		    TRACE (("/%3u EOB\n", v));
 		    stop = 1;
 		    break;
 		case 2: /* Jump */
+		    TRACE (("/%3u JUMP ",v));
 		    CHECK_SPACE (2);
 		    crimp_buf_read_uint8 (buf, &l); x += l;
 		    crimp_buf_read_uint8 (buf, &v); y -= v; /* bottom-up! */
+		    TRACE (("(dx %u dy %u)\n",l, v));
 		    break;
 		default:
-		    /* Absolute mode: 3-255. l = length of pixel
-		     * sequence. Convert that many indices.
+		    /*
+		     * Absolute mode: 3-255. l = length of pixel
+		     * sequence. Convert that many indices. Such runs do not
+		     * extend beyond the end of the current scan line. If a
+		     * run does, it is an error. Changing to the next line is
+		     * done with the EOL escape.
 		     */
+		    TRACE (("/%3u ",l));
 		    l = v;
+		    TRACE (("ABS %u : ",l));
 		    while (l) {
 			GET_INDEX (v);
 
 			va = (v & 0xF0) >> 4;
+			TRACE (("%u ",va));
 			CHECK_INDEX (va);
+			CRIMP_ASSERT_BOUNDS(x,info->w);
+			CRIMP_ASSERT_BOUNDS(y,info->h);
+
 			map_color (info->colorMap, va, &R (destination, x, y));
 
 			l --;
 			x ++;
 
-			if (x >= info->w) {;
-			    x = 0;
-			    y --;
-			}
-
 			if (!l) break;
 
 			vb = (v & 0x0F);
+			TRACE (("%u ",vb));
 			CHECK_INDEX (vb);
+			CRIMP_ASSERT_BOUNDS(x,info->w);
+			CRIMP_ASSERT_BOUNDS(y,info->h);
+
 			map_color (info->colorMap, vb, &R (destination, x, y));
 
 			l --;
 			x ++;
-
-			if (x >= info->w) {;
-			    x = 0;
-			    y --;
-			}
 		    }
-		    crimp_buf_align (buf, 2);
+		    TRACE (("\n"));
+		    crimp_buf_alignr (buf, base, 2);
 		    break;
 		}
 		break;
 	    default:
-		/* Run-code. l = length of run. Get index to map and store this many times.
+		/*
+		 * Run-code. l = length of run. Get index to map and store
+		 * this many times. Such runs do not extend beyond the end of
+		 * the current scan line. If a run does, it is an
+		 * error. Changing to the next line is done with the EOL
+		 * escape.
 		 */
 		crimp_buf_read_uint8 (buf, &v);
-		CHECK_INDEX (v);
+
+		TRACE (("/%3u RUN %u %u = ", v, l, v));
+
 		va = (v & 0xF0) >> 4;	CHECK_INDEX (va);
 		vb = (v & 0x0F);	CHECK_INDEX (vb);
 
+		TRACE (("%u %u ", va, vb));
+
 		while (l) {
+		    TRACE (("a"));
+		    CRIMP_ASSERT_BOUNDS(x,info->w);
+		    CRIMP_ASSERT_BOUNDS(y,info->h);
 		    map_color (info->colorMap, va, &R (destination, x, y));
+
 		    l --;
 		    x ++;
-		    if (x >= info->w) {
-			x = 0;
-			y --;
-		    }
+
 		    if (!l) break;
+
+		    TRACE (("b"));
+		    CRIMP_ASSERT_BOUNDS(x,info->w);
+		    CRIMP_ASSERT_BOUNDS(y,info->h);
 		    map_color (info->colorMap, vb, &R (destination, x, y));
+
 		    l --;
 		    x ++;
-		    if (x >= info->w) {
-			x = 0;
-			y --;
-		    }
 		}
+		TRACE (("\n"));
 		break;
 	    }
 	}
 
 	if ((crimp_buf_tell(buf) - base) != info->numPixelBytes) {
+	    TRACE (("RLE4 Base  %d\n",base));
+	    TRACE (("RLE4 Stop  %d\n",crimp_buf_tell(buf)));
+	    TRACE (("RLE4 Delta %d\n",crimp_buf_tell(buf) - base));
+	    TRACE (("RLE4 Size  %u\n",info->numPixelBytes));
 	    return 0;
 	}
     } else if (info->topdown) {
@@ -724,6 +770,7 @@ decode_16 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 	}
     }
 
+    TRACE (("OK"));
     return 1;
 }
 
@@ -757,9 +804,18 @@ decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 	x = 0;
 	y = info->h - 1;
 
+	TRACE (("RLE8 Base  %d\n",base));
+	TRACE (("RLE8 Stop  %d\n",crimp_buf_tell(buf)));
+	TRACE (("RLE8 Delta %d\n",crimp_buf_tell(buf) - base));
+	TRACE (("RLE8 Size  %u\n",info->numPixelBytes));
+	TRACE (("RLE8 @ (  x   y)\n"));
+
 	while (!stop && ((crimp_buf_tell(buf) - base) < info->numPixelBytes)) {
 	    CHECK_SPACE (2);
 	    crimp_buf_read_uint8 (buf, &l);
+
+	    TRACE (("RLE8 @ (%3d %3d) /%3u ",x,y,l));
+
 	    switch (l) {
 	    case 0:
 		/* Escape clause.
@@ -767,53 +823,76 @@ decode_256 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 		crimp_buf_read_uint8 (buf, &v);
 		switch (v) {
 		case 0: /* End of line */
+		    TRACE (("/%3u EOL\n",v));
 		    x = 0;
 		    y --;
 		    break;
 		case 1: /* End of bitmap */
+		    TRACE (("/%3u EOB\n",v));
 		    stop = 1;
 		    break;
 		case 2: /* Jump */
+		    TRACE (("/%3u JUMP ",v));
 		    CHECK_SPACE (2);
 		    crimp_buf_read_uint8 (buf, &l); x += l;
 		    crimp_buf_read_uint8 (buf, &v); y -= v; /* bottom-up! */
+		    TRACE (("(dx %u dy %u)\n",l, v));
 		    break;
 		default:
-		    /* Absolute mode: 3-255. l = length of pixel
-		     * sequence. Convert that many indices.
+		    /*
+		     * Absolute mode: 3-255. l = length of pixel
+		     * sequence. Convert that many indices. Such runs do not
+		     * extend beyond the end of the current scan line. If a
+		     * run does, it is an error. Changing to the next line is
+		     * done with the EOL escape.
 		     */
 		    l = v;
+		    TRACE (("/%3u ABS %u : ",v,l));
 		    while (l) {
 			GET_CHECK_INDEX (v);
+			TRACE (("%u ",v));
+			CRIMP_ASSERT_BOUNDS(x,info->w);
+			CRIMP_ASSERT_BOUNDS(y,info->h);
+
 			map_color (info->colorMap, v, &R (destination, x, y));
 			l --;
 			x ++;
-			if (x < info->w) continue;
-			x = 0;
-			y --;
 		    }
-		    crimp_buf_align (buf, 2);
+		    TRACE (("\n"));
+		    crimp_buf_alignr (buf, base, 2);
 		    break;
 		}
 		break;
 	    default:
-		/* Run-code. l = length of run. Get index to map and store this many times.
+		/*
+		 * Run-code. l = length of run. Get the index to map and store
+		 * it this many times. Such runs do not extend beyond the end
+		 * of the current scan line. If a run does, it is an
+		 * error. Changing to the next line is done with the EOL
+		 * escape.
 		 */
 		crimp_buf_read_uint8 (buf, &v);
+		TRACE (("/%3u RUN %u %u ",v,l,v));
 		CHECK_INDEX (v);
 		while (l) {
+		    TRACE (("."));
+		    CRIMP_ASSERT_BOUNDS(x,info->w);
+		    CRIMP_ASSERT_BOUNDS(y,info->h);
+
 		    map_color (info->colorMap, v, &R (destination, x, y));
 		    l --;
 		    x ++;
-		    if (x < info->w) continue;
-		    x = 0;
-		    y --;
 		}
+		TRACE (("\n"));
 		break;
 	    }
 	}
 
 	if ((crimp_buf_tell(buf) - base) != info->numPixelBytes) {
+	    TRACE (("RLE8 Base  %d\n",base));
+	    TRACE (("RLE8 Stop  %d\n",crimp_buf_tell(buf)));
+	    TRACE (("RLE8 Delta %d\n",crimp_buf_tell(buf) - base));
+	    TRACE (("RLE8 Size  %u\n",info->numPixelBytes));
 	    return 0;
 	}
     } else if (info->topdown) {

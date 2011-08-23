@@ -14,7 +14,7 @@ typedef struct {
   unsigned int mask;
   unsigned int shiftin;
   unsigned int shiftout;
-} BitmapChannel;
+} bmp_maskinfo;
 
 /*
  * Compression types

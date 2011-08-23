@@ -205,7 +205,7 @@ proc ::crimp::write::Str_tcl_hsv {image} {
 ## any non-exported C-level primitives should be placed.
 
 namespace eval ::crimp {
-    namespace export {a-z*}
+    namespace export {[a-z]*}
     namespace ensemble create
 
     namespace eval ::crimp::C {}

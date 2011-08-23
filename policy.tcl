@@ -7,18 +7,6 @@ namespace eval ::crimp {}
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::List {pattern} {
-    return [info commands ::crimp::$pattern]
-}
-
-proc ::crimp::Has {name} {
-    expr {[namespace which -command ::crimp::$name] ne {}}
-}
-
-proc ::crimp::P {fqn} {
-    return [lrange [::split [namespace tail $fqn] _] 1 end]
-}
-
 proc ::crimp::ALIGN {image size where fe values} {
     # Do nothing if the image is at the requested size.
 
@@ -219,97 +207,6 @@ proc ::crimp::meta {cmd image args} {
 	    return -code error "Unknown method \"$cmd\", expected one of [linsert [::join $x {, }] end-1 or]"
 	}
     }
-}
-
-# # ## ### ##### ######## #############
-## Read is done via sub methods, one per format to read from.
-#
-## Ditto write, convert, and join, one per destination format. Note
-## that for write and convert the input format is determined
-## automatically from the image.
-
-namespace eval ::crimp::read {
-    namespace export *
-    namespace ensemble create
-}
-
-::apply {{dir} {
-    # Readers implemented as C primitives
-    foreach fun [::crimp::List read_*] {
-	# Ignore the read_tcl_ primitives. They have their own setup
-	# in a moment.
-	if {[string match *::read_tcl_* $fun]} continue
-
-	proc [::crimp::P $fun] {detail} [string map [list @ $fun] {
-	    @ $detail
-	}]
-    }
-
-    proc tcl {format detail} {
-	set f read_tcl_$format
-	if {![::crimp::Has $f]} {
-	    return -code error "Unable to generate images of type \"$format\" from Tcl values"
-	}
-	return [::crimp::$f $detail]
-    }
-
-    # Readers implemented as Tcl procedures.
-    # - Declared as tsources in crimp.tcl.
-} ::crimp::read} [file dirname [file normalize [info script]]]
-
-# # ## ### ##### ######## #############
-
-namespace eval ::crimp::write {
-    namespace export *
-    namespace ensemble create
-}
-
-::apply {{dir} {
-    # Writers implemented as C primitives
-    foreach fun [::crimp::List write_*] {
-	proc [lindex [::crimp::P $fun] 0] {dst image} \
-	    [string map [list @ [lindex [::crimp::P $fun] 0]] {
-		set type [::crimp::TypeOf $image]
-		set f    write_@_${type}
-		if {![::crimp::Has $f]} {
-		    return -code error "Unable to write images of type \"$type\" to \"@\""
-		}
-		return [::crimp::$f $dst $image]
-	    }]
-    }
-
-    # Writers implemented as Tcl procedures.
-    # - Declared as tsources in crimp.tcl.
-} ::crimp::write} [file dirname [file normalize [info script]]]
-
-proc ::crimp::write::2file {format path image} {
-    set chan [open $path w]
-    fconfigure $chan -encoding binary
-    2chan $format $chan $image
-    close $chan
-    return
-}
-
-proc ::crimp::write::2chan {format chan image} {
-    set type [::crimp::TypeOf $image]
-    set f    writec_${format}_${type}
-
-    if {![::crimp::Has $f]} {
-	puts -nonewline $chan [2string $format $image]
-	return
-    }
-    ::crimp::$f $chan $image
-    return
-}
-
-proc ::crimp::write::2string {format image} {
-    set type [::crimp::TypeOf $image]
-    set f    writes_${format}_${type}
-
-    if {![::crimp::Has $f]} {
-	return -code error "Unable to write images of type \"$type\" to strings for \"$format\""
-    }
-    return [::crimp::$f $image]
 }
 
 # # ## ### ##### ######## #############
@@ -3386,16 +3283,6 @@ proc ::crimp::FLOATMEANSTDDEV {i {sigma 1.2}} {
     set min        [expr {$mean - $var * $sigma}]
     set max        [expr {$mean + $var * $sigma}]
     return [list $min $max]
-}
-
-# # ## ### ##### ######## #############
-
-proc ::crimp::TypeOf {image} {
-    return [namespace tail [type $image]]
-}
-
-proc ::crimp::K {x y} {
-    return $x
 }
 
 # # ## ### ##### ######## #############

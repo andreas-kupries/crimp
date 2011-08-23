@@ -16,24 +16,38 @@ if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
 
+# # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+
+::apply {{here} {
+    source $here/support.tcl
+}} [file dirname [file normalize [info script]]]
+
+# # ## ### ##### ######## #############
+## Administrivia
+
 critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
 
-critcl::summary {The core data structures of all CRIMP packages}
+critcl::summary \
+    {The core data structures of all CRIMP packages}
+
 critcl::description {
-    This package provides the core data structures, functions, and
-    macros for images and image types. It is the core shared/used by
-    all other CRIMP packages. The provided API is at the C-level, a
-    stubs table without any Tcl bindings. For these we have the
-    other packages in the CRIMP eco-system.
+    This package is the core shared/used by all other CRIMP packages.
+
+    At the C-level it provides the core data structures, functions, and macros
+    for images and image types.
+
+    These are reflected in the Tcl level API as well, via the fundamental
+    accessors and basic image conversion from and to Tcl data structures
+    (nested lists).
 }
 
-critcl::subject {data structures}
-critcl::subject {core functionality}
-critcl::subject {image data type}
-critcl::subject {image-type data type}
-critcl::subject {data types}
+critcl::subject image {image type} {image accessors} {image construction}
+critcl::subject {data structures} {data type}
 
 # # ## ### ##### ######## #############
 ## Implementation.
@@ -44,6 +58,12 @@ critcl::cheaders c/coreInt.h
 critcl::csources c/image.c
 critcl::csources c/volume.c
 critcl::csources c/image_type.c
+critcl::csources c/buffer.c
+
+# # ## ### ##### ######## #############
+## Declare the Tcl layer of the package.
+
+critcl::tsources policy_core.tcl
 
 # # ## ### ##### ######## #############
 ## C-level API (i.e. types and stubs)
@@ -52,6 +72,7 @@ critcl::api header c/common.h
 critcl::api header c/image_type.h
 critcl::api header c/image.h
 critcl::api header c/volume.h
+critcl::api header c/buffer.h
 
 # - -- --- ----- -------- -------------
 ## image_type.h
@@ -140,6 +161,109 @@ critcl::api function int crimp_get_volume_from_obj {
     crimp_volume** volume
 }
 
+# - -- --- ----- -------- -------------
+## buffer.h
+
+critcl::api function void crimp_buf_init {
+    crimp_buffer* b
+    Tcl_Obj*      obj
+}
+
+critcl::api function int crimp_buf_has {
+    crimp_buffer* b
+    int           n
+}
+
+critcl::api function int crimp_buf_size {
+    crimp_buffer* b
+}
+
+critcl::api function int crimp_buf_tell {
+    crimp_buffer* b
+}
+
+critcl::api function int crimp_buf_check {
+    crimp_buffer* b
+    int           location
+}
+
+critcl::api function void crimp_buf_moveto {
+    crimp_buffer* b
+    int           location
+}
+
+critcl::api function void crimp_buf_skip {
+    crimp_buffer* b
+    int           n
+}
+
+critcl::api function void crimp_buf_align {
+    crimp_buffer* b
+    int           n
+}
+
+critcl::api function void crimp_buf_alignr {
+    crimp_buffer* b
+    int           base
+    int           n
+}
+
+critcl::api function int crimp_buf_match {
+    crimp_buffer* b
+    int           n
+    char*         str
+}
+
+critcl::api function void crimp_buf_read_uint8 {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint16le {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint32le {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint16be {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint32be {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_int8 {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int16le {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int32le {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int16be {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int32be {
+    crimp_buffer*   b
+    int*            value
+}
+
 # # ## ### ##### ######## #############
 ## Main C section.
 
@@ -149,7 +273,11 @@ critcl::cinit {
     extern void crimp_imagetype_init (void); /* c/image_type.c */
 }
 
-critcl::ccode {}
+# # ## ### ##### ######## #############
+## Pull in the implementations of the basic accessor commands.
+
+critcl::owns        core/*.crimp
+crimp_source_cproc {core/*.crimp}
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

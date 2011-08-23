@@ -1,10 +1,10 @@
-read_tcl_float
+read::Tcl_grey8
 Tcl_Obj* pixels
 
 /*
- * Create a floating-point image from a list of lists of floating-point
- * numbers. This is, in essence, a read command, just using core Tcl values
- * instead of a Tk photo as input.
+ * Create a grey8 image from a list of lists of integers in the range
+ * [0..255]. This is, in essence, a read command, just using core Tcl
+ * values instead of a Tk photo as input.
  *
  * Using this command should be easier than trying to work with 'list' and
  * 'binary'. This way the result even already has the proper intrep.
@@ -13,8 +13,7 @@ Tcl_Obj* pixels
 Tcl_Obj** rowv;
 Tcl_Obj** colv;
 crimp_image*     result;
-int              x, y, w, h, rowc, colc;
-double           value;
+int              x, y, w, h, rowc, colc, value;
 
 /*
  * Check input, i.e. verify structure and extract dimensions
@@ -33,24 +32,28 @@ for (y = 0; y < h; y++) {
 	w = colc;
     }
     for (x = 0; x < colc; x++) {
-	if (Tcl_GetDoubleFromObj(interp, colv [x], &value) != TCL_OK) {
+	if (Tcl_GetIntFromObj(interp, colv [x], &value) != TCL_OK) {
+	    return TCL_ERROR;
+	}
+	if ((value < 0) || (value > 255)) {
+	    Tcl_SetResult(interp, "integer out of range 0..255", TCL_STATIC);
 	    return TCL_ERROR;
 	}
     }
 }
 
-result = crimp_new_float (w, h);
+result = crimp_new_grey8 (w, h);
 
 for (y = 0; y < h; y++) {
 
     Tcl_ListObjGetElements(interp, rowv [y], &colc, &colv);
 
     for (x = 0; x < colc; x++) {
-	Tcl_GetDoubleFromObj(interp, colv [x], &value);
-	FLOATP (result, x, y) = value;
+	Tcl_GetIntFromObj(interp, colv [x], &value);
+	GREY8 (result, x, y) = value;
     }
     for (; x < w; x++) {
-	FLOATP (result, x, y) = BLACK;
+	GREY8 (result, x, y) = BLACK;
     }
 }
 

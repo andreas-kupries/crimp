@@ -1,8 +1,8 @@
 # -*- tcl -*-
 # CRIMP == C Runtime Image Manipulation Package
 #
-# (c) 2010 Andrew M. Goth  http://wiki.tcl.tk/andy%20goth
-# (c) 2010 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
+# (c) 2010      Andrew M. Goth  http://wiki.tcl.tk/andy%20goth
+# (c) 2010-2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
 #
 
 # # ## ### ##### ######## #############
@@ -17,9 +17,37 @@ if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
 
+# # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+
+::apply {{here} {
+    source $here/support.tcl
+}} [file dirname [file normalize [info script]]]
+
+# # ## ### ##### ######## #############
+## Administrivia
+
 critcl::license \
     {Andreas Kupries} \
     {Under a BSD license.}
+
+critcl::summary \
+    {Main CRIMP package containing all the image processing goodies}
+
+critcl::description {
+    This package provides the CRIMP eco-system with all the image
+    processing goodies. Note that this package does not contain
+    image IO functionality. It indirectly provides only what it
+    inherited from "crimp::core". For display of the images handled
+    here use "crimp::tk". For reading and writing image files use
+    the various other crimp packages, like "crimp::ppm", etc.
+}
+
+# subjects ... Try to find a way of getting these from the .crimp
+# files, put the burden of maintaining the information local to the
+# algorithms.
 
 # # ## ### ##### ######## #############
 ## Implementation.
@@ -71,7 +99,6 @@ critcl::csources c/fftpack/rffti1.c
 ## Image readers and writers implemented as Tcl procedures.
 
 critcl::tsources reader/r_*.tcl
-critcl::tsources writer/w_*.tcl
 
 # # ## ### ##### ######## #############
 ## Declare the Tcl layer aggregating the C primitives into useful
@@ -141,32 +168,11 @@ if {[critcl::util::checkfun lrint]} {
 }}
 
 # # ## ### ##### ######## #############
-## Read and execute all .crimp files in the current directory.
+## Pull in the processing primitives.
+## We ignore the Tk dependent pieces.
 
-critcl::owns operator/*.crimp
-::apply {{here} {
-    foreach filename [lsort [glob -nocomplain -directory [file join $here operator] *.crimp]] {
-	# Ignore the Tk related operators.
-	if {[string match *tk* $filename]} continue
-
-	#critcl::msg -nonewline " \[[file rootname [file tail $filename]]\]"
-	set chan [open $filename]
-	set name [gets $chan]
-	set params "Tcl_Interp* interp"
-	set number 2
-	while {1} {
-	    incr number
-	    set line [gets $chan]
-	    if {$line eq ""} {
-		break
-	    }
-	    append params " $line"
-	}
-	set body "\n#line $number \"[file tail $filename]\"\n[read $chan]"
-	close $chan
-	namespace eval ::crimp [list ::critcl::cproc $name $params ok $body]
-    }
-}} [file dirname [file normalize [info script]]]
+critcl::owns        operator/*.crimp
+crimp_source_cproc {operator/*.crimp}
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

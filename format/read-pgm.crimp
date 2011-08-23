@@ -1,4 +1,4 @@
-read_pgm
+read::pgm
 Tcl_Obj* pgmdata
 
 /*

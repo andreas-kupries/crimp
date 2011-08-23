@@ -202,6 +202,12 @@ critcl::api function void crimp_buf_align {
     int           n
 }
 
+critcl::api function void crimp_buf_alignr {
+    crimp_buffer* b
+    int           base
+    int           n
+}
+
 critcl::api function int crimp_buf_match {
     crimp_buffer* b
     int           n

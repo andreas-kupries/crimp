@@ -53,7 +53,7 @@ if {[catch {
     } {
 	package require $p
 	puts "Using prebuilt $p [package present $p]"
-	puts "At [package ifneeded $p [package present $p]]"
+	puts "At [lindex [package ifneeded $p [package present $p]] end]"
 
     }
 } msg]} {

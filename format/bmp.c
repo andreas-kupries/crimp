@@ -402,16 +402,16 @@ bmp_read_pixels (bmp_info*      info,
 	    unsigned int* masks;
 	    CRIMP_ASSERT (info->colorMap,"colormap is channel masks");
 	    masks = (unsigned int*) info->colorMap;
-	    define_mask (&mi[0], masks[0]); /* Blue  */
+	    define_mask (&mi[0], masks[0]); /* Red   */
 	    define_mask (&mi[1], masks[1]); /* Green */
-	    define_mask (&mi[2], masks[2]); /* Red   */
+	    define_mask (&mi[2], masks[2]); /* Blue  */
 	} else {
 	    /* Fixed masks (5-5-5, 1 bit wasted)
 	     */
 	    CRIMP_ASSERT (!info->colorMap,"");
-	    define_mask (&mi[0], 0x7c00); /* Blue  */
+	    define_mask (&mi[0], 0x7c00); /* Red   */
 	    define_mask (&mi[1], 0x03e0); /* Green */
-	    define_mask (&mi[2], 0x001f); /* Red   */
+	    define_mask (&mi[2], 0x001f); /* Blue  */
 	}
 	return decode_pack16 (info, mi, buf, destination);
 	break;
@@ -422,16 +422,16 @@ bmp_read_pixels (bmp_info*      info,
 	    unsigned int* masks;
 	    CRIMP_ASSERT (info->colorMap,"colormap is channel masks");
 	    masks = (unsigned int*) info->colorMap;
-	    define_mask (&mi[0], masks[0]); /* Blue  */
+	    define_mask (&mi[0], masks[0]); /* Red   */
 	    define_mask (&mi[1], masks[1]); /* Green */
-	    define_mask (&mi[2], masks[2]); /* Red   */
+	    define_mask (&mi[2], masks[2]); /* Blue  */
 	} else {
 	    /* Fixed masks (8-8-8, 8 bit wasted)
 	     */
 	    CRIMP_ASSERT (!info->colorMap,"");
-	    define_mask (&mi[0], 0xff000000); /* Blue  */
-	    define_mask (&mi[1], 0x00ff0000); /* Green */
-	    define_mask (&mi[2], 0x0000ff00); /* Red   */
+	    define_mask (&mi[0], 0x00ff0000); /* Red   */
+	    define_mask (&mi[1], 0x0000ff00); /* Green */
+	    define_mask (&mi[2], 0x000000ff); /* Blue  */
 	}
 	return decode_pack32 (info, mi, buf, destination);
 	break;
@@ -1031,9 +1031,9 @@ decode_rgb (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 	    for (x = 0; x < info->w; x++) {
 		CHECK_SPACE (3);
 
-		crimp_buf_read_uint8 (buf, &v);  R (destination, x, y) = v;
-		crimp_buf_read_uint8 (buf, &v);  G (destination, x, y) = v;
 		crimp_buf_read_uint8 (buf, &v);  B (destination, x, y) = v;
+		crimp_buf_read_uint8 (buf, &v);  G (destination, x, y) = v;
+		crimp_buf_read_uint8 (buf, &v);  R (destination, x, y) = v;
 	    }
 	    crimp_buf_alignr (buf, base, 4);
 	}
@@ -1045,9 +1045,9 @@ decode_rgb (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
 	    for (x = 0; x < info->w; x++) {
 		CHECK_SPACE (3);
 
-		crimp_buf_read_uint8 (buf, &v);  R (destination, x, y) = v;
-		crimp_buf_read_uint8 (buf, &v);  G (destination, x, y) = v;
 		crimp_buf_read_uint8 (buf, &v);  B (destination, x, y) = v;
+		crimp_buf_read_uint8 (buf, &v);  G (destination, x, y) = v;
+		crimp_buf_read_uint8 (buf, &v);  R (destination, x, y) = v;
 	    }
 	    crimp_buf_alignr (buf, base, 4);
 	}
@@ -1071,6 +1071,10 @@ decode_pack16 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image*
 
     CRIMP_ASSERT (info->numBits == 16, "Bad format");
 
+    TRACE(("Pack16 MASK R %x >> %d << %d\n",mi[0].mask, mi[0].shiftin, mi[0].shiftout));
+    TRACE(("Pack16 MASK G %x >> %d << %d\n",mi[1].mask, mi[1].shiftin, mi[1].shiftout));
+    TRACE(("Pack16 MASK B %x >> %d << %d\n",mi[2].mask, mi[2].shiftin, mi[2].shiftout));
+
     if (info->topdown) {
 	/*
 	 * Store the scan-lines from the top down.
@@ -1080,9 +1084,9 @@ decode_pack16 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image*
 		CHECK_SPACE (2);
 		crimp_buf_read_uint16le (buf, &v);
 
-		R (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
+		R (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
 		G (destination, x, y) = ((v & mi[1].mask) >> mi[1].shiftin) << mi[1].shiftout;
-		B (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
+		B (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
 	    }
 	    crimp_buf_alignr (buf, base, 4);
 	}
@@ -1095,9 +1099,9 @@ decode_pack16 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image*
 		CHECK_SPACE (2);
 		crimp_buf_read_uint16le (buf, &v);
 
-		R (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
+		R (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
 		G (destination, x, y) = ((v & mi[1].mask) >> mi[1].shiftin) << mi[1].shiftout;
-		B (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
+		B (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
 	    }
 	    crimp_buf_alignr (buf, base, 4);
 	}
@@ -1121,6 +1125,10 @@ decode_pack32 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image*
 
     CRIMP_ASSERT (info->numBits == 32, "Bad format");
 
+    TRACE(("Pack32 MASK R %x >> %d << %d\n",mi[0].mask, mi[0].shiftin, mi[0].shiftout));
+    TRACE(("Pack32 MASK G %x >> %d << %d\n",mi[1].mask, mi[1].shiftin, mi[1].shiftout));
+    TRACE(("Pack32 MASK B %x >> %d << %d\n",mi[2].mask, mi[2].shiftin, mi[2].shiftout));
+
     if (info->topdown) {
 	/*
 	 * Store the scan-lines from the top down.
@@ -1130,9 +1138,9 @@ decode_pack32 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image*
 		CHECK_SPACE (2);
 		crimp_buf_read_uint32le (buf, &v);
 
-		R (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
+		R (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
 		G (destination, x, y) = ((v & mi[1].mask) >> mi[1].shiftin) << mi[1].shiftout;
-		B (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
+		B (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
 	    }
 	    crimp_buf_alignr (buf, base, 4);
 	}
@@ -1145,9 +1153,9 @@ decode_pack32 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image*
 		CHECK_SPACE (2);
 		crimp_buf_read_uint32le (buf, &v);
 
-		R (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
+		R (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
 		G (destination, x, y) = ((v & mi[1].mask) >> mi[1].shiftin) << mi[1].shiftout;
-		B (destination, x, y) = ((v & mi[0].mask) >> mi[0].shiftin) << mi[0].shiftout;
+		B (destination, x, y) = ((v & mi[2].mask) >> mi[2].shiftin) << mi[2].shiftout;
 	    }
 	    crimp_buf_alignr (buf, base, 4);
 	}

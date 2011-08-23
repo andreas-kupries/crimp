@@ -61,11 +61,14 @@ bmp_read_header (Tcl_Interp*     interp,
      * Check the internal consistency of the data retrieved so far
      */
 
-    if ((crimp_buf_size (buf) != fsize) ||
-	(pixOffset % 2 != 0) ||
-	!crimp_buf_check (buf, pixOffset)) {
-
-	Tcl_SetResult (interp, "Bad BMP image (Invalid pixel data location)", TCL_STATIC);
+    if (crimp_buf_size (buf) != fsize) {
+	Tcl_SetResult (interp, "Bad BMP image (File size mismatch)", TCL_STATIC);
+	return 0;
+    } else if (!crimp_buf_check (buf, pixOffset)) {
+	Tcl_SetResult (interp, "Bad BMP image (Bad pixel offset, out of range)", TCL_STATIC);
+	return 0;
+    } else if (pixOffset % 2 != 0) {
+	Tcl_SetResult (interp, "Bad BMP image (Bad pixel offset, not word-aligned)", TCL_STATIC);
 	return 0;
     }
 

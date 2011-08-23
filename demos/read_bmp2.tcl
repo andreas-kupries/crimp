@@ -8,15 +8,17 @@ def read_bmp2 {
 
 	proc 8x {image} {
 	    variable K
-	    return [crimp interpolate xy [crimp interpolate xy [crimp interpolate xy $image 2 $K] 2 $K] 2 $K]
+	    return [crimp interpolate xy \
+			[crimp interpolate xy \
+			     [crimp interpolate xy $image 2 $K] 2 $K] 2 $K]
 	}
 
 	proc SHOW {path} {
 	    if {[catch {
-		set bmp [crimp read bmp [fileutil::cat $path]]
+		set bmp [crimp read bmp [fileutil::cat -translation binary $path]]
 	    } msg]} {
 		log ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		log BMP\t:$path
+		log BMP\t:$path\t([file size $path])
 		log $msg error
 		log ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		return

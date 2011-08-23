@@ -366,7 +366,7 @@ decode_2 (bmp_info* info, crimp_buffer* buf, crimp_image* destination)
     unsigned int v, va, vb, vc, vd, ve, vf, vg, vh;
     int base = crimp_buf_tell (buf);
 
-    CRIMP_ASSERT (info->numBits == 2, "Bad format");
+    CRIMP_ASSERT (info->numBits == 1, "Bad format");
 
     if (info->topdown) {
 	/*

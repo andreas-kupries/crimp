@@ -2,8 +2,8 @@
 [manpage_begin crimp n 0.1]
 [copyright {2010-2011 Andreas Kupries}]
 [copyright {2010-2011 Documentation, Andreas Kupries}]
-[moddesc   {Image Manipulation}]
-[titledesc {Image Manipulation and Processing}]
+[moddesc   {C Raster Image Manipulation Package}]
+[titledesc {CRIMP - Manipulation and Processing}]
 [require Tcl 8.5]
 [require Tk 8.5]
 [require crimp [opt 0.1]]
@@ -14,14 +14,11 @@ This package, built on top of the [package crimp::core] package
 provides the majority of CRIMPs power, manipulating and transforming
 images in a number of ways.
 
-For a basic introduction of the whole CRIMP eco-system please read the
-[term {Introduction to CRIMP}] (sic!).
+[para] For a basic introduction of the whole CRIMP eco-system please read
+the [term {Introduction to CRIMP}] (sic!).
 
 The basic concepts used here, like images, image types, etc. are
-described in the reference manpage for the
-
-[term {Image Manipulation Core Facilities}].
-
+described in the reference manpage for the [term {CRIMP - Foundation}].
 We will not repeat them here, but assume that the reader knows them
 already.
 

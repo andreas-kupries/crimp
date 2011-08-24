@@ -1,0 +1,68 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin crimp_ppm n 0.1]
+[copyright {2011 Andreas Kupries}]
+[copyright {2011 Documentation, Andreas Kupries}]
+[moddesc   {C Raster Image Manipulation Package}]
+[titledesc {CRIMP - PPM handling, NetPBM}]
+[require Tcl 8.5]
+[require crimp::ppm [opt 0.1]]
+[keywords {Import PPM image} {Export PPM image}]
+[keywords image {image type} {computer vision}]
+[keywords {document processing}]
+[description]
+
+This package provides commands for the conversion of CRIMP images to
+Portable Pixmaps (PPM) and vice versa.
+
+[para] For a basic introduction of the whole CRIMP eco-system please
+read the [term {Introduction to CRIMP}] (sic!).
+
+The basic concepts used here, like images, image types, etc. are
+described in the reference manpage for the [term {CRIMP - Foundation}].
+We will not repeat them here, but assume that the reader knows them
+already.
+
+[para] In the overall architecture this package resides in the middle
+layer of the system's architecture, between core and applications, as
+shown at
+
+[para][image arch_pam][para]
+
+[para] The commands it provides all fall into the I/O category of the
+general design.
+
+[section {Tcl API}]
+
+[list_begin definitions]
+
+[call [cmd ::crimp] [method {read ppm}] [arg string]]
+
+This method extends the [cmd {::crimp read}] ensemble. It takes the
+(possibly binary) string holding an image in the PPM format and
+returns an image of type [const rgb] containing it.
+
+[call [cmd ::crimp] [method {write 2string}] [arg format] [arg image]]
+[call [cmd ::crimp] [method {write 2chan}]   [arg format] [arg chan] [arg image]]
+[call [cmd ::crimp] [method {write 2file}]   [arg format] [arg path] [arg image]]
+
+The package extends the above ensemble with support for the following formats
+
+[list_begin definitions]
+[def [const ppm-plain]] Text-encoded portable pixmap.
+[def [const ppm-raw]]   Binary-encoded portable pixmap.
+[list_end]
+
+[para] The supported image types are [const grey8], [const rgb],
+[const rgba], and [const hsv].
+
+[list_end]
+
+
+[section References]
+[list_begin enumerated]
+
+[enum] [uri http://en.wikipedia.org/wiki/Netpbm_format]
+
+[list_end]
+[manpage_end]
+

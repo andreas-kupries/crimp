@@ -2,8 +2,8 @@
 [manpage_begin crimp_core n 0.1]
 [copyright {2011 Andreas Kupries}]
 [copyright {2011 Documentation, Andreas Kupries}]
-[moddesc   {Image Manipulation}]
-[titledesc {Image Manipulation Core Facilities}]
+[moddesc   {C Raster Image Manipulation Package}]
+[titledesc {CRIMP - Foundation}]
 [require Tcl 8.5]
 [require crimp::core [opt 0.1]]
 [keywords photo image matrix vector]
@@ -13,11 +13,11 @@
 [keywords {image accessors}]
 [description]
 
-This package is the foundational core for all of CRIMP, the C Raster
+This package is the foundation for the whole of CRIMP, the C Raster
 Image Manipulation Package.
 
-For a basic introduction of the whole CRIMP eco-system please read the
-[term {Introduction to CRIMP}] (sic!).
+[para] For a basic introduction of the whole CRIMP eco-system please read
+the [term {Introduction to CRIMP}] (sic!).
 
 [para]
 As the foundation its location is in the bottom-most layer of the
@@ -25,7 +25,7 @@ system's architecture, as shown at
 
 [para][image arch_core][para]
 
-This core provides both C and Tcl level data types and accessors for
+The core provides both C and Tcl level data types and accessors for
 images, plus rudimentary IO capabilities (conversion to and
 construction from matrices of numbers, represented by nested Tcl
 lists).
@@ -34,8 +34,11 @@ lists).
 
 The following sections first describe the basic concepts of the
 system, like images and image types, general organization of the
-command space, etc. After that follows a reference of the Tcl and C
-APIs provided by the core.
+command space, etc. After that follows a reference of the Tcl API
+provided by the core. The C API is not really of interest to users
+of CRIMP, only to developers wishing to extend the system. As such
+it is not described here, but in separate manpages targeted at
+developers and maintainers.
 
 [section Images]
 
@@ -146,7 +149,7 @@ The package currently knows the following types:
 [list_end]
 
 Support for the various types varies by operation. The exact image
-types supported by each operation are listed the operation's
+types supported by each operation will be listed in the operation's
 description. Invoking an operation for a type it doesn't support will
 generally cause it to throw an error.
 
@@ -218,7 +221,22 @@ other packages of the CRIMP eco-system.
 
 
 [section {Tcl API}]
+
+[list_begin definitions]
+[call [cmd ::crimp] [arg ...]]
+
+Any and all functionality of CRIMP, regardless of which package
+in the system provides it, will be made accessible through a
+(set of) method(s) of this ensemble command.
+
+[para] In other words, this command serves as the umbrella
+underneath which anything else is arranged and made available.
+
+[list_end]
+
+
 [subsection Accessors]
+
 [list_begin definitions]
 [call [cmd ::crimp] [method channels] [arg image]]
 [keywords channels]
@@ -300,9 +318,33 @@ This method returns the width of the [arg image] (in pixels).
 
 [list_end]
 
-
 [subsection {I/O commands}]
 [list_begin definitions]
+
+[call [cmd ::crimp] [method read] [arg ...]]
+
+This ensemble command is the umbrella underneath which any and all
+functionality for reading images from external formats must be placed.
+
+[para] This command is an [term {extension point}]. I.e., other packages
+are allowed to extend this ensemble by providing commands of the form
+[cmd ::crimp::read::[var FOO]], where [term FOO] should be the name of
+the format the command is able to read, or related to it.
+
+Note that only commands beginning with a lower-case alphanumerical
+character, i.e. [lb]a-z0-9[rb] will be exported by the ensemble. This
+means that it is possible to put private helper commands into the
+[namespace ::crimp::read] namespace which will not be visible to the user,
+by naming them appropriately. However, even so it is recommended to put
+private commands into a sub-namespace instead, named after the package
+in question, to reduce the probability of naming conflicts.
+
+[para] The commands used to extend the ensemble are not restricted in
+their argument signature, although they are expected to return an image.
+
+[para] This package provides only rudimentary import facilities from
+Tcl data structures, as described next.
+
 
 [call [cmd ::crimp] [method {read tcl grey8}] [arg pixelmatrix]]
 
@@ -312,7 +354,7 @@ image of type [const grey8] whose height is the number of rows, i.e.
 the length of the outer list, and whose width is the maximum length
 found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
-[const 255].
+[const 0].
 
 
 [call [cmd ::crimp] [method {read tcl float}] [arg pixelmatrix]]
@@ -322,28 +364,71 @@ a list of floating point values for pixel values and returns an image
 of type [const float] whose height is the number of rows, i.e.  the
 length of the outer list, and whose width is the maximum length found
 among the inner lists. Rows whose inner list is shorter than the
-maximum length are padded with a pixel value of [const 255].
+maximum length are padded with a pixel value of [const 0].
 
+
+[call [cmd ::crimp] [method write] [arg ...]]
+
+This ensemble command is the umbrella underneath which any and all
+functionality for writing images to external formats must be placed.
+
+[para] This command is an [term {extension point}]. I.e., other packages
+are allowed to extend this ensemble by providing commands of the form
+[cmd ::crimp::write::[var FOO]], where [term FOO] should be the name of
+the format the command is able to write, or related to it.
+
+Note that only commands beginning with a lower-case alphanumerical
+character, i.e. [lb]a-z0-9[rb] will be exported by the ensemble. This
+means that it is possible to put private helper commands into the
+[namespace ::crimp::write] namespace which will not be visible to the user,
+by naming them appropriately. However, even so it is recommended to put
+private commands into a sub-namespace instead, named after the package
+in question, to reduce the probability of naming conflicts.
+
+[para] The commands used to extend the ensemble are not restricted in
+their argument signature, although they are expected to take at least
+an image as argument.
 
 
 [call [cmd ::crimp] [method {write 2string}] [arg format] [arg image]]
 [call [cmd ::crimp] [method {write 2chan}]   [arg format] [arg chan] [arg image]]
 [call [cmd ::crimp] [method {write 2file}]   [arg format] [arg path] [arg image]]
 
-This family of methods either returns the input [arg image] as a
-binary string in the specified [arg format], or writes this string to
-the open channel [arg chan], or the named file at [arg path].
+This family of methods extends the basic [cmd {::crimp write}] ensemble.
+The input [arg image] is returned as either a binary string in the
+specified [arg format], or written to the open channel [arg chan], or
+the named file at [arg path].
 
-[para] The image types accepted for writing are [arg format]
-dependent, and listed below, with the supported formats.
+[para] By default the only supported format is [const tcl], a representation
+of an image as a nested Tcl list. This format supports, i.e. accepts, images
+with the types [const grey8], [const rga], [const rgba], and [const hsv] for
+export.
 
-...TODO... write grey8/float?
+[para] This family of commands is an [term {extension point}]. Other packages
+can extend it to support additional formats by providing commands of the
+form [cmd ::crimp::write::Str_[var FOO]_[var TYPE]]
+and  [cmd ::crimp::write::Chan_[var FOO]_[var TYPE]]
+
+where [var FOO] is the name of the format, to specify as the argument
+[arg format], and [var TYPE] the type of image handled by the command.
+
+[para] Note that the [const Chan_] form is optional. If this form is missing
+the system will use the [const Str_] form to convert the image before
+writing it to channel or file.
+
+[para] The commands must match the following signatures:
+
+[list_begin definitions]
+[def "[cmd Str_...] [arg image]"]
+[def "[cmd Chan_...] [arg channel] [arg image]"]
+[list_end]
 
 [list_end]
 
 [section {C API}]
 
-TODO
+The C API of the core is of no interest to users of CRIMP, the audience
+towards which this manpage is geared to.
 
 [manpage_end]
 

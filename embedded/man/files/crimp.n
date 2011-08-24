@@ -239,10 +239,10 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp" n 0.1 doc "Image Manipulation"
+.TH "crimp" n 0.1 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
-crimp \- Image Manipulation and Processing
+crimp \- CRIMP - Manipulation and Processing
 .SH SYNOPSIS
 package require \fBTcl  8.5\fR
 .sp
@@ -482,16 +482,6 @@ package require \fBcrimp::core  ?0.1?\fR
 .sp
 \fB::crimp\fR \fBread strimj\fR \fIstring\fR ?\fIcolormap\fR?
 .sp
-\fB::crimp\fR \fBread tk\fR \fIphoto\fR
-.sp
-\fB::crimp\fR \fBwrite 2tk\fR \fIphoto\fR \fIimage\fR
-.sp
-\fB::crimp\fR \fBwrite 2string\fR \fIformat\fR \fIimage\fR
-.sp
-\fB::crimp\fR \fBwrite 2chan\fR \fIformat\fR \fIchan\fR \fIimage\fR
-.sp
-\fB::crimp\fR \fBwrite 2file\fR \fIformat\fR \fIpath\fR \fIimage\fR
-.sp
 \fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
 .sp
 \fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
@@ -573,11 +563,11 @@ package require \fBcrimp::core  ?0.1?\fR
 This package, built on top of the \fBcrimp::core\fR package
 provides the majority of CRIMPs power, manipulating and transforming
 images in a number of ways.
-For a basic introduction of the whole CRIMP eco-system please read the
-\fIIntroduction to CRIMP\fR (sic!).
+.PP
+For a basic introduction of the whole CRIMP eco-system please read
+the \fIIntroduction to CRIMP\fR (sic!).
 The basic concepts used here, like images, image types, etc. are
-described in the reference manpage for the
-\fIImage Manipulation Core Facilities\fR.
+described in the reference manpage for the \fICRIMP - Foundation\fR.
 We will not repeat them here, but assume that the reader knows them
 already.
 .PP
@@ -1755,61 +1745,6 @@ An example of a strimj is:
 @...@..@@@..@.@..@@@.
 
 .CE
-.TP
-\fB::crimp\fR \fBread tk\fR \fIphoto\fR
-This method returns an image of type \fBrgba\fR containing the data
-from the specified Tk \fIphoto\fR image.
-.TP
-\fB::crimp\fR \fBwrite 2tk\fR \fIphoto\fR \fIimage\fR
-This method writes the input \fIimage\fR to the specified Tk
-\fIphoto\fR image.
-.sp
-The method supports the writing of \fBrgb\fR, \fBrgba\fR,
-and \fBgrey8\fR images.
-.TP
-\fB::crimp\fR \fBwrite 2string\fR \fIformat\fR \fIimage\fR
-.TP
-\fB::crimp\fR \fBwrite 2chan\fR \fIformat\fR \fIchan\fR \fIimage\fR
-.TP
-\fB::crimp\fR \fBwrite 2file\fR \fIformat\fR \fIpath\fR \fIimage\fR
-This family of methods either returns the input \fIimage\fR as a
-binary string in the specified \fIformat\fR, or writes this string to
-the open channel \fIchan\fR, or the named file at \fIpath\fR.
-.sp
-The image types accepted for writing are \fIformat\fR
-dependent, and listed below, with the supported formats.
-.sp
-The currently supported formats are
-.RS
-.TP
-\fBpgm-plain\fR
-The plain ASCII format of portable grey maps, as per
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
-.sp
-The methods support the writing of \fBrgb\fR, \fBrgba\fR,
-\fBhsv\fR, and \fBgrey8\fR images.
-.TP
-\fBpgm-raw\fR
-The raw binary format of portable grey maps, as per
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
-.sp
-The methods support the writing of \fBrgb\fR, \fBrgba\fR,
-\fBhsv\fR, and \fBgrey8\fR images.
-.TP
-\fBppm-plain\fR
-The plain ASCII format of portable pix maps, as per
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
-.sp
-The methods support the writing of \fBrgb\fR, \fBrgba\fR,
-\fBhsv\fR, and \fBgrey8\fR images.
-.TP
-\fBppm-raw\fR
-The raw binary format of portable pix maps, as per
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
-.sp
-The methods support the writing of \fBrgb\fR, \fBrgba\fR,
-\fBhsv\fR, and \fBgrey8\fR images.
-.RE
 .PP
 .SS SUPPORT
 .TP

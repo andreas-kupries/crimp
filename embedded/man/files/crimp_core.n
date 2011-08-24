@@ -316,7 +316,7 @@ This package is the foundation for the whole of CRIMP, the C Raster
 Image Manipulation Package.
 .PP
 For a basic introduction of the whole CRIMP eco-system please read
-the \fIIntroduction to CRIMP\fR (sic!).
+the \fICRIMP - Introduction to CRIMP\fR (sic!).
 .PP
 As the foundation its location is in the bottom-most layer of the
 system's architecture, as shown at

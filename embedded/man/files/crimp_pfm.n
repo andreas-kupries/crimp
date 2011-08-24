@@ -268,7 +268,7 @@ PFM was derived from PGM by simply replacing the integer with
 floating-point values, in the pixel matrix.
 .PP
 For a basic introduction of the whole CRIMP eco-system please
-read the \fIIntroduction to CRIMP\fR (sic!).
+read the \fICRIMP - Introduction to CRIMP\fR (sic!).
 The basic concepts used here, like images, image types, etc. are
 described in the reference manpage for the \fICRIMP - Foundation\fR.
 We will not repeat them here, but assume that the reader knows them

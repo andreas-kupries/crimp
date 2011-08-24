@@ -1334,67 +1334,6 @@ dictionary mapping characters to triples of integers in the range
 @...@..@@@..@.@..@@@.
 }]
 
-[call [cmd ::crimp] [method {read tk}] [arg photo]]
-
-This method returns an image of type [const rgba] containing the data
-from the specified Tk [arg photo] image.
-
-
-[call [cmd ::crimp] [method {write 2tk}] [arg photo] [arg image]]
-
-This method writes the input [arg image] to the specified Tk
-[arg photo] image.
-
-[para] The method supports the writing of [const rgb], [const rgba],
-and [const grey8] images.
-
-
-[call [cmd ::crimp] [method {write 2string}] [arg format] [arg image]]
-[call [cmd ::crimp] [method {write 2chan}]   [arg format] [arg chan] [arg image]]
-[call [cmd ::crimp] [method {write 2file}]   [arg format] [arg path] [arg image]]
-
-This family of methods either returns the input [arg image] as a
-binary string in the specified [arg format], or writes this string to
-the open channel [arg chan], or the named file at [arg path].
-
-[para] The image types accepted for writing are [arg format]
-dependent, and listed below, with the supported formats.
-
-[para] The currently supported formats are
-[list_begin definitions]
-[def [const pgm-plain]]
-
-The plain ASCII format of portable grey maps, as per
-[uri http://en.wikipedia.org/wiki/Netpbm_format].
-
-[para] The methods support the writing of [const rgb], [const rgba],
-[const hsv], and [const grey8] images.
-
-[def [const pgm-raw]]
-
-The raw binary format of portable grey maps, as per
-[uri http://en.wikipedia.org/wiki/Netpbm_format].
-
-[para] The methods support the writing of [const rgb], [const rgba],
-[const hsv], and [const grey8] images.
-
-[def [const ppm-plain]]
-
-The plain ASCII format of portable pix maps, as per
-[uri http://en.wikipedia.org/wiki/Netpbm_format].
-
-[para] The methods support the writing of [const rgb], [const rgba],
-[const hsv], and [const grey8] images.
-
-[def [const ppm-raw]]
-
-The raw binary format of portable pix maps, as per
-[uri http://en.wikipedia.org/wiki/Netpbm_format].
-
-[para] The methods support the writing of [const rgb], [const rgba],
-[const hsv], and [const grey8] images.
-
-[list_end]
 [list_end]
 
 

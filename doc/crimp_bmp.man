@@ -1,0 +1,56 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin crimp_bmp n 0.1]
+[copyright {2011 Andreas Kupries}]
+[copyright {2011 Documentation, Andreas Kupries}]
+[moddesc   {C Raster Image Manipulation Package}]
+[titledesc {CRIMP - BMP handling, Windows Bitmap}]
+[require Tcl 8.5]
+[require crimp::bmp [opt 0.1]]
+[keywords {Import BMP image} {Export BMP image}]
+[keywords image {image type} {computer vision}]
+[keywords {document processing}]
+[description]
+
+This package provides commands for the conversion of Windows Bitmaps
+(BMP) into CRIMP images. [emph Note] that this package does [emph not]
+provide the ability to write images in the BMP format.
+
+[para] For a basic introduction of the whole CRIMP eco-system please
+read the [term {Introduction to CRIMP}] (sic!).
+
+The basic concepts used here, like images, image types, etc. are
+described in the reference manpage for the [term {CRIMP - Foundation}].
+We will not repeat them here, but assume that the reader knows them
+already.
+
+[para] In the overall architecture this package resides in the middle
+layer of the system's architecture, between core and applications, as
+shown at
+
+[para][image arch_bmp][para]
+
+[para] The commands it provides all fall into the I/O category of the
+general design.
+
+[section {Tcl API}]
+
+[list_begin definitions]
+
+[call [cmd ::crimp] [method {read bmp}] [arg string]]
+
+This method extends the [cmd {::crimp read}] ensemble. It takes the
+(possibly binary) string holding an image in the BMP format and
+returns an image of type [const rgb] containing it.
+
+[list_end]
+
+
+[section References]
+[list_begin enumerated]
+
+[enum] [uri http://en.wikipedia.org/wiki/BMP_file_format]
+[enum] [uri http://entropymine.com/jason/bmpsuite/]
+
+[list_end]
+[manpage_end]
+

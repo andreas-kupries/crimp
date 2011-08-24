@@ -48,8 +48,16 @@ returns an image of type [const rgb] containing it.
 The package extends the above ensemble with support for the following formats
 
 [list_begin definitions]
-[def [const ppm-plain]] Text-encoded portable pixmap.
-[def [const ppm-raw]]   Binary-encoded portable pixmap.
+[def [const ppm-plain]]
+
+The plain ASCII format of portable pix maps, as per
+[uri http://en.wikipedia.org/wiki/Netpbm_format].
+
+[def [const ppm-raw]]
+
+The raw binary format of portable pix maps, as per
+[uri http://en.wikipedia.org/wiki/Netpbm_format].
+
 [list_end]
 
 [para] The supported image types are [const grey8], [const rgb],

@@ -1,0 +1,78 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin crimp_pfm n 0.1]
+[copyright {2011 Andreas Kupries}]
+[copyright {2011 Documentation, Andreas Kupries}]
+[moddesc   {C Raster Image Manipulation Package}]
+[titledesc {CRIMP - PFM handling, NetPBM}]
+[require Tcl 8.5]
+[require crimp::pfm [opt 0.1]]
+[keywords {Import PFM image} {Export PFM image}]
+[keywords image {image type} {computer vision}]
+[keywords {document processing}]
+[description]
+
+This package provides commands for the conversion of CRIMP images to
+Portable Float Maps (PFM) and vice versa.
+
+[para] [emph Note] that in contrast to the PPM and PGM formats this is
+[emph not] an official format of the NetPBM suite.
+
+[para] PFM was derived from PGM by simply replacing the integer with
+floating-point values, in the pixel matrix.
+
+[para] For a basic introduction of the whole CRIMP eco-system please
+read the [term {Introduction to CRIMP}] (sic!).
+
+The basic concepts used here, like images, image types, etc. are
+described in the reference manpage for the [term {CRIMP - Foundation}].
+We will not repeat them here, but assume that the reader knows them
+already.
+
+[para] In the overall architecture this package resides in the middle
+layer of the system's architecture, between core and applications, as
+shown at
+
+[para][image arch_pam][para]
+
+[para] The commands it provides all fall into the I/O category of the
+general design.
+
+[section {Tcl API}]
+
+[list_begin definitions]
+
+[call [cmd ::crimp] [method {read pfm}] [arg string]]
+
+This method extends the [cmd {::crimp read}] ensemble. It takes the
+(possibly binary) string holding an image in the PFM format and
+returns an image of type [const rgb] containing it.
+
+[call [cmd ::crimp] [method {write 2string}] [arg format] [arg image]]
+[call [cmd ::crimp] [method {write 2chan}]   [arg format] [arg chan] [arg image]]
+[call [cmd ::crimp] [method {write 2file}]   [arg format] [arg path] [arg image]]
+
+The package extends the above ensemble with support for the following formats
+
+[list_begin definitions]
+[def [const pfm-plain]]
+
+The plain ASCII format of portable float maps.
+
+[def [const pfm-raw]]
+
+The raw binary format of portable float maps.
+
+[list_end]
+
+[para] The only supported image type is [const float].
+
+[list_end]
+
+[section References]
+[list_begin enumerated]
+
+[enum] [uri http://en.wikipedia.org/wiki/Netpbm_format]
+
+[list_end]
+[manpage_end]
+

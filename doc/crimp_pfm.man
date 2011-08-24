@@ -21,7 +21,7 @@ Portable Float Maps (PFM) and vice versa.
 floating-point values, in the pixel matrix.
 
 [para] For a basic introduction of the whole CRIMP eco-system please
-read the [term {Introduction to CRIMP}] (sic!).
+read the [term {CRIMP - Introduction to CRIMP}] (sic!).
 
 The basic concepts used here, like images, image types, etc. are
 described in the reference manpage for the [term {CRIMP - Foundation}].

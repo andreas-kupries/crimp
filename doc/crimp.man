@@ -15,7 +15,7 @@ provides the majority of CRIMPs power, manipulating and transforming
 images in a number of ways.
 
 [para] For a basic introduction of the whole CRIMP eco-system please read
-the [term {Introduction to CRIMP}] (sic!).
+the [term {CRIMP - Introduction to CRIMP}] (sic!).
 
 The basic concepts used here, like images, image types, etc. are
 described in the reference manpage for the [term {CRIMP - Foundation}].

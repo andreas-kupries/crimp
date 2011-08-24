@@ -16,7 +16,7 @@ This package provides commands for the conversion of Windows Bitmaps
 provide the ability to write images in the BMP format.
 
 [para] For a basic introduction of the whole CRIMP eco-system please
-read the [term {Introduction to CRIMP}] (sic!).
+read the [term {CRIMP - Introduction to CRIMP}] (sic!).
 
 The basic concepts used here, like images, image types, etc. are
 described in the reference manpage for the [term {CRIMP - Foundation}].

@@ -17,7 +17,7 @@ This package is the foundation for the whole of CRIMP, the C Raster
 Image Manipulation Package.
 
 [para] For a basic introduction of the whole CRIMP eco-system please read
-the [term {Introduction to CRIMP}] (sic!).
+the [term {CRIMP - Introduction to CRIMP}] (sic!).
 
 [para]
 As the foundation its location is in the bottom-most layer of the

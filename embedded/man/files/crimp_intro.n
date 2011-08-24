@@ -239,10 +239,10 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_introduction" n 1 doc "Image Manipulation"
+.TH "crimp_introduction" n 1 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
-crimp_introduction \- Introduction to CRIMP
+crimp_introduction \- CRIMP - Introduction to CRIMP
 .SH DESCRIPTION
 Welcome to CRIMP, the C Raster Image Manipulation Package, a set of
 extensions of \fITcl\fR for the handling and processing of

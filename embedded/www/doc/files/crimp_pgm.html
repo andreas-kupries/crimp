@@ -1,0 +1,188 @@
+
+<html><head>
+<title>crimp_pgm - C Raster Image Manipulation Package</title>
+<style type="text/css"><!--
+    HTML {
+	background: 	#FFFFFF;
+	color: 		black;
+    }
+    BODY {
+	background: 	#FFFFFF;
+	color:	 	black;
+    }
+    DIV.doctools {
+	margin-left:	10%;
+	margin-right:	10%;
+    }
+    DIV.doctools H1,DIV.doctools H2 {
+	margin-left:	-5%;
+    }
+    H1, H2, H3, H4 {
+	margin-top: 	1em;
+	font-family:	sans-serif;
+	font-size:	large;
+	color:		#005A9C;
+	background: 	transparent;
+	text-align:		left;
+    }
+    H1.title {
+	text-align: center;
+    }
+    UL,OL {
+	margin-right: 0em;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+    }
+    UL LI {
+	list-style: disc;
+    }
+    OL LI {
+	list-style: decimal;
+    }
+    DT {
+	padding-top: 	1ex;
+    }
+    UL.toc,UL.toc UL, UL.toc UL UL {
+	font:		normal 12pt/14pt sans-serif;
+	list-style:	none;
+    }
+    LI.section, LI.subsection {
+	list-style: 	none;
+	margin-left: 	0em;
+	text-indent:	0em;
+	padding: 	0em;
+    }
+    PRE {
+	display: 	block;
+	font-family:	monospace;
+	white-space:	pre;
+	margin:		0%;
+	padding-top:	0.5ex;
+	padding-bottom:	0.5ex;
+	padding-left:	1ex;
+	padding-right:	1ex;
+	width:		100%;
+    }
+    PRE.example {
+	color: 		black;
+	background: 	#f5dcb3;
+	border:		1px solid black;
+    }
+    UL.requirements LI, UL.syntax LI {
+	list-style: 	none;
+	margin-left: 	0em;
+	text-indent:	0em;
+	padding:	0em;
+    }
+    DIV.synopsis {
+	color: 		black;
+	background: 	#80ffff;
+	border:		1px solid black;
+	font-family:	serif;
+	margin-top: 	1em;
+	margin-bottom: 	1em;
+    }
+    UL.syntax {
+	margin-top: 	1em;
+	border-top:	1px solid black;
+    }
+    UL.requirements {
+	margin-bottom: 	1em;
+	border-bottom:	1px solid black;
+    }
+--></style>
+</head>
+<! -- Generated from file 'doc/files/crimp_pgm.html' by tcllib/doctools with format 'html'
+   -->
+<! -- Copyright &copy; 2011 Andreas Kupries   -- Copyright &copy; 2011 Documentation, Andreas Kupries
+   -->
+<! -- CVS: $Id$ crimp_pgm.n
+   -->
+<body><div class="doctools">
+<hr> [
+  <a href="../../toc.html">Main Table Of Contents</a>
+| <a href="../toc.html">Table Of Contents</a>
+| <a href="../../index.html">Keyword Index</a>
+] <hr>
+<h1 class="title">crimp_pgm(n) 0.1 doc &quot;C Raster Image Manipulation Package&quot;</h1>
+<div id="name" class="section"><h2><a name="name">Name</a></h2>
+<p>crimp_pgm - CRIMP - PGM handling, NetPBM</p>
+</div>
+<div id="toc" class="section"><h2><a name="toc">Table Of Contents</a></h2>
+<ul class="toc">
+<li class="section"><a href="#toc">Table Of Contents</a></li>
+<li class="section"><a href="#synopsis">Synopsis</a></li>
+<li class="section"><a href="#section1">Description</a></li>
+<li class="section"><a href="#section2">Tcl API</a></li>
+<li class="section"><a href="#section3">References</a></li>
+<li class="section"><a href="#keywords">Keywords</a></li>
+<li class="section"><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<div id="synopsis" class="section"><h2><a name="synopsis">Synopsis</a></h2>
+<div class="synopsis">
+<ul class="requirements">
+<li>package require <b class="pkgname">Tcl 8.5</b></li>
+<li>package require <b class="pkgname">crimp::pgm <span class="opt">?0.1?</span></b></li>
+</ul>
+<ul class="syntax">
+<li><a href="#1"><b class="cmd">::crimp</b> <b class="method">read pgm</b> <i class="arg">string</i></a></li>
+<li><a href="#2"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></li>
+<li><a href="#3"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></li>
+<li><a href="#4"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></li>
+</ul>
+</div>
+</div>
+<div id="section1" class="section"><h2><a name="section1">Description</a></h2>
+<p>This package provides commands for the conversion of CRIMP images to
+Portable Greymaps (PGM) and vice versa.</p>
+<p>For a basic introduction of the whole CRIMP eco-system please
+read the <i class="term">Introduction to CRIMP</i> (sic!).
+The basic concepts used here, like images, image types, etc. are
+described in the reference manpage for the <i class="term"><a href="crimp_core.html">CRIMP - Foundation</a></i>.
+We will not repeat them here, but assume that the reader knows them
+already.</p>
+<p>In the overall architecture this package resides in the middle
+layer of the system's architecture, between core and applications, as
+shown at</p>
+<p><img alt="arch_pam" src="../../image/arch_pam.png"></p>
+<p>The commands it provides all fall into the I/O category of the
+general design.</p>
+</div>
+<div id="section2" class="section"><h2><a name="section2">Tcl API</a></h2>
+<dl class="definitions">
+<dt><a name="1"><b class="cmd">::crimp</b> <b class="method">read pgm</b> <i class="arg">string</i></a></dt>
+<dd><p>This method extends the <b class="cmd">::crimp read</b> ensemble. It takes the
+(possibly binary) string holding an image in the PGM format and
+returns an image of type <b class="const">rgb</b> containing it.</p></dd>
+<dt><a name="2"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="3"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="4"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></dt>
+<dd><p>The package extends the above ensemble with support for the following formats</p>
+<dl class="definitions">
+<dt><b class="const">pgm-plain</b></dt>
+<dd><p>The plain ASCII format of portable grey maps, as per
+<a href="http://en.wikipedia.org/wiki/Netpbm_format">http://en.wikipedia.org/wiki/Netpbm_format</a>.</p></dd>
+<dt><b class="const">pgm-raw</b></dt>
+<dd><p>The raw binary format of portable grey maps, as per
+<a href="http://en.wikipedia.org/wiki/Netpbm_format">http://en.wikipedia.org/wiki/Netpbm_format</a>.</p></dd>
+</dl>
+<p>The supported image types are <b class="const">grey8</b>, <b class="const">rgb</b>,
+<b class="const">rgba</b>, and <b class="const">hsv</b>.</p></dd>
+</dl>
+</div>
+<div id="section3" class="section"><h2><a name="section3">References</a></h2>
+<ol class="enumerated">
+<li><p><a href="http://en.wikipedia.org/wiki/Netpbm_format">http://en.wikipedia.org/wiki/Netpbm_format</a></p></li>
+</ol>
+</div>
+<div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
+<p><a href="../../index.html#key2">Export PGM image</a>, <a href="../../index.html#key3">Import PGM image</a>, <a href="../../index.html#key4">computer vision</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key1">image type</a></p>
+</div>
+<div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
+<p>Copyright &copy; 2011 Andreas Kupries<br>
+Copyright &copy; 2011 Documentation, Andreas Kupries</p>
+</div>
+</div></body></html>

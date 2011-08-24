@@ -334,11 +334,26 @@ crimp
 computer vision
 .RS
 .TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.TP
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
 .RE
 const expansion
 .RS
@@ -391,11 +406,26 @@ crimp_core
 document processing
 .RS
 .TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.TP
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
 .RE
 edge shrinking
 .RS
@@ -432,6 +462,30 @@ expansion
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.RE
+Export BMP image
+.RS
+.TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.RE
+Export PFM image
+.RS
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.RE
+Export PGM image
+.RS
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.RE
+Export PPM image
+.RS
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
 .RE
 extend expansion
 .RS
@@ -523,11 +577,26 @@ image
 \fBfiles/crimp.n\fR
 crimp
 .TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.TP
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
 .RE
 image accessors
 .RS
@@ -538,8 +607,44 @@ crimp_core
 image type
 .RS
 .TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.TP
 \fBfiles/crimp_core.n\fR
 crimp_core
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
+.RE
+Import BMP image
+.RS
+.TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.RE
+Import PFM image
+.RS
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.RE
+Import PGM image
+.RS
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.RE
+Import PPM image
+.RS
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
 .RE
 integral image
 .RS
@@ -582,6 +687,9 @@ crimp_core
 .TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
 .RE
 max
 .RS
@@ -684,6 +792,9 @@ crimp_core
 .TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
 .RE
 pixel mapping
 .RS
@@ -853,6 +964,12 @@ thresholding
 \fBfiles/crimp.n\fR
 crimp
 .RE
+Tk photo
+.RS
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
+.RE
 toggle map
 .RS
 .TP
@@ -897,6 +1014,9 @@ crimp_core
 .TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
 .RE
 vector-field
 .RS

@@ -239,14 +239,16 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_core" n 0.1 doc "Image Manipulation"
+.TH "crimp_core" n 0.1 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
-crimp_core \- Image Manipulation Core Facilities
+crimp_core \- CRIMP - Foundation
 .SH SYNOPSIS
 package require \fBTcl  8.5\fR
 .sp
 package require \fBcrimp::core  ?0.1?\fR
+.sp
+\fB::crimp\fR \fI...\fR
 .sp
 \fB::crimp\fR \fBchannels\fR \fIimage\fR
 .sp
@@ -294,9 +296,13 @@ package require \fBcrimp::core  ?0.1?\fR
 .sp
 \fB::crimp\fR \fBwidth\fR \fIimage\fR
 .sp
+\fB::crimp\fR \fBread\fR \fI...\fR
+.sp
 \fB::crimp\fR \fBread tcl grey8\fR \fIpixelmatrix\fR
 .sp
 \fB::crimp\fR \fBread tcl float\fR \fIpixelmatrix\fR
+.sp
+\fB::crimp\fR \fBwrite\fR \fI...\fR
 .sp
 \fB::crimp\fR \fBwrite 2string\fR \fIformat\fR \fIimage\fR
 .sp
@@ -306,25 +312,29 @@ package require \fBcrimp::core  ?0.1?\fR
 .sp
 .BE
 .SH DESCRIPTION
-This package is the foundational core for all of CRIMP, the C Raster
+This package is the foundation for the whole of CRIMP, the C Raster
 Image Manipulation Package.
-For a basic introduction of the whole CRIMP eco-system please read the
-\fIIntroduction to CRIMP\fR (sic!).
+.PP
+For a basic introduction of the whole CRIMP eco-system please read
+the \fIIntroduction to CRIMP\fR (sic!).
 .PP
 As the foundation its location is in the bottom-most layer of the
 system's architecture, as shown at
 .PP
 IMAGE: arch_core
 .PP
-This core provides both C and Tcl level data types and accessors for
+The core provides both C and Tcl level data types and accessors for
 images, plus rudimentary IO capabilities (conversion to and
 construction from matrices of numbers, represented by nested Tcl
 lists).
 .PP
 The following sections first describe the basic concepts of the
 system, like images and image types, general organization of the
-command space, etc. After that follows a reference of the Tcl and C
-APIs provided by the core.
+command space, etc. After that follows a reference of the Tcl API
+provided by the core. The C API is not really of interest to users
+of CRIMP, only to developers wishing to extend the system. As such
+it is not described here, but in separate manpages targeted at
+developers and maintainers.
 .SH IMAGES
 Images are values. This means that they have a string
 representation. It is however strongly recommended to not access this
@@ -491,7 +501,7 @@ Pixel-size
 .RE
 .PP
 Support for the various types varies by operation. The exact image
-types supported by each operation are listed the operation's
+types supported by each operation will be listed in the operation's
 description. Invoking an operation for a type it doesn't support will
 generally cause it to throw an error.
 .SH "GENERAL DESIGN"
@@ -563,6 +573,15 @@ The core package specified here provides only Accessors and
 rudimentary I/O commands. All other sections are filled out by the
 other packages of the CRIMP eco-system.
 .SH "TCL API"
+.TP
+\fB::crimp\fR \fI...\fR
+Any and all functionality of CRIMP, regardless of which package
+in the system provides it, will be made accessible through a
+(set of) method(s) of this ensemble command.
+.sp
+In other words, this command serves as the umbrella
+underneath which anything else is arranged and made available.
+.PP
 .SS ACCESSORS
 .TP
 \fB::crimp\fR \fBchannels\fR \fIimage\fR
@@ -647,6 +666,28 @@ The method supports all image types.
 .PP
 .SS "I/O COMMANDS"
 .TP
+\fB::crimp\fR \fBread\fR \fI...\fR
+This ensemble command is the umbrella underneath which any and all
+functionality for reading images from external formats must be placed.
+.sp
+This command is an \fIextension point\fR. I.e., other packages
+are allowed to extend this ensemble by providing commands of the form
+\fB::crimp::read::\fBFOO\fR\fR, where \fIFOO\fR should be the name of
+the format the command is able to read, or related to it.
+Note that only commands beginning with a lower-case alphanumerical
+character, i.e. [a-z0-9] will be exported by the ensemble. This
+means that it is possible to put private helper commands into the
+\fB::crimp::read\fR namespace which will not be visible to the user,
+by naming them appropriately. However, even so it is recommended to put
+private commands into a sub-namespace instead, named after the package
+in question, to reduce the probability of naming conflicts.
+.sp
+The commands used to extend the ensemble are not restricted in
+their argument signature, although they are expected to return an image.
+.sp
+This package provides only rudimentary import facilities from
+Tcl data structures, as described next.
+.TP
 \fB::crimp\fR \fBread tcl grey8\fR \fIpixelmatrix\fR
 This method takes the \fIpixelmatrix\fR, a list of rows, with each row
 a list of pixel values in the domain [0..255] and returns an
@@ -654,7 +695,7 @@ image of type \fBgrey8\fR whose height is the number of rows, i.e.
 the length of the outer list, and whose width is the maximum length
 found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
-\fB255\fR.
+\fB0\fR.
 .TP
 \fB::crimp\fR \fBread tcl float\fR \fIpixelmatrix\fR
 This method takes the \fIpixelmatrix\fR, a list of rows, with each row
@@ -662,23 +703,65 @@ a list of floating point values for pixel values and returns an image
 of type \fBfloat\fR whose height is the number of rows, i.e.  the
 length of the outer list, and whose width is the maximum length found
 among the inner lists. Rows whose inner list is shorter than the
-maximum length are padded with a pixel value of \fB255\fR.
+maximum length are padded with a pixel value of \fB0\fR.
+.TP
+\fB::crimp\fR \fBwrite\fR \fI...\fR
+This ensemble command is the umbrella underneath which any and all
+functionality for writing images to external formats must be placed.
+.sp
+This command is an \fIextension point\fR. I.e., other packages
+are allowed to extend this ensemble by providing commands of the form
+\fB::crimp::write::\fBFOO\fR\fR, where \fIFOO\fR should be the name of
+the format the command is able to write, or related to it.
+Note that only commands beginning with a lower-case alphanumerical
+character, i.e. [a-z0-9] will be exported by the ensemble. This
+means that it is possible to put private helper commands into the
+\fB::crimp::write\fR namespace which will not be visible to the user,
+by naming them appropriately. However, even so it is recommended to put
+private commands into a sub-namespace instead, named after the package
+in question, to reduce the probability of naming conflicts.
+.sp
+The commands used to extend the ensemble are not restricted in
+their argument signature, although they are expected to take at least
+an image as argument.
 .TP
 \fB::crimp\fR \fBwrite 2string\fR \fIformat\fR \fIimage\fR
 .TP
 \fB::crimp\fR \fBwrite 2chan\fR \fIformat\fR \fIchan\fR \fIimage\fR
 .TP
 \fB::crimp\fR \fBwrite 2file\fR \fIformat\fR \fIpath\fR \fIimage\fR
-This family of methods either returns the input \fIimage\fR as a
-binary string in the specified \fIformat\fR, or writes this string to
-the open channel \fIchan\fR, or the named file at \fIpath\fR.
+This family of methods extends the basic \fB::crimp write\fR ensemble.
+The input \fIimage\fR is returned as either a binary string in the
+specified \fIformat\fR, or written to the open channel \fIchan\fR, or
+the named file at \fIpath\fR.
 .sp
-The image types accepted for writing are \fIformat\fR
-dependent, and listed below, with the supported formats.
-...TODO... write grey8/float?
+By default the only supported format is \fBtcl\fR, a representation
+of an image as a nested Tcl list. This format supports, i.e. accepts, images
+with the types \fBgrey8\fR, \fBrga\fR, \fBrgba\fR, and \fBhsv\fR for
+export.
+.sp
+This family of commands is an \fIextension point\fR. Other packages
+can extend it to support additional formats by providing commands of the
+form \fB::crimp::write::Str_\fBFOO\fR_\fBTYPE\fR\fR
+and  \fB::crimp::write::Chan_\fBFOO\fR_\fBTYPE\fR\fR
+where \fBFOO\fR is the name of the format, to specify as the argument
+\fIformat\fR, and \fBTYPE\fR the type of image handled by the command.
+.sp
+Note that the \fBChan_\fR form is optional. If this form is missing
+the system will use the \fBStr_\fR form to convert the image before
+writing it to channel or file.
+.sp
+The commands must match the following signatures:
+.RS
+.TP
+\fBStr_...\fR \fIimage\fR
+.TP
+\fBChan_...\fR \fIchannel\fR \fIimage\fR
+.RE
 .PP
 .SH "C API"
-TODO
+The C API of the core is of no interest to users of CRIMP, the audience
+towards which this manpage is geared to.
 .SH KEYWORDS
 channels, computer vision, dimensions, document processing, image, image accessors, image type, matrix, photo, vector
 .SH COPYRIGHT

@@ -33,7 +33,8 @@
     echo ___ WWW _________
     rm -rf     ../embedded/www
     mkdir      ../embedded/www
-    dtplite -o ../embedded/www html  .
+    dtplite -o ../embedded/www -merge html  .
+    dtplite -o ../embedded/www -merge html  .
 )
 
 echo ___ MAN /show _________

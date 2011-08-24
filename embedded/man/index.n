@@ -298,8 +298,8 @@ crimp
 channels
 .RS
 .TP
-\fBfiles/crimp.n\fR
-crimp
+\fBfiles/crimp_core.n\fR
+crimp_core
 .RE
 charcoal
 .RS
@@ -330,6 +330,15 @@ composition
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.RE
+computer vision
+.RS
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
+.TP
+\fBfiles/crimp_intro.n\fR
+crimp_introduction
 .RE
 const expansion
 .RS
@@ -376,8 +385,17 @@ crimp
 dimensions
 .RS
 .TP
-\fBfiles/crimp.n\fR
-crimp
+\fBfiles/crimp_core.n\fR
+crimp_core
+.RE
+document processing
+.RS
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
+.TP
+\fBfiles/crimp_intro.n\fR
+crimp_introduction
 .RE
 edge shrinking
 .RS
@@ -504,6 +522,24 @@ image
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
+.TP
+\fBfiles/crimp_intro.n\fR
+crimp_introduction
+.RE
+image accessors
+.RS
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
+.RE
+image type
+.RS
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
 .RE
 integral image
 .RS
@@ -540,6 +576,12 @@ matrix
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
+.TP
+\fBfiles/crimp_intro.n\fR
+crimp_introduction
 .RE
 max
 .RS
@@ -636,6 +678,12 @@ photo
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
+.TP
+\fBfiles/crimp_intro.n\fR
+crimp_introduction
 .RE
 pixel mapping
 .RS
@@ -805,6 +853,12 @@ thresholding
 \fBfiles/crimp.n\fR
 crimp
 .RE
+toggle map
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 tophat
 .RS
 .TP
@@ -834,6 +888,15 @@ variance
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.RE
+vector
+.RS
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
+.TP
+\fBfiles/crimp_intro.n\fR
+crimp_introduction
 .RE
 vector-field
 .RS

@@ -1,9 +1,9 @@
 # -*- tcl -*-
-# CRIMP, BMP	Reader/writer for the BMP image file format.
+# CRIMP, BMP	Reader for the BMP image file format.
 #
 # (c) 2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
 #
-# Derived from the TkImg BMP reader/writer implementation.
+# Redeveloped after reading the TkImg BMP reader/writer implementation.
 # Copyright (c) 1997-2003 Jan Nijtmans    <nijtmans@users.sourceforge.net>
 # Copyright (c) 2002      Andreas Kupries <andreas_kupries@users.sourceforge.net>
 #
@@ -12,13 +12,25 @@
 ## Requisites
 
 package require critcl       3
-package require critcl::util 1
 
 # # ## ### ##### ######## #############
 
 if {![critcl::compiling]} {
     error "Unable to build CRIMP::BMP, no proper compiler found."
 }
+
+# # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+
+critcl::owns support.tcl
+::apply {{here} {
+    source $here/support.tcl
+}} [file dirname [file normalize [info script]]]
+
+# # ## ### ##### ######## #############
+## Administrivia
 
 critcl::license \
     {Andreas Kupries} \
@@ -61,29 +73,10 @@ critcl::csources format/bmp.c
 critcl::cheaders format/bmp.h
 
 # # ## ### ##### ######## #############
-## Read and execute all .crimp files in the current directory.
+## Pull in the BMP-specific pieces. These are fit under the read/write namespaces.
 
-critcl::owns format/*bmp*.crimp
-::apply {{here} {
-    foreach filename [lsort [glob -nocomplain -directory [file join $here format] *bmp*.crimp]] {
-	#critcl::msg -nonewline " \[[file rootname [file tail $filename]]\]"
-	set chan [open $filename]
-	set name [gets $chan]
-	set params "Tcl_Interp* interp"
-	set number 2
-	while {1} {
-	    incr number
-	    set line [gets $chan]
-	    if {$line eq ""} {
-		break
-	    }
-	    append params " $line"
-	}
-	set body "\n#line $number \"[file tail $filename]\"\n[read $chan]"
-	close $chan
-	namespace eval ::crimp [list ::critcl::cproc $name $params ok $body]
-    }
-}} [file dirname [file normalize [info script]]]
+critcl::owns        format/*bmp*.crimp
+crimp_source_cproc {format/*bmp*.crimp}
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

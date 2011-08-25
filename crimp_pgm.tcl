@@ -71,7 +71,7 @@ critcl::ccode {
 }
 
 # # ## ### ##### ######## #############
-## Pull in the Pgm-specific pieces. These are fit under the read/write namespaces.
+## Pull in the PGM-specific pieces. These are fit under the read/write namespaces.
 
 critcl::owns        format/*pgm*.crimp
 crimp_source_cproc {format/*pgm*.crimp}

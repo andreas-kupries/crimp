@@ -22,6 +22,7 @@ if {![critcl::compiling]} {
 ## only needed for building the package, in any mode, and not during
 ## the runtime. Thus not added to the 'tsources'.
 
+critcl::owns support.tcl
 ::apply {{here} {
     source $here/support.tcl
 }} [file dirname [file normalize [info script]]]

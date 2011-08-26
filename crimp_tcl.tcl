@@ -2446,41 +2446,46 @@ proc ::crimp::noise::gaussian {image {mean 0} {variance 0.05}} {
 }
 
 proc ::crimp::noise::speckle { image {variance 0.05}} {
+    # Also known as MULTIPLICATIVE noise 
 
+    # It is in direct proportion to the grey level PIXEL VALUE in any
+    # area. Adds RANDOM Noise of ZERO mean and the specified VARIANCE.
 
-    #	Reference
-    #    1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
-    #	  In Image Restoration and Reconstruction , pages 315-316
-    #	 Also Known As multiplicative noise 
-    #    It's in direct proportion to the grey level PIXEL VALUE in any area
-    #    Adds RANDOM Noise of ZERO MEAN and Given VARIANCE 
+    # Reference
+    #
+    # 1. Rafael C. Gonzalez,
+    #    Richards E. Woods,
+    #    Digital Image Processing (Third Edition) In Image Restoration and Reconstruction,
+    #    Pages 315-316
 
+    set itype [::crimp::TypeOf $image]    
 
-    set itype     [::crimp::TypeOf  $image]    
-    
-    set ranimage  [::crimp::rangen [::crimp::height $image ] [::crimp::width $image ] ]
-    if { $itype in { grey8 grey16 grey32 } } {
+    if {$itype in {grey8 grey16 grey32}} {
+	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image]]
+
 	return [::crimp::convert::2$itype \
 		    [::crimp::FITFLOAT  \
-			 [::crimp::speckle_noise_$itype  $image $ranimage $variance ] ] ]
-    } elseif { $itype in { rgb rgba  } } {
+			 [::crimp::noise_speckle_$itype \
+			      $image $ranimage $variance]]]
+
+    } elseif {$itype in {rgb rgba}} {
+	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image]]
 	
 	set CHAN [::crimp::split $image]
 	set filtered {}
 	foreach chan [lrange $CHAN 0 2] {
 	    lappend filtered  [::crimp::convert::2grey8 \
 				   [::crimp::FITFLOAT  \
-					[::crimp::speckle_noise_grey8 $chan $ranimage $variance ]]] 
+					[::crimp::noise_speckle_grey8 \
+					     $chan $ranimage $variance]]]
 	}
 	if { $itype eq "rgba"} {
 	    lappend filtered [lindex $CHAN 3]
 	}
-	return [::crimp::join_2$itype {*}$filtered]
-	
+	return [::crimp::join_2$itype {*}$filtered]	
     } else {
-	return -code error "SPECKLE NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+	return -code error "Speckle noise is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba"
     }
-
 }
 
 # # ## ### ##### ######## #############

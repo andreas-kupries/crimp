@@ -1,27 +1,37 @@
-speckle_noise_grey16
+noise_speckle_grey16
 Tcl_Obj* imageObj
-Tcl_Obj* imageRANObj
+Tcl_Obj* randomObj
 double variance
- 
+
+/*
+ * Adding speckle-style (multiplicative) noise to the image, using the random
+ * numbers in the randomObj image (same size as imageObj is required).
+ */
 
 crimp_image* image;
-crimp_image* imageRan;
+crimp_image* image_random;
 crimp_image* result;
 int          x, y;
 double       temp ;
-crimp_input (imageObj   , image   , grey16);
-crimp_input (imageRANObj, imageRan, float );
-result = crimp_new_float (image->w, image->h);
 
+crimp_input (imageObj,  image,        grey8);
+crimp_input (randomObj, image_random, float);
+
+if (!crimp_eq_dim (image, image_random)) {
+    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_float (image->w, image->h);
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	   	temp = GREY16 (image ,x,y) / 65536.0f ;
-		FLOATP (result ,x,y) =  temp + ( sqrt(10.0f * variance ) 
-		                        * temp * ( FLOATP (imageRan ,x,y) - 0.5f )  ) ;  
-	}
-}
+	temp = GREY16 (image, x, y) / 255.0f ;
 
+	FLOATP (result, x, y) = temp +
+	    (sqrt(10.0f * variance) * temp * (FLOATP (image_random, x, y) - 0.5f));
+    }
+}
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;

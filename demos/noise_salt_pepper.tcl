@@ -1,5 +1,5 @@
 def op_Noise_Salt_Pepper {
-    label {Noise - Salt/Pepper}
+    label {Noise - Salt/Pepper (Impulse)}
     active {
 	expr {[bases] == 1}
     }

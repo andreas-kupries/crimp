@@ -2404,28 +2404,36 @@ proc ::crimp::noise::saltpepper {image {threshold 0.05}} {
     }
 }
 
-proc ::crimp::noise::gaussian { image {mean 0} {variance 0.05}} {
+proc ::crimp::noise::gaussian {image {mean 0} {variance 0.05}} {
+    # Adds gaussian noise of the specified MEAN and VARIANCE 
 
-    #	Reference
-    #    1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
-    #	  In Image Restoration and Reconstruction , pages 314-315 
-    #     Adds Gaussian Noise of given MEAN and VARIANCE 
+    # Reference
+    #
+    # 1. Rafael C. Gonzalez,
+    #    Richards E. Woods,
+    #    Digital Image Processing (Third Edition) In Image Restoration and Reconstruction,
+    #    Pages 314-315
 
-    set itype     [::crimp::TypeOf  $image]    
-    
-    set ranimage  [::crimp::rangen [::crimp::height $image ] [::crimp::width $image ] ]
-    if { $itype in { grey8 grey16 grey32 } } {
+    set itype [::crimp::TypeOf $image]    
+
+    if {$itype in {grey8 grey16 grey32}} {
+	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image ]]
+
 	return [::crimp::convert::2$itype \
 		    [::crimp::FITFLOAT  \
-			 [::crimp::gaussian_noise_$itype  $image $ranimage $mean $variance ] ] ]
-    } elseif { $itype in { rgb rgba  } } {
+			 [::crimp::noise_gaussian_$itype \
+			      $image $ranimage $mean $variance]]]
+
+    } elseif {$itype in {rgb rgba}} {
+	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image ]]
 	
 	set CHAN [::crimp::split $image]
 	set filtered {}
 	foreach chan [lrange $CHAN 0 2] {
-	    lappend filtered  [::crimp::convert::2grey8 \
-				   [::crimp::FITFLOAT  \
-					[::crimp::gaussian_noise_grey8 $chan $ranimage $mean $variance ]]] 
+	    lappend filtered [::crimp::convert::2grey8 \
+				  [::crimp::FITFLOAT  \
+				       [::crimp::noise_gaussian_grey8 \
+					    $chan $ranimage $mean $variance ]]] 
 	}
 	if { $itype eq "rgba"} {
 	    lappend filtered [lindex $CHAN 3]
@@ -2433,11 +2441,9 @@ proc ::crimp::noise::gaussian { image {mean 0} {variance 0.05}} {
 	return [::crimp::join_2$itype {*}$filtered]
 	
     } else {
-	return -code error "GAUSSIAN NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+	return -code error "Gaussian noise is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
     }
-
 }
-
 
 proc ::crimp::noise::speckle { image {variance 0.05}} {
 

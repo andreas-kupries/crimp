@@ -1,34 +1,25 @@
 def op_Noise_Salt_Pepper {
-    label {NOISE Salt Pepper }
+    label {Noise - Salt/Pepper}
     active {
 	expr {[bases] == 1}
     }
     setup_image {
-	variable L  [base]
 	show
     }
     setup {
-	variable value  0.05
-	
-	
-	
-	proc show {args} {
-	    variable L
-        variable value
-	 
+	variable threshold 0.05
 
-	   show_image    [crimp noise saltpepper $L  $value ]  
-	        return
+	proc show {args} {
+	    variable threshold
+	    show_image [crimp noise saltpepper [base] $threshold]
+	    return
 	}
 
-	scale .left.value -variable ::DEMO::value \
-	    -from 0 -to 1 -resolution .01 -length 500\
+	scale .left.threshold -variable ::DEMO::threshold \
+	    -from 0 -to 1 -resolution .01 -length 500 \
 	    -orient vertical \
 	    -command ::DEMO::show
 
-	grid .left.value -row 0 -column 0 -sticky swen
-	
-    
-
+	grid .left.threshold -row 0 -column 0 -sticky swen
     }
 }

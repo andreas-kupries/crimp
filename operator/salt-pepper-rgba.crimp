@@ -1,42 +1,62 @@
 salt_pepper_rgba
 Tcl_Obj* imageObj
-Tcl_Obj* imageRANObj
-double value 
+Tcl_Obj* randomObj
+double threshold 
+
+/*
+ * Adding Salt/Pepper-style noise (*) to the image, using the random numbers
+ * in the randomObj image (same size as imageObj is required), using a a
+ * threshold 'value'.
+ *
+ * 0             <= random < 1/2 threshold => Black Pepper
+ * 1/2 threshold <= random < threshold     => White Salt
+ * else                                    => No change.
+ *
+ * (*) Salt/Pepper == white/black pixels replacing the actual image pixel.
+ */
 
 crimp_image* image;
 crimp_image* image_random;
 crimp_image* result;
 int          x, y;
-double       randval ;
-crimp_input (imageObj   , image       , rgba);
-crimp_input (imageRANObj, image_random, float);
-result = crimp_new_rgba (image->w, image->h);
+double       half = threshold / 2.;
+double       randval;
+
+crimp_input (imageObj,  image,        rgba);
+crimp_input (randomObj, image_random, float);
+
+if (!crimp_eq_dim (image, image_random)) {
+    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_like (image);
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	    randval = FLOATP (image_random , x ,y) ;
-		
-		if ( (randval >= 0.0f ) && ( randval < (value/2) )  ) {
-		     R (result, x, y) = BLACK  ;
-		     G (result, x, y) = BLACK  ;
-		     B (result, x, y) = BLACK  ;
-		     A (result, x, y) = A (image , x ,y);
-		}
-		
-		else if ( (randval >= (value/2) ) && ( randval < value ) ) {
-		     R (result, x, y) = WHITE ;
-		     G (result, x, y) = WHITE ;
-		     B (result, x, y) = WHITE ;
-		     A (result, x, y) = A (image , x ,y);
-		}
-		
-		else {
-		     R (result, x, y) = R (image , x ,y);
-		     G (result, x, y) = G (image , x ,y);
-		     B (result, x, y) = B (image , x ,y);
-		     A (result, x, y) = A (image , x ,y);
-		}
-		
+	randval = FLOATP (image_random, x, y);
+
+	A (result, x, y) = A (image, x, y);
+
+	if (randval < 0) {
+	    goto keep;
+	}
+	if (randval < half) {
+	    R (result, x, y) = BLACK;
+	    G (result, x, y) = BLACK;
+	    B (result, x, y) = BLACK;
+	    continue;
+	}
+        if (randval < threshold) {
+	    R (result, x, y) = WHITE;
+	    G (result, x, y) = WHITE;
+	    B (result, x, y) = WHITE;
+	    continue;
+	}
+    keep:
+	R (result, x, y) = R (image, x, y);
+	G (result, x, y) = G (image, x, y);
+	B (result, x, y) = B (image, x, y);
     }
 }
 

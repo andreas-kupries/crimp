@@ -2363,37 +2363,44 @@ proc ::crimp::gradient::visual {pgradient} {
     set v [::crimp::FITFLOAT $m]
     return [::crimp::convert::2rgb [::crimp::join::2hsv $h $s $v]]
 }
-# # ## ### ##### ######## #############
 
+# # ## ### ##### ######## #############
 
 namespace eval ::crimp::noise {
     namespace export {[a-z]*}
     namespace ensemble create
-
 }
-proc ::crimp::noise::saltpepper { image {value 0.05} } {
 
-    #	Reference
-    #    1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
-    #	  In Image Restoration and Reconstruction , pages 316-317 
-    #     Also known as IMPULSE Noise
-	#     THE Parameter Value Ranges Between 0 - 1 ,
-	#     Changes about VALUE * total no of PIXELS
+proc ::crimp::noise::saltpepper {image {threshold 0.05}} {
+    #  Also known as IMPULSE Noise
+    #
+    #  The parameter threshold ranges between 0 - 1.
+    #
+    #  The method modifies about
+    #    THRESHOLD * WIDTH * HEIGHT
+    # pixels of the input image.
 
-   set itype     [::crimp::TypeOf  $image]    
-   
-   if { ($value < 0 ) || ( $value > 1 ) } {
-    return -code error "THE Range Of Value MUST be between ( 0 - 1 ) For SALT PEPPER NOISE  "
-   }   
-   
-    set ranimage  [::crimp::rangen [::crimp::height $image ] [::crimp::width $image ] ]
-   
-	if {[::crimp::Has salt_pepper_$itype]} {
-       return [::crimp::salt_pepper_$itype  $image $ranimage $value]
-   } else {
-	 return -code error "SALT PEPPER NOISE is not supported for image type \"$itype\" "
-	}
+    # Reference
+    #
+    # 1. Rafael C. Gonzalez,
+    #    Richards E. Woods,
+    #    Digital Image Processing (Third Edition) In Image Restoration and Reconstruction,
+    #    Pages 316-317 
+    
+    if {($threshold < 0) ||
+	($threshold > 1) } {
+	return -code error "Invalid salt/pepper threshold outside of \[0..\1]."
+    }   
+    
+    set itype [::crimp::TypeOf  $image]    
 
+    if {[::crimp::Has salt_pepper_$itype]} {
+	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image]]
+
+	return [::crimp::salt_pepper_$itype $image $ranimage $threshold]
+    } else {
+	return -code error "SALT PEPPER NOISE is not supported for image type \"$itype\" "
+    }
 }
 
 proc ::crimp::noise::gaussian { image {mean 0} {variance 0.05}} {
@@ -2404,29 +2411,29 @@ proc ::crimp::noise::gaussian { image {mean 0} {variance 0.05}} {
     #     Adds Gaussian Noise of given MEAN and VARIANCE 
 
     set itype     [::crimp::TypeOf  $image]    
-   
+    
     set ranimage  [::crimp::rangen [::crimp::height $image ] [::crimp::width $image ] ]
     if { $itype in { grey8 grey16 grey32 } } {
-	  return [::crimp::convert::2$itype \
-	          [::crimp::FITFLOAT  \
-			     [::crimp::gaussian_noise_$itype  $image $ranimage $mean $variance ] ] ]
-	} elseif { $itype in { rgb rgba  } } {
+	return [::crimp::convert::2$itype \
+		    [::crimp::FITFLOAT  \
+			 [::crimp::gaussian_noise_$itype  $image $ranimage $mean $variance ] ] ]
+    } elseif { $itype in { rgb rgba  } } {
 	
-	   set CHAN [::crimp::split $image]
-       set filtered {}
-       foreach chan [lrange $CHAN 0 2] {
-		  lappend filtered  [::crimp::convert::2grey8 \
-	                          [::crimp::FITFLOAT  \
-			                     [::crimp::gaussian_noise_grey8 $chan $ranimage $mean $variance ]]] 
-		}
-       if { $itype eq "rgba"} {
-               lappend filtered [lindex $CHAN 3]
-       }
-       return [::crimp::join_2$itype {*}$filtered]
-	
-	} else {
-	  return -code error "GAUSSIAN NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+	set CHAN [::crimp::split $image]
+	set filtered {}
+	foreach chan [lrange $CHAN 0 2] {
+	    lappend filtered  [::crimp::convert::2grey8 \
+				   [::crimp::FITFLOAT  \
+					[::crimp::gaussian_noise_grey8 $chan $ranimage $mean $variance ]]] 
 	}
+	if { $itype eq "rgba"} {
+	    lappend filtered [lindex $CHAN 3]
+	}
+	return [::crimp::join_2$itype {*}$filtered]
+	
+    } else {
+	return -code error "GAUSSIAN NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+    }
 
 }
 
@@ -2438,34 +2445,34 @@ proc ::crimp::noise::speckle { image {variance 0.05}} {
     #    1. Rafael C. Gonzalez , Richards E. Woods , Digital Image Processing (Third Edition ) 
     #	  In Image Restoration and Reconstruction , pages 315-316
     #	 Also Known As multiplicative noise 
-	#    It's in direct proportion to the grey level PIXEL VALUE in any area
+    #    It's in direct proportion to the grey level PIXEL VALUE in any area
     #    Adds RANDOM Noise of ZERO MEAN and Given VARIANCE 
 
 
     set itype     [::crimp::TypeOf  $image]    
-   
+    
     set ranimage  [::crimp::rangen [::crimp::height $image ] [::crimp::width $image ] ]
     if { $itype in { grey8 grey16 grey32 } } {
-	  return [::crimp::convert::2$itype \
-	          [::crimp::FITFLOAT  \
-			     [::crimp::speckle_noise_$itype  $image $ranimage $variance ] ] ]
-	} elseif { $itype in { rgb rgba  } } {
-	 
-	   set CHAN [::crimp::split $image]
-       set filtered {}
-       foreach chan [lrange $CHAN 0 2] {
-		  lappend filtered  [::crimp::convert::2grey8 \
-            	               [::crimp::FITFLOAT  \
-			                     [::crimp::speckle_noise_grey8 $chan $ranimage $variance ]]] 
-		}
-       if { $itype eq "rgba"} {
-               lappend filtered [lindex $CHAN 3]
-       }
-       return [::crimp::join_2$itype {*}$filtered]
+	return [::crimp::convert::2$itype \
+		    [::crimp::FITFLOAT  \
+			 [::crimp::speckle_noise_$itype  $image $ranimage $variance ] ] ]
+    } elseif { $itype in { rgb rgba  } } {
 	
-	} else {
-	  return -code error "SPECKLE NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+	set CHAN [::crimp::split $image]
+	set filtered {}
+	foreach chan [lrange $CHAN 0 2] {
+	    lappend filtered  [::crimp::convert::2grey8 \
+				   [::crimp::FITFLOAT  \
+					[::crimp::speckle_noise_grey8 $chan $ranimage $variance ]]] 
 	}
+	if { $itype eq "rgba"} {
+	    lappend filtered [lindex $CHAN 3]
+	}
+	return [::crimp::join_2$itype {*}$filtered]
+	
+    } else {
+	return -code error "SPECKLE NOISE is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+    }
 
 }
 

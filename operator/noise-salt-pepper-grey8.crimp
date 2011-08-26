@@ -1,4 +1,4 @@
-salt_pepper_grey8
+noise_salt_pepper_grey8
 Tcl_Obj* imageObj
 Tcl_Obj* randomObj
 double threshold

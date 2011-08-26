@@ -2394,12 +2394,13 @@ proc ::crimp::noise::saltpepper {image {threshold 0.05}} {
     
     set itype [::crimp::TypeOf  $image]    
 
-    if {[::crimp::Has salt_pepper_$itype]} {
+    set f noise_salt_pepper_$itype
+    if {[::crimp::Has $f]} {
 	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image]]
 
-	return [::crimp::salt_pepper_$itype $image $ranimage $threshold]
+	return [::crimp::$f $image $ranimage $threshold]
     } else {
-	return -code error "SALT PEPPER NOISE is not supported for image type \"$itype\" "
+	return -code error "Salt/pepper noise is not supported for image type \"$itype\" "
     }
 }
 

@@ -1546,9 +1546,14 @@ to it so that it fades to black at the edges
 
 [subsection Converters]
 [list_begin definitions]
+[call [cmd ::crimp] [method {convert 2grey32}] [arg image]]
+[call [cmd ::crimp] [method {convert 2grey16}] [arg image]]
 [call [cmd ::crimp] [method {convert 2grey8}] [arg image]]
+[call [cmd ::crimp] [method {convert 2float}] [arg image]]
+[call [cmd ::crimp] [method {convert 2complex}] [arg image]]
 [call [cmd ::crimp] [method {convert 2hsv}] [arg image]]
 [call [cmd ::crimp] [method {convert 2rgba}] [arg image]]
+[call [cmd ::crimp] [method {convert 2rgb}] [arg image]]
 [call [cmd ::crimp] [method {convert 2rgb}] [arg image]]
 
 This set of methods all convert their input [arg image] to the
@@ -1558,9 +1563,14 @@ unchanged.
 
 [para]
 
-The converters returning a [const grey8] image support [const rgb] and
-[const rgba] as their input, using the ITU-R 601-2 luma transform to
-merge the three color channels
+The converters returning a [const grey8] image support [const float],
+[const rgb] and [const rgba] as their input. For multi-channel input
+they use the ITU-R 601-2 luma transform to merge the color channels.
+
+[para]
+
+The converters returning a [const grey16], [const grey32] image
+support only [const float] as their input.
 
 [para]
 
@@ -1576,8 +1586,19 @@ and [method {join rgba}].
 
 [para]
 
-At last, the conversion to [const rgb] accepts both [const rgba] and
+The conversion to [const rgb] accepts both [const rgba] and
 [const hsv] images as input.
+
+[para]
+
+The conversion to [const float] supports only [const fpcomplex] as
+input. It simply strips the imaginary part of the input.
+
+[para]
+
+The conversion to [const fpcomplex] accepts [const float],
+[const grey8], [const grey16], and [const grey32] as input, and adds a
+constant [const 0] imaginary part.
 
 [call [cmd ::crimp] [method {complex magnitude}] [arg image]]
 
@@ -1585,11 +1606,13 @@ This method takes an image of type [const fpcomplex] as input and
 returns an image of type [const float] containing the pixel-wise
 magnitude of the input.
 
-[call [cmd ::crimp] [method {complex 2fpcomplex}] [arg image]]
+[call [cmd ::crimp] [method {complex 2complex}] [arg image]]
 
 This method takes an image of type [const float] as input and returns
 an image of type [const fpcomplex] with each pixel's real part
 containing the input, and the imaginary part set to [const 0].
+
+[para] This method is an alias for [cmd {crimp convert 2complex}].
 
 [call [cmd ::crimp] [method {complex imaginary}] [arg image]]
 
@@ -1603,6 +1626,9 @@ This method takes an image of type [const fpcomplex] as input and
 returns an image of type [const float] containing the pixel-wise
 [const real] part of the input.
 
+[para] This method is an alias for [cmd {crimp convert 2float}] as
+applied to images of type [const fpcomplex].
+
 [call [cmd ::crimp] [method {complex conjugate}] [arg image]]
 
 This method takes an image of type [const fpcomplex] as input and
@@ -1612,6 +1638,7 @@ conjugate of the input.
 [call [cmd ::crimp] [method {join 2hsv}] [arg hueImage] [arg satImage] [arg valImage]]
 [call [cmd ::crimp] [method {join 2rgba}] [arg redImage] [arg greenImage] [arg blueImage] [arg alphaImage]]
 [call [cmd ::crimp] [method {join 2rgb}] [arg redImage] [arg greenImage] [arg blueImage]]
+[call [cmd ::crimp] [method {join 2complex}] [arg realImage] [arg imaginaryImage]]
 
 This set of methods is the complement of method [method split]. Each
 take a set of [const grey8] images and fuse them together into an
@@ -1619,13 +1646,19 @@ image of the given type, with each input image becoming one channel of
 the fusing result, which is returned as the result of the command. All
 input images have to have the same dimensions.
 
+[para] The command [method {join 2complex}] is an exception regarding
+the input. It accepts images of type [const float], not [const grey8].
 
 [call [cmd ::crimp] [method split] [arg image]]
 
 This method takes an image of one of the multi-channel types, i.e.
-[const rgb], const rgba], and [const hsv] and returns a list of
-[const grey8] images, each of which contains the contents of one of
-the channels found in the input image.
+[const rgb], const rgba], [const hsv], and [const fpcomplex] and
+returns a list of [const grey8] images, each of which contains the
+contents of one of the channels found in the input image.
+
+[para] The input image type [const fpcomplex] is an exception
+regarding the output. It returns images of type [const float], not
+[const grey8].
 
 [para]
 

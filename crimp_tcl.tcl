@@ -2496,31 +2496,24 @@ proc ::crimp::complex::magnitude {image} {
     }
 }
 
-proc ::crimp::complex::2fpcomplex {image} {
-    set itype [::crimp::TypeOf $image]
-    if { $itype ne "float" } {
-	return -code error "Conversion to fpcomplex is not supported for image type \"$itype\" must be float "
-    } else {
-	return [crimp::float2fpcomplex $image]
-    }
+proc ::crimp::complex::2complex {image} {
+    return [::crimp::convert::2complex $image]
 }
 
 proc ::crimp::complex::real {image} {
     set itype [::crimp::TypeOf $image]
-    if { $itype ne "fpcomplex" } {
-	return -code error "Real part only exit for fpcomplex images "
-    } else {
-	return [crimp::fpcomplex2real $image]
+    if {$itype ne "fpcomplex"} {
+	return -code error "Extraction of the real part is not supported for type \"$itype\", only \"fpcomplex\""
     }
+    return [::crimp::convert_2float_fpcomplex $image]
 }
 
 proc ::crimp::complex::imaginary {image} {
     set itype [::crimp::TypeOf $image]
-    if { $itype ne "fpcomplex" } {
-	return -code error "Imaginary part only exit for fpcomplex images "
-    } else {
-	return [crimp::fpcomplex2imaginary $image]
+    if {$itype ne "fpcomplex"} {
+	return -code error "Extraction of the imaginary part is not supported for type \"$itype\", only \"fpcomplex\""
     }
+    return [crimp::imaginary_fpcomplex $image]
 }
 
 proc ::crimp::complex::conjugate {image} {
@@ -2614,19 +2607,19 @@ proc ::crimp::imregs::translation { image1 image2   } {
 
     # Converting to fpcomplex type images for FFT computation
     set fft1 [::crimp::fft::forward \
-		  [::crimp::complex::2fpcomplex \
+		  [::crimp::convert::2complex \
 		       [::crimp::convert::2float $image1]]]
     set fft2 [::crimp::fft::forward \
-		  [::crimp::complex::2fpcomplex \
+		  [::crimp::convert::2complex \
 		       [::crimp::convert::2float $image2]]]
 
     set correlation [::crimp::divide \
 			 [::crimp::multiply \
 			      $fft2 [::crimp::complex::conjugate $fft1]] \
 			 [::crimp::multiply \
-			      [::crimp::complex::2fpcomplex \
+			      [::crimp::convert::2complex \
 				   [crimp::complex::magnitude $fft1]] \
-			      [::crimp::complex::2fpcomplex \
+			      [::crimp::convert::2complex \
 				   [crimp::complex::magnitude $fft2]]]]
 
 
@@ -2713,10 +2706,10 @@ proc ::crimp::imregs::findobject { image1 image2   } {
     # Converting to fpcomplex type images for FFT computation
     # FFT both images, resulting in complex images in the spatial frequency domain.
     set fft1 [::crimp::fft::forward \
-		  [::crimp::complex::2fpcomplex \
+		  [::crimp::convert::2complex \
 		       [::crimp::convert::2float $image1]]]
     set fft2 [::crimp::fft::forward \
-		  [::crimp::complex::2fpcomplex \
+		  [::crimp::convert::2complex \
 		       [::crimp::convert::2float $image2]]]
 
     #4 Take the absolute values, pixel-by-pixel, of both transformed images.
@@ -2730,18 +2723,18 @@ proc ::crimp::imregs::findobject { image1 image2   } {
 
     # 6. Take the FFT of both LPT's, giving two complex images.
     set fft21 [::crimp::fft::forward \
-		   [::crimp::complex::2fpcomplex $lpt1]]
+		   [::crimp::convert::2complex $lpt1]]
     set fft22 [::crimp::fft::forward \
-		   [::crimp::complex::2fpcomplex $lpt2]]
+		   [::crimp::convert::2complex $lpt2]]
 
     # Form the correlation of the two FFT-LPT-FFT's by   multiplying the pixels of one by the complex conjugate   of the pixels of the other.
     set correlation [::crimp::divide \
 			 [::crimp::multiply \
 			      $fft22 [::crimp::complex::conjugate $fft21]] \
 			 [::crimp::multiply \
-			      [::crimp::complex::2fpcomplex \
+			      [::crimp::convert::2complex \
 				   [crimp::complex::magnitude $fft21]] \
-			      [::crimp::complex::2fpcomplex \
+			      [::crimp::convert::2complex \
 				   [crimp::complex::magnitude $fft22]]]]
 
     #8. Inverse-FFT the correlation image.
@@ -2785,21 +2778,21 @@ proc ::crimp::imregs::findobject { image1 image2   } {
 
 
     set fft2 [::crimp::fft::forward \
-		  [::crimp::complex::2fpcomplex \
+		  [::crimp::convert::2complex \
 		       [::crimp::convert::2float $image2]]]
 
     set correlation [::crimp::divide \
 			 [::crimp::multiply \
 			      $fft2 [::crimp::complex::conjugate $fft1]] \
 			 [::crimp::multiply \
-			      [::crimp::complex::2fpcomplex \
+			      [::crimp::convert::2complex \
 				   [crimp::complex::magnitude $fft1]] \
-			      [::crimp::complex::2fpcomplex \
+			      [::crimp::convert::2complex \
 				   [crimp::complex::magnitude $fft2]]]]
 
-    set ifft  [crimp::fft::backward $correlation]
+    set ifft  [::crimp::fft::backward $correlation]
 
-    set immag [crimp::complex::magnitude $ifft]
+    set immag [::crimp::complex::magnitude $ifft]
 
     # finding the Co-Ordinates of the brightest pixel
     set stat   [::crimp::statistics basic $immag]

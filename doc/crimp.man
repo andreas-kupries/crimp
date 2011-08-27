@@ -1579,31 +1579,35 @@ and [method {join rgba}].
 At last, the conversion to [const rgb] accepts both [const rgba] and
 [const hsv] images as input.
 
-[call [cmd ::crimp] [method {fpcomp magnitude}] [arg image]]
+[call [cmd ::crimp] [method {complex magnitude}] [arg image]]
 
-This Method take fpcomplex image as input and return image of 
-type float consisting of magnitude of each pixel,
+This method takes an image of type [const fpcomplex] as input and
+returns an image of type [const float] containing the pixel-wise
+magnitude of the input.
 
-[call [cmd ::crimp] [method {fpcomp 2fpcomplex}] [arg image]]
+[call [cmd ::crimp] [method {complex 2fpcomplex}] [arg image]]
 
-This Method take float image as input and return image of 
-type fpcomplex where REAL part consist of input image.
+This method takes an image of type [const float] as input and returns
+an image of type [const fpcomplex] with each pixel's real part
+containing the input, and the imaginary part set to [const 0].
 
-[call [cmd ::crimp] [method {fpcomp imaginary}] [arg image]]
+[call [cmd ::crimp] [method {complex imaginary}] [arg image]]
 
-This Method take fpcomplex image as input and return image of 
-type float consisting of imaginary part of input image.
+This method takes an image of type [const fpcomplex] as input and
+returns an image of type [const float] containing the pixel-wise
+[const imaginary] part of the input.
 
-[call [cmd ::crimp] [method {fpcomp real}] [arg image]]
+[call [cmd ::crimp] [method {complex real}] [arg image]]
 
-This Method take fpcomplex image as input and return image of 
-type float consisting of REAL part of input image.
+This method takes an image of type [const fpcomplex] as input and
+returns an image of type [const float] containing the pixel-wise
+[const real] part of the input.
 
-[call [cmd ::crimp] [method {fpcomp conjugate}] [arg image]]
+[call [cmd ::crimp] [method {complex conjugate}] [arg image]]
 
-This Method take fpcomplex image as input and return image of type 
-fpcomplex consisting of conjugate each pixel of input image.
-
+This method takes an image of type [const fpcomplex] as input and
+returns an image of the same type containing the pixel-wise complex
+conjugate of the input.
 
 [call [cmd ::crimp] [method {join 2hsv}] [arg hueImage] [arg satImage] [arg valImage]]
 [call [cmd ::crimp] [method {join 2rgba}] [arg redImage] [arg greenImage] [arg blueImage] [arg alphaImage]]

@@ -1275,11 +1275,12 @@ construction of maps from Tcl data structures, namely lists of values.
 single-byte channels, i.e. all but [const grey16], [const grey32],
 [const float], and [const bw].
 
+[call [cmd ::crimp] [method matchsize] [arg image1] [arg image2]]
 
-[call [cmd ::crimp] [method samesize] [arg image1] [arg image2]]
-
-This method takes two images and returns a dictonary having keys image1 
-and image2 which are of same dimensions.
+This method takes two images, forces them to be of the same size by
+expanding the smaller dimensions with black pixels, and then returns a
+list of the expanded images. The images in the result are in the same
+order as as arguments.
 
 [call [cmd ::crimp] [method screen] [arg image1] [arg image2]]
 

@@ -3323,8 +3323,14 @@ proc ::crimp::statistics::basic {image} {
 	return [array get stat]
     }
 
-    # No primitive, go through the histogram.
-    # Histogram and derived data, per channel.
+    # No primitive, go through the histogram. The types which have the
+    # histogram are also served by the 'stats_multi' primitive which
+    # provides the major parts of the statistics.
+
+    set stat(channel) [::crimp::stats_multi $image]
+    upvar 0 stat(channel) result
+
+    # Add the histogram and derived data, per channel.
 
     foreach {c h} [::crimp::histogram $image] {
 	#puts <$c>
@@ -3334,24 +3340,18 @@ proc ::crimp::statistics::basic {image} {
 	#puts C|[llength $cdf]|$cdf
 	set cdf255 [::crimp::FIT $cdf 255]
 
-	# Min, max, plus pre-processing for the mean
-	set min 255
-	set max 0
-	set sum 0
-	foreach {p count} $h {
-	    if {!$count} continue
-	    set min [::tcl::mathfunc::min $min $p]
-	    set max [::tcl::mathfunc::max $max $p]
-	    incr sum [expr {$p * $count}]
-	}
+	# Merge with result.
+	dict set result $c histogram $h
+	dict set result $c hf        $hf
+	dict set result $c cdf       $cdf
+	dict set result $c cdf255    $cdf255
 
-	# Arithmetic mean
-	set mean [expr {double($sum) / $n}]
+	set min [dict get $result $c min]
+	set max [dict get $result $c max]
 
 	# Median
 	if {$min == $max} {
 	    set median $min
-	    set middle $min
 	} else {
 	    set median 0
 	    foreach {p count} $h s $cdf255 {
@@ -3359,37 +3359,10 @@ proc ::crimp::statistics::basic {image} {
 		set median $p
 		break
 	    }
-	    set middle [expr {($min+$max)/2}]
 	}
 
-	# Variance
-	# http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant
-	set sum2 0
-	set sumc 0
-	foreach {p count} $h {
-	    if {!$count} continue
-	    set x [expr {$p - $mean}]
-	    set sum2 [expr {$sum2 + $count * $x * $x}]
-	    set sumc [expr {$sumc + $count * $x}]
-	}
-	set variance [expr {($sum2 - $sumc**2/$n)/($n - 1)}]
-	set stddev   [expr {sqrt($variance)}]
-
-	# Save the channel statistics
-	lappend stat(channel) $c [dict create        \
-			    min       $min  \
-			    max       $max   \
-			    middle    $middle \
-			    median    $median \
-			    mean      $mean    \
-			    stddev    $stddev   \
-			    variance  $variance \
-			    histogram $h       \
-			    hf        $hf     \
-			    cdf       $cdf    \
-			    cdf255    $cdf255 \
-				     ]
-	# geom mean, stddev
+	dict set result $c median $median
+	# geom mean
     }
 
     return [array get stat]

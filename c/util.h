@@ -27,6 +27,9 @@
  * General math support.
  */
 
+#undef MIN
+#undef MAX
+
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define CLAMP(min, v, max) ((v) < (min) ? (min) : (v) < (max) ? (v) : (max))
@@ -47,6 +50,9 @@
 #define inline __inline
 #endif
 #ifdef _AIX
+#define inline
+#endif
+#ifdef __hpux
 #define inline
 #endif
 

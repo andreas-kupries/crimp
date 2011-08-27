@@ -1,18 +1,17 @@
-fpcomplex2float
+convert_2float_fpcomplex
 Tcl_Obj* imageObj
-
 
 crimp_image* image;
 crimp_image* result;
 int          x, y;
 
 crimp_input (imageObj, image, fpcomplex);
+
 result = crimp_new_float (image->w, image->h);
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	FLOATP (result , x, y) = RE ( image, x, y) ;
-	
+	FLOATP (result, x, y) = RE (image, x, y);
     }
 }
 

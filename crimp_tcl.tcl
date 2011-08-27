@@ -2482,12 +2482,12 @@ proc ::crimp::noise::speckle {image {variance 0.05}} {
 
 # # ## ### ##### ######## #############
 
-namespace eval ::crimp::fpcomop {
+namespace eval ::crimp::complex {
     namespace export {[a-z]*}
     namespace ensemble create
 }
 
-proc ::crimp::fpcomop::magnitude {image} {
+proc ::crimp::complex::magnitude {image} {
     set itype [::crimp::TypeOf $image]
     if { $itype ne "fpcomplex" } {
 	return -code error "Magnitude of Complex Image is not supported for image type \"$itype\" must be fpcomplex "
@@ -2496,7 +2496,7 @@ proc ::crimp::fpcomop::magnitude {image} {
     }
 }
 
-proc ::crimp::fpcomop::2fpcomplex {image} {
+proc ::crimp::complex::2fpcomplex {image} {
     set itype [::crimp::TypeOf $image]
     if { $itype ne "float" } {
 	return -code error "Conversion to fpcomplex is not supported for image type \"$itype\" must be float "
@@ -2505,7 +2505,7 @@ proc ::crimp::fpcomop::2fpcomplex {image} {
     }
 }
 
-proc ::crimp::fpcomop::real {image} {
+proc ::crimp::complex::real {image} {
     set itype [::crimp::TypeOf $image]
     if { $itype ne "fpcomplex" } {
 	return -code error "Real part only exit for fpcomplex images "
@@ -2514,7 +2514,7 @@ proc ::crimp::fpcomop::real {image} {
     }
 }
 
-proc ::crimp::fpcomop::imaginary {image} {
+proc ::crimp::complex::imaginary {image} {
     set itype [::crimp::TypeOf $image]
     if { $itype ne "fpcomplex" } {
 	return -code error "Imaginary part only exit for fpcomplex images "
@@ -2523,7 +2523,7 @@ proc ::crimp::fpcomop::imaginary {image} {
     }
 }
 
-proc ::crimp::fpcomop::conjugate {image} {
+proc ::crimp::complex::conjugate {image} {
     set itype [::crimp::TypeOf $image]
     if { $itype ne "fpcomplex" } {
 	return -code error "Conjugate can only be find for fpcomplex images "
@@ -2614,25 +2614,25 @@ proc ::crimp::imregs::translation { image1 image2   } {
 
     # Converting to fpcomplex type images for FFT computation
     set fft1 [::crimp::fft::forward \
-		  [::crimp::fpcomop::2fpcomplex \
+		  [::crimp::complex::2fpcomplex \
 		       [::crimp::convert::2float $image1]]]
     set fft2 [::crimp::fft::forward \
-		  [::crimp::fpcomop::2fpcomplex \
+		  [::crimp::complex::2fpcomplex \
 		       [::crimp::convert::2float $image2]]]
 
     set correlation [::crimp::divide \
 			 [::crimp::multiply \
-			      $fft2 [::crimp::fpcomop::conjugate $fft1]] \
+			      $fft2 [::crimp::complex::conjugate $fft1]] \
 			 [::crimp::multiply \
-			      [::crimp::fpcomop::2fpcomplex \
-				   [crimp::fpcomop::magnitude $fft1]] \
-			      [::crimp::fpcomop::2fpcomplex \
-				   [crimp::fpcomop::magnitude $fft2]]]]
+			      [::crimp::complex::2fpcomplex \
+				   [crimp::complex::magnitude $fft1]] \
+			      [::crimp::complex::2fpcomplex \
+				   [crimp::complex::magnitude $fft2]]]]
 
 
     set ifft  [crimp::fft::backward $correlation]
 
-    set immag   [crimp::fpcomop::magnitude $ifft]
+    set immag   [crimp::complex::magnitude $ifft]
 
     # finding the Co-Ordinates of the brightest pixel
     set stat   [::crimp::statistics basic $immag]
@@ -2713,15 +2713,15 @@ proc ::crimp::imregs::findobject { image1 image2   } {
     # Converting to fpcomplex type images for FFT computation
     # FFT both images, resulting in complex images in the spatial frequency domain.
     set fft1 [::crimp::fft::forward \
-		  [::crimp::fpcomop::2fpcomplex \
+		  [::crimp::complex::2fpcomplex \
 		       [::crimp::convert::2float $image1]]]
     set fft2 [::crimp::fft::forward \
-		  [::crimp::fpcomop::2fpcomplex \
+		  [::crimp::complex::2fpcomplex \
 		       [::crimp::convert::2float $image2]]]
 
     #4 Take the absolute values, pixel-by-pixel, of both transformed images.
-    set fft1mag [::crimp::fpcomop::magnitude $fft1]
-    set fft2mag [::crimp::fpcomop::magnitude $fft2]
+    set fft1mag [::crimp::complex::magnitude $fft1]
+    set fft2mag [::crimp::complex::magnitude $fft2]
 
     #5 Take the LPT of both absolute-value images.
     set lpt1   [::crimp::transform::logpolar $fft1mag 360 400]
@@ -2730,24 +2730,24 @@ proc ::crimp::imregs::findobject { image1 image2   } {
 
     # 6. Take the FFT of both LPT's, giving two complex images.
     set fft21 [::crimp::fft::forward \
-		   [::crimp::fpcomop::2fpcomplex $lpt1]]
+		   [::crimp::complex::2fpcomplex $lpt1]]
     set fft22 [::crimp::fft::forward \
-		   [::crimp::fpcomop::2fpcomplex $lpt2]]
+		   [::crimp::complex::2fpcomplex $lpt2]]
 
     # Form the correlation of the two FFT-LPT-FFT's by   multiplying the pixels of one by the complex conjugate   of the pixels of the other.
     set correlation [::crimp::divide \
 			 [::crimp::multiply \
-			      $fft22 [::crimp::fpcomop::conjugate $fft21]] \
+			      $fft22 [::crimp::complex::conjugate $fft21]] \
 			 [::crimp::multiply \
-			      [::crimp::fpcomop::2fpcomplex \
-				   [crimp::fpcomop::magnitude $fft21]] \
-			      [::crimp::fpcomop::2fpcomplex \
-				   [crimp::fpcomop::magnitude $fft22]]]]
+			      [::crimp::complex::2fpcomplex \
+				   [crimp::complex::magnitude $fft21]] \
+			      [::crimp::complex::2fpcomplex \
+				   [crimp::complex::magnitude $fft22]]]]
 
     #8. Inverse-FFT the correlation image.
     set ifft  [crimp::fft::backward $correlation]
 
-    set immag   [crimp::fpcomop::magnitude $ifft]
+    set immag   [crimp::complex::magnitude $ifft]
 
     # finding the Co-Ordinates of the brightest pixel
     set stat   [::crimp::statistics basic $immag]
@@ -2785,21 +2785,21 @@ proc ::crimp::imregs::findobject { image1 image2   } {
 
 
     set fft2 [::crimp::fft::forward \
-		  [::crimp::fpcomop::2fpcomplex \
+		  [::crimp::complex::2fpcomplex \
 		       [::crimp::convert::2float $image2]]]
 
     set correlation [::crimp::divide \
 			 [::crimp::multiply \
-			      $fft2 [::crimp::fpcomop::conjugate $fft1]] \
+			      $fft2 [::crimp::complex::conjugate $fft1]] \
 			 [::crimp::multiply \
-			      [::crimp::fpcomop::2fpcomplex \
-				   [crimp::fpcomop::magnitude $fft1]] \
-			      [::crimp::fpcomop::2fpcomplex \
-				   [crimp::fpcomop::magnitude $fft2]]]]
+			      [::crimp::complex::2fpcomplex \
+				   [crimp::complex::magnitude $fft1]] \
+			      [::crimp::complex::2fpcomplex \
+				   [crimp::complex::magnitude $fft2]]]]
 
     set ifft  [crimp::fft::backward $correlation]
 
-    set immag   [crimp::fpcomop::magnitude $ifft]
+    set immag [crimp::complex::magnitude $ifft]
 
     # finding the Co-Ordinates of the brightest pixel
     set stat   [::crimp::statistics basic $immag]

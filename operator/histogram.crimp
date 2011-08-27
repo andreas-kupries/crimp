@@ -14,6 +14,7 @@ Tcl_Obj*         k; /* channel name as Tcl_Obj, for the main dict */
 
 crimp_input_any (imageObj, image);
 ASSERT_NOTIMGTYPE(image,grey32);
+ASSERT_NOTIMGTYPE(image,float);
 /*
  * Actually NOT any. The code below is not able to handle grey32, as images
  * with these types can have 4G possible values, for which we cannot allocate

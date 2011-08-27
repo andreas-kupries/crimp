@@ -1134,6 +1134,12 @@ multiplication is divided by [const 255] to scale it back into the
 range [lb]0...255[rb].
 
 [para]
+[call [cmd ::crimp] [method {noise random} ] [arg w] [arg h]]
+
+This method creates an image of type [const float] with the specified
+dimensions. The pixels are set to random values in the interval
+[lb]0...1[rb].
+
 [call [cmd ::crimp] [method {noise saltpepper} ] [arg image] [arg value]]
 [call [cmd ::crimp] [method {noise gaussian} ] [arg image] [arg mean] [arg variance]]
 [call [cmd ::crimp] [method {noise speckle} ] [arg image] [arg variance]]

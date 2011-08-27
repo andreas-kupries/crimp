@@ -1,17 +1,15 @@
-rangen
-int row 
-int column 
-
+random_uniform
+int width 
+int height 
 
 crimp_image* result;
 int          x, y;
-result = crimp_new_float (column, row);
 
-
+result = crimp_new_float (width, height);
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-		FLOATP (result, x, y) =  ( rand() / ( RAND_MAX + 1.0f ) ) ;
+	FLOATP (result, x, y) =  (rand() / (RAND_MAX + 1.0f));
     }
 }
 

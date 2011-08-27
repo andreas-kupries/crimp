@@ -2359,6 +2359,10 @@ namespace eval ::crimp::noise {
     namespace ensemble create
 }
 
+proc ::crimp::noise::random {w h} {
+    return [::crimp::random_uniform $w $h]
+}
+
 proc ::crimp::noise::saltpepper {image {threshold 0.05}} {
     #  Also known as IMPULSE Noise
     #
@@ -2384,7 +2388,7 @@ proc ::crimp::noise::saltpepper {image {threshold 0.05}} {
 
     set f noise_salt_pepper_$itype
     if {[::crimp::Has $f]} {
-	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image]]
+	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
 
 	return [::crimp::$f $image $ranimage $threshold]
     } else {
@@ -2405,7 +2409,7 @@ proc ::crimp::noise::gaussian {image {mean 0} {variance 0.05}} {
     set itype [::crimp::TypeOf $image]
 
     if {$itype in {grey8 grey16 grey32}} {
-	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image]]
+	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
 
 	return [::crimp::convert::2$itype \
 		    [::crimp::FITFLOAT  \
@@ -2413,7 +2417,7 @@ proc ::crimp::noise::gaussian {image {mean 0} {variance 0.05}} {
 			      $image $ranimage $mean $variance]]]
 
     } elseif {$itype in {rgb rgba}} {
-	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image]]
+	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
 
 	set CHAN [::crimp::split $image]
 	set filtered {}
@@ -2433,7 +2437,7 @@ proc ::crimp::noise::gaussian {image {mean 0} {variance 0.05}} {
     }
 }
 
-proc ::crimp::noise::speckle { image {variance 0.05}} {
+proc ::crimp::noise::speckle {image {variance 0.05}} {
     # Also known as MULTIPLICATIVE noise
 
     # It is in direct proportion to the grey level PIXEL VALUE in any
@@ -2449,7 +2453,7 @@ proc ::crimp::noise::speckle { image {variance 0.05}} {
     set itype [::crimp::TypeOf $image]
 
     if {$itype in {grey8 grey16 grey32}} {
-	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image]]
+	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
 
 	return [::crimp::convert::2$itype \
 		    [::crimp::FITFLOAT  \
@@ -2457,7 +2461,7 @@ proc ::crimp::noise::speckle { image {variance 0.05}} {
 			      $image $ranimage $variance]]]
 
     } elseif {$itype in {rgb rgba}} {
-	set ranimage [::crimp::rangen [::crimp::height $image] [::crimp::width $image]]
+	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
 
 	set CHAN [::crimp::split $image]
 	set filtered {}

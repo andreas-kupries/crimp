@@ -2539,51 +2539,46 @@ proc ::crimp::window { image }  {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::samesize { image1 image2 } {
+proc ::crimp::matchsize {image1 image2} {
 
-    if { [::crimp::width  $image1] > [::crimp::width  $image2] } {
-	set image2 [::crimp expand const $image2 \
-	                [expr { ( [::crimp::width  $image1] - [::crimp::width  $image2] ) / 2  }] \
-			0    \
-			[expr { ( [::crimp::width  $image1] - [::crimp::width  $image2] ) / 2  }] \
-			0    0]
-    } elseif { [::crimp::width  $image1] < [::crimp::width  $image2] } {
-	set image1 [::crimp expand const $image1 \
-	                [expr { ( [::crimp::width  $image2] - [::crimp::width  $image1] ) / 2  }] \
-			0    \
-			[expr { ( [::crimp::width  $image2] - [::crimp::width  $image1] ) / 2  }] \
-			0    0]
+    lassign [dimensions $image1] w1 h1
+    lassign [dimensions $image2] w2 h2
+
+    if { $w1 > $w2 } {
+	set dw [expr {($w1 - $w2) / 2}]
+	set image2 [::crimp expand const $image2 $dw 0 $dw 0 0]
+    } elseif { $w1 < $w2 } {
+	set dw [expr {($w2 - $w1) / 2}]
+	set image1 [::crimp expand const $image1 $dw 0 $dw 0 0]
     }
 
-    if { [::crimp::height  $image1] > [::crimp::height  $image2] } {
-	set image2 [::crimp expand const $image2 \
-			0 \
-	                [expr { ( [::crimp::height  $image1] - [::crimp::height  $image2] ) / 2  }] \
-			0    \
-			[expr { ( [::crimp::height  $image1] - [::crimp::height  $image2] ) / 2  }] \
-			0]
-    } elseif { [::crimp::height  $image1] < [::crimp::height  $image2] } {
-	set image1 [::crimp expand const $image1 \
-			0 \
-	                [expr { ( [::crimp::height  $image2] - [::crimp::height  $image1] ) / 2  }] \
-			0    \
-			[expr { ( [::crimp::height  $image2] - [::crimp::height  $image1] ) / 2  }] \
-			0]
+    if { $h1 > $h2 } {
+	set dh [expr {($h1 - $h2) / 2}]
+	set image2 [::crimp expand const $image2 0 $dh 0 $dh 0]
+    } elseif { $h1 < $h2 } {
+	set dh [expr {($h2 - $h1) / 2}]
+	set image1 [::crimp expand const $image1 0 $dh 0 $dh 0]
     }
 
-    if { [::crimp::width  $image1] > [::crimp::width  $image2] } {
-	set image2 [::crimp expand const $image2 0	0  1  0  0]
-    } elseif { [::crimp::width  $image1] < [::crimp::width  $image2] } {
-	set image1 [::crimp expand const $image1 0	0  1  0  0]
+    # 2nd half, handles the case dw/dh odd above, by extending only
+    # one side, by the last pixel.
+
+    lassign [dimensions $image1] w1 h1
+    lassign [dimensions $image2] w2 h2
+
+    if { $w1 > $w2 } {
+	set image2 [::crimp expand const $image2 0 0 1 0 0]
+    } elseif { $w1 < $w2 } {
+	set image1 [::crimp expand const $image1 0 0 1 0 0]
     }
 
-    if { [::crimp::height  $image1] > [::crimp::height  $image2] } {
-	set image2 [::crimp expand const $image2 0	0  0  1  0]
-    } elseif { [::crimp::height  $image1] < [::crimp::height  $image2] } {
-	set image1 [::crimp expand const $image1 0	0  0  1  0]
+    if { $h1 > $h2 } {
+	set image2 [::crimp expand const $image2 0 0 0 1 0]
+    } elseif { $h1 < $h2 } {
+	set image1 [::crimp expand const $image1 0 0 0 1 0]
     }
 
-    return [dict create image1 $image1 image2 $image2]
+    return [list $image1 $image2]
 }
 
 # # ## ### ##### ######## #############
@@ -2600,10 +2595,7 @@ proc ::crimp::imregs::translation { image1 image2   } {
 
     # ZERO pading to make both images of the same size
 
-    set data    [::crimp::samesize $image1 $image2]
-
-    set image1   [dict get $data image1]
-    set image2   [dict get $data image2]
+    lassign [::crimp::matchsize $image1 $image2] image1 image2
 
     # Converting to fpcomplex type images for FFT computation
     set fft1 [::crimp::fft::forward \
@@ -2646,10 +2638,7 @@ proc ::crimp::imregs::rotscale { image1 image2   } {
 
     # ZERO pading to make both images of the same size
 
-    set data    [::crimp::samesize $image1 $image2]
-
-    set image1   [dict get $data image1]
-    set image2   [dict get $data image2]
+    lassign [::crimp::matchsize $image1 $image2] image1 image2
 
     # Converting the images to LOG POLAR Axis
     set lpt1   [::crimp::transform::logpolar $image1 360 400]
@@ -2698,10 +2687,7 @@ proc ::crimp::imregs::findobject { image1 image2   } {
     set image2  [::crimp::convert::2grey8 $image2]
     set silhouette    $image2
 
-
-    set paddedimages   [::crimp::samesize $image1 $image2]
-    set image1   [dict get $paddedimages image1]
-    set image2   [dict get $paddedimages image2]
+    lassign [::crimp::matchsize $image1 $image2] image1 image2
 
     # Converting to fpcomplex type images for FFT computation
     # FFT both images, resulting in complex images in the spatial frequency domain.
@@ -2772,10 +2758,7 @@ proc ::crimp::imregs::findobject { image1 image2   } {
     # Scale and rotate the silhouette's FFT by the same amount
     # (alternatively, scale and rotate the silhouette and FFT it again.)
 
-    set paddedimages   [::crimp::samesize $image1 $image2]
-    set image1   [dict get $paddedimages image1]
-    set image2   [dict get $paddedimages image2]
-
+    lassign [::crimp::matchsize $image1 $image2] image1 image2
 
     set fft2 [::crimp::fft::forward \
 		  [::crimp::convert::2complex \

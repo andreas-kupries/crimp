@@ -34,7 +34,7 @@ def op_Registration_complete {
         set lpt2        [::crimp::warp::projective $lpt2 $transform]
 		
 			
-		set statstrans [::crimp::imregs::complete $lpt1 $lpt2 ]
+		set statstrans [::crimp::register::complete $lpt1 $lpt2 ]
 	    log "\n\n"
 	    log $statstrans
 		set disp [::crimp::montage::horizontal $lpt1 $lpt2 ]

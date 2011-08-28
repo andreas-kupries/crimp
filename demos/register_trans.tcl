@@ -1,6 +1,5 @@
-
 def op_register_translation {
-    label {Register Images: Translation (only)}
+    label {Register Images: Translation (only), +intermediates}
     active {
 	expr {[bases] == 1};	# What's this?
     }
@@ -49,6 +48,10 @@ def op_register_translation {
 	    return [list $a $b]
 	}
 
+	# This code is a replica of crimp::register::translation,
+	# modified to keep and then display all (important)
+	# intermediate images.
+
 	proc register {a b} {
 	    # The registration process starts with windowing the input images.
 
@@ -62,7 +65,6 @@ def op_register_translation {
 	    set wa [crimp::convert::2float $a]
 	    set wb [crimp::convert::2float $b]
 
-	    # DELTA imregs::translate - imregs does not window.
 	    set wa [crimp::window $wa]
 	    set wb [crimp::window $wb]
 
@@ -88,9 +90,6 @@ def op_register_translation {
 
 	    # CAMP and CPHASE are the two correlations converted back
 	    # into the pixel domain.
-
-	    # DELTA imregs::translate - imregs uses 'magnitude', instead of stripping the imaginary part.
-	    # NOTE: While the max/min values are different the location is not, so far.
 
 	    set camp   [::crimp::convert_2float_fpcomplex [crimp::fft::backward $numer]]
 	    set cphase [::crimp::convert_2float_fpcomplex [crimp::fft::backward $correl]]
@@ -167,16 +166,8 @@ def op_register_translation {
 	    variable ysol
 
 	    lassign [translate [base] $xshift $yshift] a b
-
-	    # ----------------------------------------------------------------
-
 	    lassign [register $a $b] xsol ysol
-
-	    # I expect that the computed translation will be the location
-	    # of the peak of either i1 or i2. It is not.  For whatever
-	    # reason.
-
-	    log "computed translation = [crimp::imregs::translation $a $b]"
+	    return
 	}
 
 	label .left.xlabel -text X

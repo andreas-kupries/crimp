@@ -2583,38 +2583,39 @@ proc ::crimp::matchsize {image1 image2} {
 
 # # ## ### ##### ######## #############
 
-namespace eval ::crimp::imregs {
+namespace eval ::crimp::register {
     namespace export {[a-z]*}
     namespace ensemble create
 }
 
-proc ::crimp::imregs::translation {image1 image2} {
+proc ::crimp::register::translation {needle haystack} {
 
-    set image1  [::crimp::convert::2grey8 $image1]
-    set image2  [::crimp::convert::2grey8 $image2]
+    set needle   [::crimp::convert::2grey8 $needle]
+    set haystack [::crimp::convert::2grey8 $haystack]
 
     # ZERO pading to make both images of the same size
 
-    lassign [::crimp::matchsize $image1 $image2] image1 image2
-    lassign [::crimp::dimensions $image1] w h
+    lassign [::crimp::matchsize $needle $haystack] needle haystack
+    lassign [::crimp::dimensions $needle] w h
 
-    set image1 [crimp::window $image1]
-    set image2 [crimp::window $image2]
+    # Window both images, to reduce likelyhood of false matches
+    # between linear features of one image and borders of the other.
+
+    set needle   [crimp::window $needle]
+    set haystack [crimp::window $haystack]
 
     # Perform a phase correlation on the FFTs of the inputs.
-    set fft1 [::crimp::fft::forward \
-		  [::crimp::convert::2complex $image1]]
-    set fft2 [::crimp::fft::forward \
-		  [::crimp::convert::2complex $image2]]
+    set fftn [::crimp::fft::forward [::crimp::convert::2complex $needle]]
+    set ffth [::crimp::fft::forward [::crimp::convert::2complex $haystack]]
 
     set correlation [::crimp::divide \
 			 [::crimp::multiply \
-			      $fft2 [::crimp::complex::conjugate $fft1]] \
+			      $ffth [::crimp::complex::conjugate $fftn]] \
 			 [::crimp::multiply \
 			      [::crimp::convert::2complex \
-				   [crimp::complex::magnitude $fft1]] \
+				   [crimp::complex::magnitude $fftn]] \
 			      [::crimp::convert::2complex \
-				   [crimp::complex::magnitude $fft2]]]]
+				   [crimp::complex::magnitude $ffth]]]]
 
     # And back to the pixel domain. Our input were 'real'-only complex
     # images, so the output is the same, modulo round-off. Just
@@ -2624,8 +2625,10 @@ proc ::crimp::imregs::translation {image1 image2} {
     set immag [::crimp::convert_2float_fpcomplex \
 		   [::crimp::fft::backward $correlation]]
 
-    # Finding the coorrdinates of the brightest pixel = correlation peak
-    set stat   [::crimp::statistics basic $immag]
+    # At last, find the coorrdinates of the brightest pixel, i.e. of
+    # the correlation peak.
+
+    set stat [::crimp::statistics basic $immag]
 
     #log "S max  = [format %.11f [dict get $stat channel value max]] @ [dict get $stat channel value max@]"
     #log "S min  = [format %.11f [dict get $stat channel value min]] @ [dict get $stat channel value min@]"
@@ -2638,7 +2641,7 @@ proc ::crimp::imregs::translation {image1 image2} {
     if {$dx > $w/2} { set dx [expr {$dx - $w}] }
     if {$dy > $h/2} { set dy [expr {$dy - $h}] }
 
-    log "S find = $dx $dy"
+    #log "S transform = $dx $dy"
 
     return [dict create \
 		Xshift $dx \
@@ -2647,7 +2650,7 @@ proc ::crimp::imregs::translation {image1 image2} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::imregs::rotscale { image1 image2   } {
+proc ::crimp::register::rotscale { image1 image2   } {
 
     set image1  [::crimp::convert::2grey8 $image1]
     set image2  [::crimp::convert::2grey8 $image2]
@@ -2660,7 +2663,7 @@ proc ::crimp::imregs::rotscale { image1 image2   } {
     set lpt1   [::crimp::transform::logpolar $image1 360 400]
     set lpt2   [::crimp::transform::logpolar $image2 360 400]
 
-    set stats  [::crimp::imregs::translation $lpt1 $lpt2]
+    set stats  [::crimp::register::translation $lpt1 $lpt2]
 
     set angle      [expr { 360- [dict get $stats Xshift] }]
     set rawscale   [dict get $stats Yshift]
@@ -2678,12 +2681,12 @@ proc ::crimp::imregs::rotscale { image1 image2   } {
 		scale [expr {[format %.2f $scale]}]]
 }
 
-proc ::crimp::imregs::complete { image1 image2   } {
+proc ::crimp::register::complete { image1 image2   } {
 
     set image1  [::crimp::convert::2grey8 $image1]
     set image2  [::crimp::convert::2grey8 $image2]
 
-    set statsrotate   [::crimp::imregs::rotscale $image1 $image2]
+    set statsrotate   [::crimp::register::rotscale $image1 $image2]
 
     set transcale   [::crimp::transform scale \
 			 [expr {1 / [dict get $statsrotate scale] }]  \
@@ -2692,12 +2695,12 @@ proc ::crimp::imregs::complete { image1 image2   } {
     set transform   [::crimp::transform::chain $tranrotate $transcale]
     set image2      [::crimp::warp::projective $image2 $transform]
 
-    set statstrans   [::crimp::imregs::translation $image1 $image2]
+    set statstrans   [::crimp::register::translation $image1 $image2]
 
     return [dict merge $statstrans $statsrotate]
 }
 
-proc ::crimp::imregs::findobject { image1 image2   } {
+proc ::crimp::register::findobject { image1 image2   } {
 
     set image1  [::crimp::convert::2grey8 $image1]
     set image2  [::crimp::convert::2grey8 $image2]
@@ -4093,7 +4096,7 @@ namespace eval ::crimp {
     namespace export alpha histogram max min screen add pixel
     namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate
-    namespace export kernel expand threshold gradient effect
+    namespace export kernel expand threshold gradient effect register
     namespace export statistics rotate montage morph integrate divide
     namespace export fft square meta resize warp transform contrast noise
     #

@@ -25,7 +25,7 @@ def op_Registration_translation {
 	    
 
 	    
-	    set statstrans [::crimp::imregs::translation $lpt1 $lpt2 ]
+	    set statstrans [::crimp::register::translation $lpt1 $lpt2 ]
 	    log "\n\n"
 	    log $statstrans
 	    set disp [::crimp::montage::horizontal $lpt1 $lpt2 ]

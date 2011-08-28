@@ -2433,7 +2433,7 @@ proc ::crimp::noise::gaussian {image {mean 0} {variance 0.05}} {
 	return [::crimp::join_2$itype {*}$filtered]
 
     } else {
-	return -code error "Gaussian noise is not supported for image type \"$itype\" must be grey8, grey16, grey32, rgb OR rgba "
+	return -code error "Gaussian noise is not supported for image type \"$itype\", must be grey8, grey16, grey32, rgb OR rgba "
     }
 }
 

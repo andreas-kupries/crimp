@@ -129,7 +129,7 @@ The package currently knows the following types:
 [def [const fpcomplex]]
 	[list_begin definitions]
 	[def Colorspace]	N.A / Floating Point.
-	[def Channels]		2, named "real" ,and "imaginary".
+	[def Channels]		2, named "real", and "imaginary".
 	[def Bit-depth]		4 byte/channel.
 	[def Pixel-size]	8 byte.
 	[list_end]
@@ -420,8 +420,8 @@ The following combinations of fore- and background image types are
 supported:
 
 [example {
-    Result = Foreground Background 
-    ------   ---------- ---------- 
+    Result = Foreground Background
+    ------   ---------- ----------
     grey8    grey8      grey8
     hsv      hsv        hsv
     rgb      rgb        grey8
@@ -675,8 +675,9 @@ These two methods implement 2D FFT (forward) and inverse FFT (backward).
 
 [para]
 The input is restricted to images of the single-channel types,
-i.e. [const float] , [const "grey\{8,16,32\}"] and [const "fpcomplex"]. The result is always
-of type [const float] for input images other than [const fpcomplex] .
+i.e. [const float], [const "grey\{8,16,32\}"] and [const fpcomplex].
+The result is always of type [const float] for input images other than
+[const fpcomplex], which returns an image of the same type instead.
 
 [para]
 The former means that it is necessary to split [const rgb],
@@ -841,7 +842,7 @@ direction, and thus highlight [emph vertical] lines, and vice versa for
 [call [cmd ::crimp] [method {filter wiener}] [arg image] [arg radius]]
 
 This method filters an image that has been degraded by constant power additive
-noise. It uses a pixelwise adaptive Filter method based on statistics estimated 
+noise. It uses a pixelwise adaptive Filter method based on statistics estimated
 from a local neighborhood of each pixel. The default value for radius is 2
 
 [call [cmd ::crimp] [method gamma] [arg image] [arg y]]
@@ -1049,7 +1050,7 @@ These two methods add to the basic set of morphology operations,
 [term opening] and [term closing]. In terms of erosion and dilation:
 
 [example {
-    close = erode o dilate 
+    close = erode o dilate
     open  = dilate o erode
 }]
 
@@ -1134,26 +1135,30 @@ multiplication is divided by [const 255] to scale it back into the
 range [lb]0...255[rb].
 
 [para]
-[call [cmd ::crimp] [method {noise random} ] [arg w] [arg h]]
+[call [cmd ::crimp] [method {noise random}] [arg w] [arg h]]
 
 This method creates an image of type [const float] with the specified
 dimensions. The pixels are set to random values in the interval
 [lb]0...1[rb].
 
-[call [cmd ::crimp] [method {noise saltpepper} ] [arg image] [arg value]]
-[call [cmd ::crimp] [method {noise gaussian} ] [arg image] [arg mean] [arg variance]]
-[call [cmd ::crimp] [method {noise speckle} ] [arg image] [arg variance]]
- 
+[call [cmd ::crimp] [method {noise saltpepper}] [arg image] [opt [arg density]]]
+[call [cmd ::crimp] [method {noise gaussian}] [arg image] [opt [arg mean]] [opt [arg variance]]]
+[call [cmd ::crimp] [method {noise speckle}] [arg image] [opt [arg variance]]]
+
 These methods add noises of different types to the given image.
 
-[para] [emph saltpepper]  adds salt and pepper noise to the image , where value
-is the noise density ,whose default value is 0.05 ,range [lb]0...1[rb].
+[para] [method saltpepper] adds salt and pepper noise of the specified
+[arg density]. This density must be in the range [lb]0...1[rb]. If not
+specified it defaults to [const 0.05].
 
-[para] [emph gaussian] adds gaussian noise of given mean and variance to the image , 
-the default values for mean and variance are 0 and 0.05 respectively and  range [lb]0...1[rb].
+[para] [method gaussian] adds gaussian noise of the specified mean and
+variance to the image. If not specified the mean and variance default
+to [const 0] and [const 0.05], respectively. Both must be in the range
+[lb]0...1[rb].
 
-[para] [emph speckle] adds multiplicative noise of variance to the image , 
-the default value for variance is 0.05 , range [lb]0...1[rb]. 
+[para] [method speckle] adds multiplicative noise of the specified
+variance to the image. This variance must be in the range
+[lb]0...1[rb]. If not specified it defaults to [const 0.05].
 
 [call [cmd ::crimp] [method psychedelia] [arg width] [arg height] [arg frames]]
 
@@ -1819,29 +1824,29 @@ values in the range 0...255 whereas for the types [method rgb] and
 [method hsv] the arguments are triples (3-element lists) specifying
 the R, G, and B (and H, S, and V respectively) values.
 
-[call [cmd ::crimp] [method {imregs translation}] [arg image1] [arg image2]]
+[call [cmd ::crimp] [method {imregs translation}] [arg needle] [arg haystack]]
 
-This method takes two images which are translated copy of each other 
-and returns a dictonary having two keys Xshift Yshift which contains the value of
-translation respectively.
-
-[call [cmd ::crimp] [method {imregs translation}] [arg image1] [arg image2]]
-
-This method takes two images which are translated copy of each other 
-and returns a dictonary having two keys Xshift ,Yshift which contains the value of
-translation respectively.
+This method takes two images which are translated copies of each other
+and returns a dictonary containing the two keys [const Xshift] and
+[const Yshift], which together specify the translation to apply to the
+[arg needle] to place it in the [arg haystack].
 
 [call [cmd ::crimp] [method {imregs rotscale}] [arg image1] [arg image2]]
 
-This method takes two images which are Rotated and Scaled  copy of each other 
-and returns a dictonary having two keys angle ,scale which contains the value of
-Rotation and scaling factor respectively.
+This method takes two images which are rotated and scaled copies of
+each other and returns a dictonary containing the two keys [const
+angle] and [const scale] which specify the rotation and scaling to
+apply to the [arg needle] to match it in the [arg haystack]. Note that
+this may leave the needle still at an translational offeset.
 
 [call [cmd ::crimp] [method {imregs complete}] [arg image1] [arg image2]]
 
-This method takes two images and combines the above two functions 
-and returns a dictonary having four keys Xshift, Yshift, angle, and scale which
-contains the value of Translation ,Rotation and scaling factor respectively.
+This method takes two images and combines the above two functions to
+fully locate the [arg needle] in the [arg haystack]. It returns a
+dictonary containing the four keys [const Xshift], [const Yshift],
+[const angle], and [const scale] which together specify the affine
+transformation to apply to the [arg needle] to place it in the
+[arg haystack] at correct location, rotation, and scaling.
 
 [call [cmd ::crimp] [method {kernel make}] [arg matrix] [opt [arg scale]] [opt [arg offset]]]
 
@@ -2029,7 +2034,7 @@ Thus the relevant definitions are
 
 [para][image linear_wrap]
 
-for the wrapped case, and 
+for the wrapped case, and
 
 [para][image linear_clamp]
 
@@ -2169,12 +2174,14 @@ This method converts an image in a coordinate system in two dimensions,
 where a point is identified by two numbers, one for the logarithm of the
 distance to a certain point, and one for an angle .Here Angle is taken on
 X axis and Logarithm of distance is taken on Y axis. Here xwidth and xheight
-are the dimensions of the output image , xcenter and ycenter being the center 
-point where angle and Logarithm of distance is zero ,and conners = 1 if 
-corners of the image are to be included, 0 if they are to be suppressed. 
-The default values for xcenter ,ycenter ,corners are 0 , 0 , 1 respectively. 
+are the dimensions of the output image, xcenter and ycenter being the center
+point where angle and Logarithm of distance is zero, and conners = 1 if
+corners of the image are to be included, 0 if they are to be suppressed.
+The default values for xcenter, ycenter, corners are 0, 0, 1 respectively.
 
 logpolar { image xwidth xheight { xcenter 0} { ycenter 0} { corners 1} }
+
+
 [call [cmd ::crimp] [method {transform projective}]  [arg a] [arg b] [arg c] [arg d] [arg e] [arg f] [arg g] [arg h]]
 
 This method returns the projective transformation specified by the 3x3
@@ -2248,7 +2255,7 @@ or down, along the specified dimension, while values less than
 [enum] P. Peterlin, "Morphological Operations: An Overview",
        [uri http://www.inf.u-szeged.hu/ssip/1996/morpho/morphology.html]
 
-[enum] Adrien Bousseau, "Mathematical Morphology", 
+[enum] Adrien Bousseau, "Mathematical Morphology",
        PDF at [uri http://artis.imag.fr/Members/Adrien.Bousseau/morphology/]
 
 [list_end]

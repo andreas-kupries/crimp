@@ -2589,14 +2589,12 @@ namespace eval ::crimp::register {
 }
 
 proc ::crimp::register::translation {needle haystack} {
-
     set needle   [::crimp::convert::2grey8 $needle]
     set haystack [::crimp::convert::2grey8 $haystack]
 
     # ZERO pading to make both images of the same size
 
     lassign [::crimp::matchsize $needle $haystack] needle haystack
-    lassign [::crimp::dimensions $needle] w h
 
     # Window both images, to reduce likelyhood of false matches
     # between linear features of one image and borders of the other.
@@ -2604,44 +2602,14 @@ proc ::crimp::register::translation {needle haystack} {
     set needle   [crimp::window $needle]
     set haystack [crimp::window $haystack]
 
-    # Perform a phase correlation on the FFTs of the inputs.
-    set fftn [::crimp::fft::forward [::crimp::convert::2complex $needle]]
-    set ffth [::crimp::fft::forward [::crimp::convert::2complex $haystack]]
-
-    set correlation [::crimp::divide \
-			 [::crimp::multiply \
-			      $ffth [::crimp::complex::conjugate $fftn]] \
-			 [::crimp::multiply \
-			      [::crimp::convert::2complex \
-				   [crimp::complex::magnitude $fftn]] \
-			      [::crimp::convert::2complex \
-				   [crimp::complex::magnitude $ffth]]]]
-
-    # And back to the pixel domain. Our input were 'real'-only complex
-    # images, so the output is the same, modulo round-off. Just
-    # stripping off the imaginary part is enough, after the inverse
-    # FFT was run.
-
-    set immag [::crimp::convert_2float_fpcomplex \
-		   [::crimp::fft::backward $correlation]]
-
-    # At last, find the coorrdinates of the brightest pixel, i.e. of
-    # the correlation peak.
-
-    set stat [::crimp::statistics basic $immag]
-
-    #log "S max  = [format %.11f [dict get $stat channel value max]] @ [dict get $stat channel value max@]"
-    #log "S min  = [format %.11f [dict get $stat channel value min]] @ [dict get $stat channel value min@]"
-
-    lassign [dict get $stat channel value max@] dx dy
+    lassign [TranslationCore $needle $haystack] dx dy
 
     # The raw translation values are _unsigned_ in the range 0 to
     # image width/height. Convert to signed.
 
+    lassign [::crimp::dimensions $needle] w h
     if {$dx > $w/2} { set dx [expr {$dx - $w}] }
     if {$dy > $h/2} { set dy [expr {$dy - $h}] }
-
-    #log "S transform = $dx $dy"
 
     return [dict create \
 		Xshift $dx \
@@ -2650,35 +2618,23 @@ proc ::crimp::register::translation {needle haystack} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::register::rotscale { image1 image2   } {
+proc ::crimp::register::rotscale {needle haystack} {
 
-    set image1  [::crimp::convert::2grey8 $image1]
-    set image2  [::crimp::convert::2grey8 $image2]
+    set needle   [::crimp::convert::2grey8 $needle]
+    set haystack [::crimp::convert::2grey8 $haystack]
 
     # ZERO pading to make both images of the same size
 
-    lassign [::crimp::matchsize $image1 $image2] image1 image2
+    lassign [::crimp::matchsize $needle $haystack] needle haystack
 
-    # Converting the images to LOG POLAR Axis
-    set lpt1   [::crimp::transform::logpolar $image1 360 400]
-    set lpt2   [::crimp::transform::logpolar $image2 360 400]
+    set needle   [crimp::window $needle]
+    set haystack [crimp::window $haystack]
 
-    set stats  [::crimp::register::translation $lpt1 $lpt2]
-
-    set angle      [expr { 360- [dict get $stats Xshift] }]
-    set rawscale   [dict get $stats Yshift]
-
-    set PI 3.1415926535897
-
-    if {$rawscale < [expr {400 - $rawscale }] } {
-	set scale [expr { exp ($rawscale * 2 * $PI / 360) }]
-    } else {
-	set scale [expr { 1 / (exp  ((400 - $rawscale ) * 2* $PI / 360 )) }]
-    }
+    lassign [RotScaleCore $needle $haystack] angle scale
 
     return [dict create \
-		angle [expr {[format %.2f $angle]}] \
-		scale [expr {[format %.2f $scale]}]]
+		angle $angle \
+		scale $scale]
 }
 
 proc ::crimp::register::complete { image1 image2   } {
@@ -2806,6 +2762,100 @@ proc ::crimp::register::findobject { image1 image2   } {
 		Xshift [lindex $val 0] \
 		Yshift [lindex $val 1]]
 
+}
+
+proc ::crimp::register::RotScaleCore {needle haystack} {
+    package require math::constants
+    math::constants::constants pi
+
+    # Assumptions: needle and haystack have the same size, are of type
+    # grey8, and windowed.
+
+    # Convert the inputs into log-polar form.
+
+    # Note: 360 for the angle means a precision of +/- 1 degree for the registration.
+    # For higher precision we either have to enlarge the log-polar image appropriately,
+    # or find an algorithm which does sub-pixel registration.
+
+    # Note 2: It is unclear how the 400 relates to the precision of
+    # the scale factor, and how it was chosen.
+
+    set lptn [::crimp::transform::logpolar $needle   360 400]
+    set lpth [::crimp::transform::logpolar $haystack 360 400]
+
+    lassign [TranslationCore $lptn $lpth] rawangle rawscale
+    # The resulting dx and dy are our raw angle and scale, although in
+    # need of a bit of post processing.
+
+    # rawangle in 0...360, degrees
+    # rawscale in 0...400, log domain
+
+    log "A $rawangle S $rawscale"
+
+    if {$rawangle < (360-$rawangle)} {
+	set angle [expr {- $rawangle}]
+    } else {
+	set angle [expr {360 - $rawangle}]
+    }
+
+    if {$rawscale < (400 - $rawscale)} {
+	set scale [expr {exp (($rawscale * 2 * $pi) / 360.) }]
+    } else {
+	set scale [expr {1. / (exp (((400 - $rawscale) * 2* $pi) / 360.))}]
+    }
+
+    log "A' $angle S' $scale"
+
+    return [list $angle $scale]
+}
+
+proc ::crimp::register::TranslationCore {needle haystack} {
+    # Assumptions: needle and haystack have the same size, are of type
+    # grey8, and windowed.
+
+    #lassign [::crimp::dimensions $needle] w h
+
+    # Perform a phase correlation on the FFTs of the inputs.
+    set fftn [::crimp::fft::forward [::crimp::convert::2complex $needle]]
+    set ffth [::crimp::fft::forward [::crimp::convert::2complex $haystack]]
+
+    set correlation [::crimp::divide \
+			 [::crimp::multiply \
+			      $ffth [::crimp::complex::conjugate $fftn]] \
+			 [::crimp::multiply \
+			      [::crimp::convert::2complex \
+				   [crimp::complex::magnitude $fftn]] \
+			      [::crimp::convert::2complex \
+				   [crimp::complex::magnitude $ffth]]]]
+
+    # And back to the pixel domain. Our input were 'real'-only complex
+    # images, so the output is the same, modulo round-off. Just
+    # stripping off the imaginary part is enough, after the inverse
+    # FFT was run.
+
+    set immag [::crimp::convert_2float_fpcomplex \
+		   [::crimp::fft::backward $correlation]]
+
+    # At last, find the coorrdinates of the brightest pixel, i.e. of
+    # the correlation peak.
+
+    set stat [::crimp::statistics basic $immag]
+
+    #log "S max  = [format %.11f [dict get $stat channel value max]] @ [dict get $stat channel value max@]"
+    #log "S min  = [format %.11f [dict get $stat channel value min]] @ [dict get $stat channel value min@]"
+
+    lassign [dict get $stat channel value max@] dx dy
+
+    # The raw translation values are _unsigned_ in the range 0 to
+    # image width/height. Convert to signed.
+
+    #if {$dx > $w/2} { set dx [expr {$dx - $w}] }
+    #if {$dy > $h/2} { set dy [expr {$dy - $h}] }
+
+    # Our result are translation offsets from the needle into the
+    # haystack.
+
+    return [list $dx $dy]
 }
 
 # # ## ### ##### ######## #############

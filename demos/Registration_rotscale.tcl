@@ -26,7 +26,7 @@ def op_Registration_rotscale {
         set image2      [::crimp::warp::projective $image1 $transform]
 		
 			
-		set statstrans [::crimp::imregs::rotscale $image1 $image2 ]
+		set statstrans [::crimp::register::rotscale $image1 $image2 ]
 	    log "\n\n"
 	    log $statstrans
 		set disp [::crimp::montage::horizontal $image1 $image2 ]

@@ -2616,9 +2616,13 @@ proc ::crimp::imregs::translation {image1 image2} {
 			      [::crimp::convert::2complex \
 				   [crimp::complex::magnitude $fft2]]]]
 
-    # And back to the pixel domain
-    set ifft  [crimp::fft::backward $correlation]
-    set immag [crimp::complex::magnitude $ifft]
+    # And back to the pixel domain. Our input were 'real'-only complex
+    # images, so the output is the same, modulo round-off. Just
+    # stripping off the imaginary part is enough, after the inverse
+    # FFT was run.
+
+    set immag [::crimp::convert_2float_fpcomplex \
+		   [::crimp::fft::backward $correlation]]
 
     # Finding the coorrdinates of the brightest pixel = correlation peak
     set stat   [::crimp::statistics basic $immag]

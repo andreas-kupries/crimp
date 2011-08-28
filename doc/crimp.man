@@ -1831,13 +1831,13 @@ and returns a dictonary containing the two keys [const Xshift] and
 [const Yshift], which together specify the translation to apply to the
 [arg needle] to place it in the [arg haystack].
 
-[call [cmd ::crimp] [method {imregs rotscale}] [arg image1] [arg image2]]
+[call [cmd ::crimp] [method {imregs rotscale}] [arg needle] [arg haystack]]
 
 This method takes two images which are rotated and scaled copies of
-each other and returns a dictonary containing the two keys [const
-angle] and [const scale] which specify the rotation and scaling to
-apply to the [arg needle] to match it in the [arg haystack]. Note that
-this may leave the needle still at an translational offeset.
+each other and returns a dictonary containing the two keys
+[const angle] and [const scale], which specify the rotation and scaling
+to apply to the [arg needle] to match it in the [arg haystack]. Note
+that this may leave the needle still at an translational offeset.
 
 [call [cmd ::crimp] [method {imregs complete}] [arg image1] [arg image2]]
 

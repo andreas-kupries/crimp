@@ -2588,7 +2588,7 @@ namespace eval ::crimp::imregs {
     namespace ensemble create
 }
 
-proc ::crimp::imregs::translation { image1 image2   } {
+proc ::crimp::imregs::translation {image1 image2} {
 
     set image1  [::crimp::convert::2grey8 $image1]
     set image2  [::crimp::convert::2grey8 $image2]
@@ -2596,14 +2596,16 @@ proc ::crimp::imregs::translation { image1 image2   } {
     # ZERO pading to make both images of the same size
 
     lassign [::crimp::matchsize $image1 $image2] image1 image2
+    lassign [::crimp::dimensions $image1] w h
 
-    # Converting to fpcomplex type images for FFT computation
+    set image1 [crimp::window $image1]
+    set image2 [crimp::window $image2]
+
+    # Perform a phase correlation on the FFTs of the inputs.
     set fft1 [::crimp::fft::forward \
-		  [::crimp::convert::2complex \
-		       [::crimp::convert::2float $image1]]]
+		  [::crimp::convert::2complex $image1]]
     set fft2 [::crimp::fft::forward \
-		  [::crimp::convert::2complex \
-		       [::crimp::convert::2float $image2]]]
+		  [::crimp::convert::2complex $image2]]
 
     set correlation [::crimp::divide \
 			 [::crimp::multiply \
@@ -2614,19 +2616,29 @@ proc ::crimp::imregs::translation { image1 image2   } {
 			      [::crimp::convert::2complex \
 				   [crimp::complex::magnitude $fft2]]]]
 
-
+    # And back to the pixel domain
     set ifft  [crimp::fft::backward $correlation]
+    set immag [crimp::complex::magnitude $ifft]
 
-    set immag   [crimp::complex::magnitude $ifft]
-
-    # finding the Co-Ordinates of the brightest pixel
+    # Finding the coorrdinates of the brightest pixel = correlation peak
     set stat   [::crimp::statistics basic $immag]
-    set max    [dict get $stat channel value max]
-    set min    [dict get $stat channel value min]
-    set val    [::crimp::find $immag $max $min]
 
-    return [ dict create Xshift [lindex $val 0]  \
-		 Yshift [lindex $val 1]]
+    #log "S max  = [format %.11f [dict get $stat channel value max]] @ [dict get $stat channel value max@]"
+    #log "S min  = [format %.11f [dict get $stat channel value min]] @ [dict get $stat channel value min@]"
+
+    lassign [dict get $stat channel value max@] dx dy
+
+    # The raw translation values are _unsigned_ in the range 0 to
+    # image width/height. Convert to signed.
+
+    if {$dx > $w/2} { set dx [expr {$dx - $w}] }
+    if {$dy > $h/2} { set dy [expr {$dy - $h}] }
+
+    log "S find = $dx $dy"
+
+    return [dict create \
+		Xshift $dx \
+		Yshift $dy]
 }
 
 # # ## ### ##### ######## #############
@@ -2649,7 +2661,7 @@ proc ::crimp::imregs::rotscale { image1 image2   } {
     set angle      [expr { 360- [dict get $stats Xshift] }]
     set rawscale   [dict get $stats Yshift]
 
-    set PI    3.1415926535897
+    set PI 3.1415926535897
 
     if {$rawscale < [expr {400 - $rawscale }] } {
 	set scale [expr { exp ($rawscale * 2 * $PI / 360) }]

@@ -18,28 +18,33 @@ def op_register_rotscale_2 {
 	    # also get a bit of noise mixed into them, to make the
 	    # task of registering them more difficult.
 
+	    set scale [expr {1./$scale}]
 	    log ==========================================
-	    log grey\t$angle\t$scale
+	    log grey
 
 	    set image [crimp convert 2grey8 $image]
 
-	    log warp
+	    log warp\t$angle\t$scale
 
-	    set hay [::crimp::warp::projective $image \
-			 [::crimp::transform::chain \
-			      [::crimp::transform::rotate $angle] \
-			      [::crimp::transform::scale  $scale $scale]]]
+	    # The needle is derived from the original image by
+	    # rotation and scaling. To avoid the original's borders we
+	    # then cut a 100x100 piece from the center.
+	    set needle [::crimp::warp::projective $image \
+			    [::crimp::transform::chain \
+				 [::crimp::transform::rotate $angle] \
+				 [::crimp::transform::scale  $scale $scale]]]
 
-	    # A and B are the first and second images, with the second
-	    # rotated and scaled with respect to the first.
+	    lassign [crimp::dimensions $needle] w h
+	    set needle [crimp::cut $needle \
+			    [expr {$w/2 - 50}] [expr {$h/2 - 50}] 100 100]
 
 	    log noise
 
 	    # Put in some noise
-	    set image [crimp::noise::gaussian $image 0 0.1]
-	    set hay   [crimp::noise::gaussian $hay   0 0.1]
+	    set image  [crimp::noise::gaussian $image  0 0.01]
+	    set needle [crimp::noise::gaussian $needle 0 0.01]
 
-	    return [list $image $hay]
+	    return [list $needle $image]
 	}
 
 	proc SHOW {args} {

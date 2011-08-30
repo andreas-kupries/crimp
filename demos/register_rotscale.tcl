@@ -1,5 +1,5 @@
-def op_register_translation {
-    label {Register Images: Translation, +intermediates}
+def op_register_rotscale {
+    label {Register Images: Rot/Scale, +intermediates}
     active {
 	expr {[bases] == 1};	# What's this?
     }
@@ -7,52 +7,55 @@ def op_register_translation {
 	show
     }
     setup {
-	variable xshift 90
-	variable yshift 30
-	variable xsol {}
-	variable ysol {}
+	package require math::constants
+	math::constants::constants pi
 
-	proc translate {image dx dy} {
+	variable angle 33
+	variable scale 1
+	variable aout {}
+	variable sout {}
+
+	proc rotate_and_scale {image angle scale} {
 	    # Generate two images from the input, which are translated
 	    # relative to each other, by the specified deltas. They
 	    # also get a bit of noise mixed into them, to make the
 	    # task of registering them more difficult.
 
+	    set scale [expr {1./$scale}]
+	    log ==========================================
+	    log grey
+
 	    set image [crimp convert 2grey8 $image]
 
-	    if {$dx > 0} {
-		set x1 $dx
-		set x2 0
-	    } else {
-		set x2 [expr {-$dx}]
-		set x1 0
-	    }
-	    if {$dy > 0} {
-		set y1 $dy
-		set y2 0
-	    } else {
-		set y2 [expr {-$dy}]
-		set y1 0
-	    }
+	    log warp\t$angle\t$scale
 
-	    # A and B are the first and second images, with the second
-	    # displaced with respect to the first.
+	    # The needle is derived from the original image by
+	    # rotation and scaling. To avoid the original's borders we
+	    # then cut a 100x100 piece from the center.
+	    set needle [::crimp::warp::projective $image \
+			    [::crimp::transform::chain \
+				 [::crimp::transform::rotate $angle] \
+				 [::crimp::transform::scale  $scale $scale]]]
 
-	    set a [crimp::expand replicate $image $x1 $y1 $x2 $y2]
-	    set b [crimp::expand replicate $image $x2 $y2 $x1 $y1]
+	    lassign [crimp::dimensions $needle] w h
+	    set needle [crimp::cut $needle \
+			    [expr {$w/2 - 50}] [expr {$h/2 - 50}] 100 100]
+
+	    log noise
 
 	    # Put in some noise
-	    set a [crimp::noise::gaussian $a 0 0.1]
-	    set b [crimp::noise::gaussian $b 0 0.1]
+	    set image  [crimp::noise::gaussian $image  0 0.01]
+	    set needle [crimp::noise::gaussian $needle 0 0.01]
 
-	    return [list $a $b]
+	    return [list $needle $image]
 	}
 
-	# This code is a replica of crimp::register::translation,
+	# This code is a replica of crimp::register::rotscale,
 	# modified to keep and then display all (important)
 	# intermediate images.
 
 	proc register {a b} {
+	    variable pi
 	    # The registration process starts with windowing the input images.
 
 	    log =========================================================
@@ -68,11 +71,16 @@ def op_register_translation {
 	    set wa [crimp::window $wa]
 	    set wb [crimp::window $wb]
 
-	    # FA and FB are the Fourier transforms of the windowed inputs.
+	    # LA and LB are the log-polar transforms of the windowed inputs.
+
+	    set la [::crimp::transform::logpolar $wa 360 400]
+	    set lb [::crimp::transform::logpolar $wb 360 400]
+
+	    # FA and FB are the Fourier transforms of the log-polar transforms.
 	    # TODO - We need 2-d real-to-complex FFT!
 
-	    set fa [crimp::fft::forward [crimp::convert::2complex $wa]]
-	    set fb [crimp::fft::forward [crimp::convert::2complex $wb]]
+	    set fa [crimp::fft::forward [crimp::convert::2complex $la]]
+	    set fb [crimp::fft::forward [crimp::convert::2complex $lb]]
 
 	    # MA and MB are the magnitudes of the components of FA and FB
 	    set ma [crimp::complex::magnitude $fa]
@@ -100,12 +108,14 @@ def op_register_translation {
 	    # We show	left		right
 	    #		Input A		Input B
 	    #		Input A		Input B	(windowed)
+	    #		log-polar A	log-polar B
 	    #		FFT A		FFT B	(log domain!)
 	    #		C AMP		C PHASE
 
 	    show_image [crimp::montage::vertical \
 			    [crimp::montage::horizontal $a $b] \
 			    [crimp::FITFLOAT [crimp::montage::horizontal $wa $wb]] \
+			    [crimp::FITFLOAT [crimp::montage::horizontal $la $lb]] \
 			    [crimp::FITFLOAT [crimp::montage::horizontal \
 						  [crimp::log_float $ma] \
 						  [crimp::log_float $mb]]] \
@@ -124,70 +134,87 @@ def op_register_translation {
 	    # Compute location for MIN, and show. Not part of the proc
 	    # result however.
 	    lassign [dict get $st channel value min@] dx dy
-	    set dx [fixdelta $dx $w]
-	    set dy [fixdelta $dy $h]
 	    log "P min dx/dy = $dx $dy"
 
 	    # Locate the peak, the maximum correlation telling us the translation.
 	    lassign [dict get $st channel value max@] dx dy
-	    set dx [fixdelta $dx $w]
-	    set dy [fixdelta $dy $h]
-
 	    log "P max dx/dy = $dx $dy"
 
 	    set st [crimp statistics basic [crimp::FITFLOAT $cphase]]
 	    log "Q max  = [format %.11f [dict get $st channel luma max]] @ [dict get $st channel luma max@]"
 	    log "Q min  = [format %.11f [dict get $st channel luma min]] @ [dict get $st channel luma min@] ****"
 
-	    # We may have to flip the sign of dx/dy, depending on
-	    # which of the images A and B we see as the dixed
-	    # base/reference and which as translated.
+	    # Convert the translation parameters operating on the
+	    # log-polar intermediates into angle and scale for the
+	    # inputs.
 
-	    return [list $dx $dy]
+	    if {$dx < (360-$dx)} {
+		set angle [expr {- $dx}]
+	    } else {
+		set angle [expr {360 - $dx}]
+	    }
+
+	    if {$dy < (400 - $dy)} {
+		set scale [expr {exp (($dy * 2 * $pi) / 360.) }]
+	    } else {
+		set scale [expr {1. / (exp (((400 - $dy) * 2 * $pi) / 360.))}]
+	    }
+
+	    log "P max angle $angle, scale $scale"
+
+	    return [list $angle $scale]
 	}
 
-	proc fixdelta {dx w} {
-	    # **** Values are _unsigned_ in the range 0 to image width/height. ****
-	    # **** Convert to signed. ****
-
-	    if {$dx > $w/2} { set dx [expr {$dx - $w}] }
-	    return $dx
-	}
-
-	proc show {args} {
-	    # args = scale slider info, ignored.
-
-	    # slider locations
-	    variable xshift
-	    variable yshift
-
-	    # result output, gui
-	    variable xsol
-	    variable ysol
-
-	    lassign [translate [base] $xshift $yshift] a b
-	    lassign [register $a $b] xsol ysol
+	proc SHOW {args} {
+	    variable token
+	    catch { after cancel $token }
+	    set token [after idle DEMO::show]
 	    return
 	}
 
-	label .left.xlabel -text X
-	label .left.ylabel -text Y
+	proc show {} {
+	    # args = scale slider info, ignored.
 
-	scale .left.xshift -variable ::DEMO::xshift \
-	    -from -150 -to 150 -resolution 1 \
+	    # slider locations
+	    variable angle
+	    variable scale
+
+	    # result output, gui
+	    variable aout
+	    variable sout
+
+	    lassign [rotate_and_scale [base] $angle $scale] a b
+
+	    log register/rot-scale
+
+	    lassign [register $a $b] ax sx
+
+	    set aout [format %.2f $ax]
+	    set sout [format %.2f $sx]
+
+	    log OK
+	    return
+	}
+
+	label .left.xlabel -text Angle
+	label .left.ylabel -text Scale
+
+	scale .left.angle -variable ::DEMO::angle \
+	    -from -180 -to 180 -resolution 0.1 \
 	    -length 300 -orient vertical \
-	    -command ::DEMO::show
+	    -command ::DEMO::SHOW
 
-	scale .left.yshift -variable ::DEMO::yshift \
-	    -from -150 -to 150 -resolution 1 \
+	scale .left.scale -variable ::DEMO::scale \
+	    -from 0.2 -to 20 -resolution 0.1 \
 	    -length 300 -orient vertical \
-	    -command ::DEMO::show
+	    -command ::DEMO::SHOW
 
-	label .left.xsol -textvariable ::DEMO::xsol
-	label .left.ysol -textvariable ::DEMO::ysol
+	label .left.aout -textvariable ::DEMO::aout
+	label .left.sout -textvariable ::DEMO::sout
 
 	grid .left.xlabel .left.ylabel 
-	grid .left.xshift .left.yshift -sticky ns
-	grid .left.xsol .left.ysol
+	grid .left.angle .left.scale -sticky ns
+	grid .left.aout .left.sout
+
     }
 }

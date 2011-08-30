@@ -1,5 +1,5 @@
 def op_register_translation_2 {
-    label {Register Images: Translation (only), plain}
+    label {Register Images: Translation, plain}
     active {
 	expr {[bases] == 1};	# What's this?
     }

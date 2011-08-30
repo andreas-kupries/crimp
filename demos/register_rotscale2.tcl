@@ -1,5 +1,5 @@
 def op_register_rotscale_2 {
-    label {Register Images: Rot/Scale (only), plain}
+    label {Register Images: Rot/Scale, plain}
     active {
 	expr {[bases] == 1};	# What's this?
     }
@@ -69,7 +69,7 @@ def op_register_rotscale_2 {
 
 	    show_image [crimp::montage::horizontal $a $b]
 
-	    log register
+	    log register/rot-scale
 
 	    lassign [crimp register rotscale $a $b] _ ax _ sx
 

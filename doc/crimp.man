@@ -670,6 +670,7 @@ relevant edges. This is also called tiling.
 [call [cmd ::crimp] [method {fft forward}] [arg image]]
 [call [cmd ::crimp] [method {fft backward}] [arg image]]
 [keywords fft {fast fourier transform} {fourier transform} {inverse fourier transform}]
+[keywords {transform, fast fourier} {transform, fourier} {transform, inverse fourier}]
 
 These two methods implement 2D FFT (forward) and inverse FFT (backward).
 
@@ -954,6 +955,31 @@ returned by "[method {map inverse}]".
 
 This method supports all image types supported by the method
 [method remap].
+
+
+[call [cmd ::crimp] [method logpolar] [arg image] [arg rwidth] [arg rheight] [opt [arg xcenter]] [opt [arg ycenter]] [opt [arg corners]][
+[keywords {log-polar transformation} {transformation, log-polar}]
+
+This method takes an [arg image] and returns the log-polar transformation
+of the input. This means that in the result each pixel is described by an
+angle and the logarithm of the distance to a chosen point.
+
+[para] The angle is plotted on the x-axis of the result, as fraction or
+multiples of degrees, depending on the chosen resolution [arg rwidth].
+A value of [const 360], for example, provides a resolution of 1 degree
+in the result. The angle is counted from 0 due right (the positive x-axis
+of the input) counterclockwise.
+
+[para] The log of the distance is plotted on the y-axis of the result,
+with a precision of [arg rheight].
+
+[para] The [term {center point}] is specified as offset [arg xcenter],
+[arg ycenter] from the center of the input image. I.e. the defaults of
+(0, 0) for both, when not specified, refer to the center of the input.
+
+[para] The optional flag [arg corners] specifies whether to include the
+corners of the input in the result ([const true]), or not ([const false]).
+This defaults to [const true], including the corners.
 
 
 [call [cmd ::crimp] [method matrix] [arg image] [arg matrix]]
@@ -2167,20 +2193,6 @@ first, then the one before it, etc.
 
 This method computes and returns the inverse of the specified
 projective [arg transform]ation.
-
-[call [cmd ::crimp] [method {transform logpolar}]  [arg image] [arg xwidth] [arg xheight] [arg xcenter] [arg ycenter] [arg corners]]
-
-This method converts an image in a coordinate system in two dimensions,
-where a point is identified by two numbers, one for the logarithm of the
-distance to a certain point, and one for an angle .Here Angle is taken on
-X axis and Logarithm of distance is taken on Y axis. Here xwidth and xheight
-are the dimensions of the output image, xcenter and ycenter being the center
-point where angle and Logarithm of distance is zero, and conners = 1 if
-corners of the image are to be included, 0 if they are to be suppressed.
-The default values for xcenter, ycenter, corners are 0, 0, 1 respectively.
-
-logpolar { image xwidth xheight { xcenter 0} { ycenter 0} { corners 1} }
-
 
 [call [cmd ::crimp] [method {transform projective}]  [arg a] [arg b] [arg c] [arg d] [arg e] [arg f] [arg g] [arg h]]
 

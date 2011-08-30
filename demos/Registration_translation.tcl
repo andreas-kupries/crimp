@@ -20,8 +20,8 @@ def op_Registration_translation {
 	    set tranrotate  [::crimp::transform rotate [expr {360 - $xshift } ] ] 
 	    set image2      [::crimp::warp::projective $image1 $tranrotate]
 	    
-	    set lpt1 [crimp::transform::logpolar $image1 360 360 ]
-	    set lpt2 [crimp::transform::logpolar $image2 360 360 ]
+	    set lpt1 [crimp::logpolar $image1 360 360 ]
+	    set lpt2 [crimp::logpolar $image2 360 360 ]
 	    
 
 	    

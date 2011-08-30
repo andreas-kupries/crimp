@@ -12,7 +12,12 @@ Tcl_Obj* mapObj
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
 
-#define INTYPENAME grey16
+#undef INTYPENAME
+#undef INTYPE
+#undef OUTTYPENAME
+#undef OUTTYPE
+
+#define INTYPENAME  grey16
 #define INTYPE unsigned short
 #define OUTTYPENAME grey8
 #define OUTTYPE unsigned char

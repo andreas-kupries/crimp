@@ -2678,9 +2678,8 @@ proc ::crimp::register::findobject { image1 image2   } {
     set fft2mag [::crimp::complex::magnitude $fft2]
 
     #5 Take the LPT of both absolute-value images.
-    set lpt1   [::crimp::transform::logpolar $fft1mag 360 400]
-    set lpt2   [::crimp::transform::logpolar $fft2mag 360 400]
-
+    set lpt1    [::crimp::logpolar $fft1mag 360 400]
+    set lpt2    [::crimp::logpolar $fft2mag 360 400]
 
     # 6. Take the FFT of both LPT's, giving two complex images.
     set fft21 [::crimp::fft::forward \
@@ -2780,8 +2779,8 @@ proc ::crimp::register::RotScaleCore {needle haystack} {
     # Note 2: It is unclear how the 400 relates to the precision of
     # the scale factor, and how it was chosen.
 
-    set lptn [::crimp::transform::logpolar $needle   360 400]
-    set lpth [::crimp::transform::logpolar $haystack 360 400]
+    set lptn [::crimp::logpolar $needle   360 400]
+    set lpth [::crimp::logpolar $haystack 360 400]
 
     lassign [TranslationCore $lptn $lpth] rawangle rawscale
     # The resulting dx and dy are our raw angle and scale, although in
@@ -2790,7 +2789,7 @@ proc ::crimp::register::RotScaleCore {needle haystack} {
     # rawangle in 0...360, degrees
     # rawscale in 0...400, log domain
 
-    log "A $rawangle S $rawscale"
+    #log "A $rawangle S $rawscale"
 
     if {$rawangle < (360-$rawangle)} {
 	set angle [expr {- $rawangle}]
@@ -2804,7 +2803,7 @@ proc ::crimp::register::RotScaleCore {needle haystack} {
 	set scale [expr {1. / (exp (((400 - $rawscale) * 2* $pi) / 360.))}]
     }
 
-    log "A' $angle S' $scale"
+    #log "A' $angle S' $scale"
 
     return [list $angle $scale]
 }
@@ -3059,27 +3058,21 @@ proc ::crimp::transform::CHECK {transform {prefix {}}} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::transform::logpolar { image xwidth xheight { xcenter 0} { ycenter 0} { corners 1} } {
+proc ::crimp::logpolar {image rwidth rheight {xcenter 0} {ycenter 0} {corners 1}} {
+    set itype [::crimp::TypeOf $image]
+    if {[::crimp::Has lpt_$itype]} {
+	lassign [::crimp::dimensions $image] width height
 
+	set hcenter [expr {$width  / 2 + $xcenter}]
+	set vcenter [expr {$height / 2 + $ycenter}]
 
- set itype     [::crimp::TypeOf $image]
-
- set width     [::crimp::width  $image]
- set height    [::crimp::height $image]
- set hcenter   [expr { $width  / 2 + $xcenter  }]
- set vcenter   [expr { $height / 2 + $ycenter  }]
-
-
-if {[::crimp::Has lpt_$itype]} {
-       return [::crimp::lpt_$itype  $image $width $height $hcenter $vcenter $xwidth $xheight $corners]
-   } else {
-	 return -code error "LOG POLAR is not supported for image type \"$itype\" "
-	}
-
+	return [::crimp::lpt_$itype $image $width $height $hcenter $vcenter $rwidth $rheight $corners]
+    } else {
+	return -code error "The log-polar transformation is not supported for image type \"$itype\" "
+    }
 }
 
 # # ## ### ##### ######## #############
-
 ## warping images
 
 namespace eval ::crimp::warp {
@@ -4145,7 +4138,7 @@ namespace eval ::crimp {
     namespace export wavy psychedelia matrix blank filter crop
     namespace export alpha histogram max min screen add pixel
     namespace export subtract difference multiply pyramid mapof
-    namespace export downsample upsample decimate interpolate
+    namespace export downsample upsample decimate interpolate logpolar
     namespace export kernel expand threshold gradient effect register
     namespace export statistics rotate montage morph integrate divide
     namespace export fft square meta resize warp transform contrast noise

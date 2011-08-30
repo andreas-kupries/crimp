@@ -39,8 +39,8 @@ def op_register_rotscale {
 
 	    # LA and LB are the log-polar transforms of the windowed inputs.
 
-	    set la [::crimp::transform::logpolar $wa 360 400]
-	    set lb [::crimp::transform::logpolar $wb 360 400]
+	    set la [::crimp::logpolar $wa 360 400]
+	    set lb [::crimp::logpolar $wb 360 400]
 
 	    # FA and FB are the Fourier transforms of the log-polar transforms.
 	    # TODO - We need 2-d real-to-complex FFT!

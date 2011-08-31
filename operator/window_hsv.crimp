@@ -1,4 +1,4 @@
-window_grey8
+window_hsv
 Tcl_Obj* imageObj
 
 crimp_image* image;
@@ -7,7 +7,7 @@ crimp_image* result;
 int x, y;
 float halfw, halfh, tmp, weightx, weighty;
 
-crimp_input (imageObj, image, grey8);
+crimp_input (imageObj, image, hsv);
 
 /*
  * outpixel(x,y) = weight(x,width) * weight(y,height) * inpixel(x,y)
@@ -28,7 +28,15 @@ for (y = 0; y < image->h; y++) {
 	tmp     = (x - halfw - 0.5) / halfw;
 	weightx = 1.0 - tmp * tmp;
 
-	GREY8 (result, x, y) = GREY8 (image, x, y) * weightx * weighty;
+	/*
+	 * As the windowing is meant to fade pixels towards black we are not
+	 * changing the hue, nor saturation, only the value (luma
+	 * approximation).
+	 */
+
+	H (result, x, y) = H (image, x, y);
+	S (result, x, y) = S (image, x, y);
+	V (result, x, y) = V (image, x, y) * weightx * weighty;
     }
 }   
 

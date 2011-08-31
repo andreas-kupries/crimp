@@ -1,4 +1,4 @@
-window_grey8
+window_fpcomplex
 Tcl_Obj* imageObj
 
 crimp_image* image;
@@ -7,7 +7,7 @@ crimp_image* result;
 int x, y;
 float halfw, halfh, tmp, weightx, weighty;
 
-crimp_input (imageObj, image, grey8);
+crimp_input (imageObj, image, fpcomplex);
 
 /*
  * outpixel(x,y) = weight(x,width) * weight(y,height) * inpixel(x,y)
@@ -28,7 +28,8 @@ for (y = 0; y < image->h; y++) {
 	tmp     = (x - halfw - 0.5) / halfw;
 	weightx = 1.0 - tmp * tmp;
 
-	GREY8 (result, x, y) = GREY8 (image, x, y) * weightx * weighty;
+	RE (result, x, y) = RE (image, x, y) * weightx * weighty;
+	IM (result, x, y) = IM (image, x, y) * weightx * weighty;
     }
 }   
 

@@ -1569,10 +1569,12 @@ situation the result will contain the physical coordinates of the
 conceptual origin point in its meta data, under the hierarchical key
 [const {crimp origin}].
 
-[call [cmd ::crimp] [method {window}] [arg image]]
+[call [cmd ::crimp] [method window] [arg image]]
+[keywords windowing]
 
-This method takes an image, and apply a window function
-to it so that it fades to black at the edges
+This method takes an image, applies a windowing function to it that
+fades the pixels to black towards the edges, and returns the windowed
+result.
 
 [list_end]
 

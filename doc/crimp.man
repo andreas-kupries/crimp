@@ -960,15 +960,16 @@ This method supports all image types supported by the method
 [call [cmd ::crimp] [method logpolar] [arg image] [arg rwidth] [arg rheight] [opt [arg xcenter]] [opt [arg ycenter]] [opt [arg corners]][
 [keywords {log-polar transformation} {transformation, log-polar}]
 
-This method takes an [arg image] and returns the log-polar transformation
-of the input. This means that in the result each pixel is described by an
-angle and the logarithm of the distance to a chosen point.
+This method takes an [arg image] and returns the log-polar
+transformation of the input. This means that in the result each pixel
+is described by an angle and the logarithm of the distance to a chosen
+point.
 
-[para] The angle is plotted on the x-axis of the result, as fraction or
-multiples of degrees, depending on the chosen resolution [arg rwidth].
-A value of [const 360], for example, provides a resolution of 1 degree
-in the result. The angle is counted from 0 due right (the positive x-axis
-of the input) counterclockwise.
+[para] The angle is plotted on the x-axis of the result, as fraction
+or multiples of degrees, depending on the chosen resolution
+[arg rwidth].  A value of [const 360], for example, provides a
+resolution of 1 degree in the result. The angle is counted from 0 due
+right (the positive x-axis of the input) counterclockwise.
 
 [para] The log of the distance is plotted on the y-axis of the result,
 with a precision of [arg rheight].
@@ -977,9 +978,9 @@ with a precision of [arg rheight].
 [arg ycenter] from the center of the input image. I.e. the defaults of
 (0, 0) for both, when not specified, refer to the center of the input.
 
-[para] The optional flag [arg corners] specifies whether to include the
-corners of the input in the result ([const true]), or not ([const false]).
-This defaults to [const true], including the corners.
+[para] The optional flag [arg corners] specifies whether to include
+the corners of the input in the result ([const true]), or not
+([const false]). This defaults to [const true], including the corners.
 
 
 [call [cmd ::crimp] [method matrix] [arg image] [arg matrix]]

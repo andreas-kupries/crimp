@@ -3066,7 +3066,7 @@ proc ::crimp::logpolar {image rwidth rheight {xcenter 0} {ycenter 0} {corners 1}
 	set hcenter [expr {$width  / 2 + $xcenter}]
 	set vcenter [expr {$height / 2 + $ycenter}]
 
-	return [::crimp::lpt_$itype $image $width $height $hcenter $vcenter $rwidth $rheight $corners]
+	return [::crimp::lpt_$itype $image $hcenter $vcenter $rwidth $rheight $corners]
     } else {
 	return -code error "The log-polar transformation is not supported for image type \"$itype\" "
     }

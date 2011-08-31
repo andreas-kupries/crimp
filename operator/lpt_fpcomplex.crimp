@@ -1,4 +1,4 @@
-lpt_grey32
+lpt_fpcomplex
 Tcl_Obj* imageObj
 int hcenter
 int vcenter
@@ -29,11 +29,11 @@ float*       cosines;		/* Cosines of angles corresponding
 float*       sines;             /* Sines of angles corresponding
 				 * to phi = 0 .. rwidth-1 */
 
-crimp_input (imageObj, image, grey32);
+crimp_input (imageObj, image, fpcomplex);
 w = image->w;
 h = image->h;
 
-result = crimp_new_grey32 (rwidth, rheight);
+result = crimp_new_fpcomplex (rwidth, rheight);
 
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
@@ -47,7 +47,8 @@ result = crimp_new_grey32 (rwidth, rheight);
 
 for (j = 0; j < result->h; j++) {
     for (i = 0; i < result->w; i++) {
-	GREY32 (result, i, j) = BLACK;
+	RE (result, i, j) = BLACK;
+	IM (result, i, j) = BLACK;
     }
 }
 
@@ -118,12 +119,23 @@ for (rho = 0; rho < rheight; ++rho) {
 	vfract = vv - vint0;
 	vint1  = (vint0 + 1) % h;
 
-	z00 = GREY32 (image, hint0, vint0);
-	z10 = GREY32 (image, hint0, vint1);
-	z01 = GREY32 (image, hint1, vint0);
-	z11 = GREY32 (image, hint1, vint1);
+	z00 = RE (image, hint0, vint0);
+	z10 = RE (image, hint0, vint1);
+	z01 = RE (image, hint1, vint0);
+	z11 = RE (image, hint1, vint1);
 
-	GREY32 (result, phi, rho) =
+	RE (result, phi, rho) =
+	    z00 * (1.0f - vfract) * (1.0f - hfract) +
+	    z01 * (1.0f - vfract) * hfract          +
+	    z10 *  vfract         * (1.0f - hfract) +
+	    z11 *  vfract         * hfract;
+
+	z00 = IM (image, hint0, vint0);
+	z10 = IM (image, hint0, vint1);
+	z01 = IM (image, hint1, vint0);
+	z11 = IM (image, hint1, vint1);
+
+	IM (result, phi, rho) =
 	    z00 * (1.0f - vfract) * (1.0f - hfract) +
 	    z01 * (1.0f - vfract) * hfract          +
 	    z10 *  vfract         * (1.0f - hfract) +

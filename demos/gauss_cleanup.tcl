@@ -1,10 +1,6 @@
 def op_gauss_cleanup {
-    label {laplasian of gauss Cleanup }
-    active {
-	expr {[bases] == 1}
-    }
+    label {Laplacian of Gaussian Cleanup}
     setup_image {
-	variable L [base]
 	show
     }
     setup {
@@ -12,21 +8,16 @@ def op_gauss_cleanup {
 	variable low    150
 	variable sigma1 3.5
 	variable sigma2   1
-	
-	
-	
-	proc show {args} {
-	    variable L
 
+	proc show {args} {
 	    variable high
 	    variable low
-		variable sigma1
-        variable sigma2
-        
-	    set  display [crimp filter cleanup $L $sigma1 $high $low $sigma2]	
-					 
-        show_image     $display
-	        return
+	    variable sigma1
+	    variable sigma2
+	    
+	    show_image [crimp filter cleanup [base] \
+			    $sigma1 $high $low $sigma2]	
+	    return
 	}
 
 	scale .left.high -variable ::DEMO::high \
@@ -40,21 +31,18 @@ def op_gauss_cleanup {
 	    -command ::DEMO::show
 
 	scale .left.sigma1 -variable ::DEMO::sigma1 \
-	    -from 0.1 -to 5 -resolution 0.1 -length 50\
+	    -from 0.1 -to 5 -resolution 0.1 -length 100 \
 	    -orient vertical \
 	    -command ::DEMO::show
-		
-    scale .left.sigma2 -variable ::DEMO::sigma2 \
-	    -from 0.1 -to 5 -resolution 0.1 -length 50\
-	    -orient vertical \
-	    -command ::DEMO::show
-
-
-	grid .left.high -row 0 -column 0 -sticky swen
-	grid .left.low  -row 0 -column 1 -sticky swen
 	
-	grid .left.sigma1  -row 1 -column 0 -sticky swen
-    grid .left.sigma2 -row 1 -column 1 -sticky swen
+	scale .left.sigma2 -variable ::DEMO::sigma2 \
+	    -from 0.1 -to 5 -resolution 0.1 -length 100 \
+	    -orient vertical \
+	    -command ::DEMO::show
 
+	grid .left.high   -row 0 -column 0 -sticky swen
+	grid .left.low    -row 0 -column 1 -sticky swen
+	grid .left.sigma1 -row 1 -column 0 -sticky swen
+	grid .left.sigma2 -row 1 -column 1 -sticky swen
     }
 }

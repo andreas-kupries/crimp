@@ -4,16 +4,13 @@ def op_Registration_translation {
 	expr {[bases] == 1}
     }
     setup_image {
-	variable  image1 [base] 
+	variable image1 [base] 
 	variable xshift 90
 	
 	show
     }
     setup {
-	
-	
 	proc show {args} {
-	    
 	    variable  image1
 	    variable  xshift
 	    
@@ -22,8 +19,6 @@ def op_Registration_translation {
 	    
 	    set lpt1 [crimp::logpolar $image1 360 360 ]
 	    set lpt2 [crimp::logpolar $image2 360 360 ]
-	    
-
 	    
 	    set statstrans [::crimp::register::translation $lpt1 $lpt2 ]
 	    log "\n\n"
@@ -39,7 +34,5 @@ def op_Registration_translation {
 	    -command ::DEMO::show
 	
    	grid .left.xshift     -row 0 -column 0 -sticky swen
-	
-	
     }
 }

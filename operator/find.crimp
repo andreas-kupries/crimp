@@ -3,25 +3,22 @@ Tcl_Obj* imageObj
 double max
 double min
 
-
-crimp_image* image ;
-int  x ,y ;
-int maxX , maxY ;
+crimp_image* image;
+int  x, y, maxX, maxY;
 double value;
 Tcl_Obj* list [2];
 
-value = abs(max) > abs(min) ? max : min ;
+value = abs(max) > abs(min) ? max : min;
 
-crimp_input (imageObj , image ,float );
+crimp_input (imageObj, image, float);
 
 for (y = 0; y < image->h; y++) {
     for (x = 0; x < image->w; x++) {
-	    if ( value == FLOATP (image ,x  ,y ) ) {
-		    maxX = x ; 
-			maxY = y ;
-			
-		}	
-	}
+	if (value == FLOATP (image, x,  y)) {
+	    maxX = x; 
+	    maxY = y;
+	}	
+    }
 }   
 
 
@@ -30,8 +27,6 @@ list [1] = Tcl_NewIntObj (maxY);
 
 Tcl_SetObjResult (interp, Tcl_NewListObj (2, list));
 return TCL_OK;
-
-
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

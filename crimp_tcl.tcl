@@ -2225,7 +2225,7 @@ proc ::crimp::filter::cleanup {image {sigma1 3.5 } {high 200} {low 150} {sigma2 
     set overlay [::crimp::expand const $overlay  1 1 1 1 0]
     set b       [::crimp::expand const $b        1 1 1 1 0]
 
-    return [::crimp::crop [::crimp::cleanup_internal $overlay  $b] 1 1 1 1]
+    return [::crimp::crop [::crimp::cleanup_internal $overlay $b] 1 1 1 1]
 }
 
 # # ## ### ##### ######## #############

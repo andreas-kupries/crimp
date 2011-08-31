@@ -1,27 +1,26 @@
 magnitude_fpcomplex
-Tcl_Obj* imageAObj
-
+Tcl_Obj* imageObj
 
 /*
- * Pixel wise Magnitude if a image. 
+ * Pixel wise magnitude of a complex input image.
+ * The result is of type float.
  */
 
-crimp_image*     result;
-crimp_image*     imageA;
+crimp_image* result;
+crimp_image* image;
 
 int x, y;
 
-crimp_input (imageAObj, imageA,fpcomplex);
+crimp_input (imageObj, image, fpcomplex);
 
-result = crimp_new_float (imageA->w,imageA->h);
+result = crimp_new_float (image->w, image->h);
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
 
-	RE (result, x, y) = sqrt( pow( RE (imageA, x, y),2) 
-	                        + pow ( IM (imageA, x, y),2 ) ) ;
-	
-	}
+	RE (result, x, y) = hypotf (RE (image, x, y),
+				    IM (image, x, y));
+    }
 }
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));

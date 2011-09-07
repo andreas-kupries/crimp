@@ -9,7 +9,7 @@ result = crimp_new_float (width, height);
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	FLOATP (result, x, y) =  (rand() / (RAND_MAX + 1.0f));
+	FLOATP (result, x, y) =  RAND_FLOAT();
     }
 }
 

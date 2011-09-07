@@ -57,6 +57,11 @@
 #endif
 
 /*
+ * Generator for uniform random floating-point values in the interval [0..1].
+ */
+#define RAND_FLOAT() (rand() / (RAND_MAX + 1.0f))
+
+/*
  * - - -- --- ----- -------- ------------- ---------------------
  * Handle the environment configuration as supplied by crimp_config.h
  */

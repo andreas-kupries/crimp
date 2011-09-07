@@ -1,12 +1,10 @@
 noise_salt_pepper_rgba
 Tcl_Obj* imageObj
-Tcl_Obj* randomObj
 double threshold 
 
 /*
- * Adding Salt/Pepper-style noise (*) to the image, using the random numbers
- * in the randomObj image (same size as imageObj is required), using a a
- * threshold 'value'.
+ * Adding Salt/Pepper-style noise (*) to the image, using a a threshold
+ * 'value'.
  *
  * 0             <= random < 1/2 threshold => Black Pepper
  * 1/2 threshold <= random < threshold     => White Salt
@@ -16,25 +14,18 @@ double threshold
  */
 
 crimp_image* image;
-crimp_image* image_random;
 crimp_image* result;
 int          x, y;
 double       half = threshold / 2.;
 double       randval;
 
-crimp_input (imageObj,  image,        rgba);
-crimp_input (randomObj, image_random, float);
-
-if (!crimp_eq_dim (image, image_random)) {
-    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
-    return TCL_ERROR;
-}
+crimp_input (imageObj, image, rgba);
 
 result = crimp_new_like (image);
 
 for (y = 0; y < result->h; y++) {
     for (x = 0; x < result->w; x++) {
-	randval = FLOATP (image_random, x, y);
+	randval = RAND_FLOAT();
 
 	A (result, x, y) = A (image, x, y);
 

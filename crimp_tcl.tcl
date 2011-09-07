@@ -2388,9 +2388,7 @@ proc ::crimp::noise::saltpepper {image {threshold 0.05}} {
 
     set f noise_salt_pepper_$itype
     if {[::crimp::Has $f]} {
-	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
-
-	return [::crimp::$f $image $ranimage $threshold]
+	return [::crimp::$f $image $threshold]
     } else {
 	return -code error "Salt/pepper noise is not supported for image type \"$itype\" "
     }
@@ -2409,23 +2407,19 @@ proc ::crimp::noise::gaussian {image {mean 0} {variance 0.05}} {
     set itype [::crimp::TypeOf $image]
 
     if {$itype in {grey8 grey16 grey32}} {
-	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
-
 	return [::crimp::convert::2$itype \
 		    [::crimp::FITFLOAT  \
 			 [::crimp::noise_gaussian_$itype \
-			      $image $ranimage $mean $variance]]]
+			      $image $mean $variance]]]
 
     } elseif {$itype in {rgb rgba}} {
-	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
-
 	set CHAN [::crimp::split $image]
 	set filtered {}
 	foreach chan [lrange $CHAN 0 2] {
 	    lappend filtered [::crimp::convert::2grey8 \
 				  [::crimp::FITFLOAT  \
 				       [::crimp::noise_gaussian_grey8 \
-					    $chan $ranimage $mean $variance]]]
+					    $chan $mean $variance]]]
 	}
 	if { $itype eq "rgba"} {
 	    lappend filtered [lindex $CHAN 3]
@@ -2453,23 +2447,19 @@ proc ::crimp::noise::speckle {image {variance 0.05}} {
     set itype [::crimp::TypeOf $image]
 
     if {$itype in {grey8 grey16 grey32}} {
-	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
-
 	return [::crimp::convert::2$itype \
 		    [::crimp::FITFLOAT  \
 			 [::crimp::noise_speckle_$itype \
-			      $image $ranimage $variance]]]
+			      $image $variance]]]
 
     } elseif {$itype in {rgb rgba}} {
-	set ranimage [::crimp::random_uniform {*}[::crimp::dimensions $image]]
-
 	set CHAN [::crimp::split $image]
 	set filtered {}
 	foreach chan [lrange $CHAN 0 2] {
 	    lappend filtered  [::crimp::convert::2grey8 \
 				   [::crimp::FITFLOAT  \
 					[::crimp::noise_speckle_grey8 \
-					     $chan $ranimage $variance]]]
+					     $chan $variance]]]
 	}
 	if { $itype eq "rgba"} {
 	    lappend filtered [lindex $CHAN 3]

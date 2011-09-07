@@ -1611,11 +1611,11 @@ proc ::crimp::divide {a b {scale 1} {offset 0}} {
     if {![Has $f]} {
 	return -code error "Division is not supported for the combination of \"$atype\" and \"$btype\""
     }
-	if {$atype eq "fpcomplex" } {
+    if {$atype eq "fpcomplex" } {
 	return [$f $a $b]
     } else {
 	return [$f $a $b $scale $offset]
-	}
+    }
 }
 
 # # ## ### ##### ######## #############
@@ -3089,21 +3089,18 @@ proc ::crimp::fft::forward {image} {
     # we directly call on the appropriate primitives without the need
     # for dynamic dispatch.
 
-	if {  $type eq "fpcomplex"  } {
-       return [::crimp::flip_transpose_fpcomplex \
-		[::crimp::fftx_fpcomplex \
-		     [::crimp::flip_transpose_fpcomplex \
-			  [::crimp::fftx_fpcomplex $image]]]]
-	} else {
+    if {  $type eq "fpcomplex"  } {
+	return [::crimp::flip_transpose_fpcomplex \
+		    [::crimp::fftx_fpcomplex \
+			 [::crimp::flip_transpose_fpcomplex \
+			      [::crimp::fftx_fpcomplex $image]]]]
+    } else {
 	return [::crimp::flip_transpose_float \
-		[::crimp::fftx_float \
-		     [::crimp::flip_transpose_float \
-			  [::crimp::$f $image]]]]
-	}
-
+		    [::crimp::fftx_float \
+			 [::crimp::flip_transpose_float \
+			      [::crimp::$f $image]]]]
+    }
 }
-
-
 
 proc ::crimp::fft::backward {image} {
     set type [::crimp::TypeOf $image]
@@ -3121,17 +3118,17 @@ proc ::crimp::fft::backward {image} {
     # we directly call on the appropriate primitives without the need
     # for dynamic dispatch.
 
-	if {  $type eq "fpcomplex" } {
-       return [::crimp::flip_transpose_fpcomplex \
-		[::crimp::ifftx_fpcomplex \
-		     [::crimp::flip_transpose_fpcomplex \
-			  [::crimp::ifftx_fpcomplex $image]]]]
-	} else {
-    return [::crimp::flip_transpose_float \
-		[::crimp::ifftx_float \
-		     [::crimp::flip_transpose_float \
-			  [::crimp::$f $image]]]]
-	}
+    if {  $type eq "fpcomplex" } {
+	return [::crimp::flip_transpose_fpcomplex \
+		    [::crimp::ifftx_fpcomplex \
+			 [::crimp::flip_transpose_fpcomplex \
+			      [::crimp::ifftx_fpcomplex $image]]]]
+    } else {
+	return [::crimp::flip_transpose_float \
+		    [::crimp::ifftx_float \
+			 [::crimp::flip_transpose_float \
+			      [::crimp::$f $image]]]]
+    }
 }
 
 # # ## ### ##### ######## #############

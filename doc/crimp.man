@@ -1853,14 +1853,14 @@ values in the range 0...255 whereas for the types [method rgb] and
 [method hsv] the arguments are triples (3-element lists) specifying
 the R, G, and B (and H, S, and V respectively) values.
 
-[call [cmd ::crimp] [method {imregs translation}] [arg needle] [arg haystack]]
+[call [cmd ::crimp] [method {register translation}] [arg needle] [arg haystack]]
 
 This method takes two images which are translated copies of each other
 and returns a dictonary containing the two keys [const Xshift] and
 [const Yshift], which together specify the translation to apply to the
 [arg needle] to place it in the [arg haystack].
 
-[call [cmd ::crimp] [method {imregs rotscale}] [arg needle] [arg haystack]]
+[call [cmd ::crimp] [method {register rotscale}] [arg needle] [arg haystack]]
 
 This method takes two images which are rotated and scaled copies of
 each other and returns a dictonary containing the two keys
@@ -1868,7 +1868,7 @@ each other and returns a dictonary containing the two keys
 to apply to the [arg needle] to match it in the [arg haystack]. Note
 that this may leave the needle still at an translational offeset.
 
-[call [cmd ::crimp] [method {imregs complete}] [arg image1] [arg image2]]
+[call [cmd ::crimp] [method {register complete}] [arg image1] [arg image2]]
 
 This method takes two images and combines the above two functions to
 fully locate the [arg needle] in the [arg haystack]. It returns a

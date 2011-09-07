@@ -73,12 +73,12 @@ for (c = 0; c < image->itype->channels; c++) {
     Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("variance", -1), Tcl_NewDoubleObj (var));
     Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("stddev",   -1), Tcl_NewDoubleObj (stddev));
 
-    lv[0] = Tcl_NewIntObj (minx[c]);
-    lv[1] = Tcl_NewIntObj (miny[c]);
-    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max@",   -1), Tcl_NewListObj (2, lv));
-
     lv[0] = Tcl_NewIntObj (maxx[c]);
     lv[1] = Tcl_NewIntObj (maxy[c]);
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max@",   -1), Tcl_NewListObj (2, lv));
+
+    lv[0] = Tcl_NewIntObj (minx[c]);
+    lv[1] = Tcl_NewIntObj (miny[c]);
     Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min@",   -1), Tcl_NewListObj (2, lv));
 
     Tcl_DictObjPut (NULL, result, Tcl_NewStringObj (image->itype->cname[c],-1), cdata);

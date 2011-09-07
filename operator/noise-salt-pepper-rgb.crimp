@@ -1,0 +1,63 @@
+noise_salt_pepper_rgb
+Tcl_Obj* imageObj
+double threshold
+
+/*
+ * Adding Salt/Pepper-style noise (*) to the image, using a a threshold
+ * 'value'.
+ *
+ * 0             <= random < 1/2 threshold => Black Pepper
+ * 1/2 threshold <= random < threshold     => White Salt
+ * else                                    => No change.
+ *
+ * (*) Salt/Pepper == white/black pixels replacing the actual image pixel.
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          x, y;
+double       half = threshold / 2.;
+double       randval;
+
+crimp_input (imageObj,  image,        rgb);
+
+result = crimp_new_like (image);
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+	randval = RAND_FLOAT();
+
+	if (randval < 0) {
+	    goto keep;
+	}
+	if (randval < half) {
+	    R (result, x, y) = BLACK;
+	    G (result, x, y) = BLACK;
+	    B (result, x, y) = BLACK;
+	    continue;
+	}
+        if (randval < threshold) {
+	    R (result, x, y) = WHITE;
+	    G (result, x, y) = WHITE;
+	    B (result, x, y) = WHITE;
+	    continue;
+	}
+    keep:
+	R (result, x, y) = R (image, x, y);
+	G (result, x, y) = G (image, x, y);
+	B (result, x, y) = B (image, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

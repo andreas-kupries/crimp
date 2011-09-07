@@ -1,0 +1,55 @@
+window_hsv
+Tcl_Obj* imageObj
+
+crimp_image* image;
+crimp_image* result;
+
+int x, y;
+float halfw, halfh, tmp, weightx, weighty;
+
+crimp_input (imageObj, image, hsv);
+
+/*
+ * outpixel(x,y) = weight(x,width) * weight(y,height) * inpixel(x,y)
+ *    where
+ *    w(x,range) = 1 - ((x - (range-1)/2) / (range/2))**2
+ */
+
+result = crimp_new_like (image);
+
+halfw = image->w / 2.0;
+halfh = image->h / 2.0;
+
+for (y = 0; y < image->h; y++) {
+    tmp     = (y - halfh - 0.5) / halfh;
+    weighty =  1.0 - tmp * tmp;
+
+    for (x = 0; x < image->w; x++) {
+	tmp     = (x - halfw - 0.5) / halfw;
+	weightx = 1.0 - tmp * tmp;
+
+	/*
+	 * As the windowing is meant to fade pixels towards black we are not
+	 * changing the hue, nor saturation, only the value (luma
+	 * approximation).
+	 */
+
+	H (result, x, y) = H (image, x, y);
+	S (result, x, y) = S (image, x, y);
+	V (result, x, y) = V (image, x, y) * weightx * weighty;
+    }
+}   
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result)) ;
+return TCL_OK;
+
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

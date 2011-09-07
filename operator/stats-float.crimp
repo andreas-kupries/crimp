@@ -67,12 +67,12 @@ Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("middle",   -1), Tcl_NewDoubleObj
 Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("variance", -1), Tcl_NewDoubleObj (var));
 Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("stddev",   -1), Tcl_NewDoubleObj (stddev));
 
-lv[0] = Tcl_NewIntObj (minx);
-lv[1] = Tcl_NewIntObj (miny);
-Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max@",   -1), Tcl_NewListObj (2, lv));
-
 lv[0] = Tcl_NewIntObj (maxx);
 lv[1] = Tcl_NewIntObj (maxy);
+Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max@",   -1), Tcl_NewListObj (2, lv));
+
+lv[0] = Tcl_NewIntObj (minx);
+lv[1] = Tcl_NewIntObj (miny);
 Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min@",   -1), Tcl_NewListObj (2, lv));
 
 result = Tcl_NewDictObj ();

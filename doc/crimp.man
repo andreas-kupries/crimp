@@ -126,6 +126,13 @@ The package currently knows the following types:
 	[def Bit-depth]		4 byte/channel.
 	[def Pixel-size]	4 byte.
 	[list_end]
+[def [const fpcomplex]]
+	[list_begin definitions]
+	[def Colorspace]	N.A / Floating Point.
+	[def Channels]		2, named "real", and "imaginary".
+	[def Bit-depth]		4 byte/channel.
+	[def Pixel-size]	8 byte.
+	[list_end]
 [list_end]
 
 Support for the various types varies by operation. The exact image
@@ -413,8 +420,8 @@ The following combinations of fore- and background image types are
 supported:
 
 [example {
-    Result = Foreground Background 
-    ------   ---------- ---------- 
+    Result = Foreground Background
+    ------   ---------- ----------
     grey8    grey8      grey8
     hsv      hsv        hsv
     rgb      rgb        grey8
@@ -501,7 +508,7 @@ dimensions.  The [arg value]s after the dimensions are the pixel
 values to fill the pixels in the image's channels with, per its type.
 
 [para] This method currently support only the types [const rgb],
-[const rgba], and [const grey8].
+[const rgba],[const fpcomplex], and [const grey8].
 
 
 [call [cmd ::crimp] [method crop] [arg image] [arg ww] [arg hn] [arg we] [arg hs]]
@@ -663,13 +670,15 @@ relevant edges. This is also called tiling.
 [call [cmd ::crimp] [method {fft forward}] [arg image]]
 [call [cmd ::crimp] [method {fft backward}] [arg image]]
 [keywords fft {fast fourier transform} {fourier transform} {inverse fourier transform}]
+[keywords {transform, fast fourier} {transform, fourier} {transform, inverse fourier}]
 
 These two methods implement 2D FFT (forward) and inverse FFT (backward).
 
 [para]
 The input is restricted to images of the single-channel types,
-i.e. [const float] and [const "grey\{8,16,32\}"]. The result is always
-of type [const float].
+i.e. [const float], [const "grey\{8,16,32\}"] and [const fpcomplex].
+The result is always of type [const float] for input images other than
+[const fpcomplex], which returns an image of the same type instead.
 
 [para]
 The former means that it is necessary to split [const rgb],
@@ -811,7 +820,13 @@ tradeoff, handling multi-channel images, but dropping precision.
 [call [cmd ::crimp] [method {filter scharr y}] [arg image]]
 [call [cmd ::crimp] [method {filter prewitt x}] [arg image]]
 [call [cmd ::crimp] [method {filter prewitt y}] [arg image]]
-[keywords filter sobel scharr prewitt edge-detection gradient]
+[call [cmd ::crimp] [method {filter roberts x}] [arg image]]
+[call [cmd ::crimp] [method {filter roberts y}] [arg image]]
+[call [cmd ::crimp] [method {filter canny sobel}] [arg image]]
+[call [cmd ::crimp] [method {filter canny deriche}] [arg image]]
+
+
+[keywords filter sobel scharr prewitt edge-detection roberts canny gradient]
 
 These methods are convenience methods implementing a number of standard
 convolution filters using for edge detection and calculation of image
@@ -825,6 +840,11 @@ Also note that the [method x] methods emphasize gradient in the horizontal
 direction, and thus highlight [emph vertical] lines, and vice versa for
 [method y].
 
+[call [cmd ::crimp] [method {filter wiener}] [arg image] [arg radius]]
+
+This method filters an image that has been degraded by constant power additive
+noise. It uses a pixelwise adaptive Filter method based on statistics estimated
+from a local neighborhood of each pixel. The default value for radius is 2
 
 [call [cmd ::crimp] [method gamma] [arg image] [arg y]]
 
@@ -841,6 +861,8 @@ This method supports all image types supported by the method
 [call [cmd ::crimp] [method {gradient sobel}] [arg image]]
 [call [cmd ::crimp] [method {gradient scharr}] [arg image]]
 [call [cmd ::crimp] [method {gradient prewitt}] [arg image]]
+[call [cmd ::crimp] [method {gradient roberts}] [arg image]]
+
 [keywords sobel scharr prewitt edge-detection gradient]
 
 These methods generate two gradient images for the input image, in the
@@ -933,6 +955,32 @@ returned by "[method {map inverse}]".
 
 This method supports all image types supported by the method
 [method remap].
+
+
+[call [cmd ::crimp] [method logpolar] [arg image] [arg rwidth] [arg rheight] [opt [arg xcenter]] [opt [arg ycenter]] [opt [arg corners]][
+[keywords {log-polar transformation} {transformation, log-polar}]
+
+This method takes an [arg image] and returns the log-polar
+transformation of the input. This means that in the result each pixel
+is described by an angle and the logarithm of the distance to a chosen
+point.
+
+[para] The angle is plotted on the x-axis of the result, as fraction
+or multiples of degrees, depending on the chosen resolution
+[arg rwidth].  A value of [const 360], for example, provides a
+resolution of 1 degree in the result. The angle is counted from 0 due
+right (the positive x-axis of the input) counterclockwise.
+
+[para] The log of the distance is plotted on the y-axis of the result,
+with a precision of [arg rheight].
+
+[para] The [term {center point}] is specified as offset [arg xcenter],
+[arg ycenter] from the center of the input image. I.e. the defaults of
+(0, 0) for both, when not specified, refer to the center of the input.
+
+[para] The optional flag [arg corners] specifies whether to include
+the corners of the input in the result ([const true]), or not
+([const false]). This defaults to [const true], including the corners.
 
 
 [call [cmd ::crimp] [method matrix] [arg image] [arg matrix]]
@@ -1029,7 +1077,7 @@ These two methods add to the basic set of morphology operations,
 [term opening] and [term closing]. In terms of erosion and dilation:
 
 [example {
-    close = erode o dilate 
+    close = erode o dilate
     open  = dilate o erode
 }]
 
@@ -1113,6 +1161,31 @@ performing a pixelwise multiplication. Note that the result of each
 multiplication is divided by [const 255] to scale it back into the
 range [lb]0...255[rb].
 
+[para]
+[call [cmd ::crimp] [method {noise random}] [arg w] [arg h]]
+
+This method creates an image of type [const float] with the specified
+dimensions. The pixels are set to random values in the interval
+[lb]0...1[rb].
+
+[call [cmd ::crimp] [method {noise saltpepper}] [arg image] [opt [arg density]]]
+[call [cmd ::crimp] [method {noise gaussian}] [arg image] [opt [arg mean]] [opt [arg variance]]]
+[call [cmd ::crimp] [method {noise speckle}] [arg image] [opt [arg variance]]]
+
+These methods add noises of different types to the given image.
+
+[para] [method saltpepper] adds salt and pepper noise of the specified
+[arg density]. This density must be in the range [lb]0...1[rb]. If not
+specified it defaults to [const 0.05].
+
+[para] [method gaussian] adds gaussian noise of the specified mean and
+variance to the image. If not specified the mean and variance default
+to [const 0] and [const 0.05], respectively. Both must be in the range
+[lb]0...1[rb].
+
+[para] [method speckle] adds multiplicative noise of the specified
+variance to the image. This variance must be in the range
+[lb]0...1[rb]. If not specified it defaults to [const 0.05].
 
 [call [cmd ::crimp] [method psychedelia] [arg width] [arg height] [arg frames]]
 
@@ -1234,7 +1307,12 @@ construction of maps from Tcl data structures, namely lists of values.
 single-byte channels, i.e. all but [const grey16], [const grey32],
 [const float], and [const bw].
 
+[call [cmd ::crimp] [method matchsize] [arg image1] [arg image2]]
 
+This method takes two images, forces them to be of the same size by
+expanding the smaller dimensions with black pixels, and then returns a
+list of the expanded images. The images in the result are in the same
+order as as arguments.
 
 [call [cmd ::crimp] [method screen] [arg image1] [arg image2]]
 
@@ -1242,7 +1320,6 @@ This method combines the two input images by inverting the
 multiplication of the inverted input images. I.e.
 
 [para][image screen][para]
-
 
 [call [cmd ::crimp] [method solarize] [arg image] [arg threshold]]
 [keywords solarization {sabattier effect}]
@@ -1492,14 +1569,26 @@ situation the result will contain the physical coordinates of the
 conceptual origin point in its meta data, under the hierarchical key
 [const {crimp origin}].
 
+[call [cmd ::crimp] [method window] [arg image]]
+[keywords windowing]
+
+This method takes an image, applies a windowing function to it that
+fades the pixels to black towards the edges, and returns the windowed
+result.
+
 [list_end]
 
 
 [subsection Converters]
 [list_begin definitions]
+[call [cmd ::crimp] [method {convert 2grey32}] [arg image]]
+[call [cmd ::crimp] [method {convert 2grey16}] [arg image]]
 [call [cmd ::crimp] [method {convert 2grey8}] [arg image]]
+[call [cmd ::crimp] [method {convert 2float}] [arg image]]
+[call [cmd ::crimp] [method {convert 2complex}] [arg image]]
 [call [cmd ::crimp] [method {convert 2hsv}] [arg image]]
 [call [cmd ::crimp] [method {convert 2rgba}] [arg image]]
+[call [cmd ::crimp] [method {convert 2rgb}] [arg image]]
 [call [cmd ::crimp] [method {convert 2rgb}] [arg image]]
 
 This set of methods all convert their input [arg image] to the
@@ -1509,9 +1598,14 @@ unchanged.
 
 [para]
 
-The converters returning a [const grey8] image support [const rgb] and
-[const rgba] as their input, using the ITU-R 601-2 luma transform to
-merge the three color channels
+The converters returning a [const grey8] image support [const float],
+[const rgb] and [const rgba] as their input. For multi-channel input
+they use the ITU-R 601-2 luma transform to merge the color channels.
+
+[para]
+
+The converters returning a [const grey16], [const grey32] image
+support only [const float] as their input.
 
 [para]
 
@@ -1527,13 +1621,59 @@ and [method {join rgba}].
 
 [para]
 
-At last, the conversion to [const rgb] accepts both [const rgba] and
+The conversion to [const rgb] accepts both [const rgba] and
 [const hsv] images as input.
 
+[para]
+
+The conversion to [const float] supports only [const fpcomplex] as
+input. It simply strips the imaginary part of the input.
+
+[para]
+
+The conversion to [const fpcomplex] accepts [const float],
+[const grey8], [const grey16], and [const grey32] as input, and adds a
+constant [const 0] imaginary part.
+
+[call [cmd ::crimp] [method {complex magnitude}] [arg image]]
+
+This method takes an image of type [const fpcomplex] as input and
+returns an image of type [const float] containing the pixel-wise
+magnitude of the input.
+
+[call [cmd ::crimp] [method {complex 2complex}] [arg image]]
+
+This method takes an image of type [const float] as input and returns
+an image of type [const fpcomplex] with each pixel's real part
+containing the input, and the imaginary part set to [const 0].
+
+[para] This method is an alias for [cmd {crimp convert 2complex}].
+
+[call [cmd ::crimp] [method {complex imaginary}] [arg image]]
+
+This method takes an image of type [const fpcomplex] as input and
+returns an image of type [const float] containing the pixel-wise
+[const imaginary] part of the input.
+
+[call [cmd ::crimp] [method {complex real}] [arg image]]
+
+This method takes an image of type [const fpcomplex] as input and
+returns an image of type [const float] containing the pixel-wise
+[const real] part of the input.
+
+[para] This method is an alias for [cmd {crimp convert 2float}] as
+applied to images of type [const fpcomplex].
+
+[call [cmd ::crimp] [method {complex conjugate}] [arg image]]
+
+This method takes an image of type [const fpcomplex] as input and
+returns an image of the same type containing the pixel-wise complex
+conjugate of the input.
 
 [call [cmd ::crimp] [method {join 2hsv}] [arg hueImage] [arg satImage] [arg valImage]]
 [call [cmd ::crimp] [method {join 2rgba}] [arg redImage] [arg greenImage] [arg blueImage] [arg alphaImage]]
 [call [cmd ::crimp] [method {join 2rgb}] [arg redImage] [arg greenImage] [arg blueImage]]
+[call [cmd ::crimp] [method {join 2complex}] [arg realImage] [arg imaginaryImage]]
 
 This set of methods is the complement of method [method split]. Each
 take a set of [const grey8] images and fuse them together into an
@@ -1541,13 +1681,19 @@ image of the given type, with each input image becoming one channel of
 the fusing result, which is returned as the result of the command. All
 input images have to have the same dimensions.
 
+[para] The command [method {join 2complex}] is an exception regarding
+the input. It accepts images of type [const float], not [const grey8].
 
 [call [cmd ::crimp] [method split] [arg image]]
 
 This method takes an image of one of the multi-channel types, i.e.
-[const rgb], const rgba], and [const hsv] and returns a list of
-[const grey8] images, each of which contains the contents of one of
-the channels found in the input image.
+[const rgb], const rgba], [const hsv], and [const fpcomplex] and
+returns a list of [const grey8] images, each of which contains the
+contents of one of the channels found in the input image.
+
+[para] The input image type [const fpcomplex] is an exception
+regarding the output. It returns images of type [const float], not
+[const grey8].
 
 [para]
 
@@ -1707,6 +1853,12 @@ values in the range 0...255 whereas for the types [method rgb] and
 [method hsv] the arguments are triples (3-element lists) specifying
 the R, G, and B (and H, S, and V respectively) values.
 
+[call [cmd ::crimp] [method {register translation}] [arg needle] [arg haystack]]
+
+This method takes two images which are translated copies of each other
+and returns a dictonary containing the two keys [const Xshift] and
+[const Yshift], which together specify the translation to apply to the
+[arg needle] to place it in the [arg haystack].
 
 [call [cmd ::crimp] [method {kernel make}] [arg matrix] [opt [arg scale]] [opt [arg offset]]]
 
@@ -1894,7 +2046,7 @@ Thus the relevant definitions are
 
 [para][image linear_wrap]
 
-for the wrapped case, and 
+for the wrapped case, and
 
 [para][image linear_clamp]
 
@@ -2101,7 +2253,7 @@ or down, along the specified dimension, while values less than
 [enum] P. Peterlin, "Morphological Operations: An Overview",
        [uri http://www.inf.u-szeged.hu/ssip/1996/morpho/morphology.html]
 
-[enum] Adrien Bousseau, "Mathematical Morphology", 
+[enum] Adrien Bousseau, "Mathematical Morphology",
        PDF at [uri http://artis.imag.fr/Members/Adrien.Bousseau/morphology/]
 
 [list_end]

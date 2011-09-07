@@ -41,13 +41,15 @@ extern crimp_volume* crimp_vnewm (const crimp_imagetype* type, int w, int h, int
 extern crimp_volume* crimp_vdup  (crimp_volume* volume);
 extern void          crimp_vdel  (crimp_volume* volume);
 
-#define crimp_vnew_hsv(w,h,d)    (crimp_vnew (crimp_imagetype_find ("crimp::image::hsv"),    (w), (h), (d)))
-#define crimp_vnew_rgba(w,h,d)   (crimp_vnew (crimp_imagetype_find ("crimp::image::rgba"),   (w), (h), (d)))
-#define crimp_vnew_rgb(w,h,d)    (crimp_vnew (crimp_imagetype_find ("crimp::image::rgb"),    (w), (h), (d)))
-#define crimp_vnew_grey8(w,h,d)  (crimp_vnew (crimp_imagetype_find ("crimp::image::grey8"),  (w), (h), (d)))
-#define crimp_vnew_grey16(w,h,d) (crimp_vnew (crimp_imagetype_find ("crimp::image::grey16"), (w), (h), (d)))
-#define crimp_vnew_grey32(w,h,d) (crimp_vnew (crimp_imagetype_find ("crimp::image::grey32"), (w), (h), (d)))
-#define crimp_vnew_float(w,h,d)  (crimp_vnew (crimp_imagetype_find ("crimp::image::float"),  (w), (h), (d)))
+#define crimp_vnew_hsv(w,h,d)     (crimp_vnew (crimp_imagetype_find ("crimp::image::hsv"),     (w), (h), (d)))
+#define crimp_vnew_rgba(w,h,d)    (crimp_vnew (crimp_imagetype_find ("crimp::image::rgba"),    (w), (h), (d)))
+#define crimp_vnew_rgb(w,h,d)     (crimp_vnew (crimp_imagetype_find ("crimp::image::rgb"),     (w), (h), (d)))
+#define crimp_vnew_grey8(w,h,d)   (crimp_vnew (crimp_imagetype_find ("crimp::image::grey8"),   (w), (h), (d)))
+#define crimp_vnew_grey16(w,h,d)  (crimp_vnew (crimp_imagetype_find ("crimp::image::grey16"),  (w), (h), (d)))
+#define crimp_vnew_grey32(w,h,d)  (crimp_vnew (crimp_imagetype_find ("crimp::image::grey32"),  (w), (h), (d)))
+#define crimp_vnew_float(w,h,d)   (crimp_vnew (crimp_imagetype_find ("crimp::image::float"),   (w), (h), (d)))
+#define crimp_vnew_fpcomplex(w,h,d) (crimp_vnew (crimp_imagetype_find ("crimp::image::fpcomplex"), (w), (h), (d)))
+
 
 #define crimp_vnew_like(volume)           (crimp_vnewm ((volume)->itype, (volume)->w, (volume)->h, (volume)->d, (volume)->meta))
 #define crimp_vnew_like_transpose(volume) (crimp_vnewm ((volume)->itype, (volume)->h, (volume)->w, (volume)->d, (volume)->meta))

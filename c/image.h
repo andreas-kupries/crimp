@@ -95,6 +95,21 @@ typedef struct crimp_image {
 #define S(iptr,x,y) (iptr)->pixel [SAT (iptr,x,y)]
 #define V(iptr,x,y) (iptr)->pixel [VAL (iptr,x,y)]
 
+
+/*
+ * Pixel Access Macros. FPCOMPLEX.
+ */
+
+#define REAL(iptr,x,y)      (0             + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define IMAGINARY(iptr,x,y) (sizeof(float) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+
+#define RE(iptr,x,y) *((float*) &((iptr)->pixel [REAL      (iptr,x,y)]))
+#define IM(iptr,x,y) *((float*) &((iptr)->pixel [IMAGINARY (iptr,x,y)]))
+
+
+
+
+
 /*
  * Other constants
  */
@@ -133,13 +148,15 @@ extern crimp_image* crimp_newm (const crimp_imagetype* type, int w, int h, Tcl_O
 extern crimp_image* crimp_dup  (crimp_image* image);
 extern void         crimp_del  (crimp_image* image);
 
-#define crimp_new_hsv(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),    (w), (h)))
-#define crimp_new_rgba(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),   (w), (h)))
-#define crimp_new_rgb(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),    (w), (h)))
-#define crimp_new_grey8(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::grey8"),  (w), (h)))
-#define crimp_new_grey16(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::grey16"), (w), (h)))
-#define crimp_new_grey32(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::grey32"), (w), (h)))
-#define crimp_new_float(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::float"),  (w), (h)))
+#define crimp_new_hsv(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),     (w), (h)))
+#define crimp_new_rgba(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),    (w), (h)))
+#define crimp_new_rgb(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),     (w), (h)))
+#define crimp_new_grey8(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::grey8"),   (w), (h)))
+#define crimp_new_grey16(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::grey16"),  (w), (h)))
+#define crimp_new_grey32(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::grey32"),  (w), (h)))
+#define crimp_new_float(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::float"),   (w), (h)))
+#define crimp_new_fpcomplex(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::fpcomplex"), (w), (h)))
+
 
 #define crimp_new_like(image)           (crimp_newm ((image)->itype, (image)->w, (image)->h, (image)->meta))
 #define crimp_new_like_transpose(image) (crimp_newm ((image)->itype, (image)->h, (image)->w, (image)->meta))

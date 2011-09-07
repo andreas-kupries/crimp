@@ -52,6 +52,23 @@ critcl::csources c/fftpack/rfftf.c
 critcl::csources c/fftpack/rfftf1.c
 critcl::csources c/fftpack/rffti.c
 critcl::csources c/fftpack/rffti1.c
+critcl::csources c/fftpack/cfftb.c
+critcl::csources c/fftpack/cfftb1.c
+critcl::csources c/fftpack/cfftf.c
+critcl::csources c/fftpack/cfftf1.c
+critcl::csources c/fftpack/cffti.c
+critcl::csources c/fftpack/cffti1.c
+critcl::csources c/fftpack/passf.c
+critcl::csources c/fftpack/passf2.c
+critcl::csources c/fftpack/passf3.c
+critcl::csources c/fftpack/passf4.c
+critcl::csources c/fftpack/passf5.c
+critcl::csources c/fftpack/passb.c
+critcl::csources c/fftpack/passb2.c
+critcl::csources c/fftpack/passb3.c
+critcl::csources c/fftpack/passb4.c
+critcl::csources c/fftpack/passb5.c
+
 
 # # ## ### ##### ######## #############
 ## Image readers and writers implemented as Tcl procedures.
@@ -127,7 +144,7 @@ if {[critcl::util::checkfun lrint]} {
     # needed by the C code.
 
     foreach f {
-	hypotf sinf cosf sqrtf expf
+	hypotf sinf cosf sqrtf expf logf atan2f
     } {
 	set fd [string range $f 0 end-1]
 	set d  C_HAVE_[string toupper $f]

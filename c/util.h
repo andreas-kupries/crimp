@@ -57,6 +57,11 @@
 #endif
 
 /*
+ * Generator for uniform random floating-point values in the interval [0..1].
+ */
+#define RAND_FLOAT() (rand() / (RAND_MAX + 1.0f))
+
+/*
  * - - -- --- ----- -------- ------------- ---------------------
  * Handle the environment configuration as supplied by crimp_config.h
  */
@@ -79,6 +84,14 @@
 
 #ifndef C_HAVE_SQRTF
 #define sqrtf(x) sqrt(x)
+#endif
+
+#ifndef C_HAVE_ATAN2F
+#define atan2f(x,y) atan(x,y)
+#endif
+
+#ifndef C_HAVE_LOGF
+#define logf(x) log(x)
 #endif
 
 /*

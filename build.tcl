@@ -300,8 +300,27 @@ proc _wrap4tea {{dst {}}} {
 }
 
 proc RunCritcl {args} {
-    package require critcl::app 3
-    critcl::app::main $args
+    if {![catch {
+	package require critcl::app 3
+    }]} {
+	critcl::app::main $args
+	return
+    } else {
+	foreach cmd {
+	    critcl3 critcl3.kit critcl3.tcl critcl3.exe
+	    critcl critcl.kit critcl.tcl critcl.exe
+	} {
+	    set cmd [auto_execok $cmd]
+	    if {![llength $cmd]} continue
+
+	    eval [concat exec $cmd $args] \
+		2>@ stderr >@ stdout
+	    return
+	}
+    }
+
+    puts "Unable to find a usable critcl 3 application (package). Stop."
+    ::exit 1
 }
 
 main

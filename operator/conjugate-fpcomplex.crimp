@@ -1,0 +1,37 @@
+conjugate_fpcomplex
+Tcl_Obj* imageObj
+
+/*
+ * Pixel wise complex conjugation of the input image. 
+ */
+
+crimp_image* result;
+crimp_image* image;
+
+int x, y;
+
+crimp_input (imageObj, image, fpcomplex);
+
+result = crimp_new_like (image);
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+
+	RE (result, x, y) =   RE (image, x, y);
+	IM (result, x, y) = - IM (image, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */
+ 
+ 

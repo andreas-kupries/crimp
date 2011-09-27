@@ -93,9 +93,13 @@ proc images_init {} {
 }
 
 proc images_get {index} {
-    global dir images
+    global images
+    return [image_load [lindex $images $index]]
+}
 
-    set name  [lindex $images $index]
+proc image_load {name} {
+    global dir
+
     set photo [image create photo -file [file join $dir images $name]]
     set image [crimp read tk $photo]
     image delete $photo

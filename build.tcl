@@ -143,14 +143,12 @@ proc _install {{ldir {}}} {
 	set idir [file dirname $ldir]/include
     }
 
-    package require critcl::app
-
     foreach p $packages {
 	set src     [file dirname $::me]/$p.tcl
 	set version [version $src]
 
-	file delete -force             [pwd]/BUILD
-	critcl::app::main [list -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src]
+	file delete -force [pwd]/BUILD
+	RunCritcl   -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src
 
 	file delete -force $ldir/$p$version
 	file rename        $ldir/$p $ldir/$p$version
@@ -172,14 +170,12 @@ proc _debug {{ldir {}}} {
 	set idir [file dirname $ldir]/include
     }
 
-    package require critcl::app
-
     foreach p $packages {
 	set src     [file dirname $::me]/$p.tcl
 	set version [version $src]
 
-	file delete -force [pwd]/BUILD.$p
-	critcl::app::main [list -keep -debug symbols -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src]
+	file delete                    -force [pwd]/BUILD.$p
+	RunCritcl -keep -debug symbols -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
 
 	file delete -force $ldir/$p$version
 	file rename        $ldir/$p $ldir/$p$version
@@ -286,16 +282,14 @@ proc _wrap4tea {{dst {}}} {
 	set dst [file join [pwd] tea]
     }
 
-    package require critcl::app
-
     # Generate TEA directory hierarchies
 
     foreach p $packages {
 	set src     [file dirname $::me]/$p.tcl
 	set version [version $src]
 
-	file delete -force             [pwd]/BUILD.$p
-	critcl::app::main [list -cache [pwd]/BUILD.$p -libdir $dst -tea $src]
+	file delete -force [pwd]/BUILD.$p
+	RunCritcl   -cache [pwd]/BUILD.$p -libdir $dst -tea $src
 	file delete -force $dst/$p$version
 	file rename        $dst/$p $dst/$p$version
 
@@ -304,4 +298,10 @@ proc _wrap4tea {{dst {}}} {
     }
     return
 }
+
+proc RunCritcl {args} {
+    package require critcl::app 3
+    critcl::app::main $args
+}
+
 main

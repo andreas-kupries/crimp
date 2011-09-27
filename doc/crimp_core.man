@@ -146,6 +146,13 @@ The package currently knows the following types:
 	[def Bit-depth]		4 byte/channel.
 	[def Pixel-size]	4 byte.
 	[list_end]
+[def [const fpcomplex]]
+	[list_begin definitions]
+	[def Colorspace]	N.A / Floating Point.
+	[def Channels]		2, named "real", and "imaginary".
+	[def Bit-depth]		4 byte/channel.
+	[def Pixel-size]	8 byte.
+	[list_end]
 [list_end]
 
 Support for the various types varies by operation. The exact image

@@ -310,11 +310,17 @@ proc RunCritcl {args} {
 	    critcl3 critcl3.kit critcl3.tcl critcl3.exe
 	    critcl critcl.kit critcl.tcl critcl.exe
 	} {
+	    # Locate the candidate.
 	    set cmd [auto_execok $cmd]
-	    if {![llength $cmd]} continue
 
-	    eval [concat exec $cmd $args] \
-		2>@ stderr >@ stdout
+	    # Ignore applications which were not found, are too old to
+	    # support -v, or are too old as per their returned version.
+	    if {![llength $cmd] || [catch {
+		set v [eval [linsert [linsert $cmd end -v] 0 exec]]
+	    }] || ([package vcompare $v 3.0] < 0)} continue
+
+	    # Perform the requested action.
+	    eval [concat [list exec 2>@ stderr >@ stdout] $cmd $args]
 	    return
 	}
     }

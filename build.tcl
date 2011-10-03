@@ -300,9 +300,11 @@ proc _wrap4tea {{dst {}}} {
 }
 
 proc RunCritcl {args} {
+    #puts [info level 0]
     if {![catch {
 	package require critcl::app 3
     }]} {
+	#puts "......... [package ifneeded critcl::app [package present critcl::app]]"
 	critcl::app::main $args
 	return
     } else {
@@ -320,7 +322,9 @@ proc RunCritcl {args} {
 	    }] || ([package vcompare $v 3.0] < 0)} continue
 
 	    # Perform the requested action.
-	    eval [concat [list exec 2>@ stderr >@ stdout] $cmd $args]
+	    set cmd [concat [list exec 2>@ stderr >@ stdout] $cmd $args]
+	    #puts "......... $cmd"
+	    eval $cmd
 	    return
 	}
     }

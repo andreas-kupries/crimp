@@ -75,8 +75,8 @@ rhoOffset = rheight - rhomax;         /* Offset to use for rho         */
  * Filling all the pixels by interpolating.
  */
 
-sines   = NALLOC (rwidth, float);
-cosines = NALLOC (rwidth, float);
+sines   = CRIMP_ALLOC_ARRAY (rwidth, float);
+cosines = CRIMP_ALLOC_ARRAY (rwidth, float);
 
 for (phi = 0; phi < rwidth; ++phi) {
     float theta = 2.f * (float) M_PI * phi / rwidth;

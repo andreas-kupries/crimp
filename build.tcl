@@ -134,9 +134,9 @@ proc _drop {{ldir {}}} {
     return
 }
 proc Hinstall {} { return "?destination?\n\tInstall all packages.\n\tdestination = path of package directory, default \[info library\]." }
-proc _install {{ldir {}}} {
+proc _install {{ldir {}} {config {}}} {
     global packages
-    if {[llength [info level 0]] < 2} {
+    if {$ldir eq {}} {
 	set ldir [info library]
 	set idir [file dirname [file dirname $ldir]]/include
     } else {
@@ -148,7 +148,12 @@ proc _install {{ldir {}}} {
 	set version [version $src]
 
 	file delete -force [pwd]/BUILD
-	RunCritcl   -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src
+
+	if {$config ne {}} {
+	    RunCritcl -target $config -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src
+	} else {
+	    RunCritcl -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src
+	}
 
 	file delete -force $ldir/$p$version
 	file rename        $ldir/$p $ldir/$p$version
@@ -161,9 +166,9 @@ proc _install {{ldir {}}} {
     return
 }
 proc Hdebug {} { return "?destination?\n\tInstall debug builds of all packages.\n\tdestination = path of package directory, default \[info library\]." }
-proc _debug {{ldir {}}} {
+proc _debug {{ldir {}} {config {}}} {
     global packages
-    if {[llength [info level 0]] < 2} {
+    if {$ldir eq {}} {
 	set ldir [info library]
 	set idir [file dirname [file dirname $ldir]]/include
     } else {
@@ -174,8 +179,12 @@ proc _debug {{ldir {}}} {
 	set src     [file dirname $::me]/$p.tcl
 	set version [version $src]
 
-	file delete                    -force [pwd]/BUILD.$p
-	RunCritcl -keep -debug symbols -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
+	file delete -force [pwd]/BUILD.$p
+	if {$config ne {}} {
+	    RunCritcl -target $config -keep -debug symbols -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
+	} else {
+	    RunCritcl -keep -debug symbols -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
+	}
 
 	file delete -force $ldir/$p$version
 	file rename        $ldir/$p $ldir/$p$version

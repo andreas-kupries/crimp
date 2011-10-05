@@ -163,8 +163,11 @@ if (israw) {
 	dst ++;
 	npix --;
 
-	next = index (at, ' ');
-	if (next) {
+	/* Emulate 'index'. Not implemented on windows */
+	next = at;
+	while (*next != '\0' && *next != ' ') next++;
+
+	if (*next == ' ') {
 	    at = next + 1;	    
 	} else if (npix) {
 	    goto notpfm;

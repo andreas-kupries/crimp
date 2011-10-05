@@ -315,14 +315,24 @@ proc RunCritcl {args} {
 	    # Locate the candidate.
 	    set cmd [auto_execok $cmd]
 
-	    # Ignore applications which were not found, are too old to
-	    # support -v, or are too old as per their returned version.
-	    if {![llength $cmd] || [catch {
-		set v [eval [linsert [linsert $cmd end -v] 0 exec]]
+	    # Ignore applications which were not found.
+	    if {![llength $cmd]} continue
+
+	    # Proper native path needed, especially on windows. On
+	    # windows this also works (best) with a starpack for
+	    # critcl, instead of a starkit.
+
+	    set cmd [file nativename [lindex [auto_execok $cmd] 0]]
+
+	    # Ignore applications which are too old to support
+	    # -v|--version, or are too old as per their returned
+	    # version.
+	    if {[catch {
+		set v [eval [list exec $cmd --version]]
 	    }] || ([package vcompare $v 3.0] < 0)} continue
 
 	    # Perform the requested action.
-	    set cmd [concat [list exec 2>@ stderr >@ stdout] $cmd $args]
+	    set cmd [list exec 2>@ stderr >@ stdout $cmd {*}$args]
 	    #puts "......... $cmd"
 	    eval $cmd
 	    return

@@ -13,7 +13,8 @@ Tcl_Obj*         h; /* histogram dict, indexed by pixel value */
 Tcl_Obj*         k; /* channel name as Tcl_Obj, for the main dict */
 
 crimp_input_any (imageObj, image);
-ASSERT_NOTIMGTYPE(image,grey32);
+CRIMP_ASSERT_NOTIMGTYPE(image,grey32);
+CRIMP_ASSERT_NOTIMGTYPE(image,float);
 /*
  * Actually NOT any. The code below is not able to handle grey32, as images
  * with these types can have 4G possible values, for which we cannot allocate
@@ -31,7 +32,7 @@ if (largegrey) {
     maxv = 256;
 }
 
-histogram = NALLOC (maxv * image->itype->channels, int);
+histogram = CRIMP_ALLOC_ARRAY (maxv * image->itype->channels, int);
 memset (histogram, '\0', maxv * image->itype->channels * sizeof (int));
 
 /*

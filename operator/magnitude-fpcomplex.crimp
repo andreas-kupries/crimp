@@ -1,0 +1,38 @@
+magnitude_fpcomplex
+Tcl_Obj* imageObj
+
+/*
+ * Pixel wise magnitude of a complex input image.
+ * The result is of type float.
+ */
+
+crimp_image* result;
+crimp_image* image;
+
+int x, y;
+
+crimp_input (imageObj, image, fpcomplex);
+
+result = crimp_new_float (image->w, image->h);
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+
+	RE (result, x, y) = hypotf (RE (image, x, y),
+				    IM (image, x, y));
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */
+ 
+ 

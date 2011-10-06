@@ -1,12 +1,12 @@
 #ifndef CRIMP_IMAGE_H
 #define CRIMP_IMAGE_H
 /*
- * CRIMP :: Image Declarations, and API.
- * (C) 2010.
+ * CRIMP :: Image Declarations, and API :: PUBLIC
+ * (C) 2010 - 2011
  */
 
-#include <image_type.h>
-#include <util.h>
+#include "common.h"
+#include "image_type.h"
 
 /*
  * Structures describing images.
@@ -26,8 +26,8 @@ typedef struct crimp_image {
  * Pixel Access Macros. General access to a 'color' channel.
  */
 
-#define CHAN(iptr,c,x,y) ((c) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
-#define CH(iptr,c,x,y)   (iptr)->pixel [CHAN (iptr,c,x,y)]
+#define CRIMP_CHAN(iptr,c,x,y) ((c) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define CH(iptr,c,x,y)   (iptr)->pixel [CRIMP_CHAN (iptr,c,x,y)]
 
 /*
  * Pixel Access Macros. RGBA / RGB
@@ -68,20 +68,20 @@ typedef struct crimp_image {
  *       bytes exactly, by definition.
  */
 
-#define INDEX(iptr,x,y) \
+#define CRIMP_INDEX(iptr,x,y) \
     (((x)*SZ (iptr)) + \
      ((y)*SZ (iptr)*(((size_t) (iptr)->w))))
 
-#define GREY8(iptr,x,y)  *((unsigned char*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
-#define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [INDEX (iptr,x,y)]))
-#define GREY32(iptr,x,y) *((unsigned int* )  &((iptr)->pixel [INDEX (iptr,x,y)]))
-#define FLOATP(iptr,x,y) *((float*)          &((iptr)->pixel [INDEX (iptr,x,y)]))
+#define GREY8(iptr,x,y)  *((unsigned char*)  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define GREY32(iptr,x,y) *((unsigned int* )  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define FLOATP(iptr,x,y) *((float*)          &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
 
 /*
  * Pixel as 2-complement numbers (-128..127, instead of unsigned 0..255).
  */
 
-#define SGREY8(iptr,x,y) *((signed char*)  &((iptr)->pixel [INDEX (iptr,x,y)]))
+#define SGREY8(iptr,x,y) *((signed char*)  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
 
 /*
  * Pixel Access Macros. HSV.
@@ -94,6 +94,16 @@ typedef struct crimp_image {
 #define H(iptr,x,y) (iptr)->pixel [HUE (iptr,x,y)]
 #define S(iptr,x,y) (iptr)->pixel [SAT (iptr,x,y)]
 #define V(iptr,x,y) (iptr)->pixel [VAL (iptr,x,y)]
+
+/*
+ * Pixel Access Macros. FPCOMPLEX.
+ */
+
+#define REAL(iptr,x,y)      (0             + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define IMAGINARY(iptr,x,y) (sizeof(float) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+
+#define RE(iptr,x,y) *((float*) &((iptr)->pixel [REAL      (iptr,x,y)]))
+#define IM(iptr,x,y) *((float*) &((iptr)->pixel [IMAGINARY (iptr,x,y)]))
 
 /*
  * Other constants
@@ -109,55 +119,34 @@ typedef struct crimp_image {
  * Area calculations macros.
  */
 
-#define RECT_AREA(w,h) (((size_t) (w)) * (h))
-#define crimp_image_area(iptr) (RECT_AREA ((iptr)->w, (iptr)->h))
+#define CRIMP_RECT_AREA(w,h) (((size_t) (w)) * (h))
+#define crimp_image_area(iptr) (CRIMP_RECT_AREA ((iptr)->w, (iptr)->h))
 
 /*
- * Convenient checking of image types.
+ * Convenience macros for the creation of images with predefined image types.
  */
 
-#define ASSERT_IMGTYPE(image,imtype) \
-    ASSERT ((image)->itype == crimp_imagetype_find ("crimp::image::" STR(imtype)), \
-	    "expected image type " STR(imtype))
-
-#define ASSERT_NOTIMGTYPE(image,imtype) \
-    ASSERT ((image)->itype != crimp_imagetype_find ("crimp::image::" STR(imtype)), \
-	    "unexpected image type " STR(imtype))
-
-/*
- * API :: Core. Image lifecycle management.
- */
-
-extern crimp_image* crimp_new  (const crimp_imagetype* type, int w, int h);
-extern crimp_image* crimp_newm (const crimp_imagetype* type, int w, int h, Tcl_Obj* meta);
-extern crimp_image* crimp_dup  (crimp_image* image);
-extern void         crimp_del  (crimp_image* image);
-
-#define crimp_new_hsv(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),    (w), (h)))
-#define crimp_new_rgba(w,h)   (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),   (w), (h)))
-#define crimp_new_rgb(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),    (w), (h)))
-#define crimp_new_grey8(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::grey8"),  (w), (h)))
-#define crimp_new_grey16(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::grey16"), (w), (h)))
-#define crimp_new_grey32(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::grey32"), (w), (h)))
-#define crimp_new_float(w,h)  (crimp_new (crimp_imagetype_find ("crimp::image::float"),  (w), (h)))
+#define crimp_new_hsv(w,h)       (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),     (w), (h)))
+#define crimp_new_rgba(w,h)      (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),    (w), (h)))
+#define crimp_new_rgb(w,h)       (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),     (w), (h)))
+#define crimp_new_grey8(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::grey8"),   (w), (h)))
+#define crimp_new_grey16(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::grey16"),  (w), (h)))
+#define crimp_new_grey32(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::grey32"),  (w), (h)))
+#define crimp_new_float(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::float"),   (w), (h)))
+#define crimp_new_fpcomplex(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::fpcomplex"), (w), (h)))
 
 #define crimp_new_like(image)           (crimp_newm ((image)->itype, (image)->w, (image)->h, (image)->meta))
 #define crimp_new_like_transpose(image) (crimp_newm ((image)->itype, (image)->h, (image)->w, (image)->meta))
 
 /*
- * API :: Tcl. Manage Tcl_Obj's of images.
+ * Convenience macros for input image handling.
  */
-
-extern Tcl_Obj* crimp_new_image_obj      (crimp_image*  image);
-extern int      crimp_get_image_from_obj (Tcl_Interp*   interp,
-					  Tcl_Obj*      imageObj,
-					  crimp_image** image);
 
 #define crimp_input(objvar,imagevar,itype) \
     if (crimp_get_image_from_obj (interp, (objvar), &(imagevar)) != TCL_OK) { \
 	return TCL_ERROR; \
     } \
-    ASSERT_IMGTYPE (imagevar, itype)
+    CRIMP_ASSERT_IMGTYPE (imagevar, itype)
 
 #define crimp_input_any(objvar,imagevar) \
     if (crimp_get_image_from_obj (interp, (objvar), &(imagevar)) != TCL_OK) { \

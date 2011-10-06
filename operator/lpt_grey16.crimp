@@ -1,0 +1,147 @@
+lpt_grey16
+Tcl_Obj* imageObj
+int hcenter
+int vcenter
+int rwidth
+int rheight
+int corners
+
+/*   image    :- Image to transform
+ *   hcenter  :- Location of the horizontal center
+ *   vcenter  :- Location of the vertical center
+ *   rwidth   :- Transform width  (number of angular steps)
+ *   rheight  :- Transform height (number of radial steps)
+ *   corners  :- 1 ==> corner pixels desirable,
+ *               0 ==> trim to a circle
+ *   Result   :- Transformed image
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          w, h;
+float        r0;		/* Reference radius for the transform */
+float        rhoOffset;		/* Offset to add to the log-radius */
+int          i, j;
+int          phi, rho;
+float        rhomax,  rmax;
+float*       cosines;		/* Cosines of angles corresponding
+				 * to phi = 0 .. rwidth-1 */
+float*       sines;             /* Sines of angles corresponding
+				 * to phi = 0 .. rwidth-1 */
+
+crimp_input (imageObj, image, grey16);
+w = image->w;
+h = image->h;
+
+result = crimp_new_grey16 (rwidth, rheight);
+
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#define _USE_MATH_DEFINES
+#endif
+
+/*
+ * Initialize the result with a black background. As the transform below may
+ * not reach all pixels in the result.
+ */
+
+for (j = 0; j < result->h; j++) {
+    for (i = 0; i < result->w; i++) {
+	GREY16 (result, i, j) = BLACK;
+    }
+}
+
+/*
+ * Determine the maximum radial co-ordinate.
+ */
+
+rmax = (corners
+	? 0.5f * hypotf (w, h)
+	: 0.5f * ((w < h) ? w : h));
+
+/*
+ * Determine the radius at which rho and theta have equal scales.
+ * Inside r0, rho expands, outside,it contracts.
+ */
+
+r0 = rwidth / (2.0f * (float) M_PI);
+
+rhomax    = 1.0f + r0 * logf (rmax);  /* Maximum possible value of rho */
+rhoOffset = rheight - rhomax;         /* Offset to use for rho         */
+
+/*
+ * Filling all the pixels by interpolating.
+ */
+
+sines   = CRIMP_ALLOC_ARRAY (rwidth, float);
+cosines = CRIMP_ALLOC_ARRAY (rwidth, float);
+
+for (phi = 0; phi < rwidth; ++phi) {
+    float theta = 2.f * (float) M_PI * phi / rwidth;
+
+    cosines[phi] = cosf (theta);
+    sines[phi]   = sinf (theta);
+}
+
+for (rho = 0; rho < rheight; ++rho) {
+    float r = expf ((rho - rhoOffset) / r0);
+
+    for (phi = 0; phi < rwidth; ++phi) {
+	int hint0, vint0, hint1, vint1;
+	float hfract, vfract;
+	float z00, z01, z10, z11;
+	float hh, vv;
+
+	i = rho * rwidth + phi;
+
+	hh = r * cosines[phi];
+	vv = r * sines[phi];
+
+	if ((hh < -w/2) ||
+	    (hh >  w/2) ||
+	    (vv < -h/2) ||
+	    (vv >  h/2)) continue;
+
+	hh = hh + hcenter + w;
+	while (hh >= w) hh -= w;
+
+	vv = vv + vcenter + h;
+	while (vv >= h) vv -= h;
+
+	hint0  = (int) hh;
+
+	hfract = hh - hint0;
+	hint1  = (hint0 + 1) % w;
+
+	vint0  = (int) vv;
+
+	vfract = vv - vint0;
+	vint1  = (vint0 + 1) % h;
+
+	z00 = GREY16 (image, hint0, vint0);
+	z10 = GREY16 (image, hint0, vint1);
+	z01 = GREY16 (image, hint1, vint0);
+	z11 = GREY16 (image, hint1, vint1);
+
+	GREY16 (result, phi, rho) =
+	    z00 * (1.0f - vfract) * (1.0f - hfract) +
+	    z01 * (1.0f - vfract) * hfract          +
+	    z10 *  vfract         * (1.0f - hfract) +
+	    z11 *  vfract         * hfract;
+    }
+}
+
+ckfree ((char*) sines);
+ckfree ((char*) cosines);
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

@@ -48,17 +48,17 @@ if (!crimp_require_dim (valMap, 256, 256)) {
     return TCL_ERROR;
 }
 
-if (!RANGEOK (hueControlChannel,2)) {
+if (!CRIMP_RANGEOK (hueControlChannel,2)) {
     Tcl_SetResult(interp, "bad control for hue map, expected index in (0...2)", TCL_STATIC);
     return TCL_ERROR;
 }
 
-if (!RANGEOK (satControlChannel,2)) {
+if (!CRIMP_RANGEOK (satControlChannel,2)) {
     Tcl_SetResult(interp, "bad control for saturation map, expected index in (0...2)", TCL_STATIC);
     return TCL_ERROR;
 }
 
-if (!RANGEOK (valControlChannel,2)) {
+if (!CRIMP_RANGEOK (valControlChannel,2)) {
     Tcl_SetResult(interp, "bad control for value map, expected index in (0...2)", TCL_STATIC);
     return TCL_ERROR;
 }

@@ -242,5 +242,26 @@ Database Class:	\\fB\\$3\\fR
 doc
 .RS
 .TP
+\fBcrimp_bmp\fR
+\fIfiles/crimp_bmp.n\fR: CRIMP - BMP handling, Windows Bitmap
+.TP
+\fBcrimp_core\fR
+\fIfiles/crimp_core.n\fR: CRIMP - Foundation
+.TP
+\fBcrimp_introduction\fR
+\fIfiles/crimp_intro.n\fR: CRIMP - Introduction to CRIMP
+.TP
 \fBcrimp\fR
-\fIfiles/crimp.n\fR: Image Manipulation (not yet independent of Tk)
+\fIfiles/crimp.n\fR: CRIMP - Manipulation and Processing
+.TP
+\fBcrimp_pfm\fR
+\fIfiles/crimp_pfm.n\fR: CRIMP - PFM handling, NetPBM
+.TP
+\fBcrimp_pgm\fR
+\fIfiles/crimp_pgm.n\fR: CRIMP - PGM handling, NetPBM
+.TP
+\fBcrimp_ppm\fR
+\fIfiles/crimp_ppm.n\fR: CRIMP - PPM handling, NetPBM
+.TP
+\fBcrimp_tk\fR
+\fIfiles/crimp_tk.n\fR: CRIMP - Tk Photo Handling

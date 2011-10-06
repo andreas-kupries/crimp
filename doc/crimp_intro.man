@@ -1,0 +1,98 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin crimp_introduction n 1]
+[copyright {2011 Andreas Kupries}]
+[copyright {2011 Documentation, Andreas Kupries}]
+[moddesc   {C Raster Image Manipulation Package}]
+[titledesc {CRIMP - Introduction to CRIMP}]
+[keywords photo image matrix vector]
+[keywords {computer vision}]
+[keywords {document processing}]
+[description]
+
+Welcome to CRIMP, the C Raster Image Manipulation Package, a set of
+extensions of [term Tcl] for the handling and processing of
+images. Due to the nature of images as a 2-dimensional table of
+numbers some of the commands may reach into matrix and vector
+mathematics as well.
+
+[comment {
+[para]
+What are your goals which drove you here ?
+
+[list_begin enumerated]
+[enum]
+[list_end]
+}]
+
+[section {System Architecture}]
+
+The system can be split into roughly three sections, as seen in the
+figure below
+
+[para][image architecture][para]
+
+These sections are:
+
+[list_begin enumerated]
+[enum]
+
+At the [emph core] is a single package, [package crimp::core],
+providing both C and Tcl level data types and accessors for images,
+plus rudimentary IO capabilities (conversion to and construction from
+matrices of numbers, represented by nested Tcl lists).
+
+[para] While this package is functional on its own most of the truly
+interesting commands will be found in the packages built on top of
+this one.
+
+[enum]
+
+The [emph processing] section contains a single package as well,
+[package crimp]. Built on top of the [package crimp::core] this
+package provides the majority of CRIMPs power, manipulating and
+transforming images in a number of ways.
+
+[enum]
+
+The last section, for [emph IO], currently contains five packages,
+each providing the ability to import and/or export CRIMP images from a
+specific external image format. These packages, all built on top of
+the [package crimp::core] are
+
+[list_begin definitions]
+[def [package crimp::bmp]]
+
+This package provides the ability to read BMP images, i.e. the Windows
+bitmap format, as defined at [uri http://en.wikipedia.org/wiki/BMP_file_format].
+
+[def [package crimp::pfm]]
+
+This package provides the ability to read from and write to PFM
+images, i.e. the "Portable Float Map" format. This format is an
+unofficial derivative of the "Portable Grey Map" (see below), with the
+integer numbers of that format replaced with floating point values.
+
+[def [package crimp::pgm]]
+
+This package provides the ability to read from and write to PGM
+images, i.e. the "Portable Grey Map" format as specified at
+[uri http://en.wikipedia.org/wiki/Netpbm_format].
+
+[def [package crimp::ppm]]
+
+This package provides the ability to read from and write to PPM
+images, i.e. the "Portable Pix Map" format as specified at
+[uri http://en.wikipedia.org/wiki/Netpbm_format].
+
+[def [package crimp::tk]]
+
+This package provides the ability to convert CRIMP images into Tk
+photo images and vice versa. This is the [emph only] package in the
+whole set which is dependent on the [package Tk] package and its
+facilities.
+
+[list_end]
+[list_end]
+
+[manpage_end]
+

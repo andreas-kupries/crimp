@@ -25,6 +25,7 @@ if {[catch {
 package require widget::scrolledwindow
 package require widget::toolbar
 package require widget::arrowbutton
+package require crosshair
 package require fileutil
 
 # Self dir
@@ -33,42 +34,49 @@ set dir [file dirname [file normalize [info script]]]
 puts "In $dir"
 
 set triedprebuilt 0
-if {![file exists $dir/lib] ||
-    [catch {
-	set triedprebuilt 1
+if {[catch {
+    set triedprebuilt 1
 
-	puts "Trying prebuild crimp package"
+    puts "Trying prebuild packages"
 
-	# Use crimp as prebuilt package
-	lappend auto_path $dir/lib
-	package require crimp
+    # Use crimp as prebuilt package
+    lappend auto_path $dir/lib
 
-	puts "Using prebuilt crimp [package present crimp]"
-	puts "At [package ifneeded crimp [package present crimp]]"
-    } msg]} {
+    foreach p {
+	crimp::core
+	crimp
+	crimp::tk
+	crimp::ppm
+	crimp::pgm
+	crimp::pfm
+	crimp::bmp
+    } {
+	package require $p
+	puts "Using prebuilt $p [package present $p]"
+	puts "At [lindex [package ifneeded $p [package present $p]] end]"
 
+    }
+} msg]} {
     if {$triedprebuilt} {
-	puts "Trying to use a prebuilt crimp package failed ($msg)."
+	puts "Trying to use prebuilt packages failed ($msg)."
 	puts ==\t[join [split $::errorInfo \n] \n==\t]
-	puts "Falling back to dynamic compilation via local critcl package"
+	puts "Falling back to dynamic compilation via critcl [package require critcl 3]"
     }
 
-    puts "Trying dynamically compiled crimp package"
-
-    set cp [file join [file dirname $dir] lib critcl.vfs lib]
-
-    puts "Looking for critcl in $cp"
-
-    # Access to critcl library from a local unwrapped critcl app.
-    lappend auto_path $cp
-    package require critcl 2
-
-    puts "Got:           [package ifneeded critcl [package present critcl]]"
-
-    # Directly access the crimp package
-    source [file join $dir crimp.tcl]
-
-    puts "Using dynamically compiled crimp package"
+    foreach {f p l} {
+	crimp_core.tcl crimp::core  {System foundation}
+	crimp.tcl      crimp        {Main set of image processing algorithms}
+	crimp_tk.tcl   crimp::tk    {Conversion to Tk photo and back}
+	crimp_ppm.tcl  crimp::ppm   {Read/write portable pix maps}
+	crimp_pgm.tcl  crimp::pgm   {Read/write portable grey maps}
+	crimp_pfm.tcl  crimp::pfm   {Read/write portable float maps}
+	crimp_bmp.tcl  crimp::bmp   {Read/write Windows bitmaps}
+    } {
+	puts "Trying dynamically compiled package \"$p\""
+	# Directly access the package
+	source [file join $dir $f]
+	puts "Using dynamically compiled package \"$p\""
+    }
 }
 
 puts "Starting up ..."
@@ -85,9 +93,13 @@ proc images_init {} {
 }
 
 proc images_get {index} {
-    global dir images
+    global images
+    return [image_load [lindex $images $index]]
+}
 
-    set name  [lindex $images $index]
+proc image_load {name} {
+    global dir
+
     set photo [image create photo -file [file join $dir images $name]]
     set image [crimp read tk $photo]
     image delete $photo
@@ -291,7 +303,7 @@ proc reframe_slide {} {
     destroy    .slide
     ttk::frame .slide
 
-    grid .slide -row 0 -column 2 -columnspan 3 -sticky swen
+    grid .slide -row 0 -column 1 -sticky swen
     return
 }
 
@@ -304,7 +316,180 @@ proc tags {tw} {
     return
 }
 
+proc mag_init {} {
+    # Magnifier and tracking locations. Identical when the magnifier
+    # is active, otherweise can be different.
+    global mx my tx ty magik zsettings zcurrent mag_base mag_bdef
+
+    set mag_base {}
+    set mag_bdef 0
+
+    set mx 0 ; set tx 0
+    set my 0 ; set ty 0
+
+    # mag'nifier i'nterpolation k'ernel
+    set magik [crimp kernel make {{0 1 1}} 1]
+
+    # zoom information. The zcurrent data is always at the end of the
+    # zsettings list. Switching between magnifications pulls the
+    # chosen setting from the list, and puts the current one into the
+    # proper place per the direction of zoom change.
+
+    set zsettings {
+	{1 64}
+	{2 32}
+	{3 16}
+	{4  8}
+	{5  4}
+	{6  2}
+	{0  0}
+    }
+
+    # magnification is off initially
+    set zcurrent {0 0}
+    return
+}
+
+proc mag_next {} {
+    global zcurrent zsettings
+    set zcurrent  [lindex $zsettings 0]
+    set zsettings [linsert [lrange $zsettings 1 end] end $zcurrent]
+    mag_refresh
+    return
+}
+
+proc mag_previous {} {
+    global zcurrent zsettings
+    set old $zcurrent
+    set zcurrent  [lindex $zsettings end-1]
+    set zsettings [linsert [lrange $zsettings 0 end-1] 0 $old]
+    mag_refresh
+    return
+}
+
+proc mag_refresh {} {
+    global tx ty
+    mag_track _ $tx $ty _ _ _ _
+    return
+}
+
+proc mag_track {_ x y _ _ _ _} {
+    global zcurrent mx my tx ty mag_base mag_bdef
+
+    set x [expr {int($x)}]
+    set y [expr {int($y)}]
+
+    lassign $zcurrent scale radius
+
+    .c lower magnifier
+
+    # Remember the last track position, for refresh. Having this
+    # separate from the magnifier location ensures that it gets
+    # properly moved on refresh, should it be necessary.
+
+    set tx $x
+    set ty $y
+
+    # Do nothing without image or magnification disabled.
+    if {!$mag_bdef ||
+	($scale  == 0) ||
+	($radius == 0)} {
+	return
+    }
+
+    # Move the magnifier on top of the crosshair.
+    set dx [expr {$x - $mx}]
+    set dy [expr {$y - $my}]
+
+    if {$dx || $dy} {
+	.c move magnifier $dx $dy
+	set mx $x
+	set my $y
+    }
+
+    # TODO? Put into text-item placed on top or beside (north)
+    # the magnifier image overlay.
+    set d [expr {2*$radius}]
+    log "@ $x $y $scale $radius => [expr {2**$scale}]x\[${d}x${d}\]"
+
+    # =============================================
+
+    crimp write 2tk [.c itemcget magnifier -image] \
+	[magnify $scale [mag_pull $mag_base $x $y $radius]]
+
+    .c raise magnifier
+    return
+}
+
+proc magnify {z i} {
+    global magik
+    while {$z > 0} {
+	set i [crimp interpolate xy $i 2 $magik]
+	incr z -1
+    }
+    return $i
+}
+
+proc mag_pull {i x y r} {
+    # At x,y, block of radius r.
+
+    set w $r ; incr w $r
+    set h $r ; incr h $r
+
+    incr x -$r
+    incr y -$r
+
+    # Now the block is explicity specified as rectangle with top-left
+    # corner at x,y and width, height.
+
+    # This may be outside of the image borders. We now shrink the
+    # rectangle to fit the borders, and record this as expansion to be
+    # done after extraction.
+
+    set l 0 ; set r 0 ; set t 0 ; set b 0
+
+    set iw [crimp width  $i]
+    set ih [crimp height $i]
+
+    # Completely outside.
+    if {($x >= $iw) ||
+	($y >= $ih) ||
+	(($x+$w) < 0) ||
+	(($y+$h) < 0)} {
+	return [crimp blank [crimp::TypeOf $i] $w $h 0]
+    }
+
+    # At least partially inside. We cut the rectangle down to be
+    # completely inside and remember how much was cut at each edge.
+    if {$x < 0} {
+	set  l [expr {- $x}]
+	incr w $x
+	set  x 0
+    }
+    if {$y < 0} {
+	set  t [expr {- $y}]
+	incr h $y
+	set  y 0
+    }
+
+    if {($x+$w) >= $iw} {
+	set  r [expr {($x+$w) - $iw}]
+	incr w -$r
+    }
+    if {($y+$h) >= $ih} {
+	set  b [expr {($y+$h) - $ih}]
+	incr h -$b
+    }
+
+    # Cut (possibly shrunken) region, then expand the region back to
+    # the full size, using black outside of the input.
+    return [crimp expand const \
+		[crimp cut $i $x $y $w $h] \
+		$l $t $r $b 0]
+}
+
 proc gui {} {
+    mag_init
     widgets
     layout
     bindings
@@ -339,6 +524,10 @@ proc widgets {} {
 
     .c create image {0 0} -anchor nw -tags photo
     .c itemconfigure photo -image [image create photo]
+
+    # Overlay for magnifier.
+    .c create image {0 0} -anchor center -tags magnifier
+    .c itemconfigure magnifier -image [image create photo]
     return
 }
 
@@ -394,8 +583,12 @@ proc bindings {} {
 
     # Cross hairs ...
     #.c configure -cursor tcross
-    #crosshair::crosshair .c -width 0 -fill \#999999 -dash {.}
-    #crosshair::track on  .c TRACK
+    crosshair::crosshair .c -width 0 -fill \#999999 -dash {.}
+    crosshair::track on  .c mag_track
+
+    # Switching magnifications (zoom levels)
+    bind .c <3> mag_next
+    bind .c <1> mag_previous
     return
 }
 
@@ -639,8 +832,12 @@ proc show_image {image} {
 }
 
 proc display {image} {
+    global mag_base mag_bdef
     .c configure -scrollregion [list 0 0 {*}[crimp dimensions $image]]
     crimp write 2tk [.c itemcget photo -image] $image
+    set mag_base $image
+    set mag_bdef 1
+    mag_refresh
     return
 }
 
@@ -662,9 +859,13 @@ proc thebases {} {
 }
 
 proc reload {} {
+    catch { demo_close }
     images_init
     demo_init
-    after 100 {event generate .li <<ListboxSelect>>}
+    after 100 {
+	log [join [info loaded] \n]
+	event generate .li <<ListboxSelect>>
+    }
     return
 }
 

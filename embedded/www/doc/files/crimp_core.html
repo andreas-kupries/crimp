@@ -1,0 +1,540 @@
+
+<html><head>
+<title>crimp_core - C Raster Image Manipulation Package</title>
+<style type="text/css"><!--
+    HTML {
+	background: 	#FFFFFF;
+	color: 		black;
+    }
+    BODY {
+	background: 	#FFFFFF;
+	color:	 	black;
+    }
+    DIV.doctools {
+	margin-left:	10%;
+	margin-right:	10%;
+    }
+    DIV.doctools H1,DIV.doctools H2 {
+	margin-left:	-5%;
+    }
+    H1, H2, H3, H4 {
+	margin-top: 	1em;
+	font-family:	sans-serif;
+	font-size:	large;
+	color:		#005A9C;
+	background: 	transparent;
+	text-align:		left;
+    }
+    H1.title {
+	text-align: center;
+    }
+    UL,OL {
+	margin-right: 0em;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+    }
+    UL LI {
+	list-style: disc;
+    }
+    OL LI {
+	list-style: decimal;
+    }
+    DT {
+	padding-top: 	1ex;
+    }
+    UL.toc,UL.toc UL, UL.toc UL UL {
+	font:		normal 12pt/14pt sans-serif;
+	list-style:	none;
+    }
+    LI.section, LI.subsection {
+	list-style: 	none;
+	margin-left: 	0em;
+	text-indent:	0em;
+	padding: 	0em;
+    }
+    PRE {
+	display: 	block;
+	font-family:	monospace;
+	white-space:	pre;
+	margin:		0%;
+	padding-top:	0.5ex;
+	padding-bottom:	0.5ex;
+	padding-left:	1ex;
+	padding-right:	1ex;
+	width:		100%;
+    }
+    PRE.example {
+	color: 		black;
+	background: 	#f5dcb3;
+	border:		1px solid black;
+    }
+    UL.requirements LI, UL.syntax LI {
+	list-style: 	none;
+	margin-left: 	0em;
+	text-indent:	0em;
+	padding:	0em;
+    }
+    DIV.synopsis {
+	color: 		black;
+	background: 	#80ffff;
+	border:		1px solid black;
+	font-family:	serif;
+	margin-top: 	1em;
+	margin-bottom: 	1em;
+    }
+    UL.syntax {
+	margin-top: 	1em;
+	border-top:	1px solid black;
+    }
+    UL.requirements {
+	margin-bottom: 	1em;
+	border-bottom:	1px solid black;
+    }
+--></style>
+</head>
+<! -- Generated from file 'doc/files/crimp_core.html' by tcllib/doctools with format 'html'
+   -->
+<! -- Copyright &copy; 2011 Andreas Kupries   -- Copyright &copy; 2011 Documentation, Andreas Kupries
+   -->
+<! -- CVS: $Id$ crimp_core.n
+   -->
+<body><div class="doctools">
+<hr> [
+  <a href="../../toc.html">Main Table Of Contents</a>
+| <a href="../toc.html">Table Of Contents</a>
+| <a href="../../index.html">Keyword Index</a>
+] <hr>
+<h1 class="title">crimp_core(n) 0.1 doc &quot;C Raster Image Manipulation Package&quot;</h1>
+<div id="name" class="section"><h2><a name="name">Name</a></h2>
+<p>crimp_core - CRIMP - Foundation</p>
+</div>
+<div id="toc" class="section"><h2><a name="toc">Table Of Contents</a></h2>
+<ul class="toc">
+<li class="section"><a href="#toc">Table Of Contents</a></li>
+<li class="section"><a href="#synopsis">Synopsis</a></li>
+<li class="section"><a href="#section1">Description</a></li>
+<li class="section"><a href="#section2">Images</a></li>
+<li class="section"><a href="#section3">Image Types</a></li>
+<li class="section"><a href="#section4">General design</a></li>
+<li class="section"><a href="#section5">Tcl API</a>
+<ul>
+<li class="subsection"><a href="#subsection1">Accessors</a></li>
+<li class="subsection"><a href="#subsection2">I/O commands</a></li>
+</ul>
+</li>
+<li class="section"><a href="#section6">C API</a></li>
+<li class="section"><a href="#keywords">Keywords</a></li>
+<li class="section"><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<div id="synopsis" class="section"><h2><a name="synopsis">Synopsis</a></h2>
+<div class="synopsis">
+<ul class="requirements">
+<li>package require <b class="pkgname">Tcl 8.5</b></li>
+<li>package require <b class="pkgname">crimp::core <span class="opt">?0.1?</span></b></li>
+</ul>
+<ul class="syntax">
+<li><a href="#1"><b class="cmd">::crimp</b> <i class="arg">...</i></a></li>
+<li><a href="#2"><b class="cmd">::crimp</b> <b class="method">channels</b> <i class="arg">image</i></a></li>
+<li><a href="#3"><b class="cmd">::crimp</b> <b class="method">dimensions</b> <i class="arg">image</i></a></li>
+<li><a href="#4"><b class="cmd">::crimp</b> <b class="method">height</b> <i class="arg">image</i></a></li>
+<li><a href="#5"><b class="cmd">::crimp</b> <b class="method">meta append</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">string</i>...?</span></a></li>
+<li><a href="#6"><b class="cmd">::crimp</b> <b class="method">meta create</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></li>
+<li><a href="#7"><b class="cmd">::crimp</b> <b class="method">meta exists</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
+<li><a href="#8"><b class="cmd">::crimp</b> <b class="method">meta filter</b> <i class="arg">image</i> <i class="arg">args</i>...</a></li>
+<li><a href="#9"><b class="cmd">::crimp</b> <b class="method">meta for</b> <i class="arg">image</i> {<i class="arg">keyVar</i> <i class="arg">valueVar</i>} <i class="arg">body</i></a></li>
+<li><a href="#10"><b class="cmd">::crimp</b> <b class="method">meta get</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
+<li><a href="#11"><b class="cmd">::crimp</b> <b class="method">meta incr</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">increment</i>?</span></a></li>
+<li><a href="#12"><b class="cmd">::crimp</b> <b class="method">meta info</b> <i class="arg">image</i></a></li>
+<li><a href="#13"><b class="cmd">::crimp</b> <b class="method">meta keys</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></li>
+<li><a href="#14"><b class="cmd">::crimp</b> <b class="method">meta lappend</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">value</i>...?</span></a></li>
+<li><a href="#15"><b class="cmd">::crimp</b> <b class="method">meta merge</b> <i class="arg">image</i> <span class="opt">?<i class="arg">dictionaryValue</i>...?</span></a></li>
+<li><a href="#16"><b class="cmd">::crimp</b> <b class="method">meta remove</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
+<li><a href="#17"><b class="cmd">::crimp</b> <b class="method">meta replace</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></li>
+<li><a href="#18"><b class="cmd">::crimp</b> <b class="method">meta set</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span> <i class="arg">value</i></a></li>
+<li><a href="#19"><b class="cmd">::crimp</b> <b class="method">meta size</b> <i class="arg">image</i></a></li>
+<li><a href="#20"><b class="cmd">::crimp</b> <b class="method">meta unset</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
+<li><a href="#21"><b class="cmd">::crimp</b> <b class="method">meta values</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></li>
+<li><a href="#22"><b class="cmd">::crimp</b> <b class="method">pixel</b> <i class="arg">image</i></a></li>
+<li><a href="#23"><b class="cmd">::crimp</b> <b class="method">type</b> <i class="arg">image</i></a></li>
+<li><a href="#24"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></li>
+<li><a href="#25"><b class="cmd">::crimp</b> <b class="method">read</b> <i class="arg">...</i></a></li>
+<li><a href="#26"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#27"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#28"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></li>
+<li><a href="#29"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></li>
+<li><a href="#30"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></li>
+<li><a href="#31"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></li>
+</ul>
+</div>
+</div>
+<div id="section1" class="section"><h2><a name="section1">Description</a></h2>
+<p>This package is the foundation for the whole of CRIMP, the C Raster
+Image Manipulation Package.</p>
+<p>For a basic introduction of the whole CRIMP eco-system please read
+the <i class="term"><a href="crimp_intro.html">CRIMP - Introduction to CRIMP</a></i> (sic!).</p>
+<p>As the foundation its location is in the bottom-most layer of the
+system's architecture, as shown at</p>
+<p><img alt="arch_core" src="../../image/arch_core.png"></p>
+<p>The core provides both C and Tcl level data types and accessors for
+images, plus rudimentary IO capabilities (conversion to and
+construction from matrices of numbers, represented by nested Tcl
+lists).</p>
+<p>The following sections first describe the basic concepts of the
+system, like images and image types, general organization of the
+command space, etc. After that follows a reference of the Tcl API
+provided by the core. The C API is not really of interest to users
+of CRIMP, only to developers wishing to extend the system. As such
+it is not described here, but in separate manpages targeted at
+developers and maintainers.</p>
+</div>
+<div id="section2" class="section"><h2><a name="section2">Images</a></h2>
+<p>Images are values. This means that they have a string
+representation. It is however strongly recommended to not access this
+representation at all, and to only use the accessor commands provided
+by crimp to obtain the information stored in the internal
+representation of image values.</p>
+<p>The reason behind this is simple: Memory and speed. Images can be
+large. Generating the string representation from the internal one
+roughly doubles the memory needed to store it, actually a bit more,
+due to the necessary quoting of bytes in UTF-8 and list-quting them as
+well. Furthermore such a conversion takes time, roughly proportional
+to the size of the image itself, in either direction. Properly
+accessing the image information without the package's accessor
+commands requires list commands. This causes the loss of the internal
+representation, thus forcing later a reconversion to the image's
+internal represention when it is used as image again. I.e. the
+shimmering forces us to convert twice.</p>
+<p>Therefore, to avoid this, use only the crimp commands to access the
+images. Even the raw pixel data is accessible in this manner. While
+access to that in a Tcl script is, IMHO, highly unusual, there are
+situations where it is beneficial. An example of such a situation are
+the commands exporting images to raw portable any-maps (PNMs). Our
+pixel data fits these formats exactly, and with access to it these
+commands could be written in Tcl instead of requiring C level primitives.</p>
+</div>
+<div id="section3" class="section"><h2><a name="section3">Image Types</a></h2>
+<p>Each image has a <i class="term">type</i>, a string implicitly describing features
+like the colorspace the image is in, the number of (color) channels,
+the domain, i.e. bit-depth, of pixel values in the channels, etc.</p>
+<p>All type strings have the form <b class="const">crimp::image::</b><b class="variable">foo</b>.</p>
+<p>The package currently knows the following types:</p>
+<dl class="definitions">
+<dt><b class="const">rgba</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>RGB also known as Red, Green, and Blue.</p></dd>
+<dt>Channels</dt>
+<dd><p>4, named &quot;red&quot;, &quot;green&quot;, and &quot;blue&quot;,
+				plus an &quot;alpha&quot; channel controlling
+				pixel opacity.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 byte/channel (8 bit, values 0-255).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>4 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">rgb</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>RGB also known as Red, Green, and Blue.</p></dd>
+<dt>Channels</dt>
+<dd><p>3, named &quot;red&quot;, &quot;green&quot;, and &quot;blue&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 byte/channel (8 bit, values 0-255).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>3 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">hsv</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>HSV, also known as Hue, Saturation, and Value.</p></dd>
+<dt>Channels</dt>
+<dd><p>3, named &quot;hue&quot;, &quot;saturation&quot;, and &quot;value&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 byte/channel (8 bit, values 0-255).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>3 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">grey8</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>Greyscale.</p></dd>
+<dt>Channels</dt>
+<dd><p>1, named &quot;luma&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 byte/channel (8 bit, values 0-255).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>1 byte.</p></dd>
+</dl></dd>
+<dt><b class="const">grey16</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>Greyscale.</p></dd>
+<dt>Channels</dt>
+<dd><p>1, named &quot;luma&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>2 byte/channel (16 bit, values 0-65,535).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>2 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">grey32</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>Greyscale.</p></dd>
+<dt>Channels</dt>
+<dd><p>1, named &quot;luma&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>4 byte/channel (16 bit, values 0-4,294,967,296).</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>4 bytes.</p></dd>
+</dl></dd>
+<dt><b class="const">bw</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>Binary.</p></dd>
+<dt>Channels</dt>
+<dd><p>1, named &quot;bw&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>1 bit/channel.</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>1 byte. I.e. 7 bits/channel are wasted.</p></dd>
+</dl></dd>
+<dt><b class="const">float</b></dt>
+<dd><dl class="definitions">
+	
+<dt>Colorspace</dt>
+<dd><p>N.A / Floating Point.</p></dd>
+<dt>Channels</dt>
+<dd><p>1, named &quot;value&quot;.</p></dd>
+<dt>Bit-depth</dt>
+<dd><p>4 byte/channel.</p></dd>
+<dt>Pixel-size</dt>
+<dd><p>4 byte.</p></dd>
+</dl></dd>
+</dl>
+<p>Support for the various types varies by operation. The exact image
+types supported by each operation will be listed in the operation's
+description. Invoking an operation for a type it doesn't support will
+generally cause it to throw an error.</p>
+</div>
+<div id="section4" class="section"><h2><a name="section4">General design</a></h2>
+<p>All commands operate in a pipeline fashion, taking zero or more image
+values, zero or more other arguments, and returning zero or more
+images or other values. None are operating in place, i.e. taking an
+image variable and writing back to it.</p>
+<p>They fall into five categories, namely:</p>
+<p><img alt="organization" src="../../image/organization.png"></p>
+<dl class="definitions">
+<dt>Accessors</dt>
+<dd><p>They take one or more images, extract information about them, and
+return this information as their result. This can be a simple as
+querying the image's height, to something as complex as counting pixel
+values for a histogram.</p>
+<p>The list of accessors, their syntax, and detailed meaning can be found
+in section <span class="sectref"><a href="#subsection1">Accessors</a></span>.</p></dd>
+<dt>Manipulators</dt>
+<dd><p>These take an image and transform its contents in some way, leaving
+the image type unchanged. Examples of commands in category are
+inversion, gamma conversion, etc. They fall into two sub-categories,
+manipulation of the image geometry, and of the intensity values or
+colors.</p></dd>
+<dt>Converters</dt>
+<dd><p>Similar to manipulators, except that they change the image's type,
+preserving the content instead. Here reside operations like conversion
+between the HSV and RGB colorspaces, to greyscale and back, etc.</p></dd>
+<dt>I/O</dt>
+<dd><p>Another variant of the same theme, i.e. akin to converters and
+manipulators, yet not the same, these commands read and write images
+from and to files or other data structures. I.e. they convert between
+different serializations of image content and type.</p>
+<p>The list of I/O commands, their syntax, and detailed meaning can be
+found in section <span class="sectref"><a href="#subsection2">I/O commands</a></span>.</p></dd>
+<dt>Support</dt>
+<dd><p>Lastly, but not leastly a number of commands, which, while not image
+commands themselves, support the others.</p></dd>
+</dl>
+<p>The core package specified here provides only Accessors and
+rudimentary I/O commands. All other sections are filled out by the
+other packages of the CRIMP eco-system.</p>
+</div>
+<div id="section5" class="section"><h2><a name="section5">Tcl API</a></h2>
+<dl class="definitions">
+<dt><a name="1"><b class="cmd">::crimp</b> <i class="arg">...</i></a></dt>
+<dd><p>Any and all functionality of CRIMP, regardless of which package
+in the system provides it, will be made accessible through a
+(set of) method(s) of this ensemble command.</p>
+<p>In other words, this command serves as the umbrella
+underneath which anything else is arranged and made available.</p></dd>
+</dl>
+<div id="subsection1" class="subsection"><h3><a name="subsection1">Accessors</a></h3>
+<dl class="definitions">
+<dt><a name="2"><b class="cmd">::crimp</b> <b class="method">channels</b> <i class="arg">image</i></a></dt>
+<dd><p>This method returns a list containing the names of the channels in the
+<i class="arg">image</i>. The order of channels is the same as expected by the
+<b class="method">remap</b> method.</p>
+<p>The method supports all image types.</p></dd>
+<dt><a name="3"><b class="cmd">::crimp</b> <b class="method">dimensions</b> <i class="arg">image</i></a></dt>
+<dd><p>This method returns the width and height of the <i class="arg">image</i> (in
+pixels).  The result is a 2-element list containing width and height,
+in this order.</p>
+<p>The method supports all image types.</p></dd>
+<dt><a name="4"><b class="cmd">::crimp</b> <b class="method">height</b> <i class="arg">image</i></a></dt>
+<dd><p>This method returns the height of the <i class="arg">image</i> (in pixels).</p>
+<p>The method supports all image types.</p></dd>
+<dt><a name="5"><b class="cmd">::crimp</b> <b class="method">meta append</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">string</i>...?</span></a></dt>
+<dd></dd>
+<dt><a name="6"><b class="cmd">::crimp</b> <b class="method">meta create</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></dt>
+<dd></dd>
+<dt><a name="7"><b class="cmd">::crimp</b> <b class="method">meta exists</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
+<dd></dd>
+<dt><a name="8"><b class="cmd">::crimp</b> <b class="method">meta filter</b> <i class="arg">image</i> <i class="arg">args</i>...</a></dt>
+<dd></dd>
+<dt><a name="9"><b class="cmd">::crimp</b> <b class="method">meta for</b> <i class="arg">image</i> {<i class="arg">keyVar</i> <i class="arg">valueVar</i>} <i class="arg">body</i></a></dt>
+<dd></dd>
+<dt><a name="10"><b class="cmd">::crimp</b> <b class="method">meta get</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
+<dd></dd>
+<dt><a name="11"><b class="cmd">::crimp</b> <b class="method">meta incr</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">increment</i>?</span></a></dt>
+<dd></dd>
+<dt><a name="12"><b class="cmd">::crimp</b> <b class="method">meta info</b> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="13"><b class="cmd">::crimp</b> <b class="method">meta keys</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></dt>
+<dd></dd>
+<dt><a name="14"><b class="cmd">::crimp</b> <b class="method">meta lappend</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">value</i>...?</span></a></dt>
+<dd></dd>
+<dt><a name="15"><b class="cmd">::crimp</b> <b class="method">meta merge</b> <i class="arg">image</i> <span class="opt">?<i class="arg">dictionaryValue</i>...?</span></a></dt>
+<dd></dd>
+<dt><a name="16"><b class="cmd">::crimp</b> <b class="method">meta remove</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
+<dd></dd>
+<dt><a name="17"><b class="cmd">::crimp</b> <b class="method">meta replace</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></dt>
+<dd></dd>
+<dt><a name="18"><b class="cmd">::crimp</b> <b class="method">meta set</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span> <i class="arg">value</i></a></dt>
+<dd></dd>
+<dt><a name="19"><b class="cmd">::crimp</b> <b class="method">meta size</b> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="20"><b class="cmd">::crimp</b> <b class="method">meta unset</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
+<dd></dd>
+<dt><a name="21"><b class="cmd">::crimp</b> <b class="method">meta values</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></dt>
+<dd><p>These methods provide access to the meta data slot of images, treating
+its contents as a dictionary. As such all the methods provided here
+have an appropriate counterpart in the methods of Tcl's builtin
+command <b class="cmd">dict</b>, with the image's metadata taking the place of the
+dictionary value or vqariable.
+The converse is not true, as <b class="cmd">dict</b>'s methods <b class="method">update</b> and
+<b class="method">with</b> are not supported here.</p>
+<p>Please read the documentation of Tcl's <b class="cmd">dict</b> command for reference.</p>
+<p><em>NOTE</em> that the toplevel key <b class="const">crimp</b> is reserved for
+use by CRIMP itself.</p></dd>
+<dt><a name="22"><b class="cmd">::crimp</b> <b class="method">pixel</b> <i class="arg">image</i></a></dt>
+<dd><p>This method returns the raw pixels of the <i class="arg">image</i> as a Tcl ByteArray.</p>
+<p>The method supports all image types.</p></dd>
+<dt><a name="23"><b class="cmd">::crimp</b> <b class="method">type</b> <i class="arg">image</i></a></dt>
+<dd><p>This method returns the type of the <i class="arg">image</i>.</p>
+<p>The method supports all image types.</p></dd>
+<dt><a name="24"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></dt>
+<dd><p>This method returns the width of the <i class="arg">image</i> (in pixels).</p>
+<p>The method supports all image types.</p></dd>
+</dl>
+</div>
+<div id="subsection2" class="subsection"><h3><a name="subsection2">I/O commands</a></h3>
+<dl class="definitions">
+<dt><a name="25"><b class="cmd">::crimp</b> <b class="method">read</b> <i class="arg">...</i></a></dt>
+<dd><p>This ensemble command is the umbrella underneath which any and all
+functionality for reading images from external formats must be placed.</p>
+<p>This command is an <i class="term">extension point</i>. I.e., other packages
+are allowed to extend this ensemble by providing commands of the form
+<b class="cmd">::crimp::read::<b class="variable">FOO</b></b>, where <i class="term">FOO</i> should be the name of
+the format the command is able to read, or related to it.
+Note that only commands beginning with a lower-case alphanumerical
+character, i.e. [a-z0-9] will be exported by the ensemble. This
+means that it is possible to put private helper commands into the
+<b class="namespace">::crimp::read</b> namespace which will not be visible to the user,
+by naming them appropriately. However, even so it is recommended to put
+private commands into a sub-namespace instead, named after the package
+in question, to reduce the probability of naming conflicts.</p>
+<p>The commands used to extend the ensemble are not restricted in
+their argument signature, although they are expected to return an image.</p>
+<p>This package provides only rudimentary import facilities from
+Tcl data structures, as described next.</p></dd>
+<dt><a name="26"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></dt>
+<dd><p>This method takes the <i class="arg">pixelmatrix</i>, a list of rows, with each row
+a list of pixel values in the domain [0..255] and returns an
+image of type <b class="const">grey8</b> whose height is the number of rows, i.e.
+the length of the outer list, and whose width is the maximum length
+found among the inner lists. Rows whose inner list is shorter than the
+maximum length are padded with black pixels, i.e. a pixel value of
+<b class="const">0</b>.</p></dd>
+<dt><a name="27"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></dt>
+<dd><p>This method takes the <i class="arg">pixelmatrix</i>, a list of rows, with each row
+a list of floating point values for pixel values and returns an image
+of type <b class="const">float</b> whose height is the number of rows, i.e.  the
+length of the outer list, and whose width is the maximum length found
+among the inner lists. Rows whose inner list is shorter than the
+maximum length are padded with a pixel value of <b class="const">0</b>.</p></dd>
+<dt><a name="28"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></dt>
+<dd><p>This ensemble command is the umbrella underneath which any and all
+functionality for writing images to external formats must be placed.</p>
+<p>This command is an <i class="term">extension point</i>. I.e., other packages
+are allowed to extend this ensemble by providing commands of the form
+<b class="cmd">::crimp::write::<b class="variable">FOO</b></b>, where <i class="term">FOO</i> should be the name of
+the format the command is able to write, or related to it.
+Note that only commands beginning with a lower-case alphanumerical
+character, i.e. [a-z0-9] will be exported by the ensemble. This
+means that it is possible to put private helper commands into the
+<b class="namespace">::crimp::write</b> namespace which will not be visible to the user,
+by naming them appropriately. However, even so it is recommended to put
+private commands into a sub-namespace instead, named after the package
+in question, to reduce the probability of naming conflicts.</p>
+<p>The commands used to extend the ensemble are not restricted in
+their argument signature, although they are expected to take at least
+an image as argument.</p></dd>
+<dt><a name="29"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="30"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="31"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></dt>
+<dd><p>This family of methods extends the basic <b class="cmd">::crimp write</b> ensemble.
+The input <i class="arg">image</i> is returned as either a binary string in the
+specified <i class="arg">format</i>, or written to the open channel <i class="arg">chan</i>, or
+the named file at <i class="arg">path</i>.</p>
+<p>By default the only supported format is <b class="const">tcl</b>, a representation
+of an image as a nested Tcl list. This format supports, i.e. accepts, images
+with the types <b class="const">grey8</b>, <b class="const">rga</b>, <b class="const">rgba</b>, and <b class="const">hsv</b> for
+export.</p>
+<p>This family of commands is an <i class="term">extension point</i>. Other packages
+can extend it to support additional formats by providing commands of the
+form <b class="cmd">::crimp::write::Str_<b class="variable">FOO</b>_<b class="variable">TYPE</b></b>
+and  <b class="cmd">::crimp::write::Chan_<b class="variable">FOO</b>_<b class="variable">TYPE</b></b>
+where <b class="variable">FOO</b> is the name of the format, to specify as the argument
+<i class="arg">format</i>, and <b class="variable">TYPE</b> the type of image handled by the command.</p>
+<p>Note that the <b class="const">Chan_</b> form is optional. If this form is missing
+the system will use the <b class="const">Str_</b> form to convert the image before
+writing it to channel or file.</p>
+<p>The commands must match the following signatures:</p>
+<dl class="definitions">
+<dt><b class="cmd">Str_...</b> <i class="arg">image</i></dt>
+<dd></dd>
+<dt><b class="cmd">Chan_...</b> <i class="arg">channel</i> <i class="arg">image</i></dt>
+<dd></dd>
+</dl></dd>
+</dl>
+</div>
+</div>
+<div id="section6" class="section"><h2><a name="section6">C API</a></h2>
+<p>The C API of the core is of no interest to users of CRIMP, the audience
+towards which this manpage is geared to.</p>
+</div>
+<div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
+<p><a href="../../index.html#key108">channels</a>, <a href="../../index.html#key4">computer vision</a>, <a href="../../index.html#key109">dimensions</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key110">image accessors</a>, <a href="../../index.html#key1">image type</a>, <a href="../../index.html#key6">matrix</a>, <a href="../../index.html#key7">photo</a>, <a href="../../index.html#key8">vector</a></p>
+</div>
+<div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
+<p>Copyright &copy; 2011 Andreas Kupries<br>
+Copyright &copy; 2011 Documentation, Andreas Kupries</p>
+</div>
+</div></body></html>

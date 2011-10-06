@@ -1,0 +1,41 @@
+noise_gaussian_grey32
+Tcl_Obj* imageObj
+double mean
+double variance
+
+/*
+ * Adding gaussian-style noise (*) to the image, converting a source of
+ * uniformly distributed numbers to gaussian distributed numbers.
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          x, y;
+double       rand_no;
+
+crimp_input (imageObj, image, grey32);
+
+result = crimp_new_float (image->w, image->h);
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+	rand_no = sqrt ((-2.0f ) * log(RAND_FLOAT())) * sin (2 * M_PI * RAND_FLOAT());
+
+	FLOATP (result, x, y) =
+	    (GREY32 (image, x, y) / 255.0f) + (sqrt(variance) * rand_no) + mean;
+    }
+}
+
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

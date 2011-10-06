@@ -1,16 +1,13 @@
 /*
  * CRIMP :: Image Type Definitions (Implementation).
- * (C) 2010.
+ * (C) 2010-2011.
  */
 
 /*
  * Import declarations.
  */
 
-#include <image_type.h>
-#include <util.h>
-#include <tcl.h>
-#include <string.h>
+#include "coreInt.h"
 
 /*
  * Internal declarations.
@@ -73,6 +70,9 @@ crimp_imagetype_init (void)
 
     static const char*     fp_cname [] = {"value"};
     static crimp_imagetype fp = { "crimp::image::float", sizeof(float), 1, &fp_cname };
+	
+    static const char*     fpcomplex_cname [] = {"real", "imaginary"};
+    static crimp_imagetype fpcomplex = { "crimp::image::fpcomplex", 2*sizeof(float), 2, &fpcomplex_cname };
 
     static initialized = 0;
 
@@ -92,6 +92,7 @@ crimp_imagetype_init (void)
     crimp_imagetype_def (&hsv);
     crimp_imagetype_def (&rgb);
     crimp_imagetype_def (&rgba);
+    crimp_imagetype_def (&fpcomplex);
 }
 
 
@@ -102,7 +103,7 @@ crimp_imagetype_init (void)
 void
 crimp_imagetype_def (const crimp_imagetype* imagetype)
 {
-    knowntype* kt = ALLOC (knowntype);
+    knowntype* kt = CRIMP_ALLOC (knowntype);
     kt->type   = imagetype;
     kt->next   = knowntypes;
     knowntypes = kt;
@@ -182,7 +183,7 @@ StringOfImageType (Tcl_Obj* imagetypeObjPtr)
     int              len = strlen (cit->name);
 
     imagetypeObjPtr->length = len;
-    imagetypeObjPtr->bytes  = NALLOC (len+1,char);
+    imagetypeObjPtr->bytes  = CRIMP_ALLOC_ARRAY (len+1,char);
     strcpy (imagetypeObjPtr->bytes, cit->name);
 }
 

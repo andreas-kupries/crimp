@@ -4,11 +4,13 @@ Tcl_Obj* imageObj
 crimp_image* image;
 Tcl_Obj* result;
 Tcl_Obj* cdata;
+Tcl_Obj* lv [2];
 
 size_t n;
 int x, y, w, h;
 Tcl_WideInt min, max;
 double var, stddev, mean, middle, sum, sumsq;
+int maxx, minx, maxy, miny;
 
 crimp_input (imageObj, image, grey32);
 
@@ -22,6 +24,7 @@ n = crimp_image_area (image);
 
 sum = sumsq = 0;
 min = max = GREY32 (image, 0, 0);
+minx = miny = maxx = maxy = 0;
 
 for (y = 0; y < h; y++) {
     for (x = 0; x < w; x++) {
@@ -29,8 +32,17 @@ for (y = 0; y < h; y++) {
 
 	sum   += val;
 	sumsq += val*val;
-	min = MIN (min, val);
-	max = MAX (max, val);
+
+	if (val < min) {
+	    min = val;
+	    minx = x;
+	    miny = y;
+	}
+	if (val > max) {
+	    max = val;
+	    maxx = x;
+	    maxy = y;
+	}
     }
 }
 
@@ -55,6 +67,14 @@ Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("mean",     -1), Tcl_NewDoubleObj
 Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("middle",   -1), Tcl_NewDoubleObj (middle));
 Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("variance", -1), Tcl_NewDoubleObj (var));
 Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("stddev",   -1), Tcl_NewDoubleObj (stddev));
+
+lv[0] = Tcl_NewIntObj (maxx);
+lv[1] = Tcl_NewIntObj (maxy);
+Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max@",   -1), Tcl_NewListObj (2, lv));
+
+lv[0] = Tcl_NewIntObj (minx);
+lv[1] = Tcl_NewIntObj (miny);
+Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min@",   -1), Tcl_NewListObj (2, lv));
 
 result = Tcl_NewDictObj ();
 Tcl_DictObjPut (NULL, result, Tcl_NewStringObj (image->itype->cname[0],-1), cdata);

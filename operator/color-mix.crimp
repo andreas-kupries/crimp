@@ -1,0 +1,81 @@
+color_mix
+Tcl_Obj* imageObj
+Tcl_Obj* mixMatrixObj
+
+/*
+ * Taking a color image in either RGB(A) and HSV it remixes the color channels
+ * by feeding the channels of each pixel through the specified matrix. One
+ * application of this is whitepoint correction.
+ */
+
+crimp_image* image;
+crimp_image* mix;
+crimp_image* result;
+int x, y;
+
+/*
+ * Ensure that the input is of type RGB(A) or HSV
+ */
+
+crimp_input_any (imageObj, image);
+CRIMP_ASSERT_NOTIMGTYPE (image, float);
+CRIMP_ASSERT_NOTIMGTYPE (image, grey8);
+CRIMP_ASSERT_NOTIMGTYPE (image, grey16);
+CRIMP_ASSERT_NOTIMGTYPE (image, grey32);
+
+crimp_input (mixMatrixObj, mix, float);
+
+if (!crimp_require_dim (mix, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_like (image);
+
+if (image->itype->channels == 4) {
+    for (y = 0; y < result->h; y++) {
+	for (x = 0; x < result->w; x++) {
+
+	    double r = CH (image, 0, x, y);
+	    double g = CH (image, 1, x, y);
+	    double b = CH (image, 2, x, y);
+
+	    crimp_la_multiply_matrix_3v (mix, &r, &g, &b);
+
+	    CH (result, 0, x, y)= CLAMP (0, (int) r, 255);
+	    CH (result, 1, x, y)= CLAMP (0, (int) g, 255);
+	    CH (result, 2, x, y)= CLAMP (0, (int) b, 255);
+
+	    /* The alpha channel is simply copied over */
+	    CH (result, 3, x, y)= CH (image, 3, x, y);
+	}
+    }
+} else {
+    for (y = 0; y < result->h; y++) {
+	for (x = 0; x < result->w; x++) {
+
+	    double r = CH (image, 0, x, y);
+	    double g = CH (image, 1, x, y);
+	    double b = CH (image, 2, x, y);
+
+	    crimp_la_multiply_matrix_3v (mix, &r, &g, &b);
+
+	    CH (result, 0, x, y)= CLAMP (0, (int) r, 255);
+	    CH (result, 1, x, y)= CLAMP (0, (int) g, 255);
+	    CH (result, 2, x, y)= CLAMP (0, (int) b, 255);
+	}
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

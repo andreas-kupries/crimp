@@ -19,9 +19,9 @@ int x, y, xt, yt, origx, origy, xi, yi, outside, c;
 double xf, yf;
 
 crimp_input_any (imageObj, image);
-ASSERT_NOTIMGTYPE (image, float);
-ASSERT_NOTIMGTYPE (image, grey16);
-ASSERT_NOTIMGTYPE (image, grey32);
+CRIMP_ASSERT_NOTIMGTYPE (image, float);
+CRIMP_ASSERT_NOTIMGTYPE (image, grey16);
+CRIMP_ASSERT_NOTIMGTYPE (image, grey32);
 
 crimp_input (forwardObj, forward, float);
 

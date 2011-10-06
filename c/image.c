@@ -1,17 +1,13 @@
 /*
  * CRIMP :: Image Definitions (Implementation).
- * (C) 2010.
+ * (C) 2010-2011.
  */
 
 /*
  * Import declarations.
  */
 
-#include <image.h>
-#include <util.h>
-#include <tcl.h>
-#include <string.h>
-#include <limits.h> /* HAVE_LIMITS_H check ? */
+#include "coreInt.h"
 
 /*
  * Internal declarations.
@@ -43,7 +39,7 @@ crimp_new (const crimp_imagetype* itype, int w, int h)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    size_t       size  = sizeof (crimp_image) + RECT_AREA (w, h) * itype->size;
+    size_t       size  = sizeof (crimp_image) + CRIMP_RECT_AREA (w, h) * itype->size;
     crimp_image* image = (crimp_image*) ckalloc (size);
 
     image->itype = itype;
@@ -61,7 +57,7 @@ crimp_newm (const crimp_imagetype* itype, int w, int h, Tcl_Obj* meta)
      * Note: Pixel storage and header describing it are allocated together.
      */
 
-    size_t       size  = sizeof (crimp_image) + RECT_AREA (w, h) * itype->size;
+    size_t       size  = sizeof (crimp_image) + CRIMP_RECT_AREA (w, h) * itype->size;
     crimp_image* image = (crimp_image*) ckalloc (size);
 
     image->itype = itype;
@@ -227,7 +223,7 @@ StringOfImage (Tcl_Obj* imgObjPtr)
 	 * a 0-terminated string, and the pixels aren't
 	 */
 
-	dst = tmp = NALLOC (plen+1, char);
+	dst = tmp = CRIMP_ALLOC_ARRAY (plen+1, char);
 	if (expanded) {
 	    /*
 	     * If bytes have to be expanded we have to handle them 1-by-1.
@@ -255,7 +251,7 @@ StringOfImage (Tcl_Obj* imgObjPtr)
 
     length = Tcl_DStringLength (&ds);
 
-    imgObjPtr->bytes  = NALLOC (length+1, char);
+    imgObjPtr->bytes  = CRIMP_ALLOC_ARRAY (length+1, char);
     imgObjPtr->length = length;
 
     memcpy (imgObjPtr->bytes, Tcl_DStringValue (&ds), length+1);
@@ -287,12 +283,14 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
     if ((crimp_get_imagetype_from_obj (interp, objv[0], &ct) != TCL_OK) ||
         (Tcl_GetIntFromObj            (interp, objv[1], &w) != TCL_OK) ||
 	(Tcl_GetIntFromObj            (interp, objv[2], &h) != TCL_OK) ||
-	(w < 0) || (h < 0))
+	(w < 0) || (h < 0)) {
 	goto invalid;
+    }
 
     pixel = Tcl_GetByteArrayFromObj (objv[4], &length);
-    if (length != (ct->size * RECT_AREA (w, h)))
+    if (length != (ct->size * CRIMP_RECT_AREA (w, h))) {
 	goto invalid;
+    }
 
     meta = objv[3];
 

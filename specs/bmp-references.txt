@@ -1,0 +1,9 @@
+http://www.daubnet.com/en/file-format-bmp
+http://atlc.sourceforge.net/bmp.html
+http://www.fortunecity.com/skyscraper/windows/364/bmpffrmt.html
+http://www.martinreddy.net/gfx/2d/BMP.txt
+http://www.dragonwins.com/domains/getteched/bmp/bmpfileformat.htm
+http://entropymine.com/jason/bmpsuite/
+http://www.fileformat.info/format/bmp/sample/index.htm
+http://wvnvms.wvnet.edu/vmswww/bmp.html
+http://people.sc.fsu.edu/~jburkardt/data/bmp/bmp.html

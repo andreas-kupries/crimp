@@ -1,0 +1,2227 @@
+'\"
+'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev-v3/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Copyright (c) 2010-2011 Andreas Kupries
+'\" Copyright (c) 2010-2011 Documentation, Andreas Kupries
+'\"
+'\" The definitions below are for supplemental macros used in Tcl/Tk
+'\" manual entries.
+'\"
+'\" .AP type name in/out ?indent?
+'\"	Start paragraph describing an argument to a library procedure.
+'\"	type is type of argument (int, etc.), in/out is either "in", "out",
+'\"	or "in/out" to describe whether procedure reads or modifies arg,
+'\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+'\"	needed;  use .AS below instead)
+'\"
+'\" .AS ?type? ?name?
+'\"	Give maximum sizes of arguments for setting tab stops.  Type and
+'\"	name are examples of largest possible arguments that will be passed
+'\"	to .AP later.  If args are omitted, default tab stops are used.
+'\"
+'\" .BS
+'\"	Start box enclosure.  From here until next .BE, everything will be
+'\"	enclosed in one large box.
+'\"
+'\" .BE
+'\"	End of box enclosure.
+'\"
+'\" .CS
+'\"	Begin code excerpt.
+'\"
+'\" .CE
+'\"	End code excerpt.
+'\"
+'\" .VS ?version? ?br?
+'\"	Begin vertical sidebar, for use in marking newly-changed parts
+'\"	of man pages.  The first argument is ignored and used for recording
+'\"	the version when the .VS was added, so that the sidebars can be
+'\"	found and removed when they reach a certain age.  If another argument
+'\"	is present, then a line break is forced before starting the sidebar.
+'\"
+'\" .VE
+'\"	End of vertical sidebar.
+'\"
+'\" .DS
+'\"	Begin an indented unfilled display.
+'\"
+'\" .DE
+'\"	End of indented unfilled display.
+'\"
+'\" .SO
+'\"	Start of list of standard options for a Tk widget.  The
+'\"	options follow on successive lines, in four columns separated
+'\"	by tabs.
+'\"
+'\" .SE
+'\"	End of list of standard options for a Tk widget.
+'\"
+'\" .OP cmdName dbName dbClass
+'\"	Start of description of a specific option.  cmdName gives the
+'\"	option's name as specified in the class command, dbName gives
+'\"	the option's name in the option database, and dbClass gives
+'\"	the option's class in the option database.
+'\"
+'\" .UL arg1 arg2
+'\"	Print arg1 underlined, then print arg2 normally.
+'\"
+'\" RCS: @(#) $Id: man.macros,v 1.1 2009/01/30 04:56:47 andreas_kupries Exp $
+'\"
+'\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.if t .wh -1.3i ^B
+.nr ^l \n(.l
+.ad b
+'\"	# Start an argument description
+.de AP
+.ie !"\\$4"" .TP \\$4
+.el \{\
+.   ie !"\\$2"" .TP \\n()Cu
+.   el          .TP 15
+.\}
+.ta \\n()Au \\n()Bu
+.ie !"\\$3"" \{\
+\&\\$1	\\fI\\$2\\fP	(\\$3)
+.\".b
+.\}
+.el \{\
+.br
+.ie !"\\$2"" \{\
+\&\\$1	\\fI\\$2\\fP
+.\}
+.el \{\
+\&\\fI\\$1\\fP
+.\}
+.\}
+..
+'\"	# define tabbing values for .AP
+.de AS
+.nr )A 10n
+.if !"\\$1"" .nr )A \\w'\\$1'u+3n
+.nr )B \\n()Au+15n
+.\"
+.if !"\\$2"" .nr )B \\w'\\$2'u+\\n()Au+3n
+.nr )C \\n()Bu+\\w'(in/out)'u+2n
+..
+.AS Tcl_Interp Tcl_CreateInterp in/out
+'\"	# BS - start boxed text
+'\"	# ^y = starting y location
+'\"	# ^b = 1
+.de BS
+.br
+.mk ^y
+.nr ^b 1u
+.if n .nf
+.if n .ti 0
+.if n \l'\\n(.lu\(ul'
+.if n .fi
+..
+'\"	# BE - end boxed text (draw box now)
+.de BE
+.nf
+.ti 0
+.mk ^t
+.ie n \l'\\n(^lu\(ul'
+.el \{\
+.\"	Draw four-sided box normally, but don't draw top of
+.\"	box if the box started on an earlier page.
+.ie !\\n(^b-1 \{\
+\h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.el \}\
+\h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.\}
+.fi
+.br
+.nr ^b 0
+..
+'\"	# VS - start vertical sidebar
+'\"	# ^Y = starting y location
+'\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.de VS
+.if !"\\$2"" .br
+.mk ^Y
+.ie n 'mc \s12\(br\s0
+.el .nr ^v 1u
+..
+'\"	# VE - end of vertical sidebar
+.de VE
+.ie n 'mc
+.el \{\
+.ev 2
+.nf
+.ti 0
+.mk ^t
+\h'|\\n(^lu+3n'\L'|\\n(^Yu-1v\(bv'\v'\\n(^tu+1v-\\n(^Yu'\h'-|\\n(^lu+3n'
+.sp -1
+.fi
+.ev
+.\}
+.nr ^v 0
+..
+'\"	# Special macro to handle page bottom:  finish off current
+'\"	# box/sidebar if in box/sidebar mode, then invoked standard
+'\"	# page bottom macro.
+.de ^B
+.ev 2
+'ti 0
+'nf
+.mk ^t
+.if \\n(^b \{\
+.\"	Draw three-sided box if this is the box's first page,
+.\"	draw two sides but no top otherwise.
+.ie !\\n(^b-1 \h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.el \h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.\}
+.if \\n(^v \{\
+.nr ^x \\n(^tu+1v-\\n(^Yu
+\kx\h'-\\nxu'\h'|\\n(^lu+3n'\ky\L'-\\n(^xu'\v'\\n(^xu'\h'|0u'\c
+.\}
+.bp
+'fi
+.ev
+.if \\n(^b \{\
+.mk ^y
+.nr ^b 2
+.\}
+.if \\n(^v \{\
+.mk ^Y
+.\}
+..
+'\"	# DS - begin display
+.de DS
+.RS
+.nf
+.sp
+..
+'\"	# DE - end display
+.de DE
+.fi
+.RE
+.sp
+..
+'\"	# SO - start of list of standard options
+.de SO
+.SH "STANDARD OPTIONS"
+.LP
+.nf
+.ta 4c 8c 12c
+.ft B
+..
+'\"	# SE - end of list of standard options
+.de SE
+.fi
+.ft R
+.LP
+See the \\fBoptions\\fR manual entry for details on the standard options.
+..
+'\"	# OP - start of full description for a single option
+.de OP
+.LP
+.nf
+.ta 4c
+Command-Line Name:	\\fB\\$1\\fR
+Database Name:	\\fB\\$2\\fR
+Database Class:	\\fB\\$3\\fR
+.fi
+.IP
+..
+'\"	# CS - begin code excerpt
+.de CS
+.RS
+.nf
+.ta .25i .5i .75i 1i
+..
+'\"	# CE - end code excerpt
+.de CE
+.fi
+.RE
+..
+.de UL
+\\$1\l'|0\(ul'\\$2
+..
+.TH "crimp" n 0.1 doc "C Raster Image Manipulation Package"
+.BS
+.SH NAME
+crimp \- CRIMP - Manipulation and Processing
+.SH SYNOPSIS
+package require \fBTcl  8.5\fR
+.sp
+package require \fBTk  8.5\fR
+.sp
+package require \fBcrimp  ?0.1?\fR
+.sp
+package require \fBcrimp::core  ?0.1?\fR
+.sp
+\fB::crimp\fR \fBhistogram\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBstatistics basic\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBstatistics otsu\fR \fIstats\fR
+.sp
+\fB::crimp\fR \fBadd\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
+.sp
+\fB::crimp\fR \fBalpha blend\fR \fIforeground\fR \fIbackground\fR \fIalpha\fR
+.sp
+\fB::crimp\fR \fBalpha set\fR \fIimage\fR \fImask\fR
+.sp
+\fB::crimp\fR \fBalpha opaque\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBalpha over\fR \fIforeground\fR \fIbackground\fR
+.sp
+\fB::crimp\fR \fBatan2\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBblank\fR \fItype\fR \fIwidth\fR \fIheight\fR \fIvalue\fR...
+.sp
+\fB::crimp\fR \fBcrop\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.sp
+\fB::crimp\fR \fBcut\fR \fIimage\fR \fIx\fR \fIy\fR \fIw\fR \fIh\fR
+.sp
+\fB::crimp\fR \fBdecimate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBdecimate x\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBdecimate y\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
+.sp
+\fB::crimp\fR \fBdifference\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBdownsample xy\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBdownsample x\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBdownsample y\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBeffect charcoal\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBeffect emboss\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBeffect sharpen\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
+.sp
+\fB::crimp\fR \fBexpand extend\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.sp
+\fB::crimp\fR \fBexpand mirror\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.sp
+\fB::crimp\fR \fBexpand replicate\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.sp
+\fB::crimp\fR \fBexpand wrap\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.sp
+\fB::crimp\fR \fBfft forward\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfft backward\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter ahe\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+.sp
+\fB::crimp\fR \fBfilter convolve\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+.sp
+\fB::crimp\fR \fBfilter gauss discrete\fR \fIimage\fR \fIsigma\fR ?\fIr\fR?
+.sp
+\fB::crimp\fR \fBfilter gauss sampled\fR \fIimage\fR \fIsigma\fR ?\fIr\fR?
+.sp
+\fB::crimp\fR \fBfilter mean\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+.sp
+\fB::crimp\fR \fBfilter rank\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
+.sp
+\fB::crimp\fR \fBfilter stddev\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+.sp
+\fB::crimp\fR \fBfilter sobel x\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter sobel y\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter scharr x\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter scharr y\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter prewitt x\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBfilter prewitt y\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
+.sp
+\fB::crimp\fR \fBgradient sobel\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBgradient scharr\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBgradient prewitt\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBgradient polar\fR \fIcgradient\fR
+.sp
+\fB::crimp\fR \fBgradient visual\fR \fIpgradient\fR
+.sp
+\fB::crimp\fR \fBhypot\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBintegrate\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBinterpolate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBinterpolate x\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBinterpolate y\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBinvert\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmatrix\fR \fIimage\fR \fImatrix\fR
+.sp
+\fB::crimp\fR \fBmax\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBmin\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBmontage horizontal\fR ?\fB-align\fR \fBtop\fR|\fBcenter\fR|\fBbottom\fR? ?\fB-border\fR \fIspec\fR? \fIimage\fR...
+.sp
+\fB::crimp\fR \fBmontage vertical\fR ?\fB-align\fR \fBleft\fR|\fBmiddle\fR|\fBright\fR? ?\fB-border\fR \fIspec\fR? \fIimage\fR...
+.sp
+\fB::crimp\fR \fBmorph dilate\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmorph erode\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmorph close\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmorph open\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmorph gradient\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmorph igradient\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmorph egradient\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmorph tophatw\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmorph tophatb\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmorph toggle\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBmultiply\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBpsychedelia\fR \fIwidth\fR \fIheight\fR \fIframes\fR
+.sp
+\fB::crimp\fR \fBpyramid run\fR \fIimage\fR \fIsteps\fR \fIstepcmd\fR
+.sp
+\fB<stepcmd>\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBpyramid gauss\fR \fIimage\fR \fIsteps\fR
+.sp
+\fB::crimp\fR \fBpyramid laplace\fR \fIimage\fR \fIsteps\fR
+.sp
+\fB::crimp\fR \fBremap\fR \fIimage\fR \fImap\fR...
+.sp
+\fB::crimp\fR \fBscreen\fR \fIimage1\fR \fIimage2\fR
+.sp
+\fB::crimp\fR \fBsolarize\fR \fIimage\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBsquare\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBsubtract\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
+.sp
+\fB::crimp\fR \fBthreshold global above\fR \fIimage\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBthreshold global below\fR \fIimage\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBthreshold global inside\fR \fIimage\fR \fImin\fR \fImax\fR
+.sp
+\fB::crimp\fR \fBthreshold global outside\fR \fIimage\fR \fImin\fR \fImax\fR
+.sp
+\fB::crimp\fR \fBthreshold global middle\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBthreshold global mean\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBthreshold global median\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBthreshold global otsu\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBthreshold local\fR \fIimage\fR \fIthreshold\fR...
+.sp
+\fB::crimp\fR \fBupsample xy\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBupsample x\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBupsample y\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp\fR \fBwavy\fR \fIimage\fR \fIoffset\fR \fIadj1\fR \fIadjb\fR
+.sp
+\fB::crimp\fR \fBflip horizontal\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBflip transpose\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBflip transverse\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBflip vertical\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBresize\fR ?\fB-interpolate\fR \fBnneighbour\fR|\fBbilinear\fR|\fBbicubic\fR? \fIimage\fR \fIw\fR \fIh\fR
+.sp
+\fB::crimp\fR \fBrotate cw\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBrotate ccw\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBrotate half\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBwarp field\fR ?\fB-interpolate\fR \fBnneighbour\fR|\fBbilinear\fR|\fBbicubic\fR? \fIimage\fR \fIxvec\fR \fIyvec\fR
+.sp
+\fB::crimp\fR \fBwarp projective\fR ?\fB-interpolate\fR \fBnneighbour\fR|\fBbilinear\fR|\fBbicubic\fR? \fIimage\fR \fItransform\fR
+.sp
+\fB::crimp\fR \fBconvert 2grey8\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBconvert 2hsv\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBconvert 2rgba\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBconvert 2rgb\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBjoin 2hsv\fR \fIhueImage\fR \fIsatImage\fR \fIvalImage\fR
+.sp
+\fB::crimp\fR \fBjoin 2rgba\fR \fIredImage\fR \fIgreenImage\fR \fIblueImage\fR \fIalphaImage\fR
+.sp
+\fB::crimp\fR \fBjoin 2rgb\fR \fIredImage\fR \fIgreenImage\fR \fIblueImage\fR
+.sp
+\fB::crimp\fR \fBsplit\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBread pgm\fR \fIstring\fR
+.sp
+\fB::crimp\fR \fBread ppm\fR \fIstring\fR
+.sp
+\fB::crimp\fR \fBread strimj\fR \fIstring\fR ?\fIcolormap\fR?
+.sp
+\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient rgba\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.sp
+\fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR? ?\fIoffset\fR?
+.sp
+\fB::crimp\fR \fBkernel fpmake\fR \fImatrix\fR ?\fIoffset\fR?
+.sp
+\fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
+.sp
+\fB::crimp\fR \fBmap\fR \fIarg\fR...
+.sp
+\fB::crimp\fR \fBmapof\fR \fItable\fR
+.sp
+\fB::crimp\fR \fBtable compose\fR \fIf\fR \fIg\fR
+.sp
+\fB::crimp\fR \fBtable eval wrap\fR \fIcmd\fR
+.sp
+\fB::crimp\fR \fBtable eval clamp\fR \fIcmd\fR
+.sp
+\fB<cmd>\fR \fIx\fR
+.sp
+\fB::crimp\fR \fBtable degamma\fR \fIy\fR
+.sp
+\fB::crimp\fR \fBtable gamma\fR \fIy\fR
+.sp
+\fB::crimp\fR \fBtable gauss\fR \fIsigma\fR
+.sp
+\fB::crimp\fR \fBtable identity\fR
+.sp
+\fB::crimp\fR \fBtable invers\fR
+.sp
+\fB::crimp\fR \fBtable linear wrap\fR \fIgain\fR \fIoffset\fR
+.sp
+\fB::crimp\fR \fBtable linear clamp\fR \fIgain\fR \fIoffset\fR
+.sp
+\fB::crimp\fR \fBtable log\fR ?\fImax\fR?
+.sp
+\fB::crimp\fR \fBtable solarize\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBtable sqrt\fR ?\fImax\fR?
+.sp
+\fB::crimp\fR \fBtable stretch\fR \fImin\fR \fImax\fR
+.sp
+\fB::crimp\fR \fBtable threshold above\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBtable threshold below\fR \fIthreshold\fR
+.sp
+\fB::crimp\fR \fBtable threshold inside\fR \fImin\fR \fImax\fR
+.sp
+\fB::crimp\fR \fBtable threshold outside\fR \fImin\fR \fImax\fR
+.sp
+\fB::crimp\fR \fBtable fgauss discrete\fR \fIsigma\fR ?\fIr\fR?
+.sp
+\fB::crimp\fR \fBtable fgauss sampled\fR \fIsigma\fR ?\fIr\fR?
+.sp
+\fB::crimp\fR \fBtransform affine\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR
+.sp
+\fB::crimp\fR \fBtransform chain\fR \fItransform\fR...
+.sp
+\fB::crimp\fR \fBtransform invert\fR \fItransform\fR
+.sp
+\fB::crimp\fR \fBtransform projective\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR \fIg\fR \fIh\fR
+.sp
+\fB::crimp\fR \fBtransform quadrilateral\fR \fIsrc\fR \fIdst\fR
+.sp
+\fB::crimp\fR \fBtransform rotate\fR \fItheta\fR ?\fIcenter\fR?
+.sp
+\fB::crimp\fR \fBtransform scale\fR \fIsx\fR \fIsy\fR
+.sp
+\fB::crimp\fR \fBtransform translate\fR \fIdx\fR \fIdy\fR
+.sp
+.BE
+.SH DESCRIPTION
+This package, built on top of the \fBcrimp::core\fR package
+provides the majority of CRIMPs power, manipulating and transforming
+images in a number of ways.
+.PP
+For a basic introduction of the whole CRIMP eco-system please read
+the \fICRIMP - Introduction to CRIMP\fR (sic!).
+The basic concepts used here, like images, image types, etc. are
+described in the reference manpage for the \fICRIMP - Foundation\fR.
+We will not repeat them here, but assume that the reader knows them
+already.
+.PP
+In the overall architecture this package resides in the middle
+layer of the system's architecture, between core and applications, as
+shown at
+.PP
+IMAGE: arch_processing
+.PP
+Note that the intended audience of this document are the users of
+\fBcrimp\fR. Developers wishing to work on the internals of the
+package, but unfamiliar with them, should read ... instead.
+.SH API
+.SS ACCESSORS
+.TP
+\fB::crimp\fR \fBhistogram\fR \fIimage\fR
+This method returns a nested dictionary as its result.  The outer
+dictionary is indexed by the names of the channels in the \fIimage\fR.
+Its values, the inner dictionaries, are indexed by pixel value. The
+associated values are the number of pixels with that value.
+.sp
+The method supports all image types except "grey32".  Under the
+current system the result would be a dictionary with 2^32 keys and
+values, taking up, roughly, 192 GiByte of memory in the worst case,
+and 96 GiByte in best case (all counter values shared in a single
+object).
+.TP
+\fB::crimp\fR \fBstatistics basic\fR \fIimage\fR
+This method returns a nested dictionary as its result. The outer dictionary
+contains basic information about the image, see the list of keys below.
+The inner dictionaries hold data about each (color) channel in the image,
+namely histogram and derived data like minumum pixel value, maximum, etc.
+.RS
+.TP
+\fBdimensions\fR
+2-element list holding image width and height, in
+this order.
+.TP
+\fBheight\fR
+Image height as separate value.
+.TP
+\fBpixels\fR
+Number of pixels in the image, the product of
+its width and height.
+.TP
+\fBtype\fR
+Type of the image.
+.TP
+\fBwidth\fR
+Image width as separate value.
+.TP
+\fBchannels\fR
+List of the names for the channels in the image.
+.TP
+\fBchannel\fR
+A dictionary mapping the names of the image's
+channels, as listed under key \fBchannels\fR, to
+a dictionary holding the statistics for that channel.
+.RS
+.TP
+\fBmin\fR
+The minimal pixel value with a non-zero population.
+.TP
+\fBmax\fR
+The maximal pixel value with a non-zero population.
+.TP
+\fBmean\fR
+The arithmetic mean (aka average) of pixel values.
+.TP
+\fBmiddle\fR
+The arithmetic mean of the min and max pixel values.
+.TP
+\fBmedian\fR
+The median pixel value.
+.TP
+\fBstddev\fR
+The standard deviation of pixel values.
+.TP
+\fBvariance\fR
+The variance of pixel values, square of the standard
+deviation.
+.TP
+\fBhistogram\fR
+A dictionary mapping pixel values to population counts.
+.TP
+\fBhf\fR
+The histogram reduced to the population counts, sorted
+by pixel value to direct indexing into the list by
+pixel values.
+.TP
+\fBcdf\fR
+The \fIcumulative density function\fR of pixel
+values. The discrete integral of \fBhf\fR.
+.TP
+\fBcdf255\fR
+Same as \fBcdf\fR, except scaled down so that the
+last value in the series is 255.
+.RE
+.RE
+.sp
+The method supports all image types except "grey32".  Under the
+current system the result would contain internal dictionaries with 2^32 keys
+and values, taking up, roughly, 192 GiByte of memory in the worst case,
+and 96 GiByte in best case (all counter values shared in a single
+object).
+.TP
+\fB::crimp\fR \fBstatistics otsu\fR \fIstats\fR
+This method takes a dictionary of basic image statistics as generated
+by \fBcrimp statistics basic\fR and returns an extended dictionary
+containing a threshold for image binarization computed by Otsu's
+method (See \fBreference\fR 2). Note that this
+threshold is computed separately for each channel and stored in the
+channel specific part of the dictionary, using the key \fBotsu\fR.
+.PP
+.SS MANIPULATORS
+.TP
+\fB::crimp\fR \fBadd\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
+This method combines the two input images into a result image by
+performing a pixelwise addition (image1 + image2) followed by division
+through \fIscale\fR and addition of the \fIoffset\fR. They default to
+\fB1\fR and \fB0\fR respectively, if they are not specified.
+.TP
+\fB::crimp\fR \fBalpha blend\fR \fIforeground\fR \fIbackground\fR \fIalpha\fR
+This method takes two images of identical dimensions and a blending
+factor \fIalpha\fR and returns an image which is a mix of both, with
+each pixel blended per the formula
+.sp
+.PS
+.nf
+Z = F\\alpha + B(1-\\alpha)
+
+.fi
+.PE
+.sp
+or, alternatively written
+.sp
+.PS
+.nf
+Z = (F - B)\\alpha + B
+
+.fi
+.PE
+.sp
+This means that the \fIforeground\fR is returned as is for
+"\fIalpha\fR == 255", and the \fIbackground\fR for
+"\fIalpha\fR == 0".
+I.e. the argument \fIalpha\fR controls the \fIopacity\fR of the
+foreground, with \fB1\fR and \fB0\fR standing for "fully opaque"
+and "fully transparent", respectively.
+.sp
+The following combinations of fore- and background image types are
+supported:
+.CS
+
+
+    Result = Foreground Background
+    ------   ---------- ----------
+    grey8    grey8      grey8
+    hsv      hsv        hsv
+    rgb      rgb        grey8
+    rgb      rgb        rgb
+    rgb      rgb        rgba
+    rgba     rgba       grey8
+    rgba     rgba       rgb
+    rgba     rgba       rgba
+    ------   ---------- ----------
+
+.CE
+.TP
+\fB::crimp\fR \fBalpha set\fR \fIimage\fR \fImask\fR
+This command takes two images, the input and a \fImask\fR, and returns
+an image as result in which the mask is the alpha channel of the
+input.
+The result is therefore always of type \fBrgba\fR, as the only type
+supporting an alpha channel.
+.sp
+The input image can be of type \fBrgb\fR or \fBrgba\fR.  In
+case of the latter the existing alpha channel is replaced, in case of
+the former an alpha channel is added.
+.sp
+For the mask images of type \fBgrey8\fR and \fBrgba\fR are
+accepted.  In the case of the latter the mask's alpha channel is used
+as the new alpha channel, in case of the former the mask itself is
+used.
+.TP
+\fB::crimp\fR \fBalpha opaque\fR \fIimage\fR
+A convenience method over \fBalpha set\fR, giving the \fIimage\fR
+a mask which makes it fully opaque.
+.TP
+\fB::crimp\fR \fBalpha over\fR \fIforeground\fR \fIbackground\fR
+This method is similar to \fBblend\fR above, except that there is
+no global blending parameter. This information is taken from the
+"alpha" channel of the \fIforeground\fR image instead. The blending
+formula is the same, except that the alpha parameter is now a
+per-pixel value, and not constant across the image.
+.sp
+Due to the need for an alpha channel the \fIforeground\fR has to be of
+type \fBrgba\fR. For the \fIbackground\fR image the types
+\fBrgb\fR and \fBrgba\fR are supported.
+.TP
+\fB::crimp\fR \fBatan2\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+computing
+.sp
+.PS
+.nf
+atan2 (x,y) = atan(\\frac{x}{y})
+
+.fi
+.PE
+.sp
+at each pixel.
+.sp
+The input is restricted to images of the single-channel types,
+i.e. \fBfloat\fR and \fBgrey{8,16,32}\fR. The result is always
+of type \fBfloat\fR.
+.sp
+An application of this operation is the computation of a gradient's
+direction from two images representing a gradient in X and Y directions.
+For the full conversion of such cartesian gradients to a polar
+representation use the \fBcrimp hypot\fR operation to compute the
+gradient's magnitude at each pixel.
+.TP
+\fB::crimp\fR \fBblank\fR \fItype\fR \fIwidth\fR \fIheight\fR \fIvalue\fR...
+This method returns a blank image of the given image type and
+dimensions.  The \fIvalue\fRs after the dimensions are the pixel
+values to fill the pixels in the image's channels with, per its type.
+.sp
+This method currently support only the types \fBrgb\fR,
+\fBrgba\fR, and \fBgrey8\fR.
+.TP
+\fB::crimp\fR \fBcrop\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+This method is the counterpart to the \fBexpand\fR family of
+methods, shrinking an \fIimage\fR by removing a border.
+The size of this border is specified by the four arguments \fIww\fR,
+\fIhn\fR, \fIwe\fR, and \fIhs\fR which provide the number of pixels to
+remove from the named edge. See the image below for a graphical
+representation.
+.sp
+.PS
+.nf
+   |< ww >|           |< we >|
+
+-  +------+-----------+------+
+^  |      |           |      |
+hn |      |           |      |
+V  |      |           |      |
+-  +------+-----------+------+
+   |      |           |      |
+   |      |           |      |
+   |      |           |      |
+   |      |           |      |
+-  +------+-----------+------+
+^  |      |           |      |
+hs |      |           |      |
+V  |      |           |      |
+-  +------+-----------+------+
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBcut\fR \fIimage\fR \fIx\fR \fIy\fR \fIw\fR \fIh\fR
+This method cuts the rectangular region specified throught its \fIx\fR/\fIy\fR
+position relative to the upper-left corner of the input \fIimage\fR and its
+dimensions, and returns it as its own image.
+.TP
+\fB::crimp\fR \fBdecimate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.TP
+\fB::crimp\fR \fBdecimate x\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.TP
+\fB::crimp\fR \fBdecimate y\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+This is a convenience method combining the two steps of filtering an image
+(via \fBfilter convolve\fR), followed by a \fBdownsample\fR step.
+See the method \fBinterpolate\fR for the complementary operation.
+.sp
+Note that while the \fIkernel\fR argument for \fBfilter convolve\fR
+is expected to be the 1D form of a separable low-pass filter no checks are made.
+The method simply applies both the kernel and its transposed form.
+.sp
+The method \fBpyramid gauss\fR is a user of this method.
+.TP
+\fB::crimp\fR \fBdegamma\fR \fIimage\fR \fIy\fR
+This method takes an image, runs it through an
+\fBinverse gamma correction\fR with parameter \fIy\fR, and returns
+the corrected image as it result.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap degamma\fR \fIy\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBdifference\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+taking the pixelwise absolute difference (|image1 - image2|).
+.TP
+\fB::crimp\fR \fBdownsample xy\fR \fIimage\fR \fIfactor\fR
+.TP
+\fB::crimp\fR \fBdownsample x\fR \fIimage\fR \fIfactor\fR
+.TP
+\fB::crimp\fR \fBdownsample y\fR \fIimage\fR \fIfactor\fR
+This method returns an image containing only every \fIfactor\fR pixel of the
+input \fIimage\fR (in x, y, or both dimensions). The effect is that the input is
+shrunken by \fIfactor\fR. It is the complement of method \fBupsample\fR.
+.sp
+Using the method as is is not recommended because the simple subsampling
+will cause higher image frequencies to alias into the reduced spectrum, causing
+artifacts to appear in the result. This is normally avoided by running a
+low-pass filter over the image before doing downsampling, removing the
+problematic frequencies.
+.sp
+The \fBdecimate\fR method is a convenience method combining these
+two steps into one.
+.TP
+\fB::crimp\fR \fBeffect charcoal\fR \fIimage\fR
+This method applies a charcoal effect to the image, i.e. it returns a
+\fBgrey8\fR image showing the input as if it had been drawn with a
+charcoal pencil.
+.TP
+\fB::crimp\fR \fBeffect emboss\fR \fIimage\fR
+This method applies an embossing effect to the image, i.e. it returns
+an image of the same type as the input showing the input as if it had
+been embossed into a metal plate with a stencil of some kind.
+.TP
+\fB::crimp\fR \fBeffect sharpen\fR \fIimage\fR
+This method sharpens the input image, i.e. returns an image of the
+same type as the input in which the input's edges are emphasized.
+.TP
+\fB::crimp\fR \fBexpand const\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR ?\fIvalue\fR...?
+.TP
+\fB::crimp\fR \fBexpand extend\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.TP
+\fB::crimp\fR \fBexpand mirror\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.TP
+\fB::crimp\fR \fBexpand replicate\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+.TP
+\fB::crimp\fR \fBexpand wrap\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
+This set of methods takes an image and expands it by adding a border.
+The size of this border is specified by the four arguments \fIww\fR,
+\fIhn\fR, \fIwe\fR, and \fIhs\fR which provide the number of pixels to
+add at the named edge. See the image below for a graphical
+representation.
+.sp
+.PS
+.nf
+   |< ww >|           |< we >|
+
+-  +------+-----------+------+
+^  |      |           |      |
+hn |      |           |      |
+V  |      |           |      |
+-  +------+-----------+------+
+   |      |           |      |
+   |      |           |      |
+   |      |           |      |
+   |      |           |      |
+-  +------+-----------+------+
+^  |      |           |      |
+hs |      |           |      |
+V  |      |           |      |
+-  +------+-----------+------+
+
+.fi
+.PE
+.sp
+The contents of the border's pixels are specified via the border type,
+the first argument after \fBexpand\fR, as per the list below.
+.RS
+.TP
+\fBconst\fR
+The additional \fIvalue\fRs specify the values to use for the color
+channels of the image. Values beyond the number of channels in the
+image are ignored.
+Missing values are generated by replicating the last value, except for
+the alpha channel, which will be set to \fB255\fR. If no values are
+present they default to \fB0\fR.
+.TP
+\fBextend\fR
+This is a combination of \fBmirror\fR and \fBreplicate\fR.  The
+outside pixels are the result of subtracting the outside pixel for
+\fBmirror\fR from the outside pixel for \fBreplicate\fR (and
+clamping to the range [0...255]).
+.TP
+\fBmirror\fR
+The outside pixels take the value of the associated inside pixels,
+found by reflecting its coordinates along the relevant edges.
+.TP
+\fBreplicate\fR
+The outside pixels take the value of the associated edge pixels, i.e.
+replicating them into the border.
+.TP
+\fBwrap\fR
+The outside pixels take the value of the associated inside pixels,
+found by toroidial (cyclic) wrapping its coordinates along the
+relevant edges. This is also called tiling.
+.RE
+.TP
+\fB::crimp\fR \fBfft forward\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfft backward\fR \fIimage\fR
+These two methods implement 2D FFT (forward) and inverse FFT (backward).
+.sp
+The input is restricted to images of the single-channel types,
+i.e. \fBfloat\fR and \fBgrey{8,16,32}\fR. The result is always
+of type \fBfloat\fR.
+.sp
+The former means that it is necessary to split \fBrgb\fR,
+etc. images into their channels before performing an FFT, and that
+results of an inverse FFT have to be joined.
+See the methods \fBsplit\fR and \fBjoin\fR for the relevant
+operations and their syntax.
+.sp
+The latter means that a separate invokation of method
+\fBconvert 2grey8\fR is required when reconstructing an image
+by inverting its FFT.
+.TP
+\fB::crimp\fR \fBfilter ahe\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+This method performs adaptive histogram equalization to enhance the
+contrast of the input image. Each pixel undergoes regular histogram
+equalization, with the histogram computed from the pixels in the
+\fBN\fRx\fBN\fR square centered on it, where
+"\fBN\fR = 2*\fBradius\fR+1".
+.sp
+The default radius is \fB3\fR, for a 7x7 square.
+.TP
+\fB::crimp\fR \fBfilter convolve\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? \fIkernel\fR...
+This method runs the series of filters specified by the convolution
+\fIkernel\fRs over the input and returns the filtered result. See the
+method \fBkernel\fR and its sub-methods for commands to create and
+manipulate suitable kernels.
+.sp
+The border specification determines how the input image is
+expanded (see method \fBexpand\fR) to compensate for the shrinkage
+introduced by the filter itself. The \fIspec\fR argument is a list
+containing the name of the sub-method of \fBexpand\fR to use, plus
+any additional arguments this method may need, except for the size of
+the expansion.
+.sp
+By default a black frame is used as the border, i.e.
+"\fIspec\fR == {const 0}".
+.TP
+\fB::crimp\fR \fBfilter gauss discrete\fR \fIimage\fR \fIsigma\fR ?\fIr\fR?
+.TP
+\fB::crimp\fR \fBfilter gauss sampled\fR \fIimage\fR \fIsigma\fR ?\fIr\fR?
+These methods apply a discrete or sampled gaussian blur with
+parameters \fIsigma\fR and kernel \fIr\fRadius to the \fIimage\fR. If
+the radius is not specified it defaults to the smallest integer
+greater than "3*\fIsigma\fR".
+.TP
+\fB::crimp\fR \fBfilter mean\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+This method applies a mean filter with \fIradius\fR to the
+image. I.e. each pixel of the result is the mean value of all pixels
+in the \fBN\fRx\fBN\fR square centered on it, where
+"\fBN\fR = 2*\fBradius\fR+1".
+.sp
+The default radius is \fB3\fR, for a 7x7 square.
+.sp
+\fINOTE\fR. As the mean is known to be in the range defined by the
+channel this method automatically converts float results back to the
+channel type. This introduces rounding / quantization errors. As a
+result of this price being paid the method is able to handle
+multi-channel images, by automatically splitting, processing, and
+rejoining its channels.
+.sp
+The method \fBfilter stddev\fR on the other makes the reverse
+tradeoff, keeping precision, but unable to handle multi-channel
+images.
+.TP
+\fB::crimp\fR \fBfilter rank\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR ?\fIpercentile\fR??
+This method runs a rank-filter over the input and returns the filtered
+result.
+.sp
+The border specification determines how the input image is
+expanded (see method \fBexpand\fR) to compensate for the shrinkage
+introduced by the filter itself. The \fIspec\fR argument is a list
+containing the name of the sub-method of \fBexpand\fR to use, plus
+any additional arguments this method may need, except for the size of
+the expansion.
+.sp
+By default a black frame is used as the border, i.e.
+"\fIspec\fR == {const 0}".
+.sp
+The \fIradius\fR specifies the (square) region around each
+pixel which is taken into account by the filter, with the pixel value
+selected according to the \fIpercentile\fR. The filter region of each
+pixel is a square of dimensions "2*\fIradius\fR+1", centered around
+the pixel.
+.sp
+These two values default to \fB3\fR and \fB50\fR, respectively.
+.sp
+Typical applications of rank-filters are min-, max-, and
+median-filters, for percentiles 0, 100, and 50, respectively.
+.sp
+Note that percentiles outside of the range \fB0\fR...\fB100\fR
+make no sense and are clamped to this range.
+.TP
+\fB::crimp\fR \fBfilter stddev\fR \fIimage\fR ?\fB-border\fR \fIspec\fR? ?\fIradius\fR?
+This method applies a stand deviation filter with \fIradius\fR to the
+image. I.e. each pixel of the result is the standard deviation of all
+pixel values in the \fBN\fRx\fBN\fR square centered on it, where
+"\fBN\fR = 2*\fBradius\fR+1".
+.sp
+The default radius is \fB3\fR, for a 7x7 square.
+.sp
+\fINOTE\fR. As the standard deviation is often quite small and its
+precision important the result of this method is always an image of
+type \fBfloat\fR. Because of this this method is unable to handle
+multi-channel images as the results of processing their channels
+cannot be joined back together for the proper type.
+.sp
+The method \fBfilter mean\fR on the other hand makes the reverse
+tradeoff, handling multi-channel images, but dropping precision.
+.TP
+\fB::crimp\fR \fBfilter sobel x\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter sobel y\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter scharr x\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter scharr y\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter prewitt x\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBfilter prewitt y\fR \fIimage\fR
+These methods are convenience methods implementing a number of standard
+convolution filters using for edge detection and calculation of image
+gradients.
+.sp
+See the \fBcrimp gradient\fR methods for users of these filters.
+.sp
+Also note that the \fBx\fR methods emphasize gradient in the horizontal
+direction, and thus highlight \fIvertical\fR lines, and vice versa for
+\fBy\fR.
+.TP
+\fB::crimp\fR \fBgamma\fR \fIimage\fR \fIy\fR
+This method takes an image, runs it through a \fBgamma correction\fR
+with parameter \fIy\fR, and returns the corrected image as it result.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap gamma\fR \fIy\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBgradient sobel\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBgradient scharr\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBgradient prewitt\fR \fIimage\fR
+These methods generate two gradient images for the input image, in the
+X- and Y-directions, using different semi-standard filters. I.e. the
+result is a cartesian representation of the gradients in the input.
+The result is a 2-element list containing the X- and Y-gradient
+images, in this order.
+.TP
+\fB::crimp\fR \fBgradient polar\fR \fIcgradient\fR
+This method takes a gradient in cartesian representation (as
+returned by the above methods) and converts it to polar
+representation, i.e. magnitude and angle. The result of the method
+is a 2-element list containing two \fBfloat\fR images, the
+magnitude and angle, in this order. The angle is represented
+in degrees running from 0 to 360.
+.TP
+\fB::crimp\fR \fBgradient visual\fR \fIpgradient\fR
+This method takes a gradient in polar representation (as
+returned by method \fBgradient polar\fR) and converts it
+into a color image (\fBrgb\fR) visualizing the gradient.
+.sp
+The visualization is easier to understand in HSV space tough,
+with the angle mapped to Hue, i.e. color, magnitude to Value,
+and Saturation simply at full.
+.TP
+\fB::crimp\fR \fBhypot\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+computing
+.sp
+.PS
+.nf
+hypot (x,y) = \\sqrt{x^2 + y^2}
+
+.fi
+.PE
+.sp
+at each pixel.
+.sp
+The input is restricted to images of the single-channel types,
+i.e. \fBfloat\fR and \fBgrey{8,16,32}\fR. The result is always
+of type \fBfloat\fR.
+.sp
+An application of this operation is the computation of the gradient
+magnitude from two images representing a gradient in X and Y directions.
+For the full conversion of such cartesian gradients to a polar
+representation use the \fBcrimp atan2\fR operation to compute the
+gradient's direction at each pixel.
+.TP
+\fB::crimp\fR \fBintegrate\fR \fIimage\fR
+This method takes any single-channel image, i.e. of types
+\fBfloat\fR and \fBgrey{8,16,32}\fR, and returns its integral,
+i.e. a summed area table. The type of the result is always of type
+\fBfloat\fR.
+.TP
+\fB::crimp\fR \fBinterpolate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.TP
+\fB::crimp\fR \fBinterpolate x\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+.TP
+\fB::crimp\fR \fBinterpolate y\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
+This is a convenience method combining the two steps of an \fBupsample\fR,
+followed by a filter step (via \fBfilter convolve\fR). See the method
+\fBdecimate\fR for the complementary operation.
+.sp
+Note that while the \fIkernel\fR argument for \fBfilter convolve\fR
+is expected to be 1D form of a separable low-pass filter no checks are made.
+The method simply applies both the kernel and its transposed form.
+.sp
+The methods \fBpyramid gauss\fR and \fBpyramid laplace\fR are
+users of this method.
+.TP
+\fB::crimp\fR \fBinvert\fR \fIimage\fR
+This method takes an image, runs it through the \fBinverse\fR
+function, and returns the modified image as it result.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap inverse\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBmatrix\fR \fIimage\fR \fImatrix\fR
+This method takes an image and a 3x3 matrix specified as nested Tcl
+list (row major order), applies the projective transform represented
+by the matrix to the image and returns the transformed image as its
+result.
+.sp
+Notes: It is currently unclear how the output pixel is computed
+(nearest neighbour, bilinear, etc.) (code inherited from AMG). This
+requires more reading, and teasing things apart. The transfomred image
+is clipped to the dimensions of the input image, i.e. pixels from the
+input may be lost, and pixels in the output may be unset as their
+input would come from outside of the input.
+.sp
+The operation supports only images of type \fBrgba\fR, and returns
+images of the same type.
+.TP
+\fB::crimp\fR \fBmax\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+taking the pixelwise maximum.
+.TP
+\fB::crimp\fR \fBmin\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+taking the pixelwise minimum.
+.TP
+\fB::crimp\fR \fBmontage horizontal\fR ?\fB-align\fR \fBtop\fR|\fBcenter\fR|\fBbottom\fR? ?\fB-border\fR \fIspec\fR? \fIimage\fR...
+.TP
+\fB::crimp\fR \fBmontage vertical\fR ?\fB-align\fR \fBleft\fR|\fBmiddle\fR|\fBright\fR? ?\fB-border\fR \fIspec\fR? \fIimage\fR...
+The result of these methods is an image where the input images have
+been placed adjacent to each from left to right (horizontal), or top
+to bottom (vertical). The input images have to have the same type.
+.sp
+There is no need however for them to have the same height, or width,
+respectively. When images of different height (width) are used the
+command will expand them to their common height (width), which is the
+maximum of all heights (widths). The expansion process is further
+governed by the values of the \fB-align\fR and \fB-border\fR
+options, with the latter specifying the form of the expansion (see
+method \fBexpand\fR for details), and the first specifying how the
+image is aligned within the expanded space.
+.sp
+The \fIspec\fR argument of \fB-border\fR is a list containing the
+name of the sub-method of \fBexpand\fR to use, plus any additional
+arguments this method may need, except for the size of the expansion.
+.sp
+The default values for \fB-align\fR are \fBcenter\fR and
+\fBmiddle\fR, centering the image in the space. The default for the
+\fB-border\fR is a black frame, i.e. "\fIspec\fR == {const 0}".
+.TP
+\fB::crimp\fR \fBmorph dilate\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBmorph erode\fR \fIimage\fR
+These two methods implement the basic set of morphology operations,
+\fIerosion\fR, and \fIdilation\fR using a flat 3x3 brick as their
+structuring element. For grayscale, which we have here, these are,
+mathematically, max and min rank-order filters, i.e.
+.CS
+
+
+    dilate = filter rank 1 99.99 (max)
+    erode  = filter rank 1  0.00 (min)
+
+.CE
+.IP
+The above definitions assume that background is \fBblack\fR, and
+foreground/object anything but black, usually \fBwhite\fR. Then it
+is easy to see that \fBdilate\fR expands the foreground/white, and
+erode expands background/black.
+.TP
+\fB::crimp\fR \fBmorph close\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBmorph open\fR \fIimage\fR
+These two methods add to the basic set of morphology operations,
+\fIopening\fR and \fIclosing\fR. In terms of erosion and dilation:
+.CS
+
+
+    close = erode o dilate
+    open  = dilate o erode
+
+.CE
+.TP
+\fB::crimp\fR \fBmorph gradient\fR \fIimage\fR
+The morphological \fIgradient\fR is defined as
+.CS
+
+
+    [dilate $image] - [erode $image]
+
+.CE
+.IP
+This can also be expressed as the sum of the external and internal
+gradients, see below.
+.TP
+\fB::crimp\fR \fBmorph igradient\fR \fIimage\fR
+The morphological \fIinternal gradient\fR is defined as
+.CS
+
+
+    $image - [erode image]
+
+.CE
+.TP
+\fB::crimp\fR \fBmorph egradient\fR \fIimage\fR
+The morphological \fIexternal gradient\fR is defined as
+.CS
+
+
+    [dilate $image] - $image
+
+.CE
+.TP
+\fB::crimp\fR \fBmorph tophatw\fR \fIimage\fR
+The \fIwhite tophat\fR transformation is defined as
+.CS
+
+
+    $image - [open $image]
+
+.CE
+.IP
+See \fBReferences\fR 3 to 5 (page 32). This is a greyscale morphology
+operation which does not properly apply to binary images.
+.TP
+\fB::crimp\fR \fBmorph tophatb\fR \fIimage\fR
+The \fIblack tophat\fR transformation is defined as
+.CS
+
+
+    [close $image] - $image
+
+.CE
+.IP
+See \fBReferences\fR 3 to 5 (page 33). This is a greyscale morphology
+operation which does not properly apply to binary images.
+.TP
+\fB::crimp\fR \fBmorph toggle\fR \fIimage\fR
+The \fItoggle map\fR is defined as
+.CS
+
+
+    0.5 * ([erode $image] + [dilate $image])
+
+.CE
+.IP
+See \fBReferences\fR 5, pages 34 and 35. This is a greyscale
+morphology operation to sharpen edges.
+.TP
+\fB::crimp\fR \fBmultiply\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images into a result image by
+performing a pixelwise multiplication. Note that the result of each
+multiplication is divided by \fB255\fR to scale it back into the
+range [0...255].
+.TP
+\fB::crimp\fR \fBpsychedelia\fR \fIwidth\fR \fIheight\fR \fIframes\fR
+This method creates an \fBrgba\fR image of the specified dimensions
+according to an algorithm devised by Andrew M. Goth. The \fIframes\fR
+argument specifies how many images are in the series.
+.sp
+\fIAttention:\fR This method keeps internal global state,
+ensuring that each call returns a slightly different image. Showing a
+series of such images as animation provides an effect similar to a
+lava lamp or hallucination.
+.TP
+\fB::crimp\fR \fBpyramid run\fR \fIimage\fR \fIsteps\fR \fIstepcmd\fR
+This method provides the core functionality for the generation of image
+pyramids. The command prefix \fIstepcmd\fR is run \fIsteps\fR times,
+first on the \fIimage\fR, then on the result of the previous step.
+.sp
+The assumed signature of \fIstepcmd\fR is
+.RS
+.TP
+\fB<stepcmd>\fR \fIimage\fR
+which is expected to return a list of two elements. The first element
+(\fIresult\fR) is added to the pyramid in building, whereas the second
+element (\fIiter\fR) is used in the next step as the input of the step
+command.
+.RE
+.sp
+The final result of the method is a list containing the input
+\fIimage\fR as its first element, followed by the results of the step
+function, followed by the \fIiter\fR element returned by the last step,
+"\fIsteps\fR+2" images in total.
+.sp
+IMAGE: pyramid
+.TP
+\fB::crimp\fR \fBpyramid gauss\fR \fIimage\fR \fIsteps\fR
+This method generates a gaussian image pyramid \fIsteps\fR levels deep and
+returns it as a list of images.
+.sp
+The first image in the result is the input, followed by \fIsteps\fR
+successively smaller images, each \fBdecimate\fRd by a factor two
+compared to its predecessor, for a total length of "\fIsteps\fR+1" images.
+.sp
+The convolution part of the decimation uses
+.CS
+
+ 1/16 [1 4 6 4 1]
+.CE
+.IP
+as its kernel.
+.sp
+IMAGE: pyramid_gauss
+.TP
+\fB::crimp\fR \fBpyramid laplace\fR \fIimage\fR \fIsteps\fR
+This method generates a laplacian image pyramid \fIsteps\fR levels deep and
+returns it as a list of images.
+.sp
+The first image in the result is the input, followed by \fIsteps\fR
+band pass images (differences of gaussians). The first band pass has the same
+size as the input image, and each successor is \fBdecimate\fRd by two. This
+is followed by one more image, the gaussian of the last step. This image is
+decimated by two compared to the preceding bandpass image. In total the result
+contains "\fIsteps\fR+2" images.
+.sp
+The convolution part of the decimation uses
+.CS
+
+ 1/16 [1 4 6 4 1]
+.CE
+.IP
+as its kernel. The internal interpolation used to generate the band pass
+images (resynthesis) doubles the weights of this kernel for its convolution
+step.
+.sp
+IMAGE: pyramid_laplace
+.TP
+\fB::crimp\fR \fBremap\fR \fIimage\fR \fImap\fR...
+This method is the core primitive for the per-pixel transformation of
+images, with each pixel (and channels within, if any) handled
+independently of all others.
+Applications of this operator provided by this package are (inverse)
+gamma correction, pixel inversion, and solarization. Many more are
+possible, especially when considering other colorspaces like
+HSV. There, for example, it is possible change the saturation of
+pixels, or shift the hue in arbitrary manner.
+.sp
+Beyond the input \fIimage\fR to transform one or more \fImaps\fR are
+specified which define how each pixel value in the input is mapped to
+a pixel value in the output. The command will accept at most that many
+maps as the input image has channels.  If there are less maps than
+channel the last map specified is replicated to cover the other
+channels. An exception of this is the handling of the alpha channel,
+should the input image have such. There a missing map is handle as
+\fBidentity\fR, i.e. the channel copied as is, without changes.
+.sp
+The maps are not Tcl data structures, but images themselves.  They
+have to be of type \fBgrey8\fR, and be of dimension 256x1 (width by
+height).
+.sp
+The \fBcrimp map ...\fR methods are sources for a number of
+predefined maps, whereas the \fBmapof\fR method allows the
+construction of maps from Tcl data structures, namely lists of values.
+.sp
+This method supports all image types with one or more
+single-byte channels, i.e. all but \fBgrey16\fR, \fBgrey32\fR,
+\fBfloat\fR, and \fBbw\fR.
+.TP
+\fB::crimp\fR \fBscreen\fR \fIimage1\fR \fIimage2\fR
+This method combines the two input images by inverting the
+multiplication of the inverted input images. I.e.
+.sp
+.PS
+.nf
+Z = 1-((1-A)(1-B)) = invert (multiply (invert (A), invert (B)))
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBsolarize\fR \fIimage\fR \fIthreshold\fR
+This method takes an image, runs it through the \fBsolarize\fR
+function with parameter \fIthreshold\fR, and returns the modified
+image as it result. This is also known as the \fIsabattier effect\fR.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap solarize\fR \fIthreshold\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBsquare\fR \fIimage\fR
+This is a convenience method equivalent to
+"\fBcrimp multiply\fR \fIimage\fR \fIimage\fR".
+.TP
+\fB::crimp\fR \fBsubtract\fR \fIimage1\fR \fIimage2\fR ?\fIscale\fR? ?\fIoffset\fR?
+This method combines the two input images into a result image by
+performing a pixelwise subtraction (image1 - image2) followed by
+division through \fIscale\fR and addition of the \fIoffset\fR. They
+default to \fB1\fR and \fB0\fR respectively, if they are not
+specified.
+.TP
+\fB::crimp\fR \fBthreshold global above\fR \fIimage\fR \fIthreshold\fR
+This method takes an image, runs it through the \fBthreshold above\fR
+function with parameter \fIthreshold\fR, and returns the modified
+image as it result. As the result only contains black and white,
+i.e. 2 colors, this process is also called \fIbinarization\fR or
+foreground/background segmentation.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap threshold above\fR \fIthreshold\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBthreshold global below\fR \fIimage\fR \fIthreshold\fR
+This method takes an image, runs it through the \fBthreshold below\fR
+function with parameter \fIthreshold\fR, and returns the modified
+image as it result. As the result only contains black and white,
+i.e. 2 colors, this process is also called \fIbinarization\fR, or
+foreground/background segmentation.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap threshold below\fR \fIthreshold\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBthreshold global inside\fR \fIimage\fR \fImin\fR \fImax\fR
+This method takes an image, runs it through the \fBthreshold inside\fR
+function with parameters \fImin\fR and \fImax\fR, and returns the
+modified image as it result. As the result only contains black and
+white, i.e. 2 colors, this process is also called \fIbinarization\fR
+or foreground/background segmentation.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap threshold above\fR \fIthreshold\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBthreshold global outside\fR \fIimage\fR \fImin\fR \fImax\fR
+This method takes an image, runs it through the \fBthreshold outside\fR
+function with parameters \fImin\fR and \fImax\fR, and returns the
+modified image as it result. As the result only contains black and
+white, i.e. 2 colors, this process is also called \fIbinarization\fR,
+or foreground/background segmentation.
+This is an application of method \fBremap\fR, using the mapping
+returned by "\fBmap threshold below\fR \fIthreshold\fR".
+This method supports all image types supported by the method
+\fBremap\fR.
+.TP
+\fB::crimp\fR \fBthreshold global middle\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBthreshold global mean\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBthreshold global median\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBthreshold global otsu\fR \fIimage\fR
+These four methods are convenience methods layered on top of
+\fBcrimp threshold global below\fR. They compute the value(s) to
+perform the thresholding with from the global statistics of the input
+image, with the element taken named by the method. For reference see
+the documentation of method \fBcrimp statistics ...\fR. Note that
+they treat each color channel in the image separately.
+.TP
+\fB::crimp\fR \fBthreshold local\fR \fIimage\fR \fIthreshold\fR...
+This method takes an \fIimage\fR and one or more \fIthreshold\fR maps
+and returns an image where all pixels of the input which were larger
+or equal to the corresponding pixel in the map are set to black. All
+other pixels are set to white. Each map is applied to one color
+channel of the input image. If there are too many maps the remainder
+is ignored. If there are not enough maps the last map is replicated.
+.sp
+This is the core for all methods of non-global
+\fIbinarization\fR, i.e. foreground/background segmentation. Their
+differences are just in the calculation of the maps.
+.sp
+This method supports all image types with one or more
+single-byte channels, i.e. all but \fBgrey16\fR, \fBgrey32\fR, and
+\fBbw\fR.
+.TP
+\fB::crimp\fR \fBupsample xy\fR \fIimage\fR \fIfactor\fR
+.TP
+\fB::crimp\fR \fBupsample x\fR \fIimage\fR \fIfactor\fR
+.TP
+\fB::crimp\fR \fBupsample y\fR \fIimage\fR \fIfactor\fR
+This method returns an image inserting \fIfactor\fR black pixels between
+each pixel of the input \fIimage\fR (in x, y, or both dimensions). The effect is
+that the input is expanded by \fIfactor\fR. It is the complement of
+method \fBdownsample\fR.
+.sp
+Using the method as is is not recommended because this simple upsampling
+will cause copies of the image to appear at the higher image frequencies in the
+expanded spectrum. This is normally avoided by running a low-pass filter over
+the image after the upsampling, removing the problematic copies.
+.sp
+The \fBinterpolate\fR method is a convenience method combining these
+two steps into one.
+.TP
+\fB::crimp\fR \fBwavy\fR \fIimage\fR \fIoffset\fR \fIadj1\fR \fIadjb\fR
+This method processes the input \fIimage\fR according to an algorithm
+devised by Andrew M. Goth, according to the three parameters
+\fIoffset\fR, \fIadj1\fR, and \fIadjb\fR, and returns the modified
+image as its result.
+.sp
+The operation supports only images of type \fBrgba\fR, and returns
+images of the same type.
+.TP
+\fB::crimp\fR \fBflip horizontal\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBflip transpose\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBflip transverse\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBflip vertical\fR \fIimage\fR
+This set of methods performs mirroring along the horizontal, vertical
+and diagonal axes of the input \fIimage\fR, returning the mirrored
+image as their output.  Transpose mirrors along the main diagonal,
+transverse along the secondary diagonal.  These two methods also
+exchange width and height of the image in the output.
+.sp
+The methods currently support the image types \fBrgb\fR,
+\fBrgba\fR, \fBhsv\fR, and \fBgrey8\fR.
+.TP
+\fB::crimp\fR \fBresize\fR ?\fB-interpolate\fR \fBnneighbour\fR|\fBbilinear\fR|\fBbicubic\fR? \fIimage\fR \fIw\fR \fIh\fR
+This method takes the input \fIimage\fR and resizes it to the
+specified width \fIw\fR and height \fIh\fR.
+In constrast to \fBcut\fR this is not done by taking part of the
+image in the specified size, but by scaling it up or down as
+needed. In other words, this method is a degenerate case of a
+projective transform as created by the \fBtransform\fR methods and
+used by method \fBwarp projective\fR (see below).
+.sp
+Like the aforementioned general method this method supports all
+the possible interpolation types, i.e. nearest neighbour, bilinear,
+and bicubic. By default \fBbilinear\fR interpolation is used, as a
+compromise between accuracy and speed.
+.TP
+\fB::crimp\fR \fBrotate cw\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBrotate ccw\fR \fIimage\fR
+This set of methods rotates the image in steps of 90 degrees, either
+clockwise and counter to it.
+.TP
+\fB::crimp\fR \fBrotate half\fR \fIimage\fR
+This methods rotates the image a half-turn, i.e. 180 degrees.
+.TP
+\fB::crimp\fR \fBwarp field\fR ?\fB-interpolate\fR \fBnneighbour\fR|\fBbilinear\fR|\fBbicubic\fR? \fIimage\fR \fIxvec\fR \fIyvec\fR
+This method takes an input image and two images the size of the
+expected result which provide for each pixel in the result the
+coordinates to sample in the input to determine the result's color.
+.sp
+This allows the specification of any possible geometric
+transformation and warping, going beyond even projective
+transformations.
+.sp
+The two images providing the coordinate information have to be
+of the same size, which is also the size of the returned result. The
+type of the result is however specified through the type of the input
+image.
+.sp
+The method supports all the possible interpolation types,
+i.e. nearest neighbour, bilinear, and bicubic.
+By default \fBbilinear\fR interpolation is used, as a compromise
+between accuracy and speed.
+.TP
+\fB::crimp\fR \fBwarp projective\fR ?\fB-interpolate\fR \fBnneighbour\fR|\fBbilinear\fR|\fBbicubic\fR? \fIimage\fR \fItransform\fR
+This method accepts a general projective \fItransform\fR as created by
+the \fBtransform\fR methods, applies it to the input \fIimage\fR
+and returns the projected result.
+.sp
+Like the \fBresize\fR method above this method supports all
+the possible interpolation types, i.e. nearest neighbour, bilinear,
+and bicubic. By default \fBbilinear\fR interpolation is used, as a
+compromise between accuracy and speed.
+.sp
+\fINote\fR that the returned result image is made as large as
+necessary to contain the whole of the projected input. Depending on
+the transformation this means that parts of the result can be black,
+coming from outside of the boundaries of the input. Further, the
+origin point of the result may conceptually be inside or outside of
+the result instead of at the top left corner, because of pixels in the
+input getting projected to negative coordinates. To handle this
+situation the result will contain the physical coordinates of the
+conceptual origin point in its meta data, under the hierarchical key
+\fBcrimp origin\fR.
+.PP
+.SS CONVERTERS
+.TP
+\fB::crimp\fR \fBconvert 2grey8\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBconvert 2hsv\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBconvert 2rgba\fR \fIimage\fR
+.TP
+\fB::crimp\fR \fBconvert 2rgb\fR \fIimage\fR
+This set of methods all convert their input \fIimage\fR to the
+specified type and returns it as their result. All converters accept
+an image of the destination type as input and will pass it through
+unchanged.
+.sp
+The converters returning a \fBgrey8\fR image support \fBrgb\fR and
+\fBrgba\fR as their input, using the ITU-R 601-2 luma transform to
+merge the three color channels
+.sp
+The converters to HSV support \fBrgb\fR and \fBrgba\fR as their
+input as well.
+.sp
+The conversion to \fBrgba\fR accepts only \fBhsv\fR as input,
+adding a blank (fully opaque) alpha channel. For more control over the
+contents of an image's alpha channel see the methods \fBsetalpha\fR
+and \fBjoin rgba\fR.
+.sp
+At last, the conversion to \fBrgb\fR accepts both \fBrgba\fR and
+\fBhsv\fR images as input.
+.TP
+\fB::crimp\fR \fBjoin 2hsv\fR \fIhueImage\fR \fIsatImage\fR \fIvalImage\fR
+.TP
+\fB::crimp\fR \fBjoin 2rgba\fR \fIredImage\fR \fIgreenImage\fR \fIblueImage\fR \fIalphaImage\fR
+.TP
+\fB::crimp\fR \fBjoin 2rgb\fR \fIredImage\fR \fIgreenImage\fR \fIblueImage\fR
+This set of methods is the complement of method \fBsplit\fR. Each
+take a set of \fBgrey8\fR images and fuse them together into an
+image of the given type, with each input image becoming one channel of
+the fusing result, which is returned as the result of the command. All
+input images have to have the same dimensions.
+.TP
+\fB::crimp\fR \fBsplit\fR \fIimage\fR
+This method takes an image of one of the multi-channel types, i.e.
+\fBrgb\fR, const rgba], and \fBhsv\fR and returns a list of
+\fBgrey8\fR images, each of which contains the contents of one of
+the channels found in the input image.
+.sp
+The channel images in the result are provided in the same order as
+they are accepted by the complementary \fBjoin\fR method, see
+above.
+.PP
+.SS "I/O COMMANDS"
+.TP
+\fB::crimp\fR \fBread pgm\fR \fIstring\fR
+This method returns an image of type \fBgrey8\fR containing the data
+of the portable grey map (PGM) stored in the \fIstring\fR. The method
+recognizes images in both plain and raw sub-formats.
+.TP
+\fB::crimp\fR \fBread ppm\fR \fIstring\fR
+This method returns an image of type \fBrgb\fR containing the data
+of the portable pix map (PPM) stored in the \fIstring\fR. The method
+recognizes images in both plain and raw sub-formats.
+.TP
+\fB::crimp\fR \fBread strimj\fR \fIstring\fR ?\fIcolormap\fR?
+This method returns an image of type \fBrgba\fR containing the data
+of the \fIstrimj\fR (string image) (See \fIhttp://wiki.tcl.tk/1846\fR)
+stored in the \fIstring\fR.
+.sp
+The caller can override the standard mapping from pixel characters
+to colors by specifying a \fIcolormap\fR. This argument is interpreted as
+dictionary mapping characters to triples of integers in the range
+[0...255], specifying the red, green, and blue intensities.
+.sp
+An example of a strimj is:
+.CS
+
+
+@...@.......@.@......
+@...@.......@.@......
+@...@..@@@..@.@..@@@.
+@@@@@.@...@.@.@.@...@
+@...@.@@@@@.@.@.@...@
+@...@.@.....@.@.@...@
+@...@.@...@.@.@.@...@
+@...@..@@@..@.@..@@@.
+
+.CE
+.PP
+.SS SUPPORT
+.TP
+\fB::crimp\fR \fBgradient grey8\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient rgb\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient rgba\fR \fIfrom\fR \fIto\fR \fIsize\fR
+.TP
+\fB::crimp\fR \fBgradient hsv\fR \fIfrom\fR \fIto\fR \fIsize\fR
+This set of methods takes two "color" (pixel value) arguments and
+returns an image of height 1 and width \fIsize\fR containing a
+gradient interpolating between these two colors, with \fIfrom\fR in
+the pixel at the left (x == 0) and \fIto\fR at the right
+(x == \fIsize\fR-1).
+.sp
+\fIsize\fR has to be greater than or equal to \fB2\fR. An
+error is thrown if that restriction is not met.
+.sp
+The resulting image has the type indicated in the method name.
+This also specifies what is expected as the contents of the arguments
+\fIfrom\fR and \fIto\fR. For \fBgrey8\fR these are simple pixel
+values in the range 0...255 whereas for the types \fBrgb\fR and
+\fBhsv\fR the arguments are triples (3-element lists) specifying
+the R, G, and B (and H, S, and V respectively) values.
+.TP
+\fB::crimp\fR \fBkernel make\fR \fImatrix\fR ?\fIscale\fR? ?\fIoffset\fR?
+This method takes a \fImatrix\fR of weights and an optional
+\fIscale\fR factor and returns a structure containing the associated
+convolution kernel, ready for use by method \fBfilter convolve\fR.
+.sp
+If \fIscale\fR is left unspecified it defaults to the sum of
+all weights in the matrix.
+.sp
+If \fIoffset\fR is left unspecified it defaults to 128 if the
+sum of weights is 0, and 0 else. In effect zero-sum kernels, like the
+basic edge-detectors, are shifted so that results in the range
+-128..127 correspond to 0..255.
+.sp
+The \fImatrix\fR has the same general format as the pixel
+matrix for method \fBread tcl grey8\fR, i.e. a list of lists
+(rows) of values, and is treated in the same way, i.e. the number of
+columns is the maxium length over the row lists, and shorter lists are
+padded with \fB128\fR. The values are expected to be integer numbers
+in the range -128..127.
+.TP
+\fB::crimp\fR \fBkernel fpmake\fR \fImatrix\fR ?\fIoffset\fR?
+This method is like \fBkernel make\fR except that the generated
+kernel is based on floating-point values. Because of this it is not
+accpeting a scale argument either, it is expected that the kernel
+weights already have the proper sum.
+.sp
+The \fImatrix\fR has the same general format as the pixel
+matrix for method \fBread tcl float\fR, i.e. a list of lists
+(rows) of values, and is treated in the same way, i.e. the number of
+columns is the maxium length over the row lists, and shorter lists are
+padded with \fB255\fR.  The values are expected to be floating-point
+numbers.
+.TP
+\fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
+This method takes a \fIkernel\fR as returned by the method
+\fBkernel make\fR and returns a transposed kernel, i.e. one where
+the x- and y-axes are switched.
+For example
+.sp
+.CS
+
+
+                    (1)
+                    (2)
+    {1 2 4 2 1} ==> (4)
+                    (2)
+                    (1)
+
+.CE
+.sp
+This method is its own inverse, i.e. application to its result returns
+the original input, i.e.
+.CS
+
+
+    [transpose [transpose $K]] == $K
+
+.CE
+.TP
+\fB::crimp\fR \fBmap\fR \fIarg\fR...
+This method accepts the same sub-methods and arguments as are accepted
+by the \fBtable\fR method below. In contrast to \fBtable\fR the
+result is not a list of values, but a map image directly suitable as
+argument to the \fBremap\fR method.
+.TP
+\fB::crimp\fR \fBmapof\fR \fItable\fR
+This method accepts a list of 256 values, constructs a map image
+directly suitable as argument to the \fBremap\fR method, and
+returns this map image as its result.
+.TP
+\fB::crimp\fR \fBtable compose\fR \fIf\fR \fIg\fR
+This accepts two lookup tables (aka functions) specified as lists of
+256 values, constructs the composite function f(g(x)), and then
+returns this new function as its result.
+.TP
+\fB::crimp\fR \fBtable eval wrap\fR \fIcmd\fR
+.TP
+\fB::crimp\fR \fBtable eval clamp\fR \fIcmd\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the function specified by the command prefix
+\fIcmd\fR.
+The results returned by the command prefix are rounded to the nearest
+integer and then forced into the domain [0..255] by either
+wrapping them around (modulo 256), or clamping them to the appropriate
+border, i.e 0, and 255 respectively.
+.sp
+The signature of the command prefix is
+.RS
+.TP
+\fB<cmd>\fR \fIx\fR
+which is expected to return a number in the range
+[0..255]. While the result should be an integer number it is
+allowed to be a float, the caller takes care to round the result to
+the nearest integer.
+.RE
+.TP
+\fB::crimp\fR \fBtable degamma\fR \fIy\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBinverse gamma correction\fR with
+parameter \fIy\fR.
+This inverse correction, defined in the domain of [0..1] for
+both argument and result, is defined as:
+.sp
+.PS
+.nf
+gamma^{-1}_y (x) = x^{\\frac{1}{y}}
+
+.fi
+.PE
+.sp
+Scaling of argument and result into the domain [0..255] of pixel
+values, and rounding results to the nearest integer, causes the actual
+definition used to be
+.sp
+.PS
+.nf
+gamma^{-1}_y (x) = [ 255 (\\frac{x}{255})^{\\frac{1}{y}} ]
+
+.fi
+.PE
+.TP
+\fB::crimp\fR \fBtable gamma\fR \fIy\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBgamma correction\fR with parameter
+\fIy\fR.
+This correction, defined in the domain of [0..1] for both
+argument and result, is defined as:
+.sp
+.PS
+.nf
+gamma_y (x) = x^y
+
+.fi
+.PE
+.sp
+Scaling of argument and result into the domain [0..255] of pixel
+values, and rounding results to the nearest integer, causes the actual
+definition used to be
+.sp
+.PS
+.nf
+gamma_y (x) = [ 255 (\\frac{x}{255})^y ]
+
+.fi
+.PE
+.TP
+\fB::crimp\fR \fBtable gauss\fR \fIsigma\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBsampled gauss\fR function with
+parameter \fIsigma\fR.
+This function is defined as:
+.sp
+.PS
+.nf
+gauss_\\sigma (x) = [255 e^{-\\frac{x-127.5}{2\\sigma^2}}]
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable identity\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBidentity\fR function, which is defined
+as
+.sp
+.PS
+.nf
+identity (x) = x
+
+.fi
+.PE
+.TP
+\fB::crimp\fR \fBtable invers\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBinverse\fR function, which is defined
+as
+.sp
+.PS
+.nf
+inverse (x) = 255 - x
+
+.fi
+.PE
+.TP
+\fB::crimp\fR \fBtable linear wrap\fR \fIgain\fR \fIoffset\fR
+.TP
+\fB::crimp\fR \fBtable linear clamp\fR \fIgain\fR \fIoffset\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a simple linear function with parameters
+\fIgain\fR (the slope) and \fIoffset\fR. The results are rounded to
+the nearest integer and then forced into the domain [0..255] by
+either wrapping them around (modulo 256), or clamping them to the
+appropriate border, i.e 0, and 255 respectively.
+Thus the relevant definitions are
+.sp
+.PS
+.nf
+linear^{wrap}_{gain,offset} (x) = [ gain x + offset ] \\oplus_{256} 0
+
+.fi
+.PE
+for the wrapped case, and
+.sp
+.PS
+.nf
+linear^{clamp}_{gain,offset} (x) = min (0, max (255, [ gain x + offset ]))
+
+.fi
+.PE
+when clamping.
+.TP
+\fB::crimp\fR \fBtable log\fR ?\fImax\fR?
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBlog-compression\fR function with
+parameter \fImax\fR. This parameter is the maximum pixel value the
+function is for, this value, and all larger will be mapped to 255.
+This function is defined as:
+.sp
+.PS
+.nf
+logcompress_{max} (x) = max(255, \\frac{255}{ln(1+max)} ln(1+x))
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable solarize\fR \fIthreshold\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBsolarize\fR function, with parameter
+\fIthreshold\fR. This function is defined as:
+.sp
+.PS
+.nf
+solarize_{threshold} (x) = \\left\\{\\begin{eqnarray}
+x       & x < threshold \\\\
+255 - x & x \\ge threshold \\\\
+\\end{eqnarray}\\right
+
+.fi
+.PE
+.sp
+Note how the function is the \fBidentity\fR for values under the
+threshold, and the \fBinverse\fR for values at and above it. Its
+application to an image produces what is known as either
+\fIsolarization\fR or \fIsabattier effect\fR.
+.TP
+\fB::crimp\fR \fBtable sqrt\fR ?\fImax\fR?
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through the \fBsqrt-compression\fR function with
+parameter \fImax\fR. This parameter is the maximum pixel value the
+function is for, this value, and all larger will be mapped to 255.
+This function is defined as:
+.sp
+.PS
+.nf
+sqrtcompress_{max} (x) = max(255, \\frac{255}{\\sqrt{max}} \\sqrt{x})
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable stretch\fR \fImin\fR \fImax\fR
+This is a convenience method around \fBtable linear\fR which maps
+\fImin\fR to 0, and \fImax\fR to 255, with linear interpolation in
+between. Values below \fImin\fR and above \fImax\fR are clamped to 0
+and 255 respectively.
+.TP
+\fB::crimp\fR \fBtable threshold above\fR \fIthreshold\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
+function, with parameter \fIthreshold\fR. This function is defined as:
+.sp
+.PS
+.nf
+f_{threshold} (x) = \\left\\{\\begin{eqnarray}
+0   & x \\ge threshold \\\\
+255 & x < threshold \\\\
+\\end{eqnarray}\\right
+
+
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable threshold below\fR \fIthreshold\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
+function, with parameter \fIthreshold\fR. This function is defined as:
+.sp
+.PS
+.nf
+f_{threshold} (x) = \\left\\{\\begin{eqnarray}
+0   & x < threshold \\\\
+255 & x \\ge threshold \\\\
+\\end{eqnarray}\\right
+
+
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable threshold inside\fR \fImin\fR \fImax\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
+function, with parameters \fImin\fR and \fImax\fR. This function is
+defined as:
+.sp
+.PS
+.nf
+f_{min,max} (x) = \\left\\{\\begin{eqnarray}
+255 & x \\le min \\\\
+0   & min < x < max \\\\
+255 & max \\le x \\\\
+\\end{eqnarray}\\right
+
+
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable threshold outside\fR \fImin\fR \fImax\fR
+This method returns a list of 256 values, the result of running the
+values 0 to 255 through a \fBthresholding\fR (or \fIbinarization\fR)
+function, with parameters \fImin\fR and \fImax\fR. This function is
+defined as:
+.sp
+.PS
+.nf
+f_{min,max} (x) = \\left\\{\\begin{eqnarray}
+0   & x \\le min \\\\
+255 & min < x < max \\\\
+0   & max \\le x \\\\
+\\end{eqnarray}\\right
+
+
+
+.fi
+.PE
+.sp
+.TP
+\fB::crimp\fR \fBtable fgauss discrete\fR \fIsigma\fR ?\fIr\fR?
+.TP
+\fB::crimp\fR \fBtable fgauss sampled\fR \fIsigma\fR ?\fIr\fR?
+This method computes the table for a discrete or sampled gaussian with
+parameters \fIsigma\fR and kernel \fIr\fRadius. If the radius is not
+specified it defaults to the smallest integer greater than
+"3*\fIsigma\fR".
+.TP
+\fB::crimp\fR \fBtransform affine\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR
+This method returns the affine transformation specified by the 2x3
+matrix
+.CS
+
+
+    |a b c|
+    |d e f|
+
+.CE
+.IP
+Note that it is in general easier to use the methods \fBrotate\fR,
+\fBscale\fR, and \fBtranslate\fR \fBscale\fR to generate the
+desired transformation piecemal and then use \fBchain\fR to chain the
+pieces together.
+.TP
+\fB::crimp\fR \fBtransform chain\fR \fItransform\fR...
+This method computes and returns the projective transformation
+generated by applying the specified transformations in reverse order,
+i.e with the transformation at the end of the argument list applied
+first, then the one before it, etc.
+.TP
+\fB::crimp\fR \fBtransform invert\fR \fItransform\fR
+This method computes and returns the inverse of the specified
+projective \fItransform\fRation.
+.TP
+\fB::crimp\fR \fBtransform projective\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR \fIg\fR \fIh\fR
+This method returns the projective transformation specified by the 3x3
+matrix
+.CS
+
+
+    |a b c|
+    |d e f|
+    |g h 1|
+
+.CE
+.IP
+Note that for the affine subset of projective transformation it is in
+general easier to use the methods \fBrotate\fR, \fBscale\fR, and
+\fBtranslate\fR \fBscale\fR to generate the desired
+transformation piecemal and then use \fBchain\fR to chain the pieces
+together.
+.sp
+And for a true perspective transformation specification through
+\fBquadrilateral\fR should be simpler as well.
+.TP
+\fB::crimp\fR \fBtransform quadrilateral\fR \fIsrc\fR \fIdst\fR
+This method returns the projective transformation which maps the
+quadrilateral \fIsrc\fR on to the quadrilateral \fIdst\fR.
+.sp
+Each quadrilateral is specified as a list of 4 points, each
+point a pair of x- and y-coordinates.
+.TP
+\fB::crimp\fR \fBtransform rotate\fR \fItheta\fR ?\fIcenter\fR?
+This methods returns the projective transformation which rotates the
+image by the anglie \fItheta\fR around the point \fIcenter\fR. If the
+latter is not specified {0 0} is assumed. The point, if present, is
+specified as pair of x- and y-coordinates.
+.sp
+The angle is specified in degrees, with \fB0\fR not rotating
+the image at all. Positive values cause a counterclockwise rotation,
+negative values a clockwise one.
+.TP
+\fB::crimp\fR \fBtransform scale\fR \fIsx\fR \fIsy\fR
+This methods returns the projective transformation which scales an
+image by factor \fIsx\fR in width, and \fIsy\fR in height. Values
+larger than \fB1\fR expand the image along the specified dimension,
+while values less than \fB1\fR shrink it. Negative values flip the
+respective axis.
+.TP
+\fB::crimp\fR \fBtransform translate\fR \fIdx\fR \fIdy\fR
+This methods returns the projective transformation which translates an
+image by \fIdx\fR pixels along the x-axis, and \fIdx\fR pixels along
+the y-axis. Values larger than \fB0\fR move the image to the right,
+or down, along the specified dimension, while values less than
+\fB0\fR move it to the left, or up.
+.PP
+.SH REFERENCES
+.IP [1]
+Simon Perreault and Patrick Hebert, "Median Filtering in Constant Time", 2007
+\fIhttp://nomis80.org/ctmf.html\fR
+.IP [2]
+Nobuyuki Otsu, "A threshold selection method from gray-level histograms", 1979
+\fIhttp://en.wikipedia.org/wiki/Otsu%27s_method\fR
+.IP [3]
+Leptonica, "The Tophat and H-dome transforms",
+\fIhttp://www.leptonica.com/grayscale-morphology.html#TOPHAT-HDOME\fR
+.IP [4]
+P. Peterlin, "Morphological Operations: An Overview",
+\fIhttp://www.inf.u-szeged.hu/ssip/1996/morpho/morphology.html\fR
+.IP [5]
+Adrien Bousseau, "Mathematical Morphology",
+PDF at \fIhttp://artis.imag.fr/Members/Adrien.Bousseau/morphology/\fR
+.PP
+.SH KEYWORDS
+affine, affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, charcoal, clockwise, closing, composite blending, composition, const expansion, convolution filter, counter-clockwise, cropping, cut region, cyclic wrap expansion, dilation, edge shrinking, edge-detection, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, geometry, gradient, histogram, hypot, image, integral image, internal gradient, inverse fourier transform, inversion, log-compression, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, perspective, photo, pixel mapping, prewitt, projective, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, rescale, resize, rotate, rotation, sabattier effect, scale, scharr, sharpen, shrinking, sobel, solarization, sqrt-compression, standard deviation filter, statistics, stddev, summed area table, threshold, thresholding, toggle map, tophat, toroidal wrap expansion, transform, translate, variance, vector-field, warp, white tophat, wrap expansion
+.SH COPYRIGHT
+.nf
+Copyright (c) 2010-2011 Andreas Kupries
+Copyright (c) 2010-2011 Documentation, Andreas Kupries
+
+.fi

@@ -43,7 +43,7 @@ result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
  * unclear if they talk abou this method.
  */
 
-colhistogram = NALLOC (image->w * 256, int);
+colhistogram = CRIMP_ALLOC_ARRAY (image->w * 256, int);
 memset (colhistogram,'\0', image->w * 256 * sizeof(int));
 
 n = (2*radius+1);

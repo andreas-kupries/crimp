@@ -1,0 +1,93 @@
+map2_hsv
+Tcl_Obj* imageObj
+Tcl_Obj* hueMapImageObj
+Tcl_Obj* satMapImageObj
+Tcl_Obj* valMapImageObj
+int hueControlChannel
+int satControlChannel
+int valControlChannel
+
+/*
+ * This operation is a generalized per-pixel transformation, mapping pixel
+ * values to other pixel values in a completely arbitrary way. In contrast to
+ * the map_* family of primitives here the mapping for one channel is
+ * controlled by the data in a second channel. I.e. instead of a 256x1 table
+ * we have 256 of these, in a single 256x256 map, with one channel selecting
+ * the map to use for the other. Effects possible with this are hue-dependent
+ * changes to saturation or value, value dependent color-shifts, etc.
+ *
+ * Important: For the sake of convenience the map is not provided as a (Tcl)
+ * list (of values), or array, but as an _image_ itself, a 256x256 (WxH)
+ * grey8. We have constructors for such images (read-tcl primitive).
+ */
+
+crimp_image*     result;
+crimp_image*     image;
+crimp_image*     hueMap;
+crimp_image*     satMap;
+crimp_image*     valMap;
+int              x, y;
+
+crimp_input (imageObj,       image,  hsv);
+crimp_input (hueMapImageObj, hueMap, grey8);
+crimp_input (satMapImageObj, satMap, grey8);
+crimp_input (valMapImageObj, valMap, grey8);
+
+if (!crimp_require_dim (hueMap, 256, 256)) {
+    Tcl_SetResult(interp, "bad image dimension for hue map, expected 256x256", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+if (!crimp_require_dim (satMap, 256, 256)) {
+    Tcl_SetResult(interp, "bad image dimension for saturation map, expected 256x256", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+if (!crimp_require_dim (valMap, 256, 256)) {
+    Tcl_SetResult(interp, "bad image dimension for value map, expected 256x256", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+if (!CRIMP_RANGEOK (hueControlChannel,2)) {
+    Tcl_SetResult(interp, "bad control for hue map, expected index in (0...2)", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+if (!CRIMP_RANGEOK (satControlChannel,2)) {
+    Tcl_SetResult(interp, "bad control for saturation map, expected index in (0...2)", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+if (!CRIMP_RANGEOK (valControlChannel,2)) {
+    Tcl_SetResult(interp, "bad control for value map, expected index in (0...2)", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_like (image);
+
+for (y = 0; y < result->h; y++) {
+    for (x = 0; x < result->w; x++) {
+
+	/*
+	 * Run the pixel value of the input image through the map to
+	 * produce the value for the output.
+	 */
+
+      H (result, x, y) = GREY8 (hueMap, H (image, x, y), CH (image, hueControlChannel, x, y));
+      S (result, x, y) = GREY8 (satMap, S (image, x, y), CH (image, satControlChannel, x, y));
+      V (result, x, y) = GREY8 (valMap, V (image, x, y), CH (image, valControlChannel, x, y));
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

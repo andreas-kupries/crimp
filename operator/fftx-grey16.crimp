@@ -1,0 +1,45 @@
+fftx_grey16
+Tcl_Obj* imageObj
+
+crimp_image* image;
+crimp_image* result;
+int          x, y;
+integer      n;
+real*        workspace;
+
+crimp_input (imageObj, image, grey16);
+
+result = crimp_new_float (image->w, image->h);
+
+n = image->w;
+workspace = CRIMP_ALLOC_ARRAY (2*image->w+15, real);
+rffti_ (&n, workspace);
+
+for (y = 0; y < image->h; y++) {
+    /*
+     * FFT on horizontal scan lines.  We copy each line to the result and then
+     * run the FFT on it in place.  The copying is done with a loop, as we
+     * have to cast the greyscale values into proper floats.
+     */
+
+    for (x = 0; x < image->w; x++) {
+	FLOATP (result, x, y) = GREY16 (image,  x, y);
+    }
+
+    rfftf_ (&n, &FLOATP (result, 0, y), workspace);
+}
+
+ckfree ((char*) workspace);
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

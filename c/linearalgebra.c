@@ -7,6 +7,7 @@
  * Import declarations.
  */
 
+#include <crimp_core/crimp_coreDecls.h>
 #include <linearalgebra.h>
 
 /*
@@ -22,8 +23,8 @@ crimp_la_invert_matrix_3x3 (crimp_image* matrix)
     double det  = 0;
     double sign = 1;
 
-    ASSERT_IMGTYPE (matrix, float);
-    ASSERT (crimp_require_dim(matrix, 3, 3),"Unable to invert matrix, not 3x3");
+    CRIMP_ASSERT_IMGTYPE (matrix, float);
+    CRIMP_ASSERT (crimp_require_dim(matrix, 3, 3),"Unable to invert matrix, not 3x3");
 
     result = crimp_new_float (3, 3);
 
@@ -63,10 +64,10 @@ crimp_la_multiply_matrix (crimp_image* a, crimp_image* b)
     crimp_image* result;
     int x, y, w;
 
-    ASSERT_IMGTYPE (a, float);
-    ASSERT_IMGTYPE (b, float);
-    ASSERT (crimp_require_height(a, b->w),"Unable to multiply matrices, size mismatch");
-    ASSERT (crimp_require_height(b, a->w),"Unable to multiply matrices, size mismatch");
+    CRIMP_ASSERT_IMGTYPE (a, float);
+    CRIMP_ASSERT_IMGTYPE (b, float);
+    CRIMP_ASSERT (crimp_require_height(a, b->w),"Unable to multiply matrices, size mismatch");
+    CRIMP_ASSERT (crimp_require_height(b, a->w),"Unable to multiply matrices, size mismatch");
 
     result = crimp_new_float (a->h, a->h);
 
@@ -88,10 +89,10 @@ crimp_la_multiply_matrix_3x3 (crimp_image* a, crimp_image* b)
 {
     crimp_image* result;
 
-    ASSERT_IMGTYPE (a, float);
-    ASSERT_IMGTYPE (b, float);
-    ASSERT (crimp_require_dim(a, 3,3),"Unable to multiply matrices, 3x3 expected");
-    ASSERT (crimp_require_dim(b, 3,3),"Unable to multiply matrices, 3x3 expected");
+    CRIMP_ASSERT_IMGTYPE (a, float);
+    CRIMP_ASSERT_IMGTYPE (b, float);
+    CRIMP_ASSERT (crimp_require_dim(a, 3,3),"Unable to multiply matrices, 3x3 expected");
+    CRIMP_ASSERT (crimp_require_dim(b, 3,3),"Unable to multiply matrices, 3x3 expected");
 
     result = crimp_new_float (3, 3);
 

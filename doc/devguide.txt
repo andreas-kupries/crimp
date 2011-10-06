@@ -65,7 +65,19 @@ Windows, BSD) are available at
         http://www.fossil-scm.org/download.html
 
 Installation of the "fossil" binary is done by copying it into a
-directory which is on the OS' search path for applications.
+directory which is on the OS' __search path for applications__.
+
+For both Unix and Windows this set of paths is listed in the
+environment variable PATH.
+
+If you have installed ActiveTcl, then the directory containing
+tclsh(.exe) (or tclsh85.exe, etc.) is a suitable place for the fossil
+application because ActiveTcl has put this directory into the search
+path during its own installation.
+
+If the fossil application is not put into a suitable location it has
+to be invoked with the full path.
+
 
 1c. Critcl
 ~~~~~~~~~~
@@ -77,21 +89,21 @@ The relevant version of Critcl is 2.1, which has not been officially
 released yet. This unofficial revision of the package is managed with
 "Fossil" at
 
-         https://chiselapp.com/user/andreas_kupries/repository/CriTcl/index
+         http://jcw.github.com/critcl/
 
-Yes, this is also managed with "Fossil".
+This is managed with "git".
 
-To get its sources do in a directory of your choice
+To get its sources do in a directory of your choice run
 
-        fossil clone https://chiselapp.com/user/andreas_kupries/repository/CriTcl/index critcl.fossil
-        mkdir critcl
-        cd    critcl
-        fossil open ../critcl.fossil trunk
+(*)      git clone git://github.com/jcw/critcl.git
 
-Then, to install the critcl package and application run (in the critcl
-directory made above):
+Or retrieve the starkit provided at the site.
 
-        tclsh8.5 brew install
+Then, to install the critcl package and application run
+
+        tclsh8.5 build.tcl install
+
+This has to be done in the critcl directory we created at (*).
 
 This places the critcl package in a directory where the tclsh8.5 will
 find it, and place the critcl application into the same directory the
@@ -118,11 +130,10 @@ To get its sources do in a directory of your choice
         fossil clone https://chiselapp.com/user/andreas_kupries/repository/crimp/index crimp.fossil
         mkdir crimp
         cd    crimp
-        fossil open ../crimp.fossil work-for-critcl-2.1
+        fossil open ../crimp.fossil
 
-Note the "work-for-critcl-2.1". This is essentially the trunk,
-modified to work with Critcl v2.1, which makes a few declarations and
-things easier.
+This is the trunk, using Critcl v3, which makes a few declarations and
+things easier, compared to earlier
 
 2a. Installing CRIMP
 ~~~~~~~~~~~~~~~~~~~~
@@ -135,16 +146,20 @@ sourced directly, with critcl then compiling it on-the-fly. (1)
 When it is time to install CRIMP simply run (in the crimp directory
 made above):
 
-        tclsh8.5 brew install
+        tclsh8.5 build.tcl install
 
-This places the CRIMP package in a directory where the tclsh8.5 will
-find it. This is pretty much identical to how Critcl was installed
-(see section 1c.).
+This places all of CRIMP's packages in a directory where the tclsh8.5
+will find them. This is pretty much identical to how Critcl was
+installed from a checkout (see section 1c.).
 
+On Windows you can invoke the file "build.tcl" with a double-click.
+This will pop up a small graphical interface for entering the
+destination and performing the installation. This handling of a
+double-click is restricted to Windows only however.
 
 (Ad 1) It actually demonstrates a bit more in this respect, the
 ability to automatically switch between an installed CRIMP and
-on-thel-fly building if CRIMP is not installed.
+on-the-fly building if CRIMP is not installed.
 
 
 3. Playing with CRIMP
@@ -235,18 +250,21 @@ separators.
                 Currently this is only PGM and PPM, i.e "Portable Grey
                 Map" and "Portable Pix Map" respectively.
 
-        crimp.tcl
-                This is the master file of the package.
-                Based on "critcl" it contains all the
-                necessary declarations to build the package.
+        crimp*.tcl
+                These are the master files of the packages.
+                Based on "critcl" (v3) they contains all the
+                necessary declarations to build their package.
 
-                This file reads the primitives to implement from the
-                files in the operator/ sub-directory.
+                Each file reads the primitives to implement from the
+                files in the sub-directories core/ (crimp_core),
+                operator/ (crimp), and format/ (crimp_*, except for
+                core).
 
-        crimp_tcl.tcl
-                This is the companion to "crimp.tcl" which implements
-                the higher-level interfaces on top of the C-based
-                primitive operations.
+        policy*.tcl
+                These are the companions to the "crimp*.tcl" files
+                which implement the higher-level interfaces on top of
+                the C-based primitive operations, and determine
+                policies.
 
                 The documentation (see doc/) mainly describes this
                 higher-level API, plus the few primitives which are
@@ -254,8 +272,8 @@ separators.
                 into Tcl procedures.
 
         plot.tcl
-                This is a companion Tcl file to "crimp.tcl" and
-                "crimp_tcl.tcl" which implements a simple plot
+                This is a companion Tcl file to "crimp_tk.tcl" and
+                "policy_tk.tcl" which implements a simple plot
                 widget. It essentially wraps Tklib's Plotchart package
                 into a simpler interface.
 
@@ -269,6 +287,29 @@ separators.
                 The master file "crimp.tcl" reads all the .crimp files
                 found in this directory, converting them into proper
                 critcl::cprocs.
+
+        core/
+                This directory contain the sources of the core C-level
+                primitives implemented by CRIMP.
+
+                The master file "crimp_core.tcl" reads all the .crimp
+                files found in this directory, converting them into
+                proper critcl::cprocs.
+
+        format/
+                This directory contain the sources of the C-level
+                primitives for file and other I/O implemented by the
+                various I/O packages.
+
+                The master files "crimp_*.tcl" reads all the
+                associated .crimp files found in this directory,
+                converting them into proper critcl::cprocs. I.e.
+
+		crimp_bmp	=> format/*bmp*.crimp
+		crimp_pfm	=> format/*pfm*.crimp
+		crimp_pgm	=> format/*pgm*.crimp
+		crimp_ppm	=> format/*ppm*.crimp
+		crimp_tk	=> format/*tk*.crimp
 
         cop/    (speak: C op ;)
                 For a few of the primitives in operator/ (see above)
@@ -295,17 +336,13 @@ separators.
                 (AHE support, Rank-Order Filter support, geometry
                 functions, FFT).
 
-        reader/,
-        writer/
+        reader/
 
-                These directories contain the read and write
-                procedures for image formats done in pure Tcl.
+                This directories contains the read procedures for
+                image formats done in pure Tcl, and outside of the
+                main I/O packages.
 
-                Currently Richard Suchenwirth's strimj'es (read) and
-                PPM, PGM, PFM (portable grey/pix/float maps, write).
-
-                Note that the readers for PGM and PPM are not written
-                in Tcl, but C, for speed.
+                Currently this is Richard Suchenwirth's strimj'es.
 
                 The files in these directories are declared as Tcl
                 companion files of "crimp.tcl", causing them to be

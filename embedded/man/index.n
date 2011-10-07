@@ -295,6 +295,12 @@ blending
 \fBfiles/crimp.n\fR
 crimp
 .RE
+canny
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 channels
 .RS
 .TP
@@ -340,6 +346,12 @@ crimp_bmp
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
+\fBfiles/crimp_devguide.n\fR
+crimp_devguide
+.TP
+\fBfiles/crimp_installer.n\fR
+crimp_install_guide
+.TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
@@ -351,6 +363,9 @@ crimp_pgm
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.TP
+\fBfiles/crimp_sources.n\fR
+crimp_sources
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -412,6 +427,12 @@ crimp_bmp
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
+\fBfiles/crimp_devguide.n\fR
+crimp_devguide
+.TP
+\fBfiles/crimp_installer.n\fR
+crimp_install_guide
+.TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
@@ -423,6 +444,9 @@ crimp_pgm
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.TP
+\fBfiles/crimp_sources.n\fR
+crimp_sources
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -583,6 +607,12 @@ crimp_bmp
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
+\fBfiles/crimp_devguide.n\fR
+crimp_devguide
+.TP
+\fBfiles/crimp_installer.n\fR
+crimp_install_guide
+.TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
@@ -594,6 +624,9 @@ crimp_pgm
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.TP
+\fBfiles/crimp_sources.n\fR
+crimp_sources
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -676,6 +709,12 @@ log-compression
 \fBfiles/crimp.n\fR
 crimp
 .RE
+log-polar transformation
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 matrix
 .RS
 .TP
@@ -685,8 +724,17 @@ crimp
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
+\fBfiles/crimp_devguide.n\fR
+crimp_devguide
+.TP
+\fBfiles/crimp_installer.n\fR
+crimp_install_guide
+.TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_sources.n\fR
+crimp_sources
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -790,8 +838,17 @@ crimp
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
+\fBfiles/crimp_devguide.n\fR
+crimp_devguide
+.TP
+\fBfiles/crimp_installer.n\fR
+crimp_install_guide
+.TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_sources.n\fR
+crimp_sources
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -863,6 +920,12 @@ rescale
 crimp
 .RE
 resize
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+roberts
 .RS
 .TP
 \fBfiles/crimp.n\fR
@@ -994,6 +1057,30 @@ transform
 \fBfiles/crimp.n\fR
 crimp
 .RE
+transform, fast fourier
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+transform, fourier
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+transform, inverse fourier
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+transformation, log-polar
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 translate
 .RS
 .TP
@@ -1012,8 +1099,17 @@ vector
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
+\fBfiles/crimp_devguide.n\fR
+crimp_devguide
+.TP
+\fBfiles/crimp_installer.n\fR
+crimp_install_guide
+.TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_sources.n\fR
+crimp_sources
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -1031,6 +1127,12 @@ warp
 crimp
 .RE
 white tophat
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
+windowing
 .RS
 .TP
 \fBfiles/crimp.n\fR

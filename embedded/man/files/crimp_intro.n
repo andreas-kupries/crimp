@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev-v3/embedded/man/files/crimp_intro.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_intro.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -249,6 +249,14 @@ extensions of \fITcl\fR for the handling and processing of
 images. Due to the nature of images as a 2-dimensional table of
 numbers some of the commands may reach into matrix and vector
 mathematics as well.
+.SH "RELATED DOCUMENTS"
+.IP [1]
+\fICRIMP - How To Get The Sources\fR.
+.IP [2]
+\fICRIMP - The Installer's Guide\fR.
+.IP [3]
+\fICRIMP - The Developer's Guide\fR.
+.PP
 .SH "SYSTEM ARCHITECTURE"
 The system can be split into roughly three sections, as seen in the
 figure below

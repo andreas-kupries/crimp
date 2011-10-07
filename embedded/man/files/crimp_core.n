@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Tcl/Crimp/dev-v3/embedded/man/files/crimp_core.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_core.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -498,6 +498,22 @@ Bit-depth
 .TP
 Pixel-size
 4 byte.
+.RE
+.TP
+\fBfpcomplex\fR
+.RS
+.TP
+Colorspace
+N.A / Floating Point.
+.TP
+Channels
+2, named "real", and "imaginary".
+.TP
+Bit-depth
+4 byte/channel.
+.TP
+Pixel-size
+8 byte.
 .RE
 .PP
 Support for the various types varies by operation. The exact image

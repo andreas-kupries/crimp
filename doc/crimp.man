@@ -684,7 +684,7 @@ This method supports all image types supported by the method
 [method remap].
 
 
-[call [cmd ::crimp] [method logpolar] [arg image] [arg rwidth] [arg rheight] [opt [arg xcenter]] [opt [arg ycenter]] [opt [arg corners]][
+[call [cmd ::crimp] [method logpolar] [arg image] [arg rwidth] [arg rheight] [opt [arg xcenter]] [opt [arg ycenter]] [opt [arg corners]]]
 [keywords {log-polar transformation} {transformation, log-polar}]
 
 This method takes an [arg image] and returns the log-polar

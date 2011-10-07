@@ -1,0 +1,33 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin crimp_devguide n 1]
+[include include/module.inc]
+[titledesc {CRIMP - The Developer's Guide}]
+[description]
+
+Welcome to CRIMP, the C Raster Image Manipulation Package, a set of
+extensions of [term Tcl] for the handling and processing of
+images.
+
+[para]
+
+The audience of this document is anyone wishing to extend, modify, or
+maintain the packages, for either themselves, or others.
+
+[para]
+
+Please read [term {CRIMP - How To Get The Sources}] and
+[term {CRIMP - The Installer's Guide}] first, if that was not done
+already.
+
+Here we assume that the sources are already available in a directory
+of your choice, and that you not only know how to build and install
+them, but also have all the necessary requisites. The guide to the
+sources in particular also explains the source code management system
+used, where to find it, how to set it up.
+
+[para]
+
+<<<TODO>>> Copy content over from the plain-text dev-guide.
+
+[manpage_end]
+

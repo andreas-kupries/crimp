@@ -10,24 +10,342 @@ images.
 
 [para]
 
-The audience of this document is anyone wishing to extend, modify, or
-maintain the packages, for either themselves, or others.
+This document is a guide for developers working on the "C Raster Image
+Manipulation Package" (short CRIMP), i.e. maintainers fixing bugs,
+extending the package's functionality, etc.
 
 [para]
 
-Please read [term {CRIMP - How To Get The Sources}] and
-[term {CRIMP - The Installer's Guide}] first, if that was not done
-already.
+Please read
+
+[list_begin enum]
+[enum] [term {CRIMP - How To Get The Sources}] and
+[enum] [term {CRIMP - The Installer's Guide}]
+[list_end]
+
+first, if that was not done already.
 
 Here we assume that the sources are already available in a directory
 of your choice, and that you not only know how to build and install
-them, but also have all the necessary requisites. The guide to the
-sources in particular also explains the source code management system
-used, where to find it, how to set it up.
+them, but also have all the necessary requisites to actually do
+so. The guide to the sources in particular also explains which source
+code management system is used, where to find it, how to set it up,
+etc.
+
+
+[section {Playing with CRIMP}]
+
+For a demonstration of CRIMP's current abilities see the
+[file demos.tcl] application. Within the crimp source directory run it
+as
+
+[example {
+    tclsh8.5 demos.tcl
+}]
+
+If CRIMP's packages have already been installed, then this will simply
+start the application.
+
+Otherwise the demo application will attempt to automatically build
+them using the [package critcl] package in mode "compile & run". This
+assumes that the [cmd critcl] packages were installed, and not just
+the [cmd critcl] application.
+
+If only the [cmd critcl] application was installed then this
+on-the-fly building of CRIMP is not possible and the packages must be
+installed first before using [file demos.tcl].
 
 [para]
 
+After starting the application opens a GUI which shows two lists on
+the left side, of the images available to the demos, and of the demos
+themselves. The latter list changed contents dynamically based on the
+number of images selected (0, 1, or 2).
+
+[para]
+
+After selecting image and demo the result of the demo is shown on the
+right side, usually as a plain image, the result of whatever operation
+was chosen. Some demos generate a slideshow of multiple images, or
+provide additional GUI elements, i.e. buttons, sliders, etc. for
+interactive manipulation of the demo.
+
+[para]
+
+A few demos do not generate images, but print information to the log
+window, which is shown on the left, above the lists for images and
+demos.
+
+[para]
+
+The size of the areas allocated to log window, selection lists, and
+demo results can be modified using the mouse, by dragging the panel
+separators.
+
+[section {Developing for CRIMP}]
+[subsection {Directory structure}]
+
 <<<TODO>>> Copy content over from the plain-text dev-guide.
+
+[subsection {Writing a new primitive}]
+
+<<<TODO>>> Copy content over from the plain-text dev-guide.
+
+[subsection {Writing a new high-level command}]
+
+The high-level commands wrapping around most of the C level primitives
+reside in the files matching the pattern [file "policy*.tcl"].
+
+[para]
+
+They usually have one of the following purposes:
+
+[para]
+
+[list_begin enumerated]
+
+[enum] Aggregating a group of related primitives into a single command
+    which chooses the primitive to use automatically, based on the
+    type(s) of its image argument(s).
+
+    The command [cmd {::crimp max}] is an example of this, choosing
+    and dispatching to the group of [cmd max_*_*] primitives.
+
+[enum] A nicer (more tcl-ish) interface to a (group of) primitive(s).
+
+    The command [cmd {::crimp meta}] is an example of that,
+    implementing a dict-like API on top of the raw [cmd meta_set] and
+    [cmd meta_get] primitives.
+
+[enum] Convenience methods which aggregate other commands, not
+    necessarily primitives, into a larger functionality.
+
+    The group of [cmd {::crimper filter sobel}] methods is an example of
+    this, wrapping around [cmd {::crimp filter convolve}] (itself an example
+    of (1)) and the commands for creating convolution kernels,
+    implementing a specific well-known filter with a fixed kernel.
+
+[enum] Implementing functionality fully in Tcl, where primitives are not
+    needed, or mostly not.
+
+    The [cmd {::crimp transform}] and [cmd {::crimp table}] commands
+    are examples of this, computing projective transformations and pixel
+    mapping tables, respectively.
+
+    A better example might be the "::crimp pyramid" methods which
+    encapsulate the higher-order structure of image pyramid
+    processing, leaving the details callback commands.
+
+[list_end]
+
+Their implementation has to obey the following rules:
+
+[list_begin enumerated]
+
+[enum] The CRIMP package has the namespace "::crimp" reserved for its
+    use. All new procedures have to be defined in this namespace, or
+    sub-ordinate namespaces.
+
+[enum] New procedures extending an existing ensemble have to be defined
+    in the namespace of that ensemble. (Rule (1) above could have been
+    subsumed into this, because the main command, "::crimp", is an
+    ensemble).
+
+[enum] Any new command defined directly in the "::crimp" namespace,
+    i.e. at the top-level of the hierarchy, has to be listed in the
+    [cmd {namespace export}] clauses at the bottom of file [file policy.tcl].
+
+[enum] Public procedures have to have a name starting with a lowercase
+    character.
+
+[enum] Internal procedures have to have a name starting with an uppercase
+    character.
+
+[list_end]
+
+[comment {
+<<TODO>>    Document patterns among the existing commands ?
+<<TODO>>    Document the most important helper functions (TypeOf, Has, List)
+
+[enum] Explicit dispatch - (extract image type -> search primitive for
+    the type -> call primitive, or throw error).
+
+[enum] Implicit dispatch through ensemble, with image type information
+    part of the method name (namespace path).
+(2a) Generated ensemble, using image type in the namespace name, and
+     code with placeholders.
+}]
+[subsection {Writing a new demo}]
+
+The individual demos used by [file demos.tcl] reside in the
+sub-directory [file demos/] of the sources.
+
+[para]
+
+Each demo is handled by a single file with the extension ".tcl".
+
+[para]
+
+Note that all files found in the directory and which do not have the
+extension [file .tcl] are ignored when [file demos.tcl] looks for
+demos it can use.
+
+[para]
+
+To write a new demo simply add a new file with the extension
+[file .tcl] to the directory and fill it with content according to the
+rules below, which specify the format of the demo files.
+
+[para]
+[list_begin enumerated]
+
+[enum]	A demo file is a Tcl script. As such it is a plain text file.
+
+[enum]	A demo file contains a single command "def", taking two arguments,
+	the name of the demo, and a Tcl dictionary describing it.
+
+[enum]	The dictionary describing the demo may contain the keys and values
+	listed below. Some of the keys must exist, others are optional.
+	Both will be noted in the desciptions of the keys, below.
+
+[list_begin definitions]
+    [def label]
+        Must exist. Its value is the name of the demo, as shown to
+        and seen by the user of [file demos.tcl].
+
+    [def active]
+        Optional. Its value is a script which will be executed by
+        demos.tcl whenever it has to decide which demos to show in the
+        list, based on the selection of images. The result has to be a
+        boolean value, with True signaling that the demo is suitable
+        for the selection, and False that it should not be shown.
+
+    [def setup]
+        Optional. Its value is a script which is run whenever this
+        demo has been chosen by the user. It is expected to create
+        any commands and state it may need during the processing
+        of an image.
+
+    [def shutdown]
+        Optional. Its value is a script which is run whenever this
+        demo has been de-selected by the user (and possibly some other
+        demo chosen). It is expected to clean up any dynamic resources
+        the demo may have aquired (like timers, open files, etc.).
+
+        The script does not have to care about procedures and state in
+        the ::DEMO namespace. These are automatically destroyed by the
+        framework.
+
+    [def setup_image]
+        Optional, technically. Its value is a script which is run
+        whenever the image for the demo has changed. Its
+        responsibility is to apply the demo to the image and show any
+        results. As such leaving this key out of the description makes
+        pretty much no sense at all.
+[list_end]
+
+[enum]	All scripts (see demo description, above) are executed within the
+	::DEMO namespace and have access to its variables and commands
+
+[enum]	The demo framework exports a number of supporting commands for use
+	by the scripts in the individual demos. These are:
+
+[list_begin definitions]
+    [call [cmd crimp]]
+        Of course, as demos have to have access to CRIMP's
+        functionality.
+
+    [call [cmd base] [opt [arg N]]]
+        Returns the N'th image selected by the user. Counted from 0.
+        If not specified 'N' defaults 0.
+
+    [call [cmd bases]]
+        Returns the number of selected images. Most useful to the
+        'active' script.
+
+    [call [cmd thebases]]
+        Returns a list containing all selected images.
+
+    [call [cmd show_image] [arg I]]
+        Takes an image I and displays it in the demo result area for
+        the user to see.
+
+    [call [cmd show_slides] [arg LI]]
+        Takes a list of images and displays them in the demo result
+        area for the user to see, as a slideshow which cycles through
+        the images. The user gets a bevy of buttons to start/stop the
+        cycling, change cycle interval, and direction.
+
+    [call [cmd log] [arg T]]
+        Writes the text T to the demo log window, followed by a newline
+
+    [call [cmd log*] [arg T]]
+        Writes the text T to the demo log window. No newline is added
+        after the text.
+[list_end]
+
+[enum]	The demo framework has a number of hook points in the GUI for use
+	by demos. These are:
+
+[list_begin itemized]
+[item]    .left
+[item]    .right
+[item]    .top
+[item]    .bottom
+[list_end]
+
+    These widgets are ttk::frames placed to the left, right, top and
+    bottom of the demo result area and usually empty. The demo can put
+    its own interface elements there, buttons, sliders, plots, etc. pp.
+
+    When non-empty the layout roughly looks like:
+
+[example {
+        +-------------------------------------------------------+
+        |                                                       |
+        |       .top                                            |
+        |                                                       |
+        +-------+---------------------------------------+-------+
+        |       |                                       |       |
+        |       |       demo result area                |       |
+        | .left |                                       | .right|
+        |       |                                       |       |
+        |       |                                       |       |
+        |       |                                       |       |
+        +-------+---------------------------------------+-------+
+        |                                                       |
+        |       .bottom                                         |
+        |                                                       |
+        +-------------------------------------------------------+
+}]
+
+    The demo's UI elements underneath these hooks are automatically
+    destroyed when the demo is shut down, before its 'shutdown' script
+    is run.
+
+[list_end]
+
+[subsection {Adding a new demo image}]
+
+The individual demonstration images used by [file demos.tcl] reside in
+the sub-directory [file image/] of the sources.
+
+[para]
+
+Each image is handled by a single file with the extension [file .png],
+whose contents have to be in the PNG image file format.
+
+[para]
+
+Note that all files found in the directory, and which do not have the
+extension [file .png], are ignored when [file demos.tcl] looks for
+images it can use.
+
+[para]
+
+To add a new image simply copy the image file into the directory,
+assuming that it has the correct extension and file format. Otherwise
+convert the image to PNG and change the extension to suit.
 
 [manpage_end]
 

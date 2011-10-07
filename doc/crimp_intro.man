@@ -24,6 +24,15 @@ What are your goals which drove you here ?
 [list_end]
 }]
 
+[section {Related Documents}]
+
+[list_begin enum]
+[enum] [term {CRIMP - How To Get The Sources}].
+[enum] [term {CRIMP - The Installer's Guide}].
+[enum] [term {CRIMP - The Developer's Guide}].
+[list_end]
+
+
 [section {System Architecture}]
 
 The system can be split into roughly three sections, as seen in the

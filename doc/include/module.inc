@@ -1,0 +1,7 @@
+[comment {--- Standard header for all manpages in this module --}]
+[copyright {2011 Andreas Kupries}]
+[copyright {2011 Documentation, Andreas Kupries}]
+[moddesc   {C Raster Image Manipulation Package}]
+[keywords photo image matrix vector]
+[keywords {computer vision}]
+[keywords {document processing}]

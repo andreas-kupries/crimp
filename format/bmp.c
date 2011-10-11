@@ -462,8 +462,8 @@ bmp_read_pixels (bmp_info*      info,
     x++ ; if (info->w <= x) break
 
 #define MAP(v) \
-    CRIMP_ASSERT_BOUNDS(x,info->w); \
-    CRIMP_ASSERT_BOUNDS(y,info->h); \
+    if ((x < 0) || (x >= info->w)) { return 0; } \
+    if ((y < 0) || (y >= info->h)) { return 0; } \
     map_color (info->colorMap, info->mapEntrySize, (v), &R (destination, x, y))
 
 static int

@@ -200,8 +200,9 @@ separators.</p>
 </div>
 <div id="section3" class="section"><h2><a name="section3">Developing for CRIMP</a></h2>
 <div id="subsection1" class="subsection"><h3><a name="subsection1">Directory structure</a></h3>
-<p>Helpers:</p>
 <dl class="definitions">
+<dt>Helpers</dt>
+<dd><dl class="definitions">
 <dt>&quot;<b class="file">tools/</b>&quot;</dt>
 <dd><p>This directory contains helper scripts.</p></dd>
 <dt>&quot;<b class="file">tools/makedoc.sh</b>&quot;</dt>
@@ -210,9 +211,9 @@ from the documentation sources.
 This requires the applications <b class="syscmd">mimetex</b>, <b class="syscmd">convert</b>
 (ImageMagick), <b class="syscmd">dtplite</b>, and <b class="syscmd">dia</b>. The latter is, for
 example, installed by ActiveTcl.</p></dd>
-</dl>
-<p>Documentation:</p>
-<dl class="definitions">
+</dl></dd>
+<dt>Documentation</dt>
+<dd><dl class="definitions">
 <dt>&quot;<b class="file">doc/</b>&quot;</dt>
 <dd><p>This directory contains the documentation sources. The texts are written
 in <i class="term">doctools</i> format, whereas the figures are a mixture of TeX (math
@@ -231,9 +232,9 @@ is, for example, accessing the generated HTML.</p></dd>
 CRIMP provides readers and/or writers.
 Currently this is only PGM and PPM, i.e &quot;Portable Grey Map&quot; and
 &quot;Portable Pix Map&quot; respectively, and Windows's BMP format.</p></dd>
-</dl>
-<p>Demonstration Application and Framework</p>
-<dl class="definitions">
+</dl></dd>
+<dt>Demonstration Application and Framework</dt>
+<dd><dl class="definitions">
 <dt>&quot;<b class="file">demos.tcl</b>&quot;</dt>
 <dd><p>This is the demo application &amp; framework.</p></dd>
 <dt>&quot;<b class="file">demos/</b>&quot;</dt>
@@ -244,15 +245,18 @@ structure of a demonstration.</p></dd>
 <dd><p>This directory is searched by &quot;<b class="file">demos.tcl</b>&quot; for the images to make
 available to its user and the demos. See <span class="sectref"><a href="#subsection5">Adding a new demo image</a></span>
 for more information.</p></dd>
-</dl>
-<p>Package Code, General structure</p>
-<dl class="definitions">
+</dl></dd>
+<dt>Package Code, General structure</dt>
+<dd><dl class="definitions">
 <dt>&quot;<b class="file">crimp*.tcl</b>&quot;</dt>
 <dd><p>These are the master files of the packages. Based on <b class="cmd">critcl</b> (v3) they
 contain all the necessary declarations to build their package.</p>
 <p>Each file reads the primitives to implement from the files in the
 sub-directories &quot;<b class="file">core/</b>&quot; (crimp_core), &quot;<b class="file">operator/</b>&quot; (crimp), and
 &quot;<b class="file">format/</b>&quot; (crimp_*, except for core).</p></dd>
+<dt>&quot;<b class="file">support.tcl</b>&quot;</dt>
+<dd><p>This is a shared helper file used by the package master files. It contains
+the general code to load and convert &quot;<b class="file">.crimp</b>&quot; files.</p></dd>
 <dt>&quot;<b class="file">policy*.tcl</b>&quot;</dt>
 <dd><p>These are the companions to the &quot;<b class="file">crimp*.tcl</b>&quot; files which implement the
 higher-level interfaces on top of the C-based primitive operations, and
@@ -312,20 +316,103 @@ mainly the Tcl_ObjType's for &quot;image type&quot;-values and &quot;image&quot;
 and complex functions I really did not wish to duplicate in the C
 primitives (AHE support, Rank-Order Filter support, geometry functions,
 FFT).</p>
-<p>As such most of it belongs to package <b class="package">crimp::core</b>, with the
-remainder belonging to package <b class="package"><a href="crimp.html">crimp</a></b>.</p></dd>
+<p>As such some of it belongs to package <b class="package">crimp::core</b>, with the
+large remainder belonging to package <b class="package"><a href="crimp.html">crimp</a></b>.</p></dd>
 <dt>&quot;<b class="file">reader/</b>&quot;</dt>
 <dd><p>This directories contains the read procedures for image formats done in
 pure Tcl, and outside of the main I/O packages.</p>
-<p>Currently this is Richard Suchenwirth's strimj'es.</p>
+<p>Currently this is <a href="http://wiki.tcl.tk/496">Richard Suchenwirth</a>'s
+<a href="http://wiki.tcl.tk/1881">strimj</a>'es.</p>
 <p>The files in these directories are declared as Tcl companion files of
 &quot;<b class="file">crimp.tcl</b>&quot;, causing them to be sourced automatically by the critcl
 framework when CRIMP is loaded.</p></dd>
-</dl>
-<p>Package Code, Per Package</p>
-<dl class="definitions">
-<dt>&quot;<b class="file">.</b>&quot;</dt>
+</dl></dd>
+<dt>Package Code, Per Package</dt>
+<dd><dl class="definitions">
+<dt><b class="package">crimp::core</b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp_core.tcl</b>&quot;</dt>
 <dd></dd>
+<dt>&quot;<b class="file">policy_core.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">core/*.crimp</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">c/coreInt.h</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">c/image.[ch]</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">c/volume.[ch]</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">c/image_type.[ch]</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">c/buffer.[ch]</b>&quot;</dt>
+<dd></dd>
+</dl></dd>
+<dt><b class="package"><a href="crimp.html">crimp</a></b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">policy.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">operator/*.crimp</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">reader/*</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">cop/*</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">c/*</b>&quot;</dt>
+<dd><p>Regarding &quot;<b class="file">c/*</b>&quot; only those not claimed by <b class="package">crimp::core</b>, see above.</p></dd>
+</dl></dd>
+<dt><b class="package">crimp::bmp</b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp_bmp.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">policy_bmp.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">format/*bmp*.crimp</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">format/bmp.[ch]</b>&quot;</dt>
+<dd></dd>
+</dl></dd>
+<dt><b class="package">crimp::pfm</b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp_pfm.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">policy_pfm.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">format/*pfm*.crimp</b>&quot;</dt>
+<dd></dd>
+</dl></dd>
+<dt><b class="package">crimp::pgm</b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp_pgm.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">policy_pgm.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">format/*pgm*.crimp</b>&quot;</dt>
+<dd></dd>
+</dl></dd>
+<dt><b class="package">crimp::ppm</b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp_ppm.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">policy_ppm.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">format/*ppm*.crimp</b>&quot;</dt>
+<dd></dd>
+</dl></dd>
+<dt><b class="package">crimp::tk</b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp_tk.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">policy_tk.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">plot.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">format/*tk*.crimp</b>&quot;</dt>
+<dd></dd>
+</dl></dd>
+</dl></dd>
 </dl>
 </div>
 <div id="subsection2" class="subsection"><h3><a name="subsection2">Writing a new primitive</a></h3>

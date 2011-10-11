@@ -43,12 +43,19 @@ as
     tclsh8.5 demos.tcl
 }]
 
-If CRIMP's packages have already been installed, then this will simply
-start the application.
+or
+
+[example {
+    tclsh8.5 demos.tcl /path/to/crimp/packages ...
+}]
+
+If CRIMP's packages have already been installed, or can be found in
+one of the paths provided as arguments, then this will simply start
+the application.
 
 Otherwise the demo application will attempt to automatically build
 them using the [package critcl] package in mode "compile & run". This
-assumes that the [cmd critcl] packages were installed, and not just
+assumes that the [cmd critcl] v3 packages were installed, and not just
 the [cmd critcl] application.
 
 If only the [cmd critcl] application was installed then this
@@ -83,14 +90,301 @@ demo results can be modified using the mouse, by dragging the panel
 separators.
 
 [section {Developing for CRIMP}]
+
+[comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Directory structure}]
 
-<<<TODO>>> Copy content over from the plain-text dev-guide.
+[comment =====================================================================]
+[para] Helpers:
 
+[list_begin definitions]
+[def [file tools/]]
+
+	This directory contains helper scripts.
+
+[def [file tools/makedoc.sh]]
+      
+This helper script, when run, (re)generates the embedded documentation
+from the documentation sources.
+
+This requires the applications [syscmd mimetex], [syscmd convert]
+(ImageMagick), [syscmd dtplite], and [syscmd dia]. The latter is, for
+example, installed by ActiveTcl.
+
+[comment {
+        TODO:   convert - ImageMagick
+        TODO:   mimetex - Where, install, build, ...
+        TODO:   dia, dtplite ...
+}]
+[list_end]
+
+[comment =====================================================================]
+[para] Documentation:
+
+[list_begin definitions]
+[def [file doc/]]
+
+This directory contains the documentation sources. The texts are written
+in [term doctools] format, whereas the figures are a mixture of TeX (math
+formulas), and tklib's [package dia](gram) package and application.
+
+[def [file embedded/]]
+
+This directory contains the documentation converted to regular manpages
+(nroff) and HTML.
+
+It is called embedded because these files, while derived, are part of the
+fossil repository, i.e. embedded into it. This enables fossil to access
+and display these files when serving the repositories' web interface.
+The "Command Reference" link at
+
+[uri http://chiselapp.com/user/andreas_kupries/repository/crimp/home]
+
+is, for example, accessing the generated HTML.
+
+[def [file specs/]]
+
+This directory contains specifications of the image file formats for which
+CRIMP provides readers and/or writers.
+
+Currently this is only PGM and PPM, i.e "Portable Grey Map" and
+"Portable Pix Map" respectively, and Windows's BMP format.
+
+[list_end]
+
+[comment =====================================================================]
+[para] Demonstration Application and Framework
+
+[list_begin definitions]
+[def [file demos.tcl]]
+
+This is the demo application & framework.
+
+[def [file demos/]]
+
+This directory is searched by [file demos.tcl] for the demonstrations to make
+available to its user. See [sectref {Writing a new demo}] for information on the
+structure of a demonstration.
+
+[def [file images/]]
+
+This directory is searched by [file demos.tcl] for the images to make
+available to its user and the demos. See [sectref {Adding a new demo image}]
+for more information.
+
+[list_end]
+
+[comment =====================================================================]
+[para] Package Code, General structure
+
+[list_begin definitions]
+[def [file crimp*.tcl]]
+
+These are the master files of the packages. Based on [cmd critcl] (v3) they
+contain all the necessary declarations to build their package.
+
+[para]
+
+Each file reads the primitives to implement from the files in the
+sub-directories [file core/] (crimp_core), [file operator/] (crimp), and
+[file format/] (crimp_*, except for core).
+
+[def [file policy*.tcl]]
+
+These are the companions to the [file crimp*.tcl] files which implement the
+higher-level interfaces on top of the C-based primitive operations, and
+determine policies.
+
+[para]
+
+The documentation (see [file doc/]) mainly describes this higher-level API,
+plus the few primitives which are passed through unchanged, i.e. without
+getting wrapped into Tcl procedures.
+
+[def [file plot.tcl]]
+
+This is a companion Tcl file to [file crimp_tk.tcl] and [file policy_tk.tcl]
+which implements a simple plot widget. It essentially wraps Tklib's
+[package Plotchart] package into a simpler interface.
+
+[para]
+
+The main user of this functionality is currently the demonstration framework,
+[file demos.tcl].
+
+[def [file operator/]]
+        
+This directory contain the sources of the C-level primitives implemented by
+CRIMP.
+
+[para]
+
+The master file [file crimp.tcl] reads all the [file .crimp] files found in
+this directory, converting them into proper [cmd critcl::cproc]s.
+
+[def [file core/]]
+        
+This directory contain the sources of the core C-level primitives
+implemented by CRIMP.
+
+[para]
+
+The master file [file crimp_core.tcl] reads all the [file .crimp] files found
+in this directory, converting them into proper [cmd critcl::cproc]s.
+
+[def [file format/]]
+        
+This directory contain the sources of the C-level primitives for file
+and other I/O implemented by the various I/O packages.
+
+[para]
+
+The master files [file crimp_*.tcl] read all the associated [file .crimp]
+files found in this directory, converting them into proper
+[cmd critcl::cproc]s. I.e.
+
+[list_begin definitions]
+[def [file crimp_bmp.tcl]]	[file format/*bmp*.crimp]
+[def [file crimp_pfm.tcl]]	[file format/*pfm*.crimp]
+[def [file crimp_pgm.tcl]]	[file format/*pgm*.crimp]
+[def [file crimp_ppm.tcl]]	[file format/*ppm*.crimp]
+[def [file crimp_tk.tcl]]	[file format/*tk*.crimp]
+[list_end]
+
+[def [file cop/]]
+(speak: C op ;)
+
+For a few of the primitives in operator/ (see above) the implementations were
+very similar. This directory contains "templates" for these implementations,
+with the actual primitives [cmd #include]'ing them. The templates are configured
+through a number a C [cmd #define]'s for the parts where the primitives differ.
+
+[para]
+
+The files all belong to package [package crimp].
+
+[para]
+
+This is a first attempt at templating some of the C code. It works, but
+isn't really very nicely done.
+
+[para]
+
+While I (AK) have the general ida of using Tcl and Tcl-based macro-processors
+(like "expand", see Wiki) bouncing around in my head for a better templating
+and C code generation mechanism there is nothing concrete yet.
+
+[def [file c/]]
+
+This directory contain the C sources for common/shared functionality,
+mainly the Tcl_ObjType's for "image type"-values and "image"-values,
+and complex functions I really did not wish to duplicate in the C
+primitives (AHE support, Rank-Order Filter support, geometry functions,
+FFT).
+
+[para]
+
+As such most of it belongs to package [package crimp::core], with the
+remainder belonging to package [package crimp].
+
+[def [file reader/]]
+
+This directories contains the read procedures for image formats done in
+pure Tcl, and outside of the main I/O packages.
+
+[para]
+
+Currently this is Richard Suchenwirth's strimj'es.
+
+[para]
+
+The files in these directories are declared as Tcl companion files of
+[file crimp.tcl], causing them to be sourced automatically by the critcl
+framework when CRIMP is loaded.
+
+[list_end]
+
+[comment =====================================================================]
+[para] Package Code, Per Package
+
+[list_begin definitions]
+[def [file .]]
+[list_end]
+
+
+[comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Writing a new primitive}]
 
-<<<TODO>>> Copy content over from the plain-text dev-guide.
+The individual primitive C level operations of CRIMP are found in the
+sub-directories [file core/], [file operator/], and [file format/].
+See the [sectref {Directory structure}].
 
+[para]
+Each primitive is handled by a single file with the extension [file .crimp].
+
+[para]
+
+Note that all files found in these directories and which do not have the
+extension [file .crimp] are by default ignored when [file crimp.tcl] loads
+and processes the primitives. The exception is if a package policy file
+declares them to be a part of the package in question.
+
+[para]
+
+To write a new primitive simply add a new file with the extension [file .crimp]
+to the directory and fill it with content according to the rules below, which
+specify the format of [file .crimp] files.
+
+[list_begin enumerated]
+
+[enum]
+A [file .crimp] file is a plain text file.
+
+[enum]
+The first line in the file contains the name of the primitive it implements.
+
+[enum]
+
+All following lines, until the first empty line, describe the arguments of
+the primitive, i.e. their types and names.
+
+Note that a line containing only whitespace (space and tab characters) is
+[emph not] empty.
+
+[enum]
+Each line in the argument block describes a single argument.
+
+[enum]
+All lines after the empty line terminating the argument block, to the end of
+the file, contain the C code implementing the primitive.
+
+[list_end]
+
+As an example, here are the contents of the [file .crimp] file for one of
+the primitives with one of the smallest implementations:
+
+[example {
+[1]     width
+[2]     Tcl_Obj* imageObj
+[3]
+[4]     crimp_image* image;
+[5]
+[6]     crimp_input_any (imageObj, image);
+[7]
+[8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (image->w));
+[9]     return TCL_OK;
+}]
+
+Line 1 contains the name of the primitive, "width".
+Line 2 is the first line of the argument block.
+Line 3 terminates this argument block.
+Lines 4 to 9 are the implementation.
+
+[para]
+
+This specific primitive extracts the width from the image it was given as
+argument and returns it as its result.
+[comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Writing a new high-level command}]
 
 The high-level commands wrapping around most of the C level primitives
@@ -175,6 +469,8 @@ Their implementation has to obey the following rules:
 (2a) Generated ensemble, using image type in the namespace name, and
      code with placeholders.
 }]
+
+[comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Writing a new demo}]
 
 The individual demos used by [file demos.tcl] reside in the
@@ -253,7 +549,16 @@ rules below, which specify the format of the demo files.
 [list_begin definitions]
     [call [cmd crimp]]
         Of course, as demos have to have access to CRIMP's
-        functionality.
+        functionality. All known crimp packages are loaded, i.e.
+
+	[list_begin enumerated]
+	[enum] [package crimp]
+	[enum] [package crimp::tk]
+	[enum] [package crimp::bmp]
+	[enum] [package crimp::pgm]
+	[enum] [package crimp::pfm]
+	[enum] [package crimp::ppm]
+	[list_end]
 
     [call [cmd base] [opt [arg N]]]
         Returns the N'th image selected by the user. Counted from 0.
@@ -325,6 +630,7 @@ rules below, which specify the format of the demo files.
 
 [list_end]
 
+[comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Adding a new demo image}]
 
 The individual demonstration images used by [file demos.tcl] reside in

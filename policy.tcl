@@ -3318,10 +3318,12 @@ proc ::crimp::table::eval::clamp {cmdprefix} {
 proc ::crimp::table::compose {f g} {
     # f and g are tables! representing functions, not command
     # prefixes.
-    return [eval [list apply {{f g x} {
-	# z = f(g(x))
-	return [lindex $f [lindex $g $x]]
-    }} $f $g]]
+
+    set table {}
+    for {set i 0} {$i < 256} {incr i} {
+	lappend table [lindex $f [lindex $g $i]]
+    }
+    return $table
 }
 
 proc ::crimp::table::identity {} {

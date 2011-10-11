@@ -94,8 +94,10 @@ separators.
 [comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Directory structure}]
 
+[list_begin definitions][comment {___1___}]
+
 [comment =====================================================================]
-[para] Helpers:
+[def Helpers]
 
 [list_begin definitions]
 [def [file tools/]]
@@ -119,7 +121,7 @@ example, installed by ActiveTcl.
 [list_end]
 
 [comment =====================================================================]
-[para] Documentation:
+[def Documentation]
 
 [list_begin definitions]
 [def [file doc/]]
@@ -153,7 +155,7 @@ Currently this is only PGM and PPM, i.e "Portable Grey Map" and
 [list_end]
 
 [comment =====================================================================]
-[para] Demonstration Application and Framework
+[def {Demonstration Application and Framework}]
 
 [list_begin definitions]
 [def [file demos.tcl]]
@@ -175,7 +177,7 @@ for more information.
 [list_end]
 
 [comment =====================================================================]
-[para] Package Code, General structure
+[def {Package Code, General structure}]
 
 [list_begin definitions]
 [def [file crimp*.tcl]]
@@ -188,6 +190,12 @@ contain all the necessary declarations to build their package.
 Each file reads the primitives to implement from the files in the
 sub-directories [file core/] (crimp_core), [file operator/] (crimp), and
 [file format/] (crimp_*, except for core).
+
+
+[def [file support.tcl]]
+
+This is a shared helper file used by the package master files. It contains
+the general code to load and convert [file .crimp] files.
 
 [def [file policy*.tcl]]
 
@@ -284,8 +292,8 @@ FFT).
 
 [para]
 
-As such most of it belongs to package [package crimp::core], with the
-remainder belonging to package [package crimp].
+As such some of it belongs to package [package crimp::core], with the
+large remainder belonging to package [package crimp].
 
 [def [file reader/]]
 
@@ -294,7 +302,8 @@ pure Tcl, and outside of the main I/O packages.
 
 [para]
 
-Currently this is Richard Suchenwirth's strimj'es.
+Currently this is [uri http://wiki.tcl.tk/496 {Richard Suchenwirth}]'s
+[uri http://wiki.tcl.tk/1881 strimj]'es.
 
 [para]
 
@@ -305,11 +314,81 @@ framework when CRIMP is loaded.
 [list_end]
 
 [comment =====================================================================]
-[para] Package Code, Per Package
+[def {Package Code, Per Package}]
 
 [list_begin definitions]
-[def [file .]]
+
+[def [package crimp::core]]
+
+[list_begin definitions]
+[def [file crimp_core.tcl]]
+[def [file policy_core.tcl]]
+[def [file core/*.crimp]]
+[def [file c/coreInt.h]]
+[def [file c/image.[lb]ch[rb]]]
+[def [file c/volume.[lb]ch[rb]]]
+[def [file c/image_type.[lb]ch[rb]]]
+[def [file c/buffer.[lb]ch[rb]]]
+
 [list_end]
+
+[def [package crimp]]
+
+[list_begin definitions]
+[def [file crimp.tcl]]
+[def [file policy.tcl]]
+[def [file operator/*.crimp]]
+[def [file reader/*]]
+[def [file cop/*]]
+[def [file c/*]]
+Regarding [file c/*] only those not claimed by [package crimp::core], see above.
+[list_end]
+
+[def [package crimp::bmp]]
+
+[list_begin definitions]
+[def [file crimp_bmp.tcl]]
+[def [file policy_bmp.tcl]]
+[def [file format/*bmp*.crimp]]
+[def [file format/bmp.[lb]ch[rb]]]
+[list_end]
+
+[def [package crimp::pfm]]
+
+[list_begin definitions]
+[def [file crimp_pfm.tcl]]
+[def [file policy_pfm.tcl]]
+[def [file format/*pfm*.crimp]]
+[list_end]
+
+[def [package crimp::pgm]]
+
+[list_begin definitions]
+[def [file crimp_pgm.tcl]]
+[def [file policy_pgm.tcl]]
+[def [file format/*pgm*.crimp]]
+[list_end]
+
+[def [package crimp::ppm]]
+
+[list_begin definitions]
+[def [file crimp_ppm.tcl]]
+[def [file policy_ppm.tcl]]
+[def [file format/*ppm*.crimp]]
+[list_end]
+
+[def [package crimp::tk]]
+
+[list_begin definitions]
+[def [file crimp_tk.tcl]]
+[def [file policy_tk.tcl]]
+[def [file plot.tcl]]
+[def [file format/*tk*.crimp]]
+[list_end]
+
+[list_end]
+
+[list_end][comment {___1___}]
 
 
 [comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
@@ -384,6 +463,7 @@ Lines 4 to 9 are the implementation.
 
 This specific primitive extracts the width from the image it was given as
 argument and returns it as its result.
+
 [comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Writing a new high-level command}]
 

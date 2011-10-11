@@ -329,8 +329,9 @@ demo results can be modified using the mouse, by dragging the panel
 separators.
 .SH "DEVELOPING FOR CRIMP"
 .SS "DIRECTORY STRUCTURE"
-.PP
-Helpers:
+.TP
+Helpers
+.RS
 .TP
 "\fItools/\fR"
 This directory contains helper scripts.
@@ -341,9 +342,10 @@ from the documentation sources.
 This requires the applications \fBmimetex\fR, \fBconvert\fR
 (ImageMagick), \fBdtplite\fR, and \fBdia\fR. The latter is, for
 example, installed by ActiveTcl.
-.PP
-.PP
-Documentation:
+.RE
+.TP
+Documentation
+.RS
 .TP
 "\fIdoc/\fR"
 This directory contains the documentation sources. The texts are written
@@ -365,9 +367,10 @@ This directory contains specifications of the image file formats for which
 CRIMP provides readers and/or writers.
 Currently this is only PGM and PPM, i.e "Portable Grey Map" and
 "Portable Pix Map" respectively, and Windows's BMP format.
-.PP
-.PP
+.RE
+.TP
 Demonstration Application and Framework
+.RS
 .TP
 "\fIdemos.tcl\fR"
 This is the demo application & framework.
@@ -381,9 +384,10 @@ structure of a demonstration.
 This directory is searched by "\fIdemos.tcl\fR" for the images to make
 available to its user and the demos. See \fBAdding a new demo image\fR
 for more information.
-.PP
-.PP
+.RE
+.TP
 Package Code, General structure
+.RS
 .TP
 "\fIcrimp*.tcl\fR"
 These are the master files of the packages. Based on \fBcritcl\fR (v3) they
@@ -392,6 +396,10 @@ contain all the necessary declarations to build their package.
 Each file reads the primitives to implement from the files in the
 sub-directories "\fIcore/\fR" (crimp_core), "\fIoperator/\fR" (crimp), and
 "\fIformat/\fR" (crimp_*, except for core).
+.TP
+"\fIsupport.tcl\fR"
+This is a shared helper file used by the package master files. It contains
+the general code to load and convert "\fI.crimp\fR" files.
 .TP
 "\fIpolicy*.tcl\fR"
 These are the companions to the "\fIcrimp*.tcl\fR" files which implement the
@@ -472,23 +480,115 @@ and complex functions I really did not wish to duplicate in the C
 primitives (AHE support, Rank-Order Filter support, geometry functions,
 FFT).
 .sp
-As such most of it belongs to package \fBcrimp::core\fR, with the
-remainder belonging to package \fBcrimp\fR.
+As such some of it belongs to package \fBcrimp::core\fR, with the
+large remainder belonging to package \fBcrimp\fR.
 .TP
 "\fIreader/\fR"
 This directories contains the read procedures for image formats done in
 pure Tcl, and outside of the main I/O packages.
 .sp
-Currently this is Richard Suchenwirth's strimj'es.
+Currently this is \fIRichard Suchenwirth\fR [http://wiki.tcl.tk/496]'s
+\fIstrimj\fR [http://wiki.tcl.tk/1881]'es.
 .sp
 The files in these directories are declared as Tcl companion files of
 "\fIcrimp.tcl\fR", causing them to be sourced automatically by the critcl
 framework when CRIMP is loaded.
-.PP
-.PP
-Package Code, Per Package
+.RE
 .TP
-"\fI.\fR"
+Package Code, Per Package
+.RS
+.TP
+\fBcrimp::core\fR
+.RS
+.TP
+"\fIcrimp_core.tcl\fR"
+.TP
+"\fIpolicy_core.tcl\fR"
+.TP
+"\fIcore/*.crimp\fR"
+.TP
+"\fIc/coreInt.h\fR"
+.TP
+"\fIc/image.[ch]\fR"
+.TP
+"\fIc/volume.[ch]\fR"
+.TP
+"\fIc/image_type.[ch]\fR"
+.TP
+"\fIc/buffer.[ch]\fR"
+.RE
+.TP
+\fBcrimp\fR
+.RS
+.TP
+"\fIcrimp.tcl\fR"
+.TP
+"\fIpolicy.tcl\fR"
+.TP
+"\fIoperator/*.crimp\fR"
+.TP
+"\fIreader/*\fR"
+.TP
+"\fIcop/*\fR"
+.TP
+"\fIc/*\fR"
+Regarding "\fIc/*\fR" only those not claimed by \fBcrimp::core\fR, see above.
+.RE
+.TP
+\fBcrimp::bmp\fR
+.RS
+.TP
+"\fIcrimp_bmp.tcl\fR"
+.TP
+"\fIpolicy_bmp.tcl\fR"
+.TP
+"\fIformat/*bmp*.crimp\fR"
+.TP
+"\fIformat/bmp.[ch]\fR"
+.RE
+.TP
+\fBcrimp::pfm\fR
+.RS
+.TP
+"\fIcrimp_pfm.tcl\fR"
+.TP
+"\fIpolicy_pfm.tcl\fR"
+.TP
+"\fIformat/*pfm*.crimp\fR"
+.RE
+.TP
+\fBcrimp::pgm\fR
+.RS
+.TP
+"\fIcrimp_pgm.tcl\fR"
+.TP
+"\fIpolicy_pgm.tcl\fR"
+.TP
+"\fIformat/*pgm*.crimp\fR"
+.RE
+.TP
+\fBcrimp::ppm\fR
+.RS
+.TP
+"\fIcrimp_ppm.tcl\fR"
+.TP
+"\fIpolicy_ppm.tcl\fR"
+.TP
+"\fIformat/*ppm*.crimp\fR"
+.RE
+.TP
+\fBcrimp::tk\fR
+.RS
+.TP
+"\fIcrimp_tk.tcl\fR"
+.TP
+"\fIpolicy_tk.tcl\fR"
+.TP
+"\fIplot.tcl\fR"
+.TP
+"\fIformat/*tk*.crimp\fR"
+.RE
+.RE
 .PP
 .SS "WRITING A NEW PRIMITIVE"
 The individual primitive C level operations of CRIMP are found in the

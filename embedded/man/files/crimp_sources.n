@@ -277,7 +277,7 @@ follow its link to its detailed information page.
 On that page, choose either the "ZIP" or "Tarball" link to get
 a copy of this revision in the format of your choice.
 .PP
-.PP
+.SH "SOURCE CODE MANAGEMENT"
 For the curious (or a developer-to-be), the sources are managed by the
 \fIFossil SCM\fR [http://www.fossil-scm.org].
 Binaries for popular platforms can be found directly at its

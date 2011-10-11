@@ -42,7 +42,7 @@ specific revision, the easiest way of retrieving it is to:
 a copy of this revision in the format of your choice.
 [list_end]
 
-[para]
+[section {Source Code Management}]
 
 For the curious (or a developer-to-be), the sources are managed by the
 [uri http://www.fossil-scm.org {Fossil SCM}].

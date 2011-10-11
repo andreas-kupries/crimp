@@ -559,7 +559,7 @@ proc widgets {} {
     widget::scrolledwindow .si -borderwidth 1 -relief sunken ; # list (image)
     widget::scrolledwindow .sd -borderwidth 1 -relief sunken ; # list (demo)
 
-    text .log -height 5 -width 10 -font {Helvetica -18}
+    text .log -height 5 -width 10 ;#-font {Helvetica -18}
     tags .log
 
     canvas   .c -scrollregion {-4000 -4000 4000 4000} -cursor dotbox

@@ -5,6 +5,9 @@ exec tclsh "$0" ${1+"$@"}
 
 puts "CRIMP demos"
 
+set myargs $argv
+set argv {}
+
 if {[catch {
     puts "Trying Tcl/Tk 8.6"
 
@@ -20,6 +23,10 @@ if {[catch {
     package require img::png
 
     puts "Using  Tcl/Tk 8.5 + img::png"
+}
+
+if {[llength $myargs]} {
+    lappend auto_path {*}$myargs
 }
 
 package require widget::scrolledwindow
@@ -63,6 +70,41 @@ if {[catch {
 	puts "Falling back to dynamic compilation via critcl [package require critcl 3]"
     }
 
+    # # ## ### ##### ######## ############# #####################
+
+    ## Override the default of the critcl package for errors and
+    ## message. Write them to the terminal (and, for errors, abort the
+    ## application instead of throwing them up the stack to an
+    ## uncertain catch).
+
+    proc ::critcl::error {msg} {
+	global argv0
+	puts stderr "$argv0 error: $msg"
+	flush stderr
+	exit 1
+    }
+
+    proc ::critcl::msg {args} {
+	switch -exact -- [llength $args] {
+	    1 {
+		puts stdout [lindex $args 0]
+		flush stdout
+	    }
+	    2 {
+		lassign $args o m
+		if {$o ne "-nonewline"} {
+		    return -code error "wrong\#args, expected: ?-nonewline? msg"
+		}
+		puts -nonewline stdout $m
+		flush stdout
+	    }
+	    default {
+		return -code error "wrong\#args, expected: ?-nonewline? msg"
+	    }
+	}
+	return
+    }
+
     foreach {f p l} {
 	crimp_core.tcl crimp::core  {System foundation}
 	crimp.tcl      crimp        {Main set of image processing algorithms}
@@ -78,6 +120,8 @@ if {[catch {
 	puts "Using dynamically compiled package \"$p\""
     }
 }
+
+wm protocol . WM_DELETE_WINDOW ::exit
 
 puts "Starting up ..."
 
@@ -518,7 +562,7 @@ proc widgets {} {
     text .log -height 5 -width 10 -font {Helvetica -18}
     tags .log
 
-    canvas   .c -scrollregion {-4000 -4000 4000 4000}
+    canvas   .c -scrollregion {-4000 -4000 4000 4000} -cursor dotbox
     listbox  .li -width 15 -selectmode extended -listvariable images
     listbox  .ld -width 30 -selectmode single   -listvariable activedemos
 

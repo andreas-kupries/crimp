@@ -111,26 +111,450 @@
 <div id="toc" class="section"><h2><a name="toc">Table Of Contents</a></h2>
 <ul class="toc">
 <li class="section"><a href="#toc">Table Of Contents</a></li>
+<li class="section"><a href="#synopsis">Synopsis</a></li>
 <li class="section"><a href="#section1">Description</a></li>
+<li class="section"><a href="#section2">Playing with CRIMP</a></li>
+<li class="section"><a href="#section3">Developing for CRIMP</a>
+<ul>
+<li class="subsection"><a href="#subsection1">Directory structure</a></li>
+<li class="subsection"><a href="#subsection2">Writing a new primitive</a></li>
+<li class="subsection"><a href="#subsection3">Writing a new high-level command</a></li>
+<li class="subsection"><a href="#subsection4">Writing a new demo</a></li>
+<li class="subsection"><a href="#subsection5">Adding a new demo image</a></li>
+</ul>
+</li>
 <li class="section"><a href="#keywords">Keywords</a></li>
 <li class="section"><a href="#copyright">Copyright</a></li>
 </ul>
+</div>
+<div id="synopsis" class="section"><h2><a name="synopsis">Synopsis</a></h2>
+<div class="synopsis">
+<ul class="syntax">
+<li><a href="#1"><b class="cmd"><a href="crimp.html">crimp</a></b></a></li>
+<li><a href="#2"><b class="cmd">base</b> <span class="opt">?<i class="arg">N</i>?</span></a></li>
+<li><a href="#3"><b class="cmd">bases</b></a></li>
+<li><a href="#4"><b class="cmd">thebases</b></a></li>
+<li><a href="#5"><b class="cmd">show_image</b> <i class="arg">I</i></a></li>
+<li><a href="#6"><b class="cmd">show_slides</b> <i class="arg">LI</i></a></li>
+<li><a href="#7"><b class="cmd">log</b> <i class="arg">T</i></a></li>
+<li><a href="#8"><b class="cmd">log*</b> <i class="arg">T</i></a></li>
+</ul>
+</div>
 </div>
 <div id="section1" class="section"><h2><a name="section1">Description</a></h2>
 <p>Welcome to CRIMP, the C Raster Image Manipulation Package, a set of
 extensions of <i class="term">Tcl</i> for the handling and processing of
 images.</p>
-<p>The audience of this document is anyone wishing to extend, modify, or
-maintain the packages, for either themselves, or others.</p>
-<p>Please read <i class="term"><a href="crimp_sources.html">CRIMP - How To Get The Sources</a></i> and
-<i class="term"><a href="crimp_installer.html">CRIMP - The Installer's Guide</a></i> first, if that was not done
-already.
+<p>This document is a guide for developers working on the &quot;C Raster Image
+Manipulation Package&quot; (short CRIMP), i.e. maintainers fixing bugs,
+extending the package's functionality, etc.</p>
+<p>Please read</p>
+<ol class="enumerated">
+<li><p><i class="term"><a href="crimp_sources.html">CRIMP - How To Get The Sources</a></i> and</p></li>
+<li><p><i class="term"><a href="crimp_installer.html">CRIMP - The Installer's Guide</a></i></p></li>
+</ol>
+<p>first, if that was not done already.
 Here we assume that the sources are already available in a directory
 of your choice, and that you not only know how to build and install
-them, but also have all the necessary requisites. The guide to the
-sources in particular also explains the source code management system
-used, where to find it, how to set it up.</p>
-<p>&lt;&lt;&lt;TODO&gt;&gt;&gt; Copy content over from the plain-text dev-guide.</p>
+them, but also have all the necessary requisites to actually do
+so. The guide to the sources in particular also explains which source
+code management system is used, where to find it, how to set it up,
+etc.</p>
+</div>
+<div id="section2" class="section"><h2><a name="section2">Playing with CRIMP</a></h2>
+<p>For a demonstration of CRIMP's current abilities see the
+&quot;<b class="file">demos.tcl</b>&quot; application. Within the crimp source directory run it
+as</p>
+<pre class="example">
+    tclsh8.5 demos.tcl
+</pre>
+<p>or</p>
+<pre class="example">
+    tclsh8.5 demos.tcl /path/to/crimp/packages ...
+</pre>
+<p>If CRIMP's packages have already been installed, or can be found in
+one of the paths provided as arguments, then this will simply start
+the application.
+Otherwise the demo application will attempt to automatically build
+them using the <b class="package">critcl</b> package in mode &quot;compile &amp; run&quot;. This
+assumes that the <b class="cmd">critcl</b> v3 packages were installed, and not just
+the <b class="cmd">critcl</b> application.
+If only the <b class="cmd">critcl</b> application was installed then this
+on-the-fly building of CRIMP is not possible and the packages must be
+installed first before using &quot;<b class="file">demos.tcl</b>&quot;.</p>
+<p>After starting the application opens a GUI which shows two lists on
+the left side, of the images available to the demos, and of the demos
+themselves. The latter list changed contents dynamically based on the
+number of images selected (0, 1, or 2).</p>
+<p>After selecting image and demo the result of the demo is shown on the
+right side, usually as a plain image, the result of whatever operation
+was chosen. Some demos generate a slideshow of multiple images, or
+provide additional GUI elements, i.e. buttons, sliders, etc. for
+interactive manipulation of the demo.</p>
+<p>A few demos do not generate images, but print information to the log
+window, which is shown on the left, above the lists for images and
+demos.</p>
+<p>The size of the areas allocated to log window, selection lists, and
+demo results can be modified using the mouse, by dragging the panel
+separators.</p>
+</div>
+<div id="section3" class="section"><h2><a name="section3">Developing for CRIMP</a></h2>
+<div id="subsection1" class="subsection"><h3><a name="subsection1">Directory structure</a></h3>
+<p>Helpers:</p>
+<dl class="definitions">
+<dt>&quot;<b class="file">tools/</b>&quot;</dt>
+<dd><p>This directory contains helper scripts.</p></dd>
+<dt>&quot;<b class="file">tools/makedoc.sh</b>&quot;</dt>
+<dd><p>This helper script, when run, (re)generates the embedded documentation
+from the documentation sources.
+This requires the applications <b class="syscmd">mimetex</b>, <b class="syscmd">convert</b>
+(ImageMagick), <b class="syscmd">dtplite</b>, and <b class="syscmd">dia</b>. The latter is, for
+example, installed by ActiveTcl.</p></dd>
+</dl>
+<p>Documentation:</p>
+<dl class="definitions">
+<dt>&quot;<b class="file">doc/</b>&quot;</dt>
+<dd><p>This directory contains the documentation sources. The texts are written
+in <i class="term">doctools</i> format, whereas the figures are a mixture of TeX (math
+formulas), and tklib's <b class="package">dia</b>(gram) package and application.</p></dd>
+<dt>&quot;<b class="file">embedded/</b>&quot;</dt>
+<dd><p>This directory contains the documentation converted to regular manpages
+(nroff) and HTML.
+It is called embedded because these files, while derived, are part of the
+fossil repository, i.e. embedded into it. This enables fossil to access
+and display these files when serving the repositories' web interface.
+The &quot;Command Reference&quot; link at
+<a href="http://chiselapp.com/user/andreas_kupries/repository/crimp/home">http://chiselapp.com/user/andreas_kupries/repository/crimp/home</a>
+is, for example, accessing the generated HTML.</p></dd>
+<dt>&quot;<b class="file">specs/</b>&quot;</dt>
+<dd><p>This directory contains specifications of the image file formats for which
+CRIMP provides readers and/or writers.
+Currently this is only PGM and PPM, i.e &quot;Portable Grey Map&quot; and
+&quot;Portable Pix Map&quot; respectively, and Windows's BMP format.</p></dd>
+</dl>
+<p>Demonstration Application and Framework</p>
+<dl class="definitions">
+<dt>&quot;<b class="file">demos.tcl</b>&quot;</dt>
+<dd><p>This is the demo application &amp; framework.</p></dd>
+<dt>&quot;<b class="file">demos/</b>&quot;</dt>
+<dd><p>This directory is searched by &quot;<b class="file">demos.tcl</b>&quot; for the demonstrations to make
+available to its user. See <span class="sectref"><a href="#subsection4">Writing a new demo</a></span> for information on the
+structure of a demonstration.</p></dd>
+<dt>&quot;<b class="file">images/</b>&quot;</dt>
+<dd><p>This directory is searched by &quot;<b class="file">demos.tcl</b>&quot; for the images to make
+available to its user and the demos. See <span class="sectref"><a href="#subsection5">Adding a new demo image</a></span>
+for more information.</p></dd>
+</dl>
+<p>Package Code, General structure</p>
+<dl class="definitions">
+<dt>&quot;<b class="file">crimp*.tcl</b>&quot;</dt>
+<dd><p>These are the master files of the packages. Based on <b class="cmd">critcl</b> (v3) they
+contain all the necessary declarations to build their package.</p>
+<p>Each file reads the primitives to implement from the files in the
+sub-directories &quot;<b class="file">core/</b>&quot; (crimp_core), &quot;<b class="file">operator/</b>&quot; (crimp), and
+&quot;<b class="file">format/</b>&quot; (crimp_*, except for core).</p></dd>
+<dt>&quot;<b class="file">policy*.tcl</b>&quot;</dt>
+<dd><p>These are the companions to the &quot;<b class="file">crimp*.tcl</b>&quot; files which implement the
+higher-level interfaces on top of the C-based primitive operations, and
+determine policies.</p>
+<p>The documentation (see &quot;<b class="file">doc/</b>&quot;) mainly describes this higher-level API,
+plus the few primitives which are passed through unchanged, i.e. without
+getting wrapped into Tcl procedures.</p></dd>
+<dt>&quot;<b class="file">plot.tcl</b>&quot;</dt>
+<dd><p>This is a companion Tcl file to &quot;<b class="file">crimp_tk.tcl</b>&quot; and &quot;<b class="file">policy_tk.tcl</b>&quot;
+which implements a simple plot widget. It essentially wraps Tklib's
+<b class="package">Plotchart</b> package into a simpler interface.</p>
+<p>The main user of this functionality is currently the demonstration framework,
+&quot;<b class="file">demos.tcl</b>&quot;.</p></dd>
+<dt>&quot;<b class="file">operator/</b>&quot;</dt>
+<dd><p>This directory contain the sources of the C-level primitives implemented by
+CRIMP.</p>
+<p>The master file &quot;<b class="file">crimp.tcl</b>&quot; reads all the &quot;<b class="file">.crimp</b>&quot; files found in
+this directory, converting them into proper <b class="cmd">critcl::cproc</b>s.</p></dd>
+<dt>&quot;<b class="file">core/</b>&quot;</dt>
+<dd><p>This directory contain the sources of the core C-level primitives
+implemented by CRIMP.</p>
+<p>The master file &quot;<b class="file">crimp_core.tcl</b>&quot; reads all the &quot;<b class="file">.crimp</b>&quot; files found
+in this directory, converting them into proper <b class="cmd">critcl::cproc</b>s.</p></dd>
+<dt>&quot;<b class="file">format/</b>&quot;</dt>
+<dd><p>This directory contain the sources of the C-level primitives for file
+and other I/O implemented by the various I/O packages.</p>
+<p>The master files &quot;<b class="file">crimp_*.tcl</b>&quot; read all the associated &quot;<b class="file">.crimp</b>&quot;
+files found in this directory, converting them into proper
+<b class="cmd">critcl::cproc</b>s. I.e.</p>
+<dl class="definitions">
+<dt>&quot;<b class="file">crimp_bmp.tcl</b>&quot;</dt>
+<dd><p>&quot;<b class="file">format/*bmp*.crimp</b>&quot;</p></dd>
+<dt>&quot;<b class="file">crimp_pfm.tcl</b>&quot;</dt>
+<dd><p>&quot;<b class="file">format/*pfm*.crimp</b>&quot;</p></dd>
+<dt>&quot;<b class="file">crimp_pgm.tcl</b>&quot;</dt>
+<dd><p>&quot;<b class="file">format/*pgm*.crimp</b>&quot;</p></dd>
+<dt>&quot;<b class="file">crimp_ppm.tcl</b>&quot;</dt>
+<dd><p>&quot;<b class="file">format/*ppm*.crimp</b>&quot;</p></dd>
+<dt>&quot;<b class="file">crimp_tk.tcl</b>&quot;</dt>
+<dd><p>&quot;<b class="file">format/*tk*.crimp</b>&quot;</p></dd>
+</dl></dd>
+<dt>&quot;<b class="file">cop/</b>&quot;</dt>
+<dd><p>(speak: C op ;)
+For a few of the primitives in operator/ (see above) the implementations were
+very similar. This directory contains &quot;templates&quot; for these implementations,
+with the actual primitives <b class="cmd">#include</b>'ing them. The templates are configured
+through a number a C <b class="cmd">#define</b>'s for the parts where the primitives differ.</p>
+<p>The files all belong to package <b class="package"><a href="crimp.html">crimp</a></b>.</p>
+<p>This is a first attempt at templating some of the C code. It works, but
+isn't really very nicely done.</p>
+<p>While I (AK) have the general ida of using Tcl and Tcl-based macro-processors
+(like &quot;expand&quot;, see Wiki) bouncing around in my head for a better templating
+and C code generation mechanism there is nothing concrete yet.</p></dd>
+<dt>&quot;<b class="file">c/</b>&quot;</dt>
+<dd><p>This directory contain the C sources for common/shared functionality,
+mainly the Tcl_ObjType's for &quot;image type&quot;-values and &quot;image&quot;-values,
+and complex functions I really did not wish to duplicate in the C
+primitives (AHE support, Rank-Order Filter support, geometry functions,
+FFT).</p>
+<p>As such most of it belongs to package <b class="package">crimp::core</b>, with the
+remainder belonging to package <b class="package"><a href="crimp.html">crimp</a></b>.</p></dd>
+<dt>&quot;<b class="file">reader/</b>&quot;</dt>
+<dd><p>This directories contains the read procedures for image formats done in
+pure Tcl, and outside of the main I/O packages.</p>
+<p>Currently this is Richard Suchenwirth's strimj'es.</p>
+<p>The files in these directories are declared as Tcl companion files of
+&quot;<b class="file">crimp.tcl</b>&quot;, causing them to be sourced automatically by the critcl
+framework when CRIMP is loaded.</p></dd>
+</dl>
+<p>Package Code, Per Package</p>
+<dl class="definitions">
+<dt>&quot;<b class="file">.</b>&quot;</dt>
+<dd></dd>
+</dl>
+</div>
+<div id="subsection2" class="subsection"><h3><a name="subsection2">Writing a new primitive</a></h3>
+<p>The individual primitive C level operations of CRIMP are found in the
+sub-directories &quot;<b class="file">core/</b>&quot;, &quot;<b class="file">operator/</b>&quot;, and &quot;<b class="file">format/</b>&quot;.
+See the <span class="sectref"><a href="#subsection1">Directory structure</a></span>.</p>
+<p>Each primitive is handled by a single file with the extension &quot;<b class="file">.crimp</b>&quot;.</p>
+<p>Note that all files found in these directories and which do not have the
+extension &quot;<b class="file">.crimp</b>&quot; are by default ignored when &quot;<b class="file">crimp.tcl</b>&quot; loads
+and processes the primitives. The exception is if a package policy file
+declares them to be a part of the package in question.</p>
+<p>To write a new primitive simply add a new file with the extension &quot;<b class="file">.crimp</b>&quot;
+to the directory and fill it with content according to the rules below, which
+specify the format of &quot;<b class="file">.crimp</b>&quot; files.</p>
+<ol class="enumerated">
+<li><p>A &quot;<b class="file">.crimp</b>&quot; file is a plain text file.</p></li>
+<li><p>The first line in the file contains the name of the primitive it implements.</p></li>
+<li><p>All following lines, until the first empty line, describe the arguments of
+the primitive, i.e. their types and names.
+Note that a line containing only whitespace (space and tab characters) is
+<em>not</em> empty.</p></li>
+<li><p>Each line in the argument block describes a single argument.</p></li>
+<li><p>All lines after the empty line terminating the argument block, to the end of
+the file, contain the C code implementing the primitive.</p></li>
+</ol>
+<p>As an example, here are the contents of the &quot;<b class="file">.crimp</b>&quot; file for one of
+the primitives with one of the smallest implementations:</p>
+<pre class="example">
+[1]     width
+[2]     Tcl_Obj* imageObj
+[3]
+[4]     crimp_image* image;
+[5]
+[6]     crimp_input_any (imageObj, image);
+[7]
+[8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (image-&gt;w));
+[9]     return TCL_OK;
+</pre>
+<p>Line 1 contains the name of the primitive, &quot;width&quot;.
+Line 2 is the first line of the argument block.
+Line 3 terminates this argument block.
+Lines 4 to 9 are the implementation.</p>
+<p>This specific primitive extracts the width from the image it was given as
+argument and returns it as its result.</p>
+</div>
+<div id="subsection3" class="subsection"><h3><a name="subsection3">Writing a new high-level command</a></h3>
+<p>The high-level commands wrapping around most of the C level primitives
+reside in the files matching the pattern &quot;<b class="file">policy*.tcl</b>&quot;.</p>
+<p>They usually have one of the following purposes:</p>
+<ol class="enumerated">
+<li><p>Aggregating a group of related primitives into a single command
+    which chooses the primitive to use automatically, based on the
+    type(s) of its image argument(s).
+    The command <b class="cmd">::crimp max</b> is an example of this, choosing
+    and dispatching to the group of <b class="cmd">max_*_*</b> primitives.</p></li>
+<li><p>A nicer (more tcl-ish) interface to a (group of) primitive(s).
+    The command <b class="cmd">::crimp meta</b> is an example of that,
+    implementing a dict-like API on top of the raw <b class="cmd">meta_set</b> and
+    <b class="cmd">meta_get</b> primitives.</p></li>
+<li><p>Convenience methods which aggregate other commands, not
+    necessarily primitives, into a larger functionality.
+    The group of <b class="cmd">::crimper filter sobel</b> methods is an example of
+    this, wrapping around <b class="cmd">::crimp filter convolve</b> (itself an example
+    of (1)) and the commands for creating convolution kernels,
+    implementing a specific well-known filter with a fixed kernel.</p></li>
+<li><p>Implementing functionality fully in Tcl, where primitives are not
+    needed, or mostly not.
+    The <b class="cmd">::crimp transform</b> and <b class="cmd">::crimp table</b> commands
+    are examples of this, computing projective transformations and pixel
+    mapping tables, respectively.
+    A better example might be the &quot;::crimp pyramid&quot; methods which
+    encapsulate the higher-order structure of image pyramid
+    processing, leaving the details callback commands.</p></li>
+</ol>
+<p>Their implementation has to obey the following rules:</p>
+<ol class="enumerated">
+<li><p>The CRIMP package has the namespace &quot;::crimp&quot; reserved for its
+    use. All new procedures have to be defined in this namespace, or
+    sub-ordinate namespaces.</p></li>
+<li><p>New procedures extending an existing ensemble have to be defined
+    in the namespace of that ensemble. (Rule (1) above could have been
+    subsumed into this, because the main command, &quot;::crimp&quot;, is an
+    ensemble).</p></li>
+<li><p>Any new command defined directly in the &quot;::crimp&quot; namespace,
+    i.e. at the top-level of the hierarchy, has to be listed in the
+    <b class="cmd">namespace export</b> clauses at the bottom of file &quot;<b class="file">policy.tcl</b>&quot;.</p></li>
+<li><p>Public procedures have to have a name starting with a lowercase
+    character.</p></li>
+<li><p>Internal procedures have to have a name starting with an uppercase
+    character.</p></li>
+</ol>
+</div>
+<div id="subsection4" class="subsection"><h3><a name="subsection4">Writing a new demo</a></h3>
+<p>The individual demos used by &quot;<b class="file">demos.tcl</b>&quot; reside in the
+sub-directory &quot;<b class="file">demos/</b>&quot; of the sources.</p>
+<p>Each demo is handled by a single file with the extension &quot;.tcl&quot;.</p>
+<p>Note that all files found in the directory and which do not have the
+extension &quot;<b class="file">.tcl</b>&quot; are ignored when &quot;<b class="file">demos.tcl</b>&quot; looks for
+demos it can use.</p>
+<p>To write a new demo simply add a new file with the extension
+&quot;<b class="file">.tcl</b>&quot; to the directory and fill it with content according to the
+rules below, which specify the format of the demo files.</p>
+<ol class="enumerated">
+<li><p>A demo file is a Tcl script. As such it is a plain text file.</p></li>
+<li><p>A demo file contains a single command &quot;def&quot;, taking two arguments,
+	the name of the demo, and a Tcl dictionary describing it.</p></li>
+<li><p>The dictionary describing the demo may contain the keys and values
+	listed below. Some of the keys must exist, others are optional.
+	Both will be noted in the desciptions of the keys, below.</p>
+<dl class="definitions">
+    
+<dt>label</dt>
+<dd><p>Must exist. Its value is the name of the demo, as shown to
+        and seen by the user of &quot;<b class="file">demos.tcl</b>&quot;.</p></dd>
+<dt>active</dt>
+<dd><p>Optional. Its value is a script which will be executed by
+        demos.tcl whenever it has to decide which demos to show in the
+        list, based on the selection of images. The result has to be a
+        boolean value, with True signaling that the demo is suitable
+        for the selection, and False that it should not be shown.</p></dd>
+<dt>setup</dt>
+<dd><p>Optional. Its value is a script which is run whenever this
+        demo has been chosen by the user. It is expected to create
+        any commands and state it may need during the processing
+        of an image.</p></dd>
+<dt>shutdown</dt>
+<dd><p>Optional. Its value is a script which is run whenever this
+        demo has been de-selected by the user (and possibly some other
+        demo chosen). It is expected to clean up any dynamic resources
+        the demo may have aquired (like timers, open files, etc.).
+        The script does not have to care about procedures and state in
+        the ::DEMO namespace. These are automatically destroyed by the
+        framework.</p></dd>
+<dt>setup_image</dt>
+<dd><p>Optional, technically. Its value is a script which is run
+        whenever the image for the demo has changed. Its
+        responsibility is to apply the demo to the image and show any
+        results. As such leaving this key out of the description makes
+        pretty much no sense at all.</p></dd>
+</dl>
+</li>
+<li><p>All scripts (see demo description, above) are executed within the
+	::DEMO namespace and have access to its variables and commands</p></li>
+<li><p>The demo framework exports a number of supporting commands for use
+	by the scripts in the individual demos. These are:</p>
+<dl class="definitions">
+    
+<dt><a name="1"><b class="cmd"><a href="crimp.html">crimp</a></b></a></dt>
+<dd><p>Of course, as demos have to have access to CRIMP's
+        functionality. All known crimp packages are loaded, i.e.</p>
+<ol class="enumerated">
+	
+<li><p><b class="package"><a href="crimp.html">crimp</a></b></p></li>
+<li><p><b class="package">crimp::tk</b></p></li>
+<li><p><b class="package">crimp::bmp</b></p></li>
+<li><p><b class="package">crimp::pgm</b></p></li>
+<li><p><b class="package">crimp::pfm</b></p></li>
+<li><p><b class="package">crimp::ppm</b></p></li>
+</ol></dd>
+<dt><a name="2"><b class="cmd">base</b> <span class="opt">?<i class="arg">N</i>?</span></a></dt>
+<dd><p>Returns the N'th image selected by the user. Counted from 0.
+        If not specified 'N' defaults 0.</p></dd>
+<dt><a name="3"><b class="cmd">bases</b></a></dt>
+<dd><p>Returns the number of selected images. Most useful to the
+        'active' script.</p></dd>
+<dt><a name="4"><b class="cmd">thebases</b></a></dt>
+<dd><p>Returns a list containing all selected images.</p></dd>
+<dt><a name="5"><b class="cmd">show_image</b> <i class="arg">I</i></a></dt>
+<dd><p>Takes an image I and displays it in the demo result area for
+        the user to see.</p></dd>
+<dt><a name="6"><b class="cmd">show_slides</b> <i class="arg">LI</i></a></dt>
+<dd><p>Takes a list of images and displays them in the demo result
+        area for the user to see, as a slideshow which cycles through
+        the images. The user gets a bevy of buttons to start/stop the
+        cycling, change cycle interval, and direction.</p></dd>
+<dt><a name="7"><b class="cmd">log</b> <i class="arg">T</i></a></dt>
+<dd><p>Writes the text T to the demo log window, followed by a newline</p></dd>
+<dt><a name="8"><b class="cmd">log*</b> <i class="arg">T</i></a></dt>
+<dd><p>Writes the text T to the demo log window. No newline is added
+        after the text.</p></dd>
+</dl>
+</li>
+<li><p>The demo framework has a number of hook points in the GUI for use
+	by demos. These are:</p>
+<ul class="itemized">
+<li><p>.left</p></li>
+<li><p>.right</p></li>
+<li><p>.top</p></li>
+<li><p>.bottom</p></li>
+</ul>
+<p>These widgets are ttk::frames placed to the left, right, top and
+    bottom of the demo result area and usually empty. The demo can put
+    its own interface elements there, buttons, sliders, plots, etc. pp.
+    When non-empty the layout roughly looks like:</p>
+<pre class="example">
+        +-------------------------------------------------------+
+        |                                                       |
+        |       .top                                            |
+        |                                                       |
+        +-------+---------------------------------------+-------+
+        |       |                                       |       |
+        |       |       demo result area                |       |
+        | .left |                                       | .right|
+        |       |                                       |       |
+        |       |                                       |       |
+        |       |                                       |       |
+        +-------+---------------------------------------+-------+
+        |                                                       |
+        |       .bottom                                         |
+        |                                                       |
+        +-------------------------------------------------------+
+</pre>
+<p>The demo's UI elements underneath these hooks are automatically
+    destroyed when the demo is shut down, before its 'shutdown' script
+    is run.</p></li>
+</ol>
+</div>
+<div id="subsection5" class="subsection"><h3><a name="subsection5">Adding a new demo image</a></h3>
+<p>The individual demonstration images used by &quot;<b class="file">demos.tcl</b>&quot; reside in
+the sub-directory &quot;<b class="file">image/</b>&quot; of the sources.</p>
+<p>Each image is handled by a single file with the extension &quot;<b class="file">.png</b>&quot;,
+whose contents have to be in the PNG image file format.</p>
+<p>Note that all files found in the directory, and which do not have the
+extension &quot;<b class="file">.png</b>&quot;, are ignored when &quot;<b class="file">demos.tcl</b>&quot; looks for
+images it can use.</p>
+<p>To add a new image simply copy the image file into the directory,
+assuming that it has the correct extension and file format. Otherwise
+convert the image to PNG and change the extension to suit.</p>
+</div>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
 <p><a href="../../index.html#key4">computer vision</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key6">matrix</a>, <a href="../../index.html#key7">photo</a>, <a href="../../index.html#key8">vector</a></p>

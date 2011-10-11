@@ -328,6 +328,14 @@ The size of the areas allocated to log window, selection lists, and
 demo results can be modified using the mouse, by dragging the panel
 separators.
 .SH "DEVELOPING FOR CRIMP"
+.SS "ARCHITECTURE & CONCEPTS"
+Both overall architecture and concepts like images (image values), image-types,
+and the general design, are all introduced in the user documentation, namely
+.IP [1]
+\fICRIMP - Introduction to CRIMP\fR, and
+.IP [2]
+\fICRIMP - Foundation\fR
+.PP
 .SS "DIRECTORY STRUCTURE"
 .TP
 Helpers

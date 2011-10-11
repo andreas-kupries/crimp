@@ -116,11 +116,12 @@
 <li class="section"><a href="#section2">Playing with CRIMP</a></li>
 <li class="section"><a href="#section3">Developing for CRIMP</a>
 <ul>
-<li class="subsection"><a href="#subsection1">Directory structure</a></li>
-<li class="subsection"><a href="#subsection2">Writing a new primitive</a></li>
-<li class="subsection"><a href="#subsection3">Writing a new high-level command</a></li>
-<li class="subsection"><a href="#subsection4">Writing a new demo</a></li>
-<li class="subsection"><a href="#subsection5">Adding a new demo image</a></li>
+<li class="subsection"><a href="#subsection1">Architecture &amp; Concepts</a></li>
+<li class="subsection"><a href="#subsection2">Directory structure</a></li>
+<li class="subsection"><a href="#subsection3">Writing a new primitive</a></li>
+<li class="subsection"><a href="#subsection4">Writing a new high-level command</a></li>
+<li class="subsection"><a href="#subsection5">Writing a new demo</a></li>
+<li class="subsection"><a href="#subsection6">Adding a new demo image</a></li>
 </ul>
 </li>
 <li class="section"><a href="#keywords">Keywords</a></li>
@@ -199,7 +200,15 @@ demo results can be modified using the mouse, by dragging the panel
 separators.</p>
 </div>
 <div id="section3" class="section"><h2><a name="section3">Developing for CRIMP</a></h2>
-<div id="subsection1" class="subsection"><h3><a name="subsection1">Directory structure</a></h3>
+<div id="subsection1" class="subsection"><h3><a name="subsection1">Architecture &amp; Concepts</a></h3>
+<p>Both overall architecture and concepts like images (image values), image-types,
+and the general design, are all introduced in the user documentation, namely</p>
+<ol class="enumerated">
+<li><p><i class="term"><a href="crimp_intro.html">CRIMP - Introduction to CRIMP</a></i>, and</p></li>
+<li><p><i class="term"><a href="crimp_core.html">CRIMP - Foundation</a></i></p></li>
+</ol>
+</div>
+<div id="subsection2" class="subsection"><h3><a name="subsection2">Directory structure</a></h3>
 <dl class="definitions">
 <dt>Helpers</dt>
 <dd><dl class="definitions">
@@ -239,11 +248,11 @@ Currently this is only PGM and PPM, i.e &quot;Portable Grey Map&quot; and
 <dd><p>This is the demo application &amp; framework.</p></dd>
 <dt>&quot;<b class="file">demos/</b>&quot;</dt>
 <dd><p>This directory is searched by &quot;<b class="file">demos.tcl</b>&quot; for the demonstrations to make
-available to its user. See <span class="sectref"><a href="#subsection4">Writing a new demo</a></span> for information on the
+available to its user. See <span class="sectref"><a href="#subsection5">Writing a new demo</a></span> for information on the
 structure of a demonstration.</p></dd>
 <dt>&quot;<b class="file">images/</b>&quot;</dt>
 <dd><p>This directory is searched by &quot;<b class="file">demos.tcl</b>&quot; for the images to make
-available to its user and the demos. See <span class="sectref"><a href="#subsection5">Adding a new demo image</a></span>
+available to its user and the demos. See <span class="sectref"><a href="#subsection6">Adding a new demo image</a></span>
 for more information.</p></dd>
 </dl></dd>
 <dt>Package Code, General structure</dt>
@@ -415,10 +424,10 @@ framework when CRIMP is loaded.</p></dd>
 </dl></dd>
 </dl>
 </div>
-<div id="subsection2" class="subsection"><h3><a name="subsection2">Writing a new primitive</a></h3>
+<div id="subsection3" class="subsection"><h3><a name="subsection3">Writing a new primitive</a></h3>
 <p>The individual primitive C level operations of CRIMP are found in the
 sub-directories &quot;<b class="file">core/</b>&quot;, &quot;<b class="file">operator/</b>&quot;, and &quot;<b class="file">format/</b>&quot;.
-See the <span class="sectref"><a href="#subsection1">Directory structure</a></span>.</p>
+See the <span class="sectref"><a href="#subsection2">Directory structure</a></span>.</p>
 <p>Each primitive is handled by a single file with the extension &quot;<b class="file">.crimp</b>&quot;.</p>
 <p>Note that all files found in these directories and which do not have the
 extension &quot;<b class="file">.crimp</b>&quot; are by default ignored when &quot;<b class="file">crimp.tcl</b>&quot; loads
@@ -458,7 +467,7 @@ Lines 4 to 9 are the implementation.</p>
 <p>This specific primitive extracts the width from the image it was given as
 argument and returns it as its result.</p>
 </div>
-<div id="subsection3" class="subsection"><h3><a name="subsection3">Writing a new high-level command</a></h3>
+<div id="subsection4" class="subsection"><h3><a name="subsection4">Writing a new high-level command</a></h3>
 <p>The high-level commands wrapping around most of the C level primitives
 reside in the files matching the pattern &quot;<b class="file">policy*.tcl</b>&quot;.</p>
 <p>They usually have one of the following purposes:</p>
@@ -505,7 +514,7 @@ reside in the files matching the pattern &quot;<b class="file">policy*.tcl</b>&q
     character.</p></li>
 </ol>
 </div>
-<div id="subsection4" class="subsection"><h3><a name="subsection4">Writing a new demo</a></h3>
+<div id="subsection5" class="subsection"><h3><a name="subsection5">Writing a new demo</a></h3>
 <p>The individual demos used by &quot;<b class="file">demos.tcl</b>&quot; reside in the
 sub-directory &quot;<b class="file">demos/</b>&quot; of the sources.</p>
 <p>Each demo is handled by a single file with the extension &quot;.tcl&quot;.</p>
@@ -630,7 +639,7 @@ rules below, which specify the format of the demo files.</p>
     is run.</p></li>
 </ol>
 </div>
-<div id="subsection5" class="subsection"><h3><a name="subsection5">Adding a new demo image</a></h3>
+<div id="subsection6" class="subsection"><h3><a name="subsection6">Adding a new demo image</a></h3>
 <p>The individual demonstration images used by &quot;<b class="file">demos.tcl</b>&quot; reside in
 the sub-directory &quot;<b class="file">image/</b>&quot; of the sources.</p>
 <p>Each image is handled by a single file with the extension &quot;<b class="file">.png</b>&quot;,

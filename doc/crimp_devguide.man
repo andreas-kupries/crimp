@@ -92,6 +92,17 @@ separators.
 [section {Developing for CRIMP}]
 
 [comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
+[subsection {Architecture & Concepts}]
+
+Both overall architecture and concepts like images (image values), image-types,
+and the general design, are all introduced in the user documentation, namely
+
+[list_begin enumerated]
+[enum] [term {CRIMP - Introduction to CRIMP}], and
+[enum] [term {CRIMP - Foundation}]
+[list_end]
+
+[comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Directory structure}]
 
 [list_begin definitions][comment {___1___}]

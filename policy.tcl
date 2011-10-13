@@ -2282,19 +2282,14 @@ proc ::crimp::noise::gaussian {image {mean 0} {variance 0.05}} {
     set itype [::crimp::TypeOf $image]
 
     if {$itype in {grey8 grey16 grey32}} {
-	return [::crimp::convert::2$itype \
-		    [::crimp::FITFLOAT  \
-			 [::crimp::noise_gaussian_$itype \
-			      $image $mean $variance]]]
+	return [::crimp::noise_gaussian_$itype $image $mean $variance]
 
     } elseif {$itype in {rgb rgba}} {
+	# TODO: Could maybe moved to C as well.
 	set CHAN [::crimp::split $image]
 	set filtered {}
 	foreach chan [lrange $CHAN 0 2] {
-	    lappend filtered [::crimp::convert::2grey8 \
-				  [::crimp::FITFLOAT  \
-				       [::crimp::noise_gaussian_grey8 \
-					    $chan $mean $variance]]]
+	    lappend filtered [::crimp::noise_gaussian_grey8 $chan $mean $variance]
 	}
 	if { $itype eq "rgba"} {
 	    lappend filtered [lindex $CHAN 3]

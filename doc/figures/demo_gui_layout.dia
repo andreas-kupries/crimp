@@ -1,11 +1,12 @@
 # -*- tcl -*- tcl.tk//DSL diagram//EN//1.0
 
-#set boxheight [1 cm]
+set boxheight [1 cm]
 
 block {
-    box text .left
-    box text {demo result area}
-    box text .right
+    set boxheight [2 cm]
+    box text .left width [1 cm]
+    box text {demo result area} width [4 cm]
+    box text .right width [1 cm]
 }
-group { box with s at [last n] text .top }
-group { box with n at [last s] text .bottom }
+box with s at [last block n] text .top    width [last block width]
+box with n at [last block s] text .bottom width [last block width]

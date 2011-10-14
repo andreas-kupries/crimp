@@ -1882,6 +1882,166 @@ or down, along the specified dimension, while values less than
 [list_end]
 
 
+[subsection Miscellanea]
+
+The package contains a number of primitives which are either not really
+useful to a regular user, or have not gotten a nice interface yet,
+possibly because it is not clear how that interface should look like.
+
+These primitives are collected here, so that they are not forgotten,
+i.e. as a reminder to either make them properly available, document
+as internal/undocumented/etc, or remove them.
+
+[list_begin definitions]
+
+[call [cmd ::crimp::black_white_vertical]]
+
+Generates a fixed checker board image. 256x256, with 16x16 blocks.
+Debug use only, so far.
+
+[call [cmd ::crimp::bilateral_*] [arg image] [arg sigma-space] [arg sigma-range]]
+[call [cmd ::crimp::joint_bilateral_*] [arg image] [arg wimage] [arg sigma-space] [arg sigma-range]]
+
+Regular and cross bilateral filters. Still looking buggy, possibly bad
+memory accesses.
+
+[call [cmd ::crimp::color_combine] [arg image] [arg vector]]
+
+Combines color channels of the input into a single grey8 value, the
+result of performing a scalar product of each pixel with the 3x1 (WxH)
+image [arg vector].
+
+
+[call [cmd ::crimp::color_mix] [arg image] [arg matrix]]
+
+Remixes the color channels of the input, the result of performing a
+matrix multiplication of each pixel with the 3x3 image [arg matrix].
+
+[call [cmd ::crimp::connected_components] [arg image] \
+     [arg 8connected]]
+[call [cmd ::crimp::connected_components_*] [arg image] \
+     [arg 8connected] [arg bgValue]]
+
+Computing (labeling) the connected components of the input image,
+using either 4- or 8-neighbourhood. The primitives accepting a
+background value use it to distinguish foreground and background
+and coalesce the latter into a single component, even if its area
+is disconnected.
+
+The result is always of type [const grey32], to have enough range
+for the label counters.
+
+[call [cmd ::crimp::euclidean_distance_map_float] [arg image]]
+[call [cmd ::crimp::indicator_grey8_float] [arg image]]
+
+These two together allow the creation of distance maps from images, i.e.
+watershed diagrams. Currently used only in a demo for this.
+
+
+[call [cmd ::crimp::hough_grey8] [arg image] [arg emptybucketcolor]]
+
+Hough transformation of an image. Currentl used only in a demo so far.
+
+[call [cmd ::crimp::gaussian_01_float] [arg image] [arg derivative] [arg sigma]]
+[call [cmd ::crimp::gaussian_10_float] [arg image] [arg derivative] [arg sigma]]
+[call [cmd ::crimp::gaussian_blur_float] [arg image] [arg sigma]]
+[call [cmd ::crimp::gaussian_laplacian_float] [arg image] [arg sigma]]
+[call [cmd ::crimp::gaussian_gradient_mag_float] [arg image] [arg sigma]]
+
+Fast gaussian filters (and derivatives), in X and Y directions.
+Derivative 0 is the gaussian, 1 the gradient, 2 the laplacian.
+
+[para] [method 01] and [method 10] apply gaussian and gradient, i.e.
+in different directions. 01 = gaussian in X, gradient in Y, and 10
+the reverse.
+
+[para] [method blur] simply applies a gaussian in both directions, i.e.
+
+[example {
+    g10 (g01 (image))
+}]
+
+[para] [method laplacian] simply applies a laplacian of gaussians
+in both directions and returns the sum of the results, an approximation
+of the laplacian, the scalar second derivative, i.e.
+
+[example {
+    g02 (image) + g20 (image)
+}]
+
+[para] [method gradient_mag] simply applies a gradient of gaussians
+in both directions and returns the proper magnitude, i.e.
+
+[example {
+    hypot (g10 (image), g01 (image))
+}]
+
+[call [cmd ::crimp::map_2*_*] [arg image] [arg map]]
+
+Operators applying a piecewise linear [arg map] to the input image.
+The map is stored in a Tcl list containing 2 elements, each a bytearray.
+The first stores the abscissaes delineating the intervals, the second
+the ordinates at these interval borders. The format of the binary data
+depends on the types of input and output values (byte, int, float, ...).
+
+[para] For conversion a pixel value is searched for in the intervals
+of abscissae. With both the interval and the fraction inside of it
+known the output is then linearly interpolated from the associated
+ordinates. The search is a binary one, assuming that the abscissae
+are sorted from smaller to larger. If the input value is outside of
+the defined intervals the outputs associated with the min and max
+abscissae are returned, respectively.
+
+[para] Not exposed yet, unclear how the higher level API should
+look like.
+
+[call [cmd ::crimp::map2_*] [arg image] \
+     [arg mapNimage]... \
+     [arg mapNcontrol]...]
+
+Primitives for per-pixel transformations of multi-channel images
+(HSV, RGB, RGBA) with one map image per channel, and one integer
+index per channel selecting the control channel. Each map a 256x256
+grey8 image indexed by the pixel data of the channel to be mapped
+in X, and the pixel data of the chosen control channel in Y. This
+enables effects like hue-dependent changes to saturation or value,
+value dependent color-shifts, etc.
+
+[para] Not exposed yet, unclear how the higher level API should
+look like.
+
+
+[call [cmd ::crimp::region_sum] [arg image] [arg radius]]
+Takes a [term {summed area table}] as input and computes the sums
+for square windows of the [arg radius] around each pixel. Time
+is constant per pixel, independent of the radius, because of the
+nature of the input. Only used internally so far.
+
+[call [cmd ::crimp::exp_float] [arg image]]
+[call [cmd ::crimp::log_float] [arg image]]
+[call [cmd ::crimp::log10_float] [arg image]]
+[call [cmd ::crimp::offset_float] [arg image] [arg offset]]
+[call [cmd ::crimp::pow_float_float] [arg imageBase] [arg imageExponent]]
+[call [cmd ::crimp::scale_float] [arg image] [arg factor]]
+[call [cmd ::crimp::sqrt_float] [arg image]]
+Only used internally (or demos), in various calculations like arithmetic mean, standard
+deviation, etc. Might be useful in general, as unary operator.
+
+[call [cmd ::crimp::non_max_suppression] [arg imageMagnitude] [arg imageAngle]]
+[call [cmd ::crimp::trace_hysteresis] [arg image] [arg low] [arg high]]
+Abandoned, part of an older attempt at canny edge detection.
+
+[call [cmd ::crimp::window_*] [arg image]]
+
+[call [cmd ::crimp::window_*] [arg image]]
+Window the image by decreasing luma from center to the edges using an
+inverse square law. Currently only used internally, as part of the
+translational registration. Might be useful in general.
+
+[list_end]
+
+
+
 [section References]
 [list_begin enumerated]
 

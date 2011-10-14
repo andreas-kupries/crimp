@@ -116,13 +116,20 @@ and the general design, are all introduced in the user documentation, namely
 	This directory contains helper scripts.
 
 [def [file tools/makedoc.sh]]
+[def [file tools/makefigures.sh]]
+[def [file tools/makedocfigures.sh]]
       
-This helper script, when run, (re)generates the embedded documentation
-from the documentation sources.
+These helper scripts, when run, (re)generate the embedded documentation
+from the documentation sources, or the figures, or both.
 
 This requires the applications [syscmd mimetex], [syscmd convert]
 (ImageMagick), [syscmd dtplite], and [syscmd dia]. The latter is, for
 example, installed by ActiveTcl.
+
+[def [file tools/validatedoc.sh]]
+
+This helper script validates that the documentation markup conforms to
+the syntax of [term doctools]. Nothing is generated.
 
 [comment {
         TODO:   convert - ImageMagick
@@ -694,26 +701,9 @@ rules below, which specify the format of the demo files.
     bottom of the demo result area and usually empty. The demo can put
     its own interface elements there, buttons, sliders, plots, etc. pp.
 
-    When non-empty the layout roughly looks like:
+    When not empty the layout roughly looks like:
 
-[example {
-        +-------------------------------------------------------+
-        |                                                       |
-        |       .top                                            |
-        |                                                       |
-        +-------+---------------------------------------+-------+
-        |       |                                       |       |
-        |       |       demo result area                |       |
-        | .left |                                       | .right|
-        |       |                                       |       |
-        |       |                                       |       |
-        |       |                                       |       |
-        +-------+---------------------------------------+-------+
-        |                                                       |
-        |       .bottom                                         |
-        |                                                       |
-        +-------------------------------------------------------+
-}]
+[para][image demo_gui_layout][para]
 
     The demo's UI elements underneath these hooks are automatically
     destroyed when the demo is shut down, before its 'shutdown' script

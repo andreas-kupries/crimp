@@ -1,7 +1,7 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
-'\" Copyright (c) 2010-2011 Andreas Kupries
-'\" Copyright (c) 2010-2011 Documentation, Andreas Kupries
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Copyright (c) 2011 Andreas Kupries
+'\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
 '\" The definitions below are for supplemental macros used in Tcl/Tk
 '\" manual entries.
@@ -770,7 +770,8 @@ and "fully transparent", respectively.
 .sp
 The following combinations of fore- and background image types are
 supported:
-.nf
+.CS
+
 
     Result = Foreground Background
     ------   ---------- ----------
@@ -784,7 +785,7 @@ supported:
     rgba     rgba       rgba
     ------   ---------- ----------
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBalpha set\fR \fIimage\fR \fImask\fR
 This command takes two images, the input and a \fImask\fR, and returns
@@ -1333,12 +1334,14 @@ These two methods implement the basic set of morphology operations,
 \fIerosion\fR, and \fIdilation\fR using a flat 3x3 brick as their
 structuring element. For grayscale, which we have here, these are,
 mathematically, max and min rank-order filters, i.e.
-.nf
+.CS
+
 
     dilate = filter rank 1 99.99 (max)
     erode  = filter rank 1  0.00 (min)
 
-.fi
+.CE
+.IP
 The above definitions assume that background is \fBblack\fR, and
 foreground/object anything but black, usually \fBwhite\fR. Then it
 is easy to see that \fBdilate\fR expands the foreground/white, and
@@ -1349,66 +1352,77 @@ erode expands background/black.
 \fB::crimp\fR \fBmorph open\fR \fIimage\fR
 These two methods add to the basic set of morphology operations,
 \fIopening\fR and \fIclosing\fR. In terms of erosion and dilation:
-.nf
+.CS
+
 
     close = erode o dilate
     open  = dilate o erode
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmorph gradient\fR \fIimage\fR
 The morphological \fIgradient\fR is defined as
-.nf
+.CS
+
 
     [dilate $image] - [erode $image]
 
-.fi
+.CE
+.IP
 This can also be expressed as the sum of the external and internal
 gradients, see below.
 .TP
 \fB::crimp\fR \fBmorph igradient\fR \fIimage\fR
 The morphological \fIinternal gradient\fR is defined as
-.nf
+.CS
+
 
     $image - [erode image]
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmorph egradient\fR \fIimage\fR
 The morphological \fIexternal gradient\fR is defined as
-.nf
+.CS
+
 
     [dilate $image] - $image
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmorph tophatw\fR \fIimage\fR
 The \fIwhite tophat\fR transformation is defined as
-.nf
+.CS
+
 
     $image - [open $image]
 
-.fi
+.CE
+.IP
 See \fBReferences\fR 3 to 5 (page 32). This is a greyscale morphology
 operation which does not properly apply to binary images.
 .TP
 \fB::crimp\fR \fBmorph tophatb\fR \fIimage\fR
 The \fIblack tophat\fR transformation is defined as
-.nf
+.CS
+
 
     [close $image] - $image
 
-.fi
+.CE
+.IP
 See \fBReferences\fR 3 to 5 (page 33). This is a greyscale morphology
 operation which does not properly apply to binary images.
 .TP
 \fB::crimp\fR \fBmorph toggle\fR \fIimage\fR
 The \fItoggle map\fR is defined as
-.nf
+.CS
+
 
     0.5 * ([erode $image] + [dilate $image])
 
-.fi
+.CE
+.IP
 See \fBReferences\fR 5, pages 34 and 35. This is a greyscale
 morphology operation to sharpen edges.
 .TP
@@ -1485,9 +1499,11 @@ successively smaller images, each \fBdecimate\fRd by a factor two
 compared to its predecessor, for a total length of "\fIsteps\fR+1" images.
 .sp
 The convolution part of the decimation uses
-.nf
+.CS
+
  1/16 [1 4 6 4 1]
-.fi
+.CE
+.IP
 as its kernel.
 .sp
 IMAGE: pyramid_gauss
@@ -1504,9 +1520,11 @@ decimated by two compared to the preceding bandpass image. In total the result
 contains "\fIsteps\fR+2" images.
 .sp
 The convolution part of the decimation uses
-.nf
+.CS
+
  1/16 [1 4 6 4 1]
-.fi
+.CE
+.IP
 as its kernel. The internal interpolation used to generate the band pass
 images (resynthesis) doubles the weights of this kernel for its convolution
 step.
@@ -1899,7 +1917,8 @@ dictionary mapping characters to triples of integers in the range
 [0...255], specifying the red, green, and blue intensities.
 .sp
 An example of a strimj is:
-.nf
+.CS
+
 
 @...@.......@.@......
 @...@.......@.@......
@@ -1910,7 +1929,7 @@ An example of a strimj is:
 @...@.@...@.@.@.@...@
 @...@..@@@..@.@..@@@.
 
-.fi
+.CE
 .PP
 .SS SUPPORT
 .TP
@@ -1982,7 +2001,8 @@ This method takes a \fIkernel\fR as returned by the method
 the x- and y-axes are switched.
 For example
 .sp
-.nf
+.CS
+
 
                     (1)
                     (2)
@@ -1990,15 +2010,16 @@ For example
                     (2)
                     (1)
 
-.fi
+.CE
 .sp
 This method is its own inverse, i.e. application to its result returns
 the original input, i.e.
-.nf
+.CS
+
 
     [transpose [transpose $K]] == $K
 
-.fi
+.CE
 .TP
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 This method accepts the same sub-methods and arguments as are accepted
@@ -2295,12 +2316,14 @@ specified it defaults to the smallest integer greater than
 \fB::crimp\fR \fBtransform affine\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR
 This method returns the affine transformation specified by the 2x3
 matrix
-.nf
+.CS
+
 
     |a b c|
     |d e f|
 
-.fi
+.CE
+.IP
 Note that it is in general easier to use the methods \fBrotate\fR,
 \fBscale\fR, and \fBtranslate\fR \fBscale\fR to generate the
 desired transformation piecemal and then use \fBchain\fR to chain the
@@ -2319,13 +2342,15 @@ projective \fItransform\fRation.
 \fB::crimp\fR \fBtransform projective\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR \fIg\fR \fIh\fR
 This method returns the projective transformation specified by the 3x3
 matrix
-.nf
+.CS
+
 
     |a b c|
     |d e f|
     |g h 1|
 
-.fi
+.CE
+.IP
 Note that for the affine subset of projective transformation it is in
 general easier to use the methods \fBrotate\fR, \fBscale\fR, and
 \fBtranslate\fR \fBscale\fR to generate the desired
@@ -2384,10 +2409,10 @@ Adrien Bousseau, "Mathematical Morphology",
 PDF at \fIhttp://artis.imag.fr/Members/Adrien.Bousseau/morphology/\fR
 .PP
 .SH KEYWORDS
-affine, affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, canny, charcoal, clockwise, closing, composite blending, composition, const expansion, convolution filter, counter-clockwise, cropping, cut region, cyclic wrap expansion, dilation, edge shrinking, edge-detection, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, geometry, gradient, histogram, hypot, image, integral image, internal gradient, inverse fourier transform, inversion, log-compression, log-polar transformation, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, perspective, photo, pixel mapping, prewitt, projective, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, rescale, resize, roberts, rotate, rotation, sabattier effect, scale, scharr, sharpen, shrinking, sobel, solarization, sqrt-compression, standard deviation filter, statistics, stddev, summed area table, threshold, thresholding, toggle map, tophat, toroidal wrap expansion, transform, transform, fast fourier, transform, fourier, transform, inverse fourier, transformation, log-polar, translate, variance, vector-field, warp, white tophat, windowing, wrap expansion
+affine, affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, canny, charcoal, clockwise, closing, composite blending, composition, computer vision, const expansion, convolution filter, counter-clockwise, cropping, cut region, cyclic wrap expansion, dilation, document processing, edge shrinking, edge-detection, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, geometry, gradient, histogram, hypot, image, integral image, internal gradient, inverse fourier transform, inversion, log-compression, log-polar transformation, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, perspective, photo, pixel mapping, prewitt, projective, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, rescale, resize, roberts, rotate, rotation, sabattier effect, scale, scharr, sharpen, shrinking, sobel, solarization, sqrt-compression, standard deviation filter, statistics, stddev, summed area table, threshold, thresholding, toggle map, tophat, toroidal wrap expansion, transform, transform, fast fourier, transform, fourier, transform, inverse fourier, transformation, log-polar, translate, variance, vector, vector-field, warp, white tophat, windowing, wrap expansion
 .SH COPYRIGHT
 .nf
-Copyright (c) 2010-2011 Andreas Kupries
-Copyright (c) 2010-2011 Documentation, Andreas Kupries
+Copyright (c) 2011 Andreas Kupries
+Copyright (c) 2011 Documentation, Andreas Kupries
 
 .fi

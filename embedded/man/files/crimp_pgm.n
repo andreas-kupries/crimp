@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_pgm.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_pgm.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -309,7 +309,7 @@ The supported image types are \fBgrey8\fR, \fBrgb\fR,
 \fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR
 .PP
 .SH KEYWORDS
-Export PGM image, Import PGM image, computer vision, document processing, image, image type
+Export PGM image, Export image, PGM, Import PGM image, Import image, PGM, PGM, PGM image export, PGM image import, computer vision, document processing, image, matrix, photo, vector
 .SH COPYRIGHT
 .nf
 Copyright (c) 2011 Andreas Kupries

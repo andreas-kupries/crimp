@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_tk.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_tk.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -294,7 +294,7 @@ The supported image types are \fBgrey8\fR, \fBrgb\fR, and
 \fBrgba\fR.
 .PP
 .SH KEYWORDS
-Tk photo, computer vision, document processing, image, matrix, photo, vector
+Export tk photo, Import tk photo, Tk photo export, Tk photo import, computer vision, document processing, image, matrix, photo, vector
 .SH COPYRIGHT
 .nf
 Copyright (c) 2011 Andreas Kupries

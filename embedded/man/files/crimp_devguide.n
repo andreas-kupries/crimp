@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -287,17 +287,19 @@ etc.
 For a demonstration of CRIMP's current abilities see the
 "\fIdemos.tcl\fR" application. Within the crimp source directory run it
 as
-.nf
+.CS
+
 
     tclsh8.5 demos.tcl
 
-.fi
+.CE
 or
-.nf
+.CS
+
 
     tclsh8.5 demos.tcl /path/to/crimp/packages ...
 
-.fi
+.CE
 If CRIMP's packages have already been installed, or can be found in
 one of the paths provided as arguments, then this will simply start
 the application.
@@ -345,11 +347,19 @@ Helpers
 This directory contains helper scripts.
 .TP
 "\fItools/makedoc.sh\fR"
-This helper script, when run, (re)generates the embedded documentation
-from the documentation sources.
+.TP
+"\fItools/makefigures.sh\fR"
+.TP
+"\fItools/makedocfigures.sh\fR"
+These helper scripts, when run, (re)generate the embedded documentation
+from the documentation sources, or the figures, or both.
 This requires the applications \fBmimetex\fR, \fBconvert\fR
 (ImageMagick), \fBdtplite\fR, and \fBdia\fR. The latter is, for
 example, installed by ActiveTcl.
+.TP
+"\fItools/validatedoc.sh\fR"
+This helper script validates that the documentation markup conforms to
+the syntax of \fIdoctools\fR. Nothing is generated.
 .RE
 .TP
 Documentation
@@ -630,7 +640,8 @@ the file, contain the C code implementing the primitive.
 .PP
 As an example, here are the contents of the "\fI.crimp\fR" file for one of
 the primitives with one of the smallest implementations:
-.nf
+.CS
+
 
 [1]     width
 [2]     Tcl_Obj* imageObj
@@ -642,7 +653,7 @@ the primitives with one of the smallest implementations:
 [8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (image->w));
 [9]     return TCL_OK;
 
-.fi
+.CE
 Line 1 contains the name of the primitive, "width".
 Line 2 is the first line of the argument block.
 Line 3 terminates this argument block.
@@ -830,30 +841,34 @@ by demos. These are:
 .IP \(bu
 .bottom
 .RE
+.IP
 These widgets are ttk::frames placed to the left, right, top and
 bottom of the demo result area and usually empty. The demo can put
 its own interface elements there, buttons, sliders, plots, etc. pp.
-When non-empty the layout roughly looks like:
+When not empty the layout roughly looks like:
+.sp
+.PS
 .nf
-
-        +-------------------------------------------------------+
-        |                                                       |
-        |       .top                                            |
-        |                                                       |
-        +-------+---------------------------------------+-------+
-        |       |                                       |       |
-        |       |       demo result area                |       |
-        | .left |                                       | .right|
-        |       |                                       |       |
-        |       |                                       |       |
-        |       |                                       |       |
-        +-------+---------------------------------------+-------+
-        |                                                       |
-        |       .bottom                                         |
-        |                                                       |
-        +-------------------------------------------------------+
++-------------------------------------------------------+
+|                                                       |
+|       .top                                            |
+|                                                       |
++-------+---------------------------------------+-------+
+|       |                                       |       |
+|       |       demo result area                |       |
+| .left |                                       | .right|
+|       |                                       |       |
+|       |                                       |       |
+|       |                                       |       |
++-------+---------------------------------------+-------+
+|                                                       |
+|       .bottom                                         |
+|                                                       |
++-------------------------------------------------------+
 
 .fi
+.PE
+.sp
 The demo's UI elements underneath these hooks are automatically
 destroyed when the demo is shut down, before its 'shutdown' script
 is run.

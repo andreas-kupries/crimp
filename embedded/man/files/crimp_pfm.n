@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_pfm.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_pfm.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -312,7 +312,7 @@ The only supported image type is \fBfloat\fR.
 \fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR
 .PP
 .SH KEYWORDS
-Export PFM image, Import PFM image, computer vision, document processing, image, image type
+Export PFM image, Export image, PFM, Import PFM image, Import image, PFM, PFM, PFM image export, PFM image import, computer vision, document processing, image, matrix, photo, vector
 .SH COPYRIGHT
 .nf
 Copyright (c) 2011 Andreas Kupries

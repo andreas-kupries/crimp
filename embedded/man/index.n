@@ -295,6 +295,24 @@ blending
 \fBfiles/crimp.n\fR
 crimp
 .RE
+BMP
+.RS
+.TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.RE
+BMP image export
+.RS
+.TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.RE
+BMP image import
+.RS
+.TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.RE
 canny
 .RS
 .TP
@@ -339,6 +357,9 @@ crimp
 .RE
 computer vision
 .RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
 .TP
 \fBfiles/crimp_bmp.n\fR
 crimp_bmp
@@ -421,6 +442,9 @@ crimp_core
 document processing
 .RS
 .TP
+\fBfiles/crimp.n\fR
+crimp
+.TP
 \fBfiles/crimp_bmp.n\fR
 crimp_bmp
 .TP
@@ -493,6 +517,30 @@ Export BMP image
 \fBfiles/crimp_bmp.n\fR
 crimp_bmp
 .RE
+Export image, BMP
+.RS
+.TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.RE
+Export image, PFM
+.RS
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.RE
+Export image, PGM
+.RS
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.RE
+Export image, PPM
+.RS
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
+.RE
 Export PFM image
 .RS
 .TP
@@ -510,6 +558,12 @@ Export PPM image
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.RE
+Export tk photo
+.RS
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
 .RE
 extend expansion
 .RS
@@ -640,26 +694,38 @@ crimp_core
 image type
 .RS
 .TP
-\fBfiles/crimp_bmp.n\fR
-crimp_bmp
-.TP
 \fBfiles/crimp_core.n\fR
 crimp_core
-.TP
-\fBfiles/crimp_pfm.n\fR
-crimp_pfm
-.TP
-\fBfiles/crimp_pgm.n\fR
-crimp_pgm
-.TP
-\fBfiles/crimp_ppm.n\fR
-crimp_ppm
 .RE
 Import BMP image
 .RS
 .TP
 \fBfiles/crimp_bmp.n\fR
 crimp_bmp
+.RE
+Import image, BMP
+.RS
+.TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.RE
+Import image, PFM
+.RS
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.RE
+Import image, PGM
+.RS
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.RE
+Import image, PPM
+.RS
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
 .RE
 Import PFM image
 .RS
@@ -678,6 +744,12 @@ Import PPM image
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.RE
+Import tk photo
+.RS
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
 .RE
 integral image
 .RS
@@ -721,6 +793,9 @@ matrix
 \fBfiles/crimp.n\fR
 crimp
 .TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.TP
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
@@ -732,6 +807,15 @@ crimp_install_guide
 .TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
@@ -829,11 +913,50 @@ perspective
 \fBfiles/crimp.n\fR
 crimp
 .RE
+PFM
+.RS
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.RE
+PFM image export
+.RS
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.RE
+PFM image import
+.RS
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.RE
+PGM
+.RS
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.RE
+PGM image export
+.RS
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.RE
+PGM image import
+.RS
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.RE
 photo
 .RS
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
 .TP
 \fBfiles/crimp_core.n\fR
 crimp_core
@@ -847,6 +970,15 @@ crimp_install_guide
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
+.TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
 .TP
@@ -858,6 +990,24 @@ pixel mapping
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.RE
+PPM
+.RS
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
+.RE
+PPM image export
+.RS
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
+.RE
+PPM image import
+.RS
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
 .RE
 prewitt
 .RS
@@ -1027,7 +1177,13 @@ thresholding
 \fBfiles/crimp.n\fR
 crimp
 .RE
-Tk photo
+Tk photo export
+.RS
+.TP
+\fBfiles/crimp_tk.n\fR
+crimp_tk
+.RE
+Tk photo import
 .RS
 .TP
 \fBfiles/crimp_tk.n\fR
@@ -1096,6 +1252,12 @@ crimp
 vector
 .RS
 .TP
+\fBfiles/crimp.n\fR
+crimp
+.TP
+\fBfiles/crimp_bmp.n\fR
+crimp_bmp
+.TP
 \fBfiles/crimp_core.n\fR
 crimp_core
 .TP
@@ -1107,6 +1269,15 @@ crimp_install_guide
 .TP
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
+.TP
+\fBfiles/crimp_pfm.n\fR
+crimp_pfm
+.TP
+\fBfiles/crimp_pgm.n\fR
+crimp_pgm
+.TP
+\fBfiles/crimp_ppm.n\fR
+crimp_ppm
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources

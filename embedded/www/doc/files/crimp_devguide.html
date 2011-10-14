@@ -215,11 +215,18 @@ and the general design, are all introduced in the user documentation, namely</p>
 <dt>&quot;<b class="file">tools/</b>&quot;</dt>
 <dd><p>This directory contains helper scripts.</p></dd>
 <dt>&quot;<b class="file">tools/makedoc.sh</b>&quot;</dt>
-<dd><p>This helper script, when run, (re)generates the embedded documentation
-from the documentation sources.
+<dd></dd>
+<dt>&quot;<b class="file">tools/makefigures.sh</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">tools/makedocfigures.sh</b>&quot;</dt>
+<dd><p>These helper scripts, when run, (re)generate the embedded documentation
+from the documentation sources, or the figures, or both.
 This requires the applications <b class="syscmd">mimetex</b>, <b class="syscmd">convert</b>
 (ImageMagick), <b class="syscmd">dtplite</b>, and <b class="syscmd">dia</b>. The latter is, for
 example, installed by ActiveTcl.</p></dd>
+<dt>&quot;<b class="file">tools/validatedoc.sh</b>&quot;</dt>
+<dd><p>This helper script validates that the documentation markup conforms to
+the syntax of <i class="term">doctools</i>. Nothing is generated.</p></dd>
 </dl></dd>
 <dt>Documentation</dt>
 <dd><dl class="definitions">
@@ -615,25 +622,8 @@ rules below, which specify the format of the demo files.</p>
 <p>These widgets are ttk::frames placed to the left, right, top and
     bottom of the demo result area and usually empty. The demo can put
     its own interface elements there, buttons, sliders, plots, etc. pp.
-    When non-empty the layout roughly looks like:</p>
-<pre class="example">
-        +-------------------------------------------------------+
-        |                                                       |
-        |       .top                                            |
-        |                                                       |
-        +-------+---------------------------------------+-------+
-        |       |                                       |       |
-        |       |       demo result area                |       |
-        | .left |                                       | .right|
-        |       |                                       |       |
-        |       |                                       |       |
-        |       |                                       |       |
-        +-------+---------------------------------------+-------+
-        |                                                       |
-        |       .bottom                                         |
-        |                                                       |
-        +-------------------------------------------------------+
-</pre>
+    When not empty the layout roughly looks like:</p>
+<p><img alt="demo_gui_layout" src="../../image/demo_gui_layout.png"></p>
 <p>The demo's UI elements underneath these hooks are automatically
     destroyed when the demo is shut down, before its 'shutdown' script
     is run.</p></li>
@@ -653,7 +643,7 @@ convert the image to PNG and change the extension to suit.</p>
 </div>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p><a href="../../index.html#key4">computer vision</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key6">matrix</a>, <a href="../../index.html#key7">photo</a>, <a href="../../index.html#key8">vector</a></p>
+<p><a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key4">vector</a></p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2011 Andreas Kupries<br>

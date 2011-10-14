@@ -1,14 +1,11 @@
 [comment {-*- tcl -*- doctools manpage}]
 [manpage_begin crimp_bmp n 0.1]
-[copyright {2011 Andreas Kupries}]
-[copyright {2011 Documentation, Andreas Kupries}]
-[moddesc   {C Raster Image Manipulation Package}]
+[include include/module.inc]
 [titledesc {CRIMP - BMP handling, Windows Bitmap}]
 [require Tcl 8.5]
 [require crimp::bmp [opt 0.1]]
-[keywords {Import BMP image} {Export BMP image}]
-[keywords image {image type} {computer vision}]
-[keywords {document processing}]
+[keywords {Import BMP image} {BMP image import} {Import image, BMP} BMP]
+[keywords {Export BMP image} {BMP image export} {Export image, BMP}]
 [description]
 
 This package provides commands for the conversion of Windows Bitmaps

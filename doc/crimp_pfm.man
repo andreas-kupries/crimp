@@ -1,14 +1,11 @@
 [comment {-*- tcl -*- doctools manpage}]
 [manpage_begin crimp_pfm n 0.1]
-[copyright {2011 Andreas Kupries}]
-[copyright {2011 Documentation, Andreas Kupries}]
-[moddesc   {C Raster Image Manipulation Package}]
+[include include/module.inc]
 [titledesc {CRIMP - PFM handling, NetPBM}]
 [require Tcl 8.5]
 [require crimp::pfm [opt 0.1]]
-[keywords {Import PFM image} {Export PFM image}]
-[keywords image {image type} {computer vision}]
-[keywords {document processing}]
+[keywords {Import PFM image} {PFM image import} {Import image, PFM} PFM]
+[keywords {Export PFM image} {PFM image export} {Export image, PFM}]
 [description]
 
 This package provides commands for the conversion of CRIMP images to

@@ -1,15 +1,12 @@
 [comment {-*- tcl -*- doctools manpage}]
 [manpage_begin crimp_tk n 0.1]
-[copyright {2011 Andreas Kupries}]
-[copyright {2011 Documentation, Andreas Kupries}]
-[moddesc   {C Raster Image Manipulation Package}]
+[include include/module.inc]
 [titledesc {CRIMP - Tk Photo Handling}]
 [require Tcl 8.5]
 [require Tk 8.5]
 [require crimp::tk [opt 0.1]]
-[keywords photo {Tk photo} image matrix vector]
-[keywords {computer vision}]
-[keywords {document processing}]
+[keywords {Tk photo import} {Import tk photo}]
+[keywords {Tk photo export} {Export tk photo}]
 [description]
 
 This package provides commands for the conversion of CRIMP images to

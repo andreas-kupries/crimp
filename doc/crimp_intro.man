@@ -1,12 +1,7 @@
 [comment {-*- tcl -*- doctools manpage}]
 [manpage_begin crimp_introduction n 1]
-[copyright {2011 Andreas Kupries}]
-[copyright {2011 Documentation, Andreas Kupries}]
-[moddesc   {C Raster Image Manipulation Package}]
+[include include/module.inc]
 [titledesc {CRIMP - Introduction to CRIMP}]
-[keywords photo image matrix vector]
-[keywords {computer vision}]
-[keywords {document processing}]
 [description]
 
 Welcome to CRIMP, the C Raster Image Manipulation Package, a set of

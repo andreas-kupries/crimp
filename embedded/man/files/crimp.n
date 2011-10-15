@@ -608,6 +608,64 @@ package require \fBcrimp::core  ?0.1?\fR
 .sp
 \fB::crimp\fR \fBtransform translate\fR \fIdx\fR \fIdy\fR
 .sp
+\fB::crimp::black_white_vertical\fR
+.sp
+\fB::crimp::bilateral_*\fR \fIimage\fR \fIsigma-space\fR \fIsigma-range\fR
+.sp
+\fB::crimp::joint_bilateral_*\fR \fIimage\fR \fIwimage\fR \fIsigma-space\fR \fIsigma-range\fR
+.sp
+\fB::crimp::color_combine\fR \fIimage\fR \fIvector\fR
+.sp
+\fB::crimp::color_mix\fR \fIimage\fR \fImatrix\fR
+.sp
+\fB::crimp::connected_components\fR \fIimage\fR \fI8connected\fR
+.sp
+\fB::crimp::connected_components_*\fR \fIimage\fR \fI8connected\fR \fIbgValue\fR
+.sp
+\fB::crimp::euclidean_distance_map_float\fR \fIimage\fR
+.sp
+\fB::crimp::indicator_grey8_float\fR \fIimage\fR
+.sp
+\fB::crimp::hough_grey8\fR \fIimage\fR \fIemptybucketcolor\fR
+.sp
+\fB::crimp::gaussian_01_float\fR \fIimage\fR \fIderivative\fR \fIsigma\fR
+.sp
+\fB::crimp::gaussian_10_float\fR \fIimage\fR \fIderivative\fR \fIsigma\fR
+.sp
+\fB::crimp::gaussian_blur_float\fR \fIimage\fR \fIsigma\fR
+.sp
+\fB::crimp::gaussian_laplacian_float\fR \fIimage\fR \fIsigma\fR
+.sp
+\fB::crimp::gaussian_gradient_mag_float\fR \fIimage\fR \fIsigma\fR
+.sp
+\fB::crimp::map_2*_*\fR \fIimage\fR \fImap\fR
+.sp
+\fB::crimp::map2_*\fR \fIimage\fR \fImapNimage\fR... \fImapNcontrol\fR...
+.sp
+\fB::crimp::region_sum\fR \fIimage\fR \fIradius\fR
+.sp
+\fB::crimp::exp_float\fR \fIimage\fR
+.sp
+\fB::crimp::log_float\fR \fIimage\fR
+.sp
+\fB::crimp::log10_float\fR \fIimage\fR
+.sp
+\fB::crimp::offset_float\fR \fIimage\fR \fIoffset\fR
+.sp
+\fB::crimp::pow_float_float\fR \fIimageBase\fR \fIimageExponent\fR
+.sp
+\fB::crimp::scale_float\fR \fIimage\fR \fIfactor\fR
+.sp
+\fB::crimp::sqrt_float\fR \fIimage\fR
+.sp
+\fB::crimp::non_max_suppression\fR \fIimageMagnitude\fR \fIimageAngle\fR
+.sp
+\fB::crimp::trace_hysteresis\fR \fIimage\fR \fIlow\fR \fIhigh\fR
+.sp
+\fB::crimp::window_*\fR \fIimage\fR
+.sp
+\fB::crimp::window_*\fR \fIimage\fR
+.sp
 .BE
 .SH DESCRIPTION
 This package, built on top of the \fBcrimp::core\fR package
@@ -2390,6 +2448,183 @@ image by \fIdx\fR pixels along the x-axis, and \fIdx\fR pixels along
 the y-axis. Values larger than \fB0\fR move the image to the right,
 or down, along the specified dimension, while values less than
 \fB0\fR move it to the left, or up.
+.PP
+.SS MISCELLANEA
+The package contains a number of primitives which are either not
+really useful to a regular user, or have not gotten a nice interface
+yet, possibly because it is not clear how that interface should look
+like.
+.PP
+These primitives are collected here, so that they are not
+forgotten, i.e. as a reminder to either make them properly available,
+document as internal/undocumented/etc, or remove them.
+.TP
+\fB::crimp::black_white_vertical\fR
+Generates a fixed checker board image. The output is 256x256
+\fBgrey8\fR image, with 16x16 blocks. Debug use only, so far.
+.TP
+\fB::crimp::bilateral_*\fR \fIimage\fR \fIsigma-space\fR \fIsigma-range\fR
+.TP
+\fB::crimp::joint_bilateral_*\fR \fIimage\fR \fIwimage\fR \fIsigma-space\fR \fIsigma-range\fR
+Regular and cross bilateral filters. Still looking buggy, possibly bad
+memory accesses.
+.TP
+\fB::crimp::color_combine\fR \fIimage\fR \fIvector\fR
+This operation combines the channels of the input into a single
+\fBgrey8\fR value, the result of performing a scalar product of each
+pixel with the 3x1 \fIvector\fR (\fBfloat\fR image).
+.TP
+\fB::crimp::color_mix\fR \fIimage\fR \fImatrix\fR
+This operation mixes the color channels of the input, the result of
+performing a matrix multiplication of each pixel with the 3x3
+\fImatrix\fR (\fBfloat\fR image).
+.TP
+\fB::crimp::connected_components\fR \fIimage\fR \fI8connected\fR
+.TP
+\fB::crimp::connected_components_*\fR \fIimage\fR \fI8connected\fR \fIbgValue\fR
+Computing (labeling) the connected components of the input image,
+using either 4- or 8-neighbourhood. The primitives accepting a
+background value use it to distinguish foreground and background and
+coalesce the latter into a single component, even if its area is
+disconnected.
+.sp
+The result is always of type \fBgrey32\fR, to have enough
+range for the label counters.
+.TP
+\fB::crimp::euclidean_distance_map_float\fR \fIimage\fR
+.TP
+\fB::crimp::indicator_grey8_float\fR \fIimage\fR
+These two operations together allow the creation of distance maps from
+images, i.e.  watershed diagrams. Currently only used in a
+demonstration for this.
+.TP
+\fB::crimp::hough_grey8\fR \fIimage\fR \fIemptybucketcolor\fR
+Hough transformation of an image. Currently only used in a
+demonstration so far.
+.TP
+\fB::crimp::gaussian_01_float\fR \fIimage\fR \fIderivative\fR \fIsigma\fR
+.TP
+\fB::crimp::gaussian_10_float\fR \fIimage\fR \fIderivative\fR \fIsigma\fR
+.TP
+\fB::crimp::gaussian_blur_float\fR \fIimage\fR \fIsigma\fR
+.TP
+\fB::crimp::gaussian_laplacian_float\fR \fIimage\fR \fIsigma\fR
+.TP
+\fB::crimp::gaussian_gradient_mag_float\fR \fIimage\fR \fIsigma\fR
+Fast gaussian filters and derivatives, applied in X and Y directions,
+i.e. rows and coluimns of the input image. The \fIderivative\fR is either
+.RS
+.TP
+\fB0\fR
+Gaussian
+.TP
+\fB1\fR
+Gradient
+.TP
+\fB2\fR
+Laplacian
+.RE
+.sp
+The methods \fB01\fR and \fB10\fR apply a gaussian or
+derivative to the image, in X and Y directions,
+respectively. I.e. they operate on the rows, or columns of the image,
+respectively.
+.sp
+\fBblur\fR applies a gaussian blur in both directions, i.e.
+.CS
+
+
+    output = gauss10 (gauss01 (image))
+
+.CE
+.sp
+\fBlaplacian\fR returns an approximation of the scalar
+second derivative, the \fIlaplacian\fR of the image. It is computed
+by applying a laplacian of a gaussian, for both X and Y directions,
+and adding the results, i.e.:
+.CS
+
+
+    laplace20 (gauss01 (image)) + laplace02 (gauss20 (image))
+
+.CE
+.sp
+\fBgradient_mag\fR returns the magnitude of the image
+gradient. It is computed by applying a gradient of gaussian to X and Y
+directions, and computing the length of the resulting 2-vector
+(euclidean norm), i.e.
+.CS
+
+
+    hypot (gauss10 (grad10 (image)), gauss10 (grad01 (image)))
+
+.CE
+.TP
+\fB::crimp::map_2*_*\fR \fIimage\fR \fImap\fR
+Operators applying a piecewise linear \fImap\fR to the input image.
+The map is stored in a Tcl list containing 2 elements, each a
+bytearray.  The first stores the abscissaes delineating the intervals,
+the second the ordinates at these interval borders. The format of the
+binary data depends on the types of input and output values (byte,
+int, float, ...).
+.sp
+For conversion a pixel value is searched for in the intervals
+of abscissae. With both the interval and the fraction inside of it
+known the output is then linearly interpolated from the associated
+ordinates. The search is a binary one, assuming that the abscissae are
+sorted from smaller to larger. If the input value is outside of the
+defined intervals the outputs associated with the min and max
+abscissae are returned, respectively.
+.sp
+Not exposed yet, unclear how the higher level API should look
+like.
+.TP
+\fB::crimp::map2_*\fR \fIimage\fR \fImapNimage\fR... \fImapNcontrol\fR...
+Primitives applying per-pixel transformations to multi-channel images
+(HSV, RGB, RGBA). Each channel is transformed with one map image per
+channel, and one integer index per channel selecting the control
+channel.
+Each map is a 256x256 \fBgrey8\fR image indexed by the pixel data of
+the channel to be mapped in X, and the pixel data of the chosen
+control channel in Y. This enables effects like hue-dependent changes
+to saturation or value, value dependent color-shifts, etc.
+.sp
+Not exposed yet, unclear how the higher level API should
+look like.
+.TP
+\fB::crimp::region_sum\fR \fIimage\fR \fIradius\fR
+Takes a \fIsummed area table\fR as input and computes the sums
+for square windows of the \fIradius\fR around each pixel. Time
+is constant per pixel, independent of the radius, because of the
+nature of the input. Only used internally so far.
+.TP
+\fB::crimp::exp_float\fR \fIimage\fR
+.TP
+\fB::crimp::log_float\fR \fIimage\fR
+.TP
+\fB::crimp::log10_float\fR \fIimage\fR
+.TP
+\fB::crimp::offset_float\fR \fIimage\fR \fIoffset\fR
+.TP
+\fB::crimp::pow_float_float\fR \fIimageBase\fR \fIimageExponent\fR
+.TP
+\fB::crimp::scale_float\fR \fIimage\fR \fIfactor\fR
+.TP
+\fB::crimp::sqrt_float\fR \fIimage\fR
+Only used internally (or demos), in various calculations like arithmetic mean, standard
+deviation, etc. Might be useful in general, as unary operator.
+.TP
+\fB::crimp::non_max_suppression\fR \fIimageMagnitude\fR \fIimageAngle\fR
+.TP
+\fB::crimp::trace_hysteresis\fR \fIimage\fR \fIlow\fR \fIhigh\fR
+Abandoned, part of an older attempt at canny edge detection.
+.TP
+\fB::crimp::window_*\fR \fIimage\fR
+.TP
+\fB::crimp::window_*\fR \fIimage\fR
+Window the image by decreasing luma from center to the edges using an
+inverse square law. Currently only used internally, as part of the
+translational registration. Might be useful in general.
 .PP
 .SH REFERENCES
 .IP [1]

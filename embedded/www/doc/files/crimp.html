@@ -120,6 +120,7 @@
 <li class="subsection"><a href="#subsection3">Converters</a></li>
 <li class="subsection"><a href="#subsection4">I/O commands</a></li>
 <li class="subsection"><a href="#subsection5">Support</a></li>
+<li class="subsection"><a href="#subsection6">Miscellanea</a></li>
 </ul>
 </li>
 <li class="section"><a href="#section3">References</a></li>
@@ -314,6 +315,35 @@
 <li><a href="#176"><b class="cmd">::crimp</b> <b class="method">transform rotate</b> <i class="arg">theta</i> <span class="opt">?<i class="arg">center</i>?</span></a></li>
 <li><a href="#177"><b class="cmd">::crimp</b> <b class="method">transform scale</b> <i class="arg">sx</i> <i class="arg">sy</i></a></li>
 <li><a href="#178"><b class="cmd">::crimp</b> <b class="method">transform translate</b> <i class="arg">dx</i> <i class="arg">dy</i></a></li>
+<li><a href="#179"><b class="cmd">::crimp::black_white_vertical</b></a></li>
+<li><a href="#180"><b class="cmd">::crimp::bilateral_*</b> <i class="arg">image</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></li>
+<li><a href="#181"><b class="cmd">::crimp::joint_bilateral_*</b> <i class="arg">image</i> <i class="arg">wimage</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></li>
+<li><a href="#182"><b class="cmd">::crimp::color_combine</b> <i class="arg">image</i> <i class="arg">vector</i></a></li>
+<li><a href="#183"><b class="cmd">::crimp::color_mix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></li>
+<li><a href="#184"><b class="cmd">::crimp::connected_components</b> <i class="arg">image</i> <i class="arg">8connected</i></a></li>
+<li><a href="#185"><b class="cmd">::crimp::connected_components_*</b> <i class="arg">image</i> <i class="arg">8connected</i> <i class="arg">bgValue</i></a></li>
+<li><a href="#186"><b class="cmd">::crimp::euclidean_distance_map_float</b> <i class="arg">image</i></a></li>
+<li><a href="#187"><b class="cmd">::crimp::indicator_grey8_float</b> <i class="arg">image</i></a></li>
+<li><a href="#188"><b class="cmd">::crimp::hough_grey8</b> <i class="arg">image</i> <i class="arg">emptybucketcolor</i></a></li>
+<li><a href="#189"><b class="cmd">::crimp::gaussian_01_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></li>
+<li><a href="#190"><b class="cmd">::crimp::gaussian_10_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></li>
+<li><a href="#191"><b class="cmd">::crimp::gaussian_blur_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></li>
+<li><a href="#192"><b class="cmd">::crimp::gaussian_laplacian_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></li>
+<li><a href="#193"><b class="cmd">::crimp::gaussian_gradient_mag_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></li>
+<li><a href="#194"><b class="cmd">::crimp::map_2*_*</b> <i class="arg">image</i> <i class="arg">map</i></a></li>
+<li><a href="#195"><b class="cmd">::crimp::map2_*</b> <i class="arg">image</i> <i class="arg">mapNimage</i>... <i class="arg">mapNcontrol</i>...</a></li>
+<li><a href="#196"><b class="cmd">::crimp::region_sum</b> <i class="arg">image</i> <i class="arg">radius</i></a></li>
+<li><a href="#197"><b class="cmd">::crimp::exp_float</b> <i class="arg">image</i></a></li>
+<li><a href="#198"><b class="cmd">::crimp::log_float</b> <i class="arg">image</i></a></li>
+<li><a href="#199"><b class="cmd">::crimp::log10_float</b> <i class="arg">image</i></a></li>
+<li><a href="#200"><b class="cmd">::crimp::offset_float</b> <i class="arg">image</i> <i class="arg">offset</i></a></li>
+<li><a href="#201"><b class="cmd">::crimp::pow_float_float</b> <i class="arg">imageBase</i> <i class="arg">imageExponent</i></a></li>
+<li><a href="#202"><b class="cmd">::crimp::scale_float</b> <i class="arg">image</i> <i class="arg">factor</i></a></li>
+<li><a href="#203"><b class="cmd">::crimp::sqrt_float</b> <i class="arg">image</i></a></li>
+<li><a href="#204"><b class="cmd">::crimp::non_max_suppression</b> <i class="arg">imageMagnitude</i> <i class="arg">imageAngle</i></a></li>
+<li><a href="#205"><b class="cmd">::crimp::trace_hysteresis</b> <i class="arg">image</i> <i class="arg">low</i> <i class="arg">high</i></a></li>
+<li><a href="#206"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></li>
+<li><a href="#207"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></li>
 </ul>
 </div>
 </div>
@@ -1594,6 +1624,151 @@ image by <i class="arg">dx</i> pixels along the x-axis, and <i class="arg">dx</i
 the y-axis. Values larger than <b class="const">0</b> move the image to the right,
 or down, along the specified dimension, while values less than
 <b class="const">0</b> move it to the left, or up.</p></dd>
+</dl>
+</div>
+<div id="subsection6" class="subsection"><h3><a name="subsection6">Miscellanea</a></h3>
+<p>The package contains a number of primitives which are either not
+really useful to a regular user, or have not gotten a nice interface
+yet, possibly because it is not clear how that interface should look
+like.</p>
+<p>These primitives are collected here, so that they are not
+forgotten, i.e. as a reminder to either make them properly available,
+document as internal/undocumented/etc, or remove them.</p>
+<dl class="definitions">
+<dt><a name="179"><b class="cmd">::crimp::black_white_vertical</b></a></dt>
+<dd><p>Generates a fixed checker board image. The output is 256x256
+<b class="const">grey8</b> image, with 16x16 blocks. Debug use only, so far.</p></dd>
+<dt><a name="180"><b class="cmd">::crimp::bilateral_*</b> <i class="arg">image</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></dt>
+<dd></dd>
+<dt><a name="181"><b class="cmd">::crimp::joint_bilateral_*</b> <i class="arg">image</i> <i class="arg">wimage</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></dt>
+<dd><p>Regular and cross bilateral filters. Still looking buggy, possibly bad
+memory accesses.</p></dd>
+<dt><a name="182"><b class="cmd">::crimp::color_combine</b> <i class="arg">image</i> <i class="arg">vector</i></a></dt>
+<dd><p>This operation combines the channels of the input into a single
+<b class="const">grey8</b> value, the result of performing a scalar product of each
+pixel with the 3x1 <i class="arg">vector</i> (<b class="const">float</b> image).</p></dd>
+<dt><a name="183"><b class="cmd">::crimp::color_mix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></dt>
+<dd><p>This operation mixes the color channels of the input, the result of
+performing a matrix multiplication of each pixel with the 3x3
+<i class="arg">matrix</i> (<b class="const">float</b> image).</p></dd>
+<dt><a name="184"><b class="cmd">::crimp::connected_components</b> <i class="arg">image</i> <i class="arg">8connected</i></a></dt>
+<dd></dd>
+<dt><a name="185"><b class="cmd">::crimp::connected_components_*</b> <i class="arg">image</i> <i class="arg">8connected</i> <i class="arg">bgValue</i></a></dt>
+<dd><p>Computing (labeling) the connected components of the input image,
+using either 4- or 8-neighbourhood. The primitives accepting a
+background value use it to distinguish foreground and background and
+coalesce the latter into a single component, even if its area is
+disconnected.</p>
+<p>The result is always of type <b class="const">grey32</b>, to have enough
+range for the label counters.</p></dd>
+<dt><a name="186"><b class="cmd">::crimp::euclidean_distance_map_float</b> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="187"><b class="cmd">::crimp::indicator_grey8_float</b> <i class="arg">image</i></a></dt>
+<dd><p>These two operations together allow the creation of distance maps from
+images, i.e.  watershed diagrams. Currently only used in a
+demonstration for this.</p></dd>
+<dt><a name="188"><b class="cmd">::crimp::hough_grey8</b> <i class="arg">image</i> <i class="arg">emptybucketcolor</i></a></dt>
+<dd><p>Hough transformation of an image. Currently only used in a
+demonstration so far.</p></dd>
+<dt><a name="189"><b class="cmd">::crimp::gaussian_01_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></dt>
+<dd></dd>
+<dt><a name="190"><b class="cmd">::crimp::gaussian_10_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></dt>
+<dd></dd>
+<dt><a name="191"><b class="cmd">::crimp::gaussian_blur_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></dt>
+<dd></dd>
+<dt><a name="192"><b class="cmd">::crimp::gaussian_laplacian_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></dt>
+<dd></dd>
+<dt><a name="193"><b class="cmd">::crimp::gaussian_gradient_mag_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></dt>
+<dd><p>Fast gaussian filters and derivatives, applied in X and Y directions,
+i.e. rows and coluimns of the input image. The <i class="arg">derivative</i> is either</p>
+<dl class="definitions">
+<dt><b class="const">0</b></dt>
+<dd><p>Gaussian</p></dd>
+<dt><b class="const">1</b></dt>
+<dd><p>Gradient</p></dd>
+<dt><b class="const">2</b></dt>
+<dd><p>Laplacian</p></dd>
+</dl>
+<p>The methods <b class="method">01</b> and <b class="method">10</b> apply a gaussian or
+derivative to the image, in X and Y directions,
+respectively. I.e. they operate on the rows, or columns of the image,
+respectively.</p>
+<p><b class="method">blur</b> applies a gaussian blur in both directions, i.e.</p>
+<pre class="example">
+    output = gauss10 (gauss01 (image))
+</pre>
+<p><b class="method">laplacian</b> returns an approximation of the scalar
+second derivative, the <i class="term">laplacian</i> of the image. It is computed
+by applying a laplacian of a gaussian, for both X and Y directions,
+and adding the results, i.e.:</p>
+<pre class="example">
+    laplace20 (gauss01 (image)) + laplace02 (gauss20 (image))
+</pre>
+<p><b class="method">gradient_mag</b> returns the magnitude of the image
+gradient. It is computed by applying a gradient of gaussian to X and Y
+directions, and computing the length of the resulting 2-vector
+(euclidean norm), i.e.</p>
+<pre class="example">
+    hypot (gauss10 (grad10 (image)), gauss10 (grad01 (image)))
+</pre>
+</dd>
+<dt><a name="194"><b class="cmd">::crimp::map_2*_*</b> <i class="arg">image</i> <i class="arg">map</i></a></dt>
+<dd><p>Operators applying a piecewise linear <i class="arg">map</i> to the input image.
+The map is stored in a Tcl list containing 2 elements, each a
+bytearray.  The first stores the abscissaes delineating the intervals,
+the second the ordinates at these interval borders. The format of the
+binary data depends on the types of input and output values (byte,
+int, float, ...).</p>
+<p>For conversion a pixel value is searched for in the intervals
+of abscissae. With both the interval and the fraction inside of it
+known the output is then linearly interpolated from the associated
+ordinates. The search is a binary one, assuming that the abscissae are
+sorted from smaller to larger. If the input value is outside of the
+defined intervals the outputs associated with the min and max
+abscissae are returned, respectively.</p>
+<p>Not exposed yet, unclear how the higher level API should look
+like.</p></dd>
+<dt><a name="195"><b class="cmd">::crimp::map2_*</b> <i class="arg">image</i> <i class="arg">mapNimage</i>... <i class="arg">mapNcontrol</i>...</a></dt>
+<dd><p>Primitives applying per-pixel transformations to multi-channel images
+(HSV, RGB, RGBA). Each channel is transformed with one map image per
+channel, and one integer index per channel selecting the control
+channel.
+Each map is a 256x256 <b class="const">grey8</b> image indexed by the pixel data of
+the channel to be mapped in X, and the pixel data of the chosen
+control channel in Y. This enables effects like hue-dependent changes
+to saturation or value, value dependent color-shifts, etc.</p>
+<p>Not exposed yet, unclear how the higher level API should
+look like.</p></dd>
+<dt><a name="196"><b class="cmd">::crimp::region_sum</b> <i class="arg">image</i> <i class="arg">radius</i></a></dt>
+<dd><p>Takes a <i class="term"><a href="../../index.html#key84">summed area table</a></i> as input and computes the sums
+for square windows of the <i class="arg">radius</i> around each pixel. Time
+is constant per pixel, independent of the radius, because of the
+nature of the input. Only used internally so far.</p></dd>
+<dt><a name="197"><b class="cmd">::crimp::exp_float</b> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="198"><b class="cmd">::crimp::log_float</b> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="199"><b class="cmd">::crimp::log10_float</b> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="200"><b class="cmd">::crimp::offset_float</b> <i class="arg">image</i> <i class="arg">offset</i></a></dt>
+<dd></dd>
+<dt><a name="201"><b class="cmd">::crimp::pow_float_float</b> <i class="arg">imageBase</i> <i class="arg">imageExponent</i></a></dt>
+<dd></dd>
+<dt><a name="202"><b class="cmd">::crimp::scale_float</b> <i class="arg">image</i> <i class="arg">factor</i></a></dt>
+<dd></dd>
+<dt><a name="203"><b class="cmd">::crimp::sqrt_float</b> <i class="arg">image</i></a></dt>
+<dd><p>Only used internally (or demos), in various calculations like arithmetic mean, standard
+deviation, etc. Might be useful in general, as unary operator.</p></dd>
+<dt><a name="204"><b class="cmd">::crimp::non_max_suppression</b> <i class="arg">imageMagnitude</i> <i class="arg">imageAngle</i></a></dt>
+<dd></dd>
+<dt><a name="205"><b class="cmd">::crimp::trace_hysteresis</b> <i class="arg">image</i> <i class="arg">low</i> <i class="arg">high</i></a></dt>
+<dd><p>Abandoned, part of an older attempt at canny edge detection.</p></dd>
+<dt><a name="206"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="207"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></dt>
+<dd><p>Window the image by decreasing luma from center to the edges using an
+inverse square law. Currently only used internally, as part of the
+translational registration. Might be useful in general.</p></dd>
 </dl>
 </div>
 </div>

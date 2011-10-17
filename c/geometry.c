@@ -40,20 +40,19 @@ crimp_geo_warp_init (crimp_image* input, crimp_image* forward, int* origx, int* 
 
     double xlu, xru, xld, xrd, left, right;
     double ylu, yru, yld, yrd, up, down;
-    int ileft, iright, iup, idown, w, h, iorigx, iorigy, oc;
+    int ileft, iright, iup, idown, w, h, iorigx, iorigy, oc = 0;
     Tcl_Obj* meta;
     Tcl_Obj* key1 = Tcl_NewStringObj ("crimp", -1);
     Tcl_Obj* key2 = Tcl_NewStringObj ("origin", -1);
-    Tcl_Obj* cmeta;
-    Tcl_Obj* corig;
-    Tcl_Obj* orig [2];
+    Tcl_Obj* cmeta = NULL;
+    Tcl_Obj* corig = NULL;
+    Tcl_Obj* orig [2] = {NULL, NULL};
 
-    if (!input->meta ||
-	(Tcl_DictObjGet(NULL, input->meta, key1, &cmeta) != TCL_OK) ||
-	(Tcl_DictObjGet(NULL, cmeta, key2, &corig) != TCL_OK) ||
-	(Tcl_ListObjGetElements(NULL, corig, &oc, &orig) != TCL_OK) ||
-	(Tcl_GetIntFromObj(NULL,orig[0], &iorigx) != TCL_OK) ||
-	(Tcl_GetIntFromObj(NULL,orig[1], &iorigy) != TCL_OK)) {
+    if (!input->meta ||	(Tcl_DictObjGet(NULL, input->meta, key1, &cmeta) != TCL_OK) ||
+	!cmeta       ||	(Tcl_DictObjGet(NULL, cmeta, key2, &corig)       != TCL_OK) ||
+	!corig       || (Tcl_ListObjGetElements(NULL, corig, &oc, &orig) != TCL_OK) ||
+	!orig[0]     || (Tcl_GetIntFromObj(NULL,orig[0], &iorigx)        != TCL_OK) ||
+	!orig[1]     || (Tcl_GetIntFromObj(NULL,orig[1], &iorigy)        != TCL_OK)) {
 	iorigx = iorigy = 0;
     }
 

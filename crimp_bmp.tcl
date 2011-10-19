@@ -1,19 +1,22 @@
 # -*- tcl -*-
-# CRIMP :: Tk == C Runtime Image Manipulation Package :: Tk Photo Conversion.
+# CRIMP, BMP	Reader for the BMP image file format.
 #
-# (c) 2010      Andrew M. Goth  http://wiki.tcl.tk/andy%20goth
-# (c) 2010-2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
+# (c) 2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
+#
+# Redeveloped after reading the TkImg BMP reader/writer implementation.
+# Copyright (c) 1997-2003 Jan Nijtmans    <nijtmans@users.sourceforge.net>
+# Copyright (c) 2002      Andreas Kupries <andreas_kupries@users.sourceforge.net>
 #
 
 # # ## ### ##### ######## #############
 ## Requisites
 
-package require critcl 3
+package require critcl       3
 
 # # ## ### ##### ######## #############
 
 if {![critcl::compiling]} {
-    error "Unable to build CRIMP::TK, no proper compiler found."
+    error "Unable to build CRIMP::BMP, no proper compiler found."
 }
 
 # # ## ### ##### ######## #############
@@ -34,35 +37,27 @@ critcl::license \
     {Under a BSD license.}
 
 critcl::summary \
-    {Extension of the CRIMP core to handle import and export of Tk photos}
+    {Extension of the CRIMP core to handle import and export of BMP images}
 
 critcl::description {
     This package provides the CRIMP eco-system with the functionality to handle
-    images stored in Tk photo images. This means that this package is dependent
-    on Tk, and thus the presence of a windowing system, like X11, or Aqua.
+    images stored as Windows Bitmap (BMP).
 }
 
-critcl::subject image {Tk photo image} {Tk photo} {Tk photo import} {Tk photo export}
+critcl::subject image {BMP image} {Portable PixMap} {BMP import} {BMP export}
 critcl::subject image {image import} {image export}
-critcl::subject photo {photo import} {photo export}
 
 # # ## ### ##### ######## #############
 ## Implementation.
 
 critcl::tcl 8.5
-critcl::tk
 
 # # ## ### ##### ######## #############
 ## Declare the Tcl layer aggregating the C primitives into useful
 ## commands. After the Tcl-based readers and writers to properly pick
 ## them up too in the ensembles.
 
-critcl::tsources policy_tk.tcl
-
-# # ## ### ##### ######## #############
-## Chart helpers.
-
-critcl::tsources plot.tcl
+critcl::tsources policy_bmp.tcl
 
 # # ## ### ##### ######## #############
 ## C-level API (i.e. stubs and types)
@@ -72,28 +67,27 @@ critcl::api import crimp::core 0.1
 # # ## ### ##### ######## #############
 ## Main C section.
 
-critcl::ccode {
-    #include <math.h>
-    #include <stdlib.h>
-    #include <string.h>
-}
+critcl::ccode {}
+
+critcl::csources format/bmp.c
+critcl::cheaders format/bmp.h
 
 # # ## ### ##### ######## #############
-## Pull in the Tk-specific pieces. These are fit under the read/write namespaces.
+## Pull in the BMP-specific pieces. These are fit under the read/write namespaces.
 
-critcl::owns        format/*tk*.crimp
-crimp_source_cproc {format/*tk*.crimp}
+critcl::owns        format/*bmp*.crimp
+crimp_source_cproc {format/*bmp*.crimp}
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.
 
 if {![critcl::load]} {
-    error "Building and loading CRIMP::TK failed."
+    error "Building and loading CRIMP::BMP failed."
 }
 
 # # ## ### ##### ######## #############
 
-package provide crimp::tk 0.1.1
+package provide crimp::bmp 0.1.1
 return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

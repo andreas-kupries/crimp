@@ -71,6 +71,10 @@ proc log {args} {
 	set chan stdout
     }
     # chan <=> tag, if not overriden
+    if {[string match {Files left*} $text]} {
+	set tag warn
+	set text \n$text
+    }
     if {$tag eq {}} { set tag $chan }
     #::_puts $tag/$text
 
@@ -143,6 +147,10 @@ proc _install {{ldir {}} {config {}}} {
 	set idir [file dirname $ldir]/include
     }
 
+    # Create directories, might not exist.
+    file mkdir $idir
+    file mkdir $ldir
+
     foreach p $packages {
 	set src     [file dirname $::me]/$p.tcl
 	set version [version $src]
@@ -153,6 +161,11 @@ proc _install {{ldir {}} {config {}}} {
 	    RunCritcl -target $config -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src
 	} else {
 	    RunCritcl -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src
+	}
+
+	if {![file exists $ldir/$p]} {
+	    set ::NOTE {warn {DONE, with FAILURES}}
+	    break
 	}
 
 	file delete -force $ldir/$p$version
@@ -174,6 +187,10 @@ proc _debug {{ldir {}} {config {}}} {
     } else {
 	set idir [file dirname $ldir]/include
     }
+
+    # Create directories, might not exist.
+    file mkdir $idir
+    file mkdir $ldir
 
     foreach p $packages {
 	set src     [file dirname $::me]/$p.tcl
@@ -201,6 +218,8 @@ proc _gui {} {
     package require Tk
     package require widget::scrolledwindow
 
+    wm protocol . WM_DELETE_WINDOW ::_exit
+
     label  .l -text {Install Path: }
     entry  .e -textvariable ::INSTALLPATH
     button .i -command Install -text Install
@@ -211,8 +230,9 @@ proc _gui {} {
     .st setwidget .t
 
     .t tag configure stdout -font {Helvetica 8}
-    .t tag configure stderr -background red   -font {Helvetica 12}
-    .t tag configure ok     -background green -font {Helvetica 8}
+    .t tag configure stderr -background red    -font {Helvetica 12}
+    .t tag configure ok     -background green  -font {Helvetica 8}
+    .t tag configure warn   -background yellow -font {Helvetica 12}
 
     grid .l  -row 0 -column 0 -sticky new
     grid .e  -row 0 -column 1 -sticky new
@@ -239,16 +259,17 @@ proc _gui {} {
     return
 }
 proc Install {} {
-    global INSTALLPATH
+    global INSTALLPATH NOTE
     .i configure -state disabled
     .d configure -state disabled
 
+    set NOTE {ok DONE}
     set fail [catch {
 	_install $INSTALLPATH
 
 	puts ""
-	tag ok
-	puts DONE
+	tag  [lindex $NOTE 0]
+	puts [lindex $NOTE 1]
     } e o]
 
     .i configure -state normal

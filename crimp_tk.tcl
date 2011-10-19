@@ -8,8 +8,7 @@
 # # ## ### ##### ######## #############
 ## Requisites
 
-package require critcl       3
-package require critcl::util 1
+package require critcl 3
 
 # # ## ### ##### ######## #############
 

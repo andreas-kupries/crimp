@@ -154,7 +154,7 @@ proc image_load {name} {
 # # ## ### ##### ######## #############
 
 proc demo_init {} {
-    global dir demo dcurrent demo_map
+    global dir demo demo_index dcurrent demo_map
     set dcurrent {}
 
     array unset demo     *
@@ -174,9 +174,15 @@ proc demo_init {} {
 	set thedemo {}
 	source $f
 	set name [dict get $thedemo name]
+	set demo_label [dict get $thedemo label]
+	set demo_index(${demo_label}) [list ${name} [file tail ${f}]]
 	#puts <$thedemo>
 	set demo($name) $thedemo
 	lappend demo($name) cmd [list demo_use $name]
+    }
+
+    foreach l [lsort -dict [array names demo_index]] {
+        lappend demo_index(_NAMES_) [lindex $demo_index(${l}) 0]
     }
 
     foreach name [demo_list] {
@@ -188,8 +194,8 @@ proc demo_init {} {
 }
 
 proc demo_list {} {
-    global demo
-    return [lsort -dict [array names demo]]
+    global demo_index
+    return $demo_index(_NAMES_)
 }
 
 proc demo_cmd {name} {
@@ -602,7 +608,8 @@ proc layout {} {
     grid .sd -row 0 -column 1 -rowspan 3 -sticky swen -in .l
 
     grid rowconfigure    .l 0 -weight 1
-    grid columnconfigure .l 0 -weight 1
+    grid columnconfigure .l 0 -weight 0
+    grid columnconfigure .l 1 -weight 1
 
     # Image display in the center of the right panel
     grid .sc -row 1 -column 1 -sticky swen -in .r
@@ -661,17 +668,17 @@ proc show {indices} {
 }
 
 proc show_demo {} {
-    global demo_map activedemos
+    global demo_index demo_map activedemos
     set selection [.ld curselection]
     if {![llength $selection]} return
     set index [lindex $selection 0]
 
     set label [lindex $activedemos $index]
     set command $demo_map($label)
+    log "-- ${label} ([lindex $demo_index(${label}) 1]) --"
 
     uplevel #0 $command
     return
-
 }
 
 # # ## ### ##### ######## #############

@@ -363,6 +363,9 @@ proc tags {tw} {
     $tw tag configure note \
 	-background lightyellow  \
 	-borderwidth 1 -relief sunken
+    $tw tag configure separator \
+	-background lightblue  \
+	-borderwidth 1 -relief sunken
     return
 }
 
@@ -675,7 +678,7 @@ proc show_demo {} {
 
     set label [lindex $activedemos $index]
     set command $demo_map($label)
-    log "-- ${label} ([lindex $demo_index(${label}) 1]) --"
+    log "-- ${label} ([lindex $demo_index(${label}) 1]) --" separator
 
     uplevel #0 $command
     return

@@ -1560,6 +1560,12 @@ the original input, i.e. [example {
 }]
 
 
+[call [cmd ::crimp] [method {kernel image}] [arg kernel]]
+
+This method extracts and returns the internal image used to store
+the [arg kernel]'s coefficients.
+
+
 [call [cmd ::crimp] [method map] [arg arg]...]
 
 This method accepts the same sub-methods and arguments as are accepted

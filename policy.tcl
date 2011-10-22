@@ -2945,6 +2945,10 @@ proc ::crimp::kernel::transpose {kernel} {
     return [list $h $w $Kt $scale $offset]
 }
 
+proc ::crimp::kernel::image {kernel} {
+    return [lindex $kernel 2]
+}
+
 # # ## ### ##### ######## #############
 ## Image pyramids
 

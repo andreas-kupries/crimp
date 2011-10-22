@@ -162,7 +162,7 @@ proc demo_init {} {
 
     array set demo {
 	aaaaa {
-	    label       Unmodified
+	    label       A:Unmodified
 	    cmd         demo_close
 	    active      {expr {[bases] == 1}}
 	    setup       {}
@@ -170,6 +170,8 @@ proc demo_init {} {
 	    shutdown    {}
 	}
     }
+    set demo_index(A:Unmodified) [list aaaaa N/A]
+
     foreach f [glob -directory $dir/demos *.tcl] {
 	set thedemo {}
 	source $f

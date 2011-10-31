@@ -36,9 +36,9 @@ package require crosshair
 package require fileutil
 
 # Self dir
-set dir [file dirname [file normalize [info script]]]
+set selfdir [file dirname [file normalize [info script]]]
 
-puts "In $dir"
+puts "In $selfdir"
 
 set triedprebuilt 0
 if {[catch {
@@ -47,7 +47,7 @@ if {[catch {
     puts "Trying prebuild packages"
 
     # Use crimp as prebuilt package
-    lappend auto_path $dir/lib
+    lappend auto_path $selfdir/lib
 
     foreach p {
 	crimp::core
@@ -116,7 +116,7 @@ if {[catch {
     } {
 	puts "Trying dynamically compiled package \"$p\""
 	# Directly access the package
-	source [file join $dir $f]
+	source [file join $selfdir $f]
 	puts "Using dynamically compiled package \"$p\""
     }
 }
@@ -131,8 +131,8 @@ puts "Starting up ..."
 # # ## ### ##### ######## #############
 
 proc images_init {} {
-    global dir images
-    set images [lsort -dict [glob -tails -directory $dir/images *.png]]
+    global selfdir images
+    set images [lsort -dict [glob -tails -directory $selfdir/images *.png]]
     return
 }
 
@@ -142,9 +142,9 @@ proc images_get {index} {
 }
 
 proc image_load {name} {
-    global dir
+    global selfdir
 
-    set photo [image create photo -file [file join $dir images $name]]
+    set photo [image create photo -file [file join $selfdir images $name]]
     set image [crimp read tk $photo]
     image delete $photo
 
@@ -154,7 +154,7 @@ proc image_load {name} {
 # # ## ### ##### ######## #############
 
 proc demo_init {} {
-    global dir demo demo_index dcurrent demo_map
+    global selfdir demo demo_index dcurrent demo_map
     set dcurrent {}
 
     array unset demo     *
@@ -172,7 +172,7 @@ proc demo_init {} {
     }
     set demo_index(A:Unmodified) [list aaaaa N/A]
 
-    foreach f [glob -directory $dir/demos *.tcl] {
+    foreach f [glob -directory $selfdir/demos *.tcl] {
 	set thedemo {}
 	source $f
 	set name [dict get $thedemo name]

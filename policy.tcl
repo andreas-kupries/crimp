@@ -295,6 +295,7 @@ namespace eval ::crimp::join {
 ::apply {{} {
     foreach fun [::crimp::List join_*] {
 	proc [::crimp::P $fun] {args} [string map [list @ $fun] {
+	    # TODO : Check arguments for proper type.
 	    return [@ {*}$args]
 	}]
     }

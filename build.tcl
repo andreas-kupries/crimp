@@ -155,12 +155,12 @@ proc _install {{ldir {}} {config {}}} {
 	set src     [file dirname $::me]/$p.tcl
 	set version [version $src]
 
-	file delete -force [pwd]/BUILD
+	file delete -force [pwd]/BUILD.$p
 
 	if {$config ne {}} {
-	    RunCritcl -target $config -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src
+	    RunCritcl -target $config -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
 	} else {
-	    RunCritcl -cache [pwd]/BUILD -libdir $ldir -includedir $idir -pkg $src
+	    RunCritcl -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
 	}
 
 	if {![file exists $ldir/$p]} {

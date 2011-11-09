@@ -5,38 +5,32 @@ def op_l0smoothing {
     }
     setup {
 	proc showsmooth {i} {
-	    # Do the smoothing separately on each channel. While this
-	    # is not how the original performs the operation it is
-	    # easier to implement. I will have to see how much this
-	    # affects the result.
-
-	    foreach c [crimp split [crimp convert 2rgb $i]] {
-		lappend res [l0smooth $c 0.005]
-	    }
-
-	    show_image [crimp join 2rgb {*}$res]
-	    return
-	}
-
-	proc showsmooth {i} {
-	    # Do the smoothing separately on each channel. While this
-	    # is not how the original performs the operation it is
-	    # easier to implement. I will have to see how much this
-	    # affects the result.
-
-	    show_image [l0smooth [crimp convert 2grey8 $i] 0.005]
+	    set grey [crimp convert 2grey8 $i]
+	    show_image [crimp montage vertical \
+			    [l0smooth $grey 0.005] \
+			    $grey]
 	    return
 	}
 
 	namespace eval l0smooth {
-	    variable DX [crimp kernel make {{ 0  1  -1}}]
+	    variable DX [crimp kernel fpmake {{ 0  1  -1}} 0]
 	    variable DY [crimp kernel transpose $DX]
-	    # DX, DY :: sgrey8, convolution kernel, spatial
+	    # DX, DY :: float, convolution kernel, spatial
+
+	    variable DXI [crimp read tcl float {{1   -1}}]
+	    variable DYI [crimp read tcl float {{1} {-1}}]
+	    # DXI, DYI :: float, convolution kernel, spatial, FFT inputs.
+
+	    variable tofloat [expr {1./255}]
+	    variable toint   255.0
 	}
 
 	proc l0smooth::Setup {} {
 	    variable DX
 	    variable DY
+	    variable DXI
+	    variable DYI
+	    variable tofloat
 	    upvar 1 lambda lambda	; # :: scalar float
 	    upvar 1 beta0  beta0	; # :: scalar float
 	    upvar 1 image  image	; # :: img    grey8 -> float, spatial
@@ -54,39 +48,49 @@ def op_l0smoothing {
 		set beta0 [expr {2* $lambda}]
 	    }
 
-	    set image [crimp convert 2float $image]
-	    # image :: img float
+	    set image [crimp::scale_float \
+			   [crimp convert 2float $image] $tofloat]
+	    # image :: img float, range [0...1]
 
 	    # loop initialization
 	    set result $image
 	    set beta   $beta0
 	    set count  0
 
-	    # Constant parts of the loop moved upfront.
-	    # TODO: FFT of the delta function
-	    # ????: Delta against what ?
+	    lassign [crimp dimensions $image] w h
 
-	    #set f1 [crimp convert 2complex [crimp blank float {*}[crimp dimensions $image] 1.0]]
-	    # ATTENTION ! NOTE: The above is likely wrong.
-	    lassign [crimp dimensions $image] w h ; incr w -1 ; incr h -1
-	    set f1 [crimp fft forward \
-			[crimp convert 2complex \
-			     [crimp expand const \
-				  [crimp blank float 1 1 1.0] \
-				  0 0 $w $h 0.0]]]
-	    # ATTENTION ! NOTE: The above is likely wrong.
+	    # Constant parts of the loop moved upfront.
+
+	    set f1 [crimp convert 2complex [crimp blank float $w $h 1.0]]
+	    # f1 :: img complex, frequency
+
+	    # This is the FFT of the delta function. That is, a single
+	    # 1 in the top left corner.  Interestingly, the result is
+	    # an image with an 1 in all pixels. So we spare us the FFT
+	    # and generate this directly.
 
 	    set fi [crimp fft forward [crimp convert 2complex $image]]
-	    # f1 :: img complex, frequency
 	    # fi :: img complex, frequency
 
-
 	    # FFT of the convolution kernels ...
-	    # We assume that DX/DY are smaller than image in all respects.
-	    # This will fail when the input image gets smaller than 3x3.
-	    set dx [lindex [crimp matchsize [crimp kernel image $DX] $image] 0]
-	    set dy [lindex [crimp matchsize [crimp kernel image $DY] $image] 0]
-	    # dx, dy :: img grey8, spatial
+	    # It is easier to construct them directly than to pull the
+	    # images out of the kernels, and then shift them properly
+	    # during the expansion. (The center 1 must be placed in
+	    # the top left corner).
+
+	    # We assume that DX/DY are smaller than the image in all
+	    # respects. We will be in trouble should the input image
+	    # get smaller than 3x3.
+
+	    log dxi=[crimp::dimensions $DXI]
+	    log dyi=[crimp::dimensions $DYI]
+
+	    set dx [crimp expand const $DXI 0 0 [expr {$w-2}] [expr {$h-1}] 0.0]
+	    set dy [crimp expand const $DYI 0 0 [expr {$w-1}] [expr {$h-2}] 0.0]
+	    # dx, dy :: img float, spatial
+
+	    log dx=[crimp::dimensions $dx]
+	    log dy=[crimp::dimensions $dy]
 
 	    set fdx [crimp fft forward [crimp convert 2complex $dx]]
 	    set fdy [crimp fft forward [crimp convert 2complex $dy]]
@@ -97,25 +101,18 @@ def op_l0smoothing {
 	    set cfdy [crimp complex conjugate $fdy]
 	    # cfdx, cfdy :: img complex, frequency
 
-	    if 0 {
-		# Standard formulation, multiplication of complex conjugates.
-		# With a float result embedded in complex. However, in Solve12
-		# we have to cast to float and back for some calculations. Using
-		# the alternate formula below helps reducing on ops.
-		set denom [crimp add \
-			       [crimp multiply $cfdx $fdx] \
-			       [crimp multiply $cfdy $fdy]]
-	    }
+	    # The main part of the denominator used in Solve8 uses
+	    # multiplication of numbers with their own complex
+	    # conjugate (fdX, cfdX). That comes down to the squared
+	    # magnitude, which we can compute easier. We pre-convert
+	    # the result to complex as that allows us to avoid a few
+	    # casts (conversions) later in the loop.
 
-	    # Alternate formulation, without using a conjugate, and keeping
-	    # the result as float. This avoids unnecessary casts here and in
-	    # Solve12.
-
-	    set denom [crimp add \
-			   [crimp square [crimp complex real $fdx]] \
-			   [crimp square [crimp complex real $fdy]]]
-
-	    # denom :: img float, frequency
+ 	    set denom [crimp convert 2complex \
+			   [crimp add \
+				[crimp::sqmagnitude_fpcomplex $fdx] \
+				[crimp::sqmagnitude_fpcomplex $fdy]]]
+	    # denom :: img complex, frequency
 	    return
 	}
 
@@ -165,7 +162,7 @@ def op_l0smoothing {
 			       [expr {$lambda / $beta}]]
 	    # threshold :: img float, semi-boolean, spatial
 
-	    # At last multiplication of this with dx, dy
+	    # At last, multiplication of this with dx, dy
 	    # generates the sought for h, v, removing the unwanted
 	    # gradients and leaving the others untouched.
 
@@ -199,25 +196,19 @@ def op_l0smoothing {
 
 	    # numerator   = fi + beta * (fdx* . fh  + fdy* . fv)
 	    # denominator = f1 + beta * (fdx* . fdx + fdy* . fdy)
+	    #                    denom = ~~~~~~~~~~~~~~~~~~~~~~~
 
 	    # + = element-wise addition
 	    # . = element-wise multiplication
 	    # * = element-wise complex conjugate
 
-	    set num [crimp add \
-			 $fi \
-			 [crimp convert 2complex \
-			      [crimp::scale_float \
-				   [crimp complex real \
-					[crimp add \
-					     [crimp multiply $cfdx $fh] \
-					     [crimp multiply $cfdy $fv]]] \
-				   $beta]]]
-	    # num :: img, complex, frequency
+	    set numer [crimp add \
+			   [crimp multiply $cfdx $fh] \
+			   [crimp multiply $cfdy $fv]]
 
-	    set den [crimp add $f1 \
-			 [crimp convert 2complex \
-			      [crimp::scale_float $denom $beta]]]
+	    set num [crimp add $fi [crimp::scale_fpcomplex $numer $beta]]
+	    set den [crimp add $f1 [crimp::scale_fpcomplex $denom $beta]]
+	    # num :: img complex, frequency
 	    # den :: img complex, frequency
 
 	    set result [crimp complex real \
@@ -228,6 +219,8 @@ def op_l0smoothing {
 	}
 
 	proc l0smooth {image lambda {beta0 {}} {betamax 10000} {kappa 2}} {
+	    variable l0smooth::toint
+
 	    # beta0, betamax, kappa => defaults.
 	    # image type -> float.
 
@@ -242,7 +235,8 @@ def op_l0smoothing {
 		l0smooth::Solve8
 
 		# Show interim results.
-		show_image [crimp convert 2grey8 $result]
+		show_image [crimp convert 2grey8 \
+				[crimp::scale_float $result $toint]]
 
 		# Prepare for next round.
 		set beta [expr {$beta * $kappa}]
@@ -251,7 +245,8 @@ def op_l0smoothing {
 
 	    log Done
 
-	    return [crimp convert 2grey8 $result]
+	    return [crimp convert 2grey8 \
+			[crimp::scale_float $result $toint]]
 	}
     }
 }

@@ -1,0 +1,42 @@
+write::Str_tcl_fpcomplex
+Tcl_Obj* imageObj
+
+Tcl_Obj*           res;
+Tcl_Obj*           line;
+Tcl_Obj*           pair;
+crimp_image*       image;
+int x, y;
+
+crimp_input (imageObj, image, fpcomplex);
+
+res = Tcl_NewListObj (0, NULL);
+
+for (y = 0; y < image->h; y++) {
+
+    line = Tcl_NewListObj (0, NULL);
+
+    for (x = 0; x < image->w; x++) {
+	double re = RE (image, x, y);
+	double im = IM (image, x, y);
+
+	pair = Tcl_NewListObj (0, NULL);
+
+	Tcl_ListObjAppendElement (interp, pair, Tcl_NewDoubleObj (re));
+	Tcl_ListObjAppendElement (interp, pair, Tcl_NewDoubleObj (im));
+	Tcl_ListObjAppendElement (interp, line, pair);
+    }
+    Tcl_ListObjAppendElement (interp, res, line);
+}
+
+Tcl_SetObjResult(interp, res);
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

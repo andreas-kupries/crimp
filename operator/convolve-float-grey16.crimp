@@ -52,7 +52,7 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	}
 
 	sum /= scale; sum += offset; isum = sum;
-	GREY16 (result, xo, yo) = CLAMP (0, isum, 255);
+	GREY16 (result, xo, yo) = CLAMP (0, isum, MAXVAL_GREY16);
     }
 }
 

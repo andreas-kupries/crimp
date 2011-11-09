@@ -42,7 +42,6 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	 */
 
 	double sum = 0;
-	int    isum;
 
 	for (yk = 0, dy = -kh; yk < kernel->h; yk++, dy++) {
 	    for (xk = 0, dx = -kw; xk < kernel->w; xk++, dx++) {
@@ -51,8 +50,8 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 	    }
 	}
 
-	sum /= scale; sum += offset; isum = sum;
-	GREY32 (result, xo, yo) = CLAMP (0, isum, 255);
+	sum /= scale; sum += offset;
+	GREY32 (result, xo, yo) = (int) CLAMP (0.0, sum, ((double) MAXVAL_GREY32));
     }
 }
 

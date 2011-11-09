@@ -315,6 +315,13 @@ proc def {name dict} {
 
 # # ## ### ##### ######## #############
 
+proc clear {} {
+    .log configure -state normal
+    .log delete 1.0 end
+    .log configure -state disabled
+    return
+}
+
 proc log {msg {tags {}}} {
     log* $msg\n $tags
     return
@@ -919,6 +926,7 @@ proc reload {} {
     images_init
     demo_init
     after 100 {
+	clear
 	log [join [info loaded] \n]
 	event generate .li <<ListboxSelect>>
     }

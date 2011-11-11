@@ -284,66 +284,67 @@
 <li><a href="#145"><b class="cmd">::crimp</b> <b class="method">kernel make</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">scale</i>?</span> <span class="opt">?<i class="arg">offset</i>?</span></a></li>
 <li><a href="#146"><b class="cmd">::crimp</b> <b class="method">kernel fpmake</b> <i class="arg">matrix</i> <span class="opt">?<i class="arg">offset</i>?</span></a></li>
 <li><a href="#147"><b class="cmd">::crimp</b> <b class="method">kernel transpose</b> <i class="arg">kernel</i></a></li>
-<li><a href="#148"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></li>
-<li><a href="#149"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></li>
-<li><a href="#150"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></li>
-<li><a href="#151"><b class="cmd">::crimp</b> <b class="method">table eval wrap</b> <i class="arg">cmd</i></a></li>
-<li><a href="#152"><b class="cmd">::crimp</b> <b class="method">table eval clamp</b> <i class="arg">cmd</i></a></li>
-<li><a href="#153"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></li>
-<li><a href="#154"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></li>
-<li><a href="#155"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></li>
-<li><a href="#156"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></li>
-<li><a href="#157"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></li>
-<li><a href="#158"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></li>
-<li><a href="#159"><b class="cmd">::crimp</b> <b class="method">table linear wrap</b> <i class="arg">gain</i> <i class="arg">offset</i></a></li>
-<li><a href="#160"><b class="cmd">::crimp</b> <b class="method">table linear clamp</b> <i class="arg">gain</i> <i class="arg">offset</i></a></li>
-<li><a href="#161"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
-<li><a href="#162"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></li>
-<li><a href="#163"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
-<li><a href="#164"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
-<li><a href="#165"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></li>
-<li><a href="#166"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></li>
-<li><a href="#167"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
-<li><a href="#168"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
-<li><a href="#169"><b class="cmd">::crimp</b> <b class="method">table fgauss discrete</b> <i class="arg">sigma</i> <span class="opt">?<i class="arg">r</i>?</span></a></li>
-<li><a href="#170"><b class="cmd">::crimp</b> <b class="method">table fgauss sampled</b> <i class="arg">sigma</i> <span class="opt">?<i class="arg">r</i>?</span></a></li>
-<li><a href="#171"><b class="cmd">::crimp</b> <b class="method">transform affine</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i></a></li>
-<li><a href="#172"><b class="cmd">::crimp</b> <b class="method">transform chain</b> <i class="arg">transform</i>...</a></li>
-<li><a href="#173"><b class="cmd">::crimp</b> <b class="method">transform invert</b> <i class="arg">transform</i></a></li>
-<li><a href="#174"><b class="cmd">::crimp</b> <b class="method">transform projective</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i> <i class="arg">g</i> <i class="arg">h</i></a></li>
-<li><a href="#175"><b class="cmd">::crimp</b> <b class="method">transform quadrilateral</b> <i class="arg">src</i> <i class="arg">dst</i></a></li>
-<li><a href="#176"><b class="cmd">::crimp</b> <b class="method">transform rotate</b> <i class="arg">theta</i> <span class="opt">?<i class="arg">center</i>?</span></a></li>
-<li><a href="#177"><b class="cmd">::crimp</b> <b class="method">transform scale</b> <i class="arg">sx</i> <i class="arg">sy</i></a></li>
-<li><a href="#178"><b class="cmd">::crimp</b> <b class="method">transform translate</b> <i class="arg">dx</i> <i class="arg">dy</i></a></li>
-<li><a href="#179"><b class="cmd">::crimp::black_white_vertical</b></a></li>
-<li><a href="#180"><b class="cmd">::crimp::bilateral_*</b> <i class="arg">image</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></li>
-<li><a href="#181"><b class="cmd">::crimp::joint_bilateral_*</b> <i class="arg">image</i> <i class="arg">wimage</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></li>
-<li><a href="#182"><b class="cmd">::crimp::color_combine</b> <i class="arg">image</i> <i class="arg">vector</i></a></li>
-<li><a href="#183"><b class="cmd">::crimp::color_mix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></li>
-<li><a href="#184"><b class="cmd">::crimp::connected_components</b> <i class="arg">image</i> <i class="arg">8connected</i></a></li>
-<li><a href="#185"><b class="cmd">::crimp::connected_components_*</b> <i class="arg">image</i> <i class="arg">8connected</i> <i class="arg">bgValue</i></a></li>
-<li><a href="#186"><b class="cmd">::crimp::euclidean_distance_map_float</b> <i class="arg">image</i></a></li>
-<li><a href="#187"><b class="cmd">::crimp::indicator_grey8_float</b> <i class="arg">image</i></a></li>
-<li><a href="#188"><b class="cmd">::crimp::hough_grey8</b> <i class="arg">image</i> <i class="arg">emptybucketcolor</i></a></li>
-<li><a href="#189"><b class="cmd">::crimp::gaussian_01_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></li>
-<li><a href="#190"><b class="cmd">::crimp::gaussian_10_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></li>
-<li><a href="#191"><b class="cmd">::crimp::gaussian_blur_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></li>
-<li><a href="#192"><b class="cmd">::crimp::gaussian_laplacian_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></li>
-<li><a href="#193"><b class="cmd">::crimp::gaussian_gradient_mag_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></li>
-<li><a href="#194"><b class="cmd">::crimp::map_2*_*</b> <i class="arg">image</i> <i class="arg">map</i></a></li>
-<li><a href="#195"><b class="cmd">::crimp::map2_*</b> <i class="arg">image</i> <i class="arg">mapNimage</i>... <i class="arg">mapNcontrol</i>...</a></li>
-<li><a href="#196"><b class="cmd">::crimp::region_sum</b> <i class="arg">image</i> <i class="arg">radius</i></a></li>
-<li><a href="#197"><b class="cmd">::crimp::exp_float</b> <i class="arg">image</i></a></li>
-<li><a href="#198"><b class="cmd">::crimp::log_float</b> <i class="arg">image</i></a></li>
-<li><a href="#199"><b class="cmd">::crimp::log10_float</b> <i class="arg">image</i></a></li>
-<li><a href="#200"><b class="cmd">::crimp::offset_float</b> <i class="arg">image</i> <i class="arg">offset</i></a></li>
-<li><a href="#201"><b class="cmd">::crimp::pow_float_float</b> <i class="arg">imageBase</i> <i class="arg">imageExponent</i></a></li>
-<li><a href="#202"><b class="cmd">::crimp::scale_float</b> <i class="arg">image</i> <i class="arg">factor</i></a></li>
-<li><a href="#203"><b class="cmd">::crimp::sqrt_float</b> <i class="arg">image</i></a></li>
-<li><a href="#204"><b class="cmd">::crimp::non_max_suppression</b> <i class="arg">imageMagnitude</i> <i class="arg">imageAngle</i></a></li>
-<li><a href="#205"><b class="cmd">::crimp::trace_hysteresis</b> <i class="arg">image</i> <i class="arg">low</i> <i class="arg">high</i></a></li>
-<li><a href="#206"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></li>
+<li><a href="#148"><b class="cmd">::crimp</b> <b class="method">kernel image</b> <i class="arg">kernel</i></a></li>
+<li><a href="#149"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></li>
+<li><a href="#150"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></li>
+<li><a href="#151"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></li>
+<li><a href="#152"><b class="cmd">::crimp</b> <b class="method">table eval wrap</b> <i class="arg">cmd</i></a></li>
+<li><a href="#153"><b class="cmd">::crimp</b> <b class="method">table eval clamp</b> <i class="arg">cmd</i></a></li>
+<li><a href="#154"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></li>
+<li><a href="#155"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></li>
+<li><a href="#156"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></li>
+<li><a href="#157"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></li>
+<li><a href="#158"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></li>
+<li><a href="#159"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></li>
+<li><a href="#160"><b class="cmd">::crimp</b> <b class="method">table linear wrap</b> <i class="arg">gain</i> <i class="arg">offset</i></a></li>
+<li><a href="#161"><b class="cmd">::crimp</b> <b class="method">table linear clamp</b> <i class="arg">gain</i> <i class="arg">offset</i></a></li>
+<li><a href="#162"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
+<li><a href="#163"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></li>
+<li><a href="#164"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></li>
+<li><a href="#165"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#166"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></li>
+<li><a href="#167"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></li>
+<li><a href="#168"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#169"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></li>
+<li><a href="#170"><b class="cmd">::crimp</b> <b class="method">table fgauss discrete</b> <i class="arg">sigma</i> <span class="opt">?<i class="arg">r</i>?</span></a></li>
+<li><a href="#171"><b class="cmd">::crimp</b> <b class="method">table fgauss sampled</b> <i class="arg">sigma</i> <span class="opt">?<i class="arg">r</i>?</span></a></li>
+<li><a href="#172"><b class="cmd">::crimp</b> <b class="method">transform affine</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i></a></li>
+<li><a href="#173"><b class="cmd">::crimp</b> <b class="method">transform chain</b> <i class="arg">transform</i>...</a></li>
+<li><a href="#174"><b class="cmd">::crimp</b> <b class="method">transform invert</b> <i class="arg">transform</i></a></li>
+<li><a href="#175"><b class="cmd">::crimp</b> <b class="method">transform projective</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i> <i class="arg">g</i> <i class="arg">h</i></a></li>
+<li><a href="#176"><b class="cmd">::crimp</b> <b class="method">transform quadrilateral</b> <i class="arg">src</i> <i class="arg">dst</i></a></li>
+<li><a href="#177"><b class="cmd">::crimp</b> <b class="method">transform rotate</b> <i class="arg">theta</i> <span class="opt">?<i class="arg">center</i>?</span></a></li>
+<li><a href="#178"><b class="cmd">::crimp</b> <b class="method">transform scale</b> <i class="arg">sx</i> <i class="arg">sy</i></a></li>
+<li><a href="#179"><b class="cmd">::crimp</b> <b class="method">transform translate</b> <i class="arg">dx</i> <i class="arg">dy</i></a></li>
+<li><a href="#180"><b class="cmd">::crimp::black_white_vertical</b></a></li>
+<li><a href="#181"><b class="cmd">::crimp::bilateral_*</b> <i class="arg">image</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></li>
+<li><a href="#182"><b class="cmd">::crimp::joint_bilateral_*</b> <i class="arg">image</i> <i class="arg">wimage</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></li>
+<li><a href="#183"><b class="cmd">::crimp::color_combine</b> <i class="arg">image</i> <i class="arg">vector</i></a></li>
+<li><a href="#184"><b class="cmd">::crimp::color_mix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></li>
+<li><a href="#185"><b class="cmd">::crimp::connected_components</b> <i class="arg">image</i> <i class="arg">8connected</i></a></li>
+<li><a href="#186"><b class="cmd">::crimp::connected_components_*</b> <i class="arg">image</i> <i class="arg">8connected</i> <i class="arg">bgValue</i></a></li>
+<li><a href="#187"><b class="cmd">::crimp::euclidean_distance_map_float</b> <i class="arg">image</i></a></li>
+<li><a href="#188"><b class="cmd">::crimp::indicator_grey8_float</b> <i class="arg">image</i></a></li>
+<li><a href="#189"><b class="cmd">::crimp::hough_grey8</b> <i class="arg">image</i> <i class="arg">emptybucketcolor</i></a></li>
+<li><a href="#190"><b class="cmd">::crimp::gaussian_01_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></li>
+<li><a href="#191"><b class="cmd">::crimp::gaussian_10_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></li>
+<li><a href="#192"><b class="cmd">::crimp::gaussian_blur_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></li>
+<li><a href="#193"><b class="cmd">::crimp::gaussian_laplacian_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></li>
+<li><a href="#194"><b class="cmd">::crimp::gaussian_gradient_mag_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></li>
+<li><a href="#195"><b class="cmd">::crimp::map_2*_*</b> <i class="arg">image</i> <i class="arg">map</i></a></li>
+<li><a href="#196"><b class="cmd">::crimp::map2_*</b> <i class="arg">image</i> <i class="arg">mapNimage</i>... <i class="arg">mapNcontrol</i>...</a></li>
+<li><a href="#197"><b class="cmd">::crimp::region_sum</b> <i class="arg">image</i> <i class="arg">radius</i></a></li>
+<li><a href="#198"><b class="cmd">::crimp::exp_float</b> <i class="arg">image</i></a></li>
+<li><a href="#199"><b class="cmd">::crimp::log_float</b> <i class="arg">image</i></a></li>
+<li><a href="#200"><b class="cmd">::crimp::log10_float</b> <i class="arg">image</i></a></li>
+<li><a href="#201"><b class="cmd">::crimp::offset_float</b> <i class="arg">image</i> <i class="arg">offset</i></a></li>
+<li><a href="#202"><b class="cmd">::crimp::pow_float_float</b> <i class="arg">imageBase</i> <i class="arg">imageExponent</i></a></li>
+<li><a href="#203"><b class="cmd">::crimp::scale_float</b> <i class="arg">image</i> <i class="arg">factor</i></a></li>
+<li><a href="#204"><b class="cmd">::crimp::sqrt_float</b> <i class="arg">image</i></a></li>
+<li><a href="#205"><b class="cmd">::crimp::non_max_suppression</b> <i class="arg">imageMagnitude</i> <i class="arg">imageAngle</i></a></li>
+<li><a href="#206"><b class="cmd">::crimp::trace_hysteresis</b> <i class="arg">image</i> <i class="arg">low</i> <i class="arg">high</i></a></li>
 <li><a href="#207"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></li>
+<li><a href="#208"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></li>
 </ul>
 </div>
 </div>
@@ -882,7 +883,7 @@ arguments this method may need, except for the size of the expansion.</p>
 <dd></dd>
 <dt><a name="69"><b class="cmd">::crimp</b> <b class="method">morph erode</b> <i class="arg">image</i></a></dt>
 <dd><p>These two methods implement the basic set of morphology operations,
-<i class="term"><a href="../../index.html#key106">erosion</a></i>, and <i class="term"><a href="../../index.html#key40">dilation</a></i> using a flat 3x3 brick as their
+<i class="term"><a href="../../index.html#key103">erosion</a></i>, and <i class="term"><a href="../../index.html#key37">dilation</a></i> using a flat 3x3 brick as their
 structuring element. For grayscale, which we have here, these are,
 mathematically, max and min rank-order filters, i.e.</p>
 <pre class="example">
@@ -897,47 +898,47 @@ erode expands background/black.</p></dd>
 <dd></dd>
 <dt><a name="71"><b class="cmd">::crimp</b> <b class="method">morph open</b> <i class="arg">image</i></a></dt>
 <dd><p>These two methods add to the basic set of morphology operations,
-<i class="term"><a href="../../index.html#key109">opening</a></i> and <i class="term"><a href="../../index.html#key31">closing</a></i>. In terms of erosion and dilation:</p>
+<i class="term"><a href="../../index.html#key106">opening</a></i> and <i class="term"><a href="../../index.html#key28">closing</a></i>. In terms of erosion and dilation:</p>
 <pre class="example">
     close = erode o dilate
     open  = dilate o erode
 </pre>
 </dd>
 <dt><a name="72"><b class="cmd">::crimp</b> <b class="method">morph gradient</b> <i class="arg">image</i></a></dt>
-<dd><p>The morphological <i class="term"><a href="../../index.html#key120">gradient</a></i> is defined as</p>
+<dd><p>The morphological <i class="term"><a href="../../index.html#key117">gradient</a></i> is defined as</p>
 <pre class="example">
     [dilate $image] - [erode $image]
 </pre>
 <p>This can also be expressed as the sum of the external and internal
 gradients, see below.</p></dd>
 <dt><a name="73"><b class="cmd">::crimp</b> <b class="method">morph igradient</b> <i class="arg">image</i></a></dt>
-<dd><p>The morphological <i class="term"><a href="../../index.html#key38">internal gradient</a></i> is defined as</p>
+<dd><p>The morphological <i class="term"><a href="../../index.html#key35">internal gradient</a></i> is defined as</p>
 <pre class="example">
     $image - [erode image]
 </pre>
 </dd>
 <dt><a name="74"><b class="cmd">::crimp</b> <b class="method">morph egradient</b> <i class="arg">image</i></a></dt>
-<dd><p>The morphological <i class="term"><a href="../../index.html#key21">external gradient</a></i> is defined as</p>
+<dd><p>The morphological <i class="term"><a href="../../index.html#key18">external gradient</a></i> is defined as</p>
 <pre class="example">
     [dilate $image] - $image
 </pre>
 </dd>
 <dt><a name="75"><b class="cmd">::crimp</b> <b class="method">morph tophatw</b> <i class="arg">image</i></a></dt>
-<dd><p>The <i class="term"><a href="../../index.html#key78">white tophat</a></i> transformation is defined as</p>
+<dd><p>The <i class="term"><a href="../../index.html#key75">white tophat</a></i> transformation is defined as</p>
 <pre class="example">
     $image - [open $image]
 </pre>
 <p>See <span class="sectref"><a href="#section3">References</a></span> 3 to 5 (page 32). This is a greyscale morphology
 operation which does not properly apply to binary images.</p></dd>
 <dt><a name="76"><b class="cmd">::crimp</b> <b class="method">morph tophatb</b> <i class="arg">image</i></a></dt>
-<dd><p>The <i class="term"><a href="../../index.html#key53">black tophat</a></i> transformation is defined as</p>
+<dd><p>The <i class="term"><a href="../../index.html#key50">black tophat</a></i> transformation is defined as</p>
 <pre class="example">
     [close $image] - $image
 </pre>
 <p>See <span class="sectref"><a href="#section3">References</a></span> 3 to 5 (page 33). This is a greyscale morphology
 operation which does not properly apply to binary images.</p></dd>
 <dt><a name="77"><b class="cmd">::crimp</b> <b class="method">morph toggle</b> <i class="arg">image</i></a></dt>
-<dd><p>The <i class="term"><a href="../../index.html#key108">toggle map</a></i> is defined as</p>
+<dd><p>The <i class="term"><a href="../../index.html#key105">toggle map</a></i> is defined as</p>
 <pre class="example">
     0.5 * ([erode $image] + [dilate $image])
 </pre>
@@ -1056,7 +1057,7 @@ multiplication of the inverted input images. I.e.</p>
 <dt><a name="91"><b class="cmd">::crimp</b> <b class="method">solarize</b> <i class="arg">image</i> <i class="arg">threshold</i></a></dt>
 <dd><p>This method takes an image, runs it through the <b class="function">solarize</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
-image as it result. This is also known as the <i class="term"><a href="../../index.html#key99">sabattier effect</a></i>.
+image as it result. This is also known as the <i class="term"><a href="../../index.html#key96">sabattier effect</a></i>.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map solarize</b> <i class="arg">threshold</i>&quot;.
 This method supports all image types supported by the method
@@ -1074,7 +1075,7 @@ specified.</p></dd>
 <dd><p>This method takes an image, runs it through the <b class="function">threshold above</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
 image as it result. As the result only contains black and white,
-i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key116">binarization</a></i> or
+i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key113">binarization</a></i> or
 foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold above</b> <i class="arg">threshold</i>&quot;.
@@ -1084,7 +1085,7 @@ This method supports all image types supported by the method
 <dd><p>This method takes an image, runs it through the <b class="function">threshold below</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
 image as it result. As the result only contains black and white,
-i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key116">binarization</a></i>, or
+i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key113">binarization</a></i>, or
 foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold below</b> <i class="arg">threshold</i>&quot;.
@@ -1094,7 +1095,7 @@ This method supports all image types supported by the method
 <dd><p>This method takes an image, runs it through the <b class="function">threshold inside</b>
 function with parameters <i class="arg">min</i> and <i class="arg">max</i>, and returns the
 modified image as it result. As the result only contains black and
-white, i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key116">binarization</a></i>
+white, i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key113">binarization</a></i>
 or foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold above</b> <i class="arg">threshold</i>&quot;.
@@ -1104,7 +1105,7 @@ This method supports all image types supported by the method
 <dd><p>This method takes an image, runs it through the <b class="function">threshold outside</b>
 function with parameters <i class="arg">min</i> and <i class="arg">max</i>, and returns the
 modified image as it result. As the result only contains black and
-white, i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key116">binarization</a></i>,
+white, i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key113">binarization</a></i>,
 or foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold below</b> <i class="arg">threshold</i>&quot;.
@@ -1131,7 +1132,7 @@ other pixels are set to white. Each map is applied to one color
 channel of the input image. If there are too many maps the remainder
 is ignored. If there are not enough maps the last map is replicated.</p>
 <p>This is the core for all methods of non-global
-<i class="term"><a href="../../index.html#key116">binarization</a></i>, i.e. foreground/background segmentation. Their
+<i class="term"><a href="../../index.html#key113">binarization</a></i>, i.e. foreground/background segmentation. Their
 differences are just in the calculation of the maps.</p>
 <p>This method supports all image types with one or more
 single-byte channels, i.e. all but <b class="const">grey16</b>, <b class="const">grey32</b>, and
@@ -1425,22 +1426,25 @@ the original input, i.e.</p>
     [transpose [transpose $K]] == $K
 </pre>
 </dd>
-<dt><a name="148"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></dt>
+<dt><a name="148"><b class="cmd">::crimp</b> <b class="method">kernel image</b> <i class="arg">kernel</i></a></dt>
+<dd><p>This method extracts and returns the internal image used to store
+the <i class="arg">kernel</i>'s coefficients.</p></dd>
+<dt><a name="149"><b class="cmd">::crimp</b> <b class="method">map</b> <i class="arg">arg</i>...</a></dt>
 <dd><p>This method accepts the same sub-methods and arguments as are accepted
 by the <b class="method">table</b> method below. In contrast to <b class="method">table</b> the
 result is not a list of values, but a map image directly suitable as
 argument to the <b class="method">remap</b> method.</p></dd>
-<dt><a name="149"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></dt>
+<dt><a name="150"><b class="cmd">::crimp</b> <b class="method">mapof</b> <i class="arg">table</i></a></dt>
 <dd><p>This method accepts a list of 256 values, constructs a map image
 directly suitable as argument to the <b class="method">remap</b> method, and
 returns this map image as its result.</p></dd>
-<dt><a name="150"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></dt>
+<dt><a name="151"><b class="cmd">::crimp</b> <b class="method">table compose</b> <i class="arg">f</i> <i class="arg">g</i></a></dt>
 <dd><p>This accepts two lookup tables (aka functions) specified as lists of
 256 values, constructs the composite function f(g(x)), and then
 returns this new function as its result.</p></dd>
-<dt><a name="151"><b class="cmd">::crimp</b> <b class="method">table eval wrap</b> <i class="arg">cmd</i></a></dt>
+<dt><a name="152"><b class="cmd">::crimp</b> <b class="method">table eval wrap</b> <i class="arg">cmd</i></a></dt>
 <dd></dd>
-<dt><a name="152"><b class="cmd">::crimp</b> <b class="method">table eval clamp</b> <i class="arg">cmd</i></a></dt>
+<dt><a name="153"><b class="cmd">::crimp</b> <b class="method">table eval clamp</b> <i class="arg">cmd</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the function specified by the command prefix
 <i class="arg">cmd</i>.
@@ -1450,13 +1454,13 @@ wrapping them around (modulo 256), or clamping them to the appropriate
 border, i.e 0, and 255 respectively.</p>
 <p>The signature of the command prefix is</p>
 <dl class="definitions">
-<dt><a name="153"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></dt>
+<dt><a name="154"><b class="cmd">&lt;cmd&gt;</b> <i class="arg">x</i></a></dt>
 <dd><p>which is expected to return a number in the range
 [0..255]. While the result should be an integer number it is
 allowed to be a float, the caller takes care to round the result to
 the nearest integer.</p></dd>
 </dl></dd>
-<dt><a name="154"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></dt>
+<dt><a name="155"><b class="cmd">::crimp</b> <b class="method">table degamma</b> <i class="arg">y</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">inverse gamma correction</b> with
 parameter <i class="arg">y</i>.
@@ -1467,7 +1471,7 @@ both argument and result, is defined as:</p>
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
 <p><img alt="scaled_gamma_inv" src="../../image/scaled_gamma_inv.png"></p></dd>
-<dt><a name="155"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
+<dt><a name="156"><b class="cmd">::crimp</b> <b class="method">table gamma</b> <i class="arg">y</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">gamma correction</b> with parameter
 <i class="arg">y</i>.
@@ -1478,25 +1482,25 @@ argument and result, is defined as:</p>
 values, and rounding results to the nearest integer, causes the actual
 definition used to be</p>
 <p><img alt="scaled_gamma" src="../../image/scaled_gamma.png"></p></dd>
-<dt><a name="156"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></dt>
+<dt><a name="157"><b class="cmd">::crimp</b> <b class="method">table gauss</b> <i class="arg">sigma</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">sampled gauss</b> function with
 parameter <i class="arg">sigma</i>.
 This function is defined as:</p>
 <p><img alt="gauss" src="../../image/gauss.png"></p></dd>
-<dt><a name="157"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
+<dt><a name="158"><b class="cmd">::crimp</b> <b class="method">table identity</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">identity</b> function, which is defined
 as</p>
 <p><img alt="identity" src="../../image/identity.png"></p></dd>
-<dt><a name="158"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
+<dt><a name="159"><b class="cmd">::crimp</b> <b class="method">table invers</b></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">inverse</b> function, which is defined
 as</p>
 <p><img alt="inverse" src="../../image/inverse.png"></p></dd>
-<dt><a name="159"><b class="cmd">::crimp</b> <b class="method">table linear wrap</b> <i class="arg">gain</i> <i class="arg">offset</i></a></dt>
+<dt><a name="160"><b class="cmd">::crimp</b> <b class="method">table linear wrap</b> <i class="arg">gain</i> <i class="arg">offset</i></a></dt>
 <dd></dd>
-<dt><a name="160"><b class="cmd">::crimp</b> <b class="method">table linear clamp</b> <i class="arg">gain</i> <i class="arg">offset</i></a></dt>
+<dt><a name="161"><b class="cmd">::crimp</b> <b class="method">table linear clamp</b> <i class="arg">gain</i> <i class="arg">offset</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through a simple linear function with parameters
 <i class="arg">gain</i> (the slope) and <i class="arg">offset</i>. The results are rounded to
@@ -1508,14 +1512,14 @@ Thus the relevant definitions are</p>
 for the wrapped case, and</p>
 <p><img alt="linear_clamp" src="../../image/linear_clamp.png">
 when clamping.</p></dd>
-<dt><a name="161"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
+<dt><a name="162"><b class="cmd">::crimp</b> <b class="method">table log</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">log-compression</b> function with
 parameter <i class="arg">max</i>. This parameter is the maximum pixel value the
 function is for, this value, and all larger will be mapped to 255.
 This function is defined as:</p>
 <p><img alt="log" src="../../image/log.png"></p></dd>
-<dt><a name="162"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="163"><b class="cmd">::crimp</b> <b class="method">table solarize</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">solarize</b> function, with parameter
 <i class="arg">threshold</i>. This function is defined as:</p>
@@ -1523,49 +1527,49 @@ values 0 to 255 through the <b class="function">solarize</b> function, with para
 <p>Note how the function is the <b class="function">identity</b> for values under the
 threshold, and the <b class="function">inverse</b> for values at and above it. Its
 application to an image produces what is known as either
-<i class="term"><a href="../../index.html#key105">solarization</a></i> or <i class="term"><a href="../../index.html#key99">sabattier effect</a></i>.</p></dd>
-<dt><a name="163"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
+<i class="term"><a href="../../index.html#key102">solarization</a></i> or <i class="term"><a href="../../index.html#key96">sabattier effect</a></i>.</p></dd>
+<dt><a name="164"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">sqrt-compression</b> function with
 parameter <i class="arg">max</i>. This parameter is the maximum pixel value the
 function is for, this value, and all larger will be mapped to 255.
 This function is defined as:</p>
 <p><img alt="sqrt" src="../../image/sqrt.png"></p></dd>
-<dt><a name="164"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
+<dt><a name="165"><b class="cmd">::crimp</b> <b class="method">table stretch</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This is a convenience method around <b class="method">table linear</b> which maps
 <i class="arg">min</i> to 0, and <i class="arg">max</i> to 255, with linear interpolation in
 between. Values below <i class="arg">min</i> and above <i class="arg">max</i> are clamped to 0
 and 255 respectively.</p></dd>
-<dt><a name="165"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="166"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key116">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key113">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-ge" src="../../image/threshold-ge.png"></p></dd>
-<dt><a name="166"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></dt>
+<dt><a name="167"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key116">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key113">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-le" src="../../image/threshold-le.png"></p></dd>
-<dt><a name="167"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
+<dt><a name="168"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key116">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key113">binarization</a></i>)
 function, with parameters <i class="arg">min</i> and <i class="arg">max</i>. This function is
 defined as:</p>
 <p><img alt="threshold-inside" src="../../image/threshold-inside.png"></p></dd>
-<dt><a name="168"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
+<dt><a name="169"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key116">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key113">binarization</a></i>)
 function, with parameters <i class="arg">min</i> and <i class="arg">max</i>. This function is
 defined as:</p>
 <p><img alt="threshold-outside" src="../../image/threshold-outside.png"></p></dd>
-<dt><a name="169"><b class="cmd">::crimp</b> <b class="method">table fgauss discrete</b> <i class="arg">sigma</i> <span class="opt">?<i class="arg">r</i>?</span></a></dt>
+<dt><a name="170"><b class="cmd">::crimp</b> <b class="method">table fgauss discrete</b> <i class="arg">sigma</i> <span class="opt">?<i class="arg">r</i>?</span></a></dt>
 <dd></dd>
-<dt><a name="170"><b class="cmd">::crimp</b> <b class="method">table fgauss sampled</b> <i class="arg">sigma</i> <span class="opt">?<i class="arg">r</i>?</span></a></dt>
+<dt><a name="171"><b class="cmd">::crimp</b> <b class="method">table fgauss sampled</b> <i class="arg">sigma</i> <span class="opt">?<i class="arg">r</i>?</span></a></dt>
 <dd><p>This method computes the table for a discrete or sampled gaussian with
 parameters <i class="arg">sigma</i> and kernel <i class="arg">r</i>adius. If the radius is not
 specified it defaults to the smallest integer greater than
 &quot;3*<i class="arg">sigma</i>&quot;.</p></dd>
-<dt><a name="171"><b class="cmd">::crimp</b> <b class="method">transform affine</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i></a></dt>
+<dt><a name="172"><b class="cmd">::crimp</b> <b class="method">transform affine</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i></a></dt>
 <dd><p>This method returns the affine transformation specified by the 2x3
 matrix</p>
 <pre class="example">
@@ -1576,15 +1580,15 @@ matrix</p>
 <b class="method">scale</b>, and <b class="method">translate</b> <b class="method">scale</b> to generate the
 desired transformation piecemal and then use <b class="method">chain</b> to chain the
 pieces together.</p></dd>
-<dt><a name="172"><b class="cmd">::crimp</b> <b class="method">transform chain</b> <i class="arg">transform</i>...</a></dt>
+<dt><a name="173"><b class="cmd">::crimp</b> <b class="method">transform chain</b> <i class="arg">transform</i>...</a></dt>
 <dd><p>This method computes and returns the projective transformation
 generated by applying the specified transformations in reverse order,
 i.e with the transformation at the end of the argument list applied
 first, then the one before it, etc.</p></dd>
-<dt><a name="173"><b class="cmd">::crimp</b> <b class="method">transform invert</b> <i class="arg">transform</i></a></dt>
+<dt><a name="174"><b class="cmd">::crimp</b> <b class="method">transform invert</b> <i class="arg">transform</i></a></dt>
 <dd><p>This method computes and returns the inverse of the specified
 projective <i class="arg">transform</i>ation.</p></dd>
-<dt><a name="174"><b class="cmd">::crimp</b> <b class="method">transform projective</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i> <i class="arg">g</i> <i class="arg">h</i></a></dt>
+<dt><a name="175"><b class="cmd">::crimp</b> <b class="method">transform projective</b> <i class="arg">a</i> <i class="arg">b</i> <i class="arg">c</i> <i class="arg">d</i> <i class="arg">e</i> <i class="arg">f</i> <i class="arg">g</i> <i class="arg">h</i></a></dt>
 <dd><p>This method returns the projective transformation specified by the 3x3
 matrix</p>
 <pre class="example">
@@ -1599,12 +1603,12 @@ transformation piecemal and then use <b class="method">chain</b> to chain the pi
 together.</p>
 <p>And for a true perspective transformation specification through
 <b class="method">quadrilateral</b> should be simpler as well.</p></dd>
-<dt><a name="175"><b class="cmd">::crimp</b> <b class="method">transform quadrilateral</b> <i class="arg">src</i> <i class="arg">dst</i></a></dt>
+<dt><a name="176"><b class="cmd">::crimp</b> <b class="method">transform quadrilateral</b> <i class="arg">src</i> <i class="arg">dst</i></a></dt>
 <dd><p>This method returns the projective transformation which maps the
 quadrilateral <i class="arg">src</i> on to the quadrilateral <i class="arg">dst</i>.</p>
 <p>Each quadrilateral is specified as a list of 4 points, each
 point a pair of x- and y-coordinates.</p></dd>
-<dt><a name="176"><b class="cmd">::crimp</b> <b class="method">transform rotate</b> <i class="arg">theta</i> <span class="opt">?<i class="arg">center</i>?</span></a></dt>
+<dt><a name="177"><b class="cmd">::crimp</b> <b class="method">transform rotate</b> <i class="arg">theta</i> <span class="opt">?<i class="arg">center</i>?</span></a></dt>
 <dd><p>This methods returns the projective transformation which rotates the
 image by the anglie <i class="arg">theta</i> around the point <i class="arg">center</i>. If the
 latter is not specified {0 0} is assumed. The point, if present, is
@@ -1612,13 +1616,13 @@ specified as pair of x- and y-coordinates.</p>
 <p>The angle is specified in degrees, with <b class="const">0</b> not rotating
 the image at all. Positive values cause a counterclockwise rotation,
 negative values a clockwise one.</p></dd>
-<dt><a name="177"><b class="cmd">::crimp</b> <b class="method">transform scale</b> <i class="arg">sx</i> <i class="arg">sy</i></a></dt>
+<dt><a name="178"><b class="cmd">::crimp</b> <b class="method">transform scale</b> <i class="arg">sx</i> <i class="arg">sy</i></a></dt>
 <dd><p>This methods returns the projective transformation which scales an
 image by factor <i class="arg">sx</i> in width, and <i class="arg">sy</i> in height. Values
 larger than <b class="const">1</b> expand the image along the specified dimension,
 while values less than <b class="const">1</b> shrink it. Negative values flip the
 respective axis.</p></dd>
-<dt><a name="178"><b class="cmd">::crimp</b> <b class="method">transform translate</b> <i class="arg">dx</i> <i class="arg">dy</i></a></dt>
+<dt><a name="179"><b class="cmd">::crimp</b> <b class="method">transform translate</b> <i class="arg">dx</i> <i class="arg">dy</i></a></dt>
 <dd><p>This methods returns the projective transformation which translates an
 image by <i class="arg">dx</i> pixels along the x-axis, and <i class="arg">dx</i> pixels along
 the y-axis. Values larger than <b class="const">0</b> move the image to the right,
@@ -1635,25 +1639,25 @@ like.</p>
 forgotten, i.e. as a reminder to either make them properly available,
 document as internal/undocumented/etc, or remove them.</p>
 <dl class="definitions">
-<dt><a name="179"><b class="cmd">::crimp::black_white_vertical</b></a></dt>
+<dt><a name="180"><b class="cmd">::crimp::black_white_vertical</b></a></dt>
 <dd><p>Generates a fixed checker board image. The output is 256x256
 <b class="const">grey8</b> image, with 16x16 blocks. Debug use only, so far.</p></dd>
-<dt><a name="180"><b class="cmd">::crimp::bilateral_*</b> <i class="arg">image</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></dt>
+<dt><a name="181"><b class="cmd">::crimp::bilateral_*</b> <i class="arg">image</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></dt>
 <dd></dd>
-<dt><a name="181"><b class="cmd">::crimp::joint_bilateral_*</b> <i class="arg">image</i> <i class="arg">wimage</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></dt>
+<dt><a name="182"><b class="cmd">::crimp::joint_bilateral_*</b> <i class="arg">image</i> <i class="arg">wimage</i> <i class="arg">sigma-space</i> <i class="arg">sigma-range</i></a></dt>
 <dd><p>Regular and cross bilateral filters. Still looking buggy, possibly bad
 memory accesses.</p></dd>
-<dt><a name="182"><b class="cmd">::crimp::color_combine</b> <i class="arg">image</i> <i class="arg">vector</i></a></dt>
+<dt><a name="183"><b class="cmd">::crimp::color_combine</b> <i class="arg">image</i> <i class="arg">vector</i></a></dt>
 <dd><p>This operation combines the channels of the input into a single
 <b class="const">grey8</b> value, the result of performing a scalar product of each
 pixel with the 3x1 <i class="arg">vector</i> (<b class="const">float</b> image).</p></dd>
-<dt><a name="183"><b class="cmd">::crimp::color_mix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></dt>
+<dt><a name="184"><b class="cmd">::crimp::color_mix</b> <i class="arg">image</i> <i class="arg">matrix</i></a></dt>
 <dd><p>This operation mixes the color channels of the input, the result of
 performing a matrix multiplication of each pixel with the 3x3
 <i class="arg">matrix</i> (<b class="const">float</b> image).</p></dd>
-<dt><a name="184"><b class="cmd">::crimp::connected_components</b> <i class="arg">image</i> <i class="arg">8connected</i></a></dt>
+<dt><a name="185"><b class="cmd">::crimp::connected_components</b> <i class="arg">image</i> <i class="arg">8connected</i></a></dt>
 <dd></dd>
-<dt><a name="185"><b class="cmd">::crimp::connected_components_*</b> <i class="arg">image</i> <i class="arg">8connected</i> <i class="arg">bgValue</i></a></dt>
+<dt><a name="186"><b class="cmd">::crimp::connected_components_*</b> <i class="arg">image</i> <i class="arg">8connected</i> <i class="arg">bgValue</i></a></dt>
 <dd><p>Computing (labeling) the connected components of the input image,
 using either 4- or 8-neighbourhood. The primitives accepting a
 background value use it to distinguish foreground and background and
@@ -1661,24 +1665,24 @@ coalesce the latter into a single component, even if its area is
 disconnected.</p>
 <p>The result is always of type <b class="const">grey32</b>, to have enough
 range for the label counters.</p></dd>
-<dt><a name="186"><b class="cmd">::crimp::euclidean_distance_map_float</b> <i class="arg">image</i></a></dt>
+<dt><a name="187"><b class="cmd">::crimp::euclidean_distance_map_float</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="187"><b class="cmd">::crimp::indicator_grey8_float</b> <i class="arg">image</i></a></dt>
+<dt><a name="188"><b class="cmd">::crimp::indicator_grey8_float</b> <i class="arg">image</i></a></dt>
 <dd><p>These two operations together allow the creation of distance maps from
 images, i.e.  watershed diagrams. Currently only used in a
 demonstration for this.</p></dd>
-<dt><a name="188"><b class="cmd">::crimp::hough_grey8</b> <i class="arg">image</i> <i class="arg">emptybucketcolor</i></a></dt>
+<dt><a name="189"><b class="cmd">::crimp::hough_grey8</b> <i class="arg">image</i> <i class="arg">emptybucketcolor</i></a></dt>
 <dd><p>Hough transformation of an image. Currently only used in a
 demonstration so far.</p></dd>
-<dt><a name="189"><b class="cmd">::crimp::gaussian_01_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></dt>
+<dt><a name="190"><b class="cmd">::crimp::gaussian_01_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></dt>
 <dd></dd>
-<dt><a name="190"><b class="cmd">::crimp::gaussian_10_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></dt>
+<dt><a name="191"><b class="cmd">::crimp::gaussian_10_float</b> <i class="arg">image</i> <i class="arg">derivative</i> <i class="arg">sigma</i></a></dt>
 <dd></dd>
-<dt><a name="191"><b class="cmd">::crimp::gaussian_blur_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></dt>
+<dt><a name="192"><b class="cmd">::crimp::gaussian_blur_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></dt>
 <dd></dd>
-<dt><a name="192"><b class="cmd">::crimp::gaussian_laplacian_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></dt>
+<dt><a name="193"><b class="cmd">::crimp::gaussian_laplacian_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></dt>
 <dd></dd>
-<dt><a name="193"><b class="cmd">::crimp::gaussian_gradient_mag_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></dt>
+<dt><a name="194"><b class="cmd">::crimp::gaussian_gradient_mag_float</b> <i class="arg">image</i> <i class="arg">sigma</i></a></dt>
 <dd><p>Fast gaussian filters and derivatives, applied in X and Y directions,
 i.e. rows and coluimns of the input image. The <i class="arg">derivative</i> is either</p>
 <dl class="definitions">
@@ -1712,7 +1716,7 @@ directions, and computing the length of the resulting 2-vector
     hypot (gauss10 (grad10 (image)), gauss10 (grad01 (image)))
 </pre>
 </dd>
-<dt><a name="194"><b class="cmd">::crimp::map_2*_*</b> <i class="arg">image</i> <i class="arg">map</i></a></dt>
+<dt><a name="195"><b class="cmd">::crimp::map_2*_*</b> <i class="arg">image</i> <i class="arg">map</i></a></dt>
 <dd><p>Operators applying a piecewise linear <i class="arg">map</i> to the input image.
 The map is stored in a Tcl list containing 2 elements, each a
 bytearray.  The first stores the abscissaes delineating the intervals,
@@ -1728,7 +1732,7 @@ defined intervals the outputs associated with the min and max
 abscissae are returned, respectively.</p>
 <p>Not exposed yet, unclear how the higher level API should look
 like.</p></dd>
-<dt><a name="195"><b class="cmd">::crimp::map2_*</b> <i class="arg">image</i> <i class="arg">mapNimage</i>... <i class="arg">mapNcontrol</i>...</a></dt>
+<dt><a name="196"><b class="cmd">::crimp::map2_*</b> <i class="arg">image</i> <i class="arg">mapNimage</i>... <i class="arg">mapNcontrol</i>...</a></dt>
 <dd><p>Primitives applying per-pixel transformations to multi-channel images
 (HSV, RGB, RGBA). Each channel is transformed with one map image per
 channel, and one integer index per channel selecting the control
@@ -1739,33 +1743,33 @@ control channel in Y. This enables effects like hue-dependent changes
 to saturation or value, value dependent color-shifts, etc.</p>
 <p>Not exposed yet, unclear how the higher level API should
 look like.</p></dd>
-<dt><a name="196"><b class="cmd">::crimp::region_sum</b> <i class="arg">image</i> <i class="arg">radius</i></a></dt>
-<dd><p>Takes a <i class="term"><a href="../../index.html#key84">summed area table</a></i> as input and computes the sums
+<dt><a name="197"><b class="cmd">::crimp::region_sum</b> <i class="arg">image</i> <i class="arg">radius</i></a></dt>
+<dd><p>Takes a <i class="term"><a href="../../index.html#key81">summed area table</a></i> as input and computes the sums
 for square windows of the <i class="arg">radius</i> around each pixel. Time
 is constant per pixel, independent of the radius, because of the
 nature of the input. Only used internally so far.</p></dd>
-<dt><a name="197"><b class="cmd">::crimp::exp_float</b> <i class="arg">image</i></a></dt>
+<dt><a name="198"><b class="cmd">::crimp::exp_float</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="198"><b class="cmd">::crimp::log_float</b> <i class="arg">image</i></a></dt>
+<dt><a name="199"><b class="cmd">::crimp::log_float</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="199"><b class="cmd">::crimp::log10_float</b> <i class="arg">image</i></a></dt>
+<dt><a name="200"><b class="cmd">::crimp::log10_float</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="200"><b class="cmd">::crimp::offset_float</b> <i class="arg">image</i> <i class="arg">offset</i></a></dt>
+<dt><a name="201"><b class="cmd">::crimp::offset_float</b> <i class="arg">image</i> <i class="arg">offset</i></a></dt>
 <dd></dd>
-<dt><a name="201"><b class="cmd">::crimp::pow_float_float</b> <i class="arg">imageBase</i> <i class="arg">imageExponent</i></a></dt>
+<dt><a name="202"><b class="cmd">::crimp::pow_float_float</b> <i class="arg">imageBase</i> <i class="arg">imageExponent</i></a></dt>
 <dd></dd>
-<dt><a name="202"><b class="cmd">::crimp::scale_float</b> <i class="arg">image</i> <i class="arg">factor</i></a></dt>
+<dt><a name="203"><b class="cmd">::crimp::scale_float</b> <i class="arg">image</i> <i class="arg">factor</i></a></dt>
 <dd></dd>
-<dt><a name="203"><b class="cmd">::crimp::sqrt_float</b> <i class="arg">image</i></a></dt>
+<dt><a name="204"><b class="cmd">::crimp::sqrt_float</b> <i class="arg">image</i></a></dt>
 <dd><p>Only used internally (or demos), in various calculations like arithmetic mean, standard
 deviation, etc. Might be useful in general, as unary operator.</p></dd>
-<dt><a name="204"><b class="cmd">::crimp::non_max_suppression</b> <i class="arg">imageMagnitude</i> <i class="arg">imageAngle</i></a></dt>
+<dt><a name="205"><b class="cmd">::crimp::non_max_suppression</b> <i class="arg">imageMagnitude</i> <i class="arg">imageAngle</i></a></dt>
 <dd></dd>
-<dt><a name="205"><b class="cmd">::crimp::trace_hysteresis</b> <i class="arg">image</i> <i class="arg">low</i> <i class="arg">high</i></a></dt>
+<dt><a name="206"><b class="cmd">::crimp::trace_hysteresis</b> <i class="arg">image</i> <i class="arg">low</i> <i class="arg">high</i></a></dt>
 <dd><p>Abandoned, part of an older attempt at canny edge detection.</p></dd>
-<dt><a name="206"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></dt>
-<dd></dd>
 <dt><a name="207"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></dt>
+<dd></dd>
+<dt><a name="208"><b class="cmd">::crimp::window_*</b> <i class="arg">image</i></a></dt>
 <dd><p>Window the image by decreasing luma from center to the edges using an
 inverse square law. Currently only used internally, as part of the
 translational registration. Might be useful in general.</p></dd>
@@ -1787,7 +1791,7 @@ translational registration. Might be useful in general.</p></dd>
 </ol>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p><a href="../../index.html#key77">affine</a>, <a href="../../index.html#key101">affine transform</a>, <a href="../../index.html#key30">alpha</a>, <a href="../../index.html#key115">alpha blending</a>, <a href="../../index.html#key32">alpha channel</a>, <a href="../../index.html#key52">average</a>, <a href="../../index.html#key116">binarization</a>, <a href="../../index.html#key53">black tophat</a>, <a href="../../index.html#key65">blending</a>, <a href="../../index.html#key80">canny</a>, <a href="../../index.html#key41">charcoal</a>, <a href="../../index.html#key66">clockwise</a>, <a href="../../index.html#key31">closing</a>, <a href="../../index.html#key121">composite blending</a>, <a href="../../index.html#key100">composition</a>, <a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key28">const expansion</a>, <a href="../../index.html#key103">convolution filter</a>, <a href="../../index.html#key112">counter-clockwise</a>, <a href="../../index.html#key24">cropping</a>, <a href="../../index.html#key33">cut region</a>, <a href="../../index.html#key74">cyclic wrap expansion</a>, <a href="../../index.html#key40">dilation</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key51">edge shrinking</a>, <a href="../../index.html#key50">edge-detection</a>, <a href="../../index.html#key102">effect</a>, <a href="../../index.html#key95">emboss</a>, <a href="../../index.html#key106">erosion</a>, <a href="../../index.html#key42">expansion</a>, <a href="../../index.html#key70">extend expansion</a>, <a href="../../index.html#key21">external gradient</a>, <a href="../../index.html#key48">extract rectangle</a>, <a href="../../index.html#key107">extract region</a>, <a href="../../index.html#key72">fast fourier transform</a>, <a href="../../index.html#key47">fft</a>, <a href="../../index.html#key71">filter</a>, <a href="../../index.html#key25">flip</a>, <a href="../../index.html#key123">fourier transform</a>, <a href="../../index.html#key39">gamma correction</a>, <a href="../../index.html#key83">geometry</a>, <a href="../../index.html#key120">gradient</a>, <a href="../../index.html#key90">histogram</a>, <a href="../../index.html#key27">hypot</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key79">integral image</a>, <a href="../../index.html#key38">internal gradient</a>, <a href="../../index.html#key85">inverse fourier transform</a>, <a href="../../index.html#key86">inversion</a>, <a href="../../index.html#key49">log-compression</a>, <a href="../../index.html#key119">log-polar transformation</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key73">max</a>, <a href="../../index.html#key94">max-filter</a>, <a href="../../index.html#key114">mean</a>, <a href="../../index.html#key91">mean filter</a>, <a href="../../index.html#key44">median</a>, <a href="../../index.html#key61">median-filter</a>, <a href="../../index.html#key57">middle</a>, <a href="../../index.html#key68">min</a>, <a href="../../index.html#key122">min-filter</a>, <a href="../../index.html#key93">mirror expansion</a>, <a href="../../index.html#key64">montage</a>, <a href="../../index.html#key46">morphology</a>, <a href="../../index.html#key109">opening</a>, <a href="../../index.html#key20">otsu threshold</a>, <a href="../../index.html#key22">perspective</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key29">pixel mapping</a>, <a href="../../index.html#key56">prewitt</a>, <a href="../../index.html#key97">projective</a>, <a href="../../index.html#key55">projective transform</a>, <a href="../../index.html#key126">rank-order filter</a>, <a href="../../index.html#key81">rectangle cut</a>, <a href="../../index.html#key104">rectangle extraction</a>, <a href="../../index.html#key92">region cut</a>, <a href="../../index.html#key117">remapping</a>, <a href="../../index.html#key82">replicate edge expansion</a>, <a href="../../index.html#key75">rescale</a>, <a href="../../index.html#key96">resize</a>, <a href="../../index.html#key113">roberts</a>, <a href="../../index.html#key45">rotate</a>, <a href="../../index.html#key59">rotation</a>, <a href="../../index.html#key99">sabattier effect</a>, <a href="../../index.html#key76">scale</a>, <a href="../../index.html#key125">scharr</a>, <a href="../../index.html#key124">sharpen</a>, <a href="../../index.html#key69">shrinking</a>, <a href="../../index.html#key87">sobel</a>, <a href="../../index.html#key105">solarization</a>, <a href="../../index.html#key34">sqrt-compression</a>, <a href="../../index.html#key62">standard deviation filter</a>, <a href="../../index.html#key98">statistics</a>, <a href="../../index.html#key37">stddev</a>, <a href="../../index.html#key84">summed area table</a>, <a href="../../index.html#key89">threshold</a>, <a href="../../index.html#key63">thresholding</a>, <a href="../../index.html#key108">toggle map</a>, <a href="../../index.html#key60">tophat</a>, <a href="../../index.html#key88">toroidal wrap expansion</a>, <a href="../../index.html#key67">transform</a>, <a href="../../index.html#key36">transform, fast fourier</a>, <a href="../../index.html#key26">transform, fourier</a>, <a href="../../index.html#key111">transform, inverse fourier</a>, <a href="../../index.html#key110">transformation, log-polar</a>, <a href="../../index.html#key43">translate</a>, <a href="../../index.html#key35">variance</a>, <a href="../../index.html#key4">vector</a>, <a href="../../index.html#key118">vector-field</a>, <a href="../../index.html#key23">warp</a>, <a href="../../index.html#key78">white tophat</a>, <a href="../../index.html#key54">windowing</a>, <a href="../../index.html#key58">wrap expansion</a></p>
+<p><a href="../../index.html#key74">affine</a>, <a href="../../index.html#key98">affine transform</a>, <a href="../../index.html#key27">alpha</a>, <a href="../../index.html#key112">alpha blending</a>, <a href="../../index.html#key29">alpha channel</a>, <a href="../../index.html#key49">average</a>, <a href="../../index.html#key113">binarization</a>, <a href="../../index.html#key50">black tophat</a>, <a href="../../index.html#key62">blending</a>, <a href="../../index.html#key77">canny</a>, <a href="../../index.html#key38">charcoal</a>, <a href="../../index.html#key63">clockwise</a>, <a href="../../index.html#key28">closing</a>, <a href="../../index.html#key118">composite blending</a>, <a href="../../index.html#key97">composition</a>, <a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key25">const expansion</a>, <a href="../../index.html#key100">convolution filter</a>, <a href="../../index.html#key109">counter-clockwise</a>, <a href="../../index.html#key21">cropping</a>, <a href="../../index.html#key30">cut region</a>, <a href="../../index.html#key71">cyclic wrap expansion</a>, <a href="../../index.html#key37">dilation</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key48">edge shrinking</a>, <a href="../../index.html#key47">edge-detection</a>, <a href="../../index.html#key99">effect</a>, <a href="../../index.html#key92">emboss</a>, <a href="../../index.html#key103">erosion</a>, <a href="../../index.html#key39">expansion</a>, <a href="../../index.html#key67">extend expansion</a>, <a href="../../index.html#key18">external gradient</a>, <a href="../../index.html#key45">extract rectangle</a>, <a href="../../index.html#key104">extract region</a>, <a href="../../index.html#key69">fast fourier transform</a>, <a href="../../index.html#key44">fft</a>, <a href="../../index.html#key68">filter</a>, <a href="../../index.html#key22">flip</a>, <a href="../../index.html#key120">fourier transform</a>, <a href="../../index.html#key36">gamma correction</a>, <a href="../../index.html#key80">geometry</a>, <a href="../../index.html#key117">gradient</a>, <a href="../../index.html#key87">histogram</a>, <a href="../../index.html#key24">hypot</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key76">integral image</a>, <a href="../../index.html#key35">internal gradient</a>, <a href="../../index.html#key82">inverse fourier transform</a>, <a href="../../index.html#key83">inversion</a>, <a href="../../index.html#key46">log-compression</a>, <a href="../../index.html#key116">log-polar transformation</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key70">max</a>, <a href="../../index.html#key91">max-filter</a>, <a href="../../index.html#key111">mean</a>, <a href="../../index.html#key88">mean filter</a>, <a href="../../index.html#key41">median</a>, <a href="../../index.html#key58">median-filter</a>, <a href="../../index.html#key54">middle</a>, <a href="../../index.html#key65">min</a>, <a href="../../index.html#key119">min-filter</a>, <a href="../../index.html#key90">mirror expansion</a>, <a href="../../index.html#key61">montage</a>, <a href="../../index.html#key43">morphology</a>, <a href="../../index.html#key106">opening</a>, <a href="../../index.html#key17">otsu threshold</a>, <a href="../../index.html#key19">perspective</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key26">pixel mapping</a>, <a href="../../index.html#key53">prewitt</a>, <a href="../../index.html#key94">projective</a>, <a href="../../index.html#key52">projective transform</a>, <a href="../../index.html#key123">rank-order filter</a>, <a href="../../index.html#key78">rectangle cut</a>, <a href="../../index.html#key101">rectangle extraction</a>, <a href="../../index.html#key89">region cut</a>, <a href="../../index.html#key114">remapping</a>, <a href="../../index.html#key79">replicate edge expansion</a>, <a href="../../index.html#key72">rescale</a>, <a href="../../index.html#key93">resize</a>, <a href="../../index.html#key110">roberts</a>, <a href="../../index.html#key42">rotate</a>, <a href="../../index.html#key56">rotation</a>, <a href="../../index.html#key96">sabattier effect</a>, <a href="../../index.html#key73">scale</a>, <a href="../../index.html#key122">scharr</a>, <a href="../../index.html#key121">sharpen</a>, <a href="../../index.html#key66">shrinking</a>, <a href="../../index.html#key84">sobel</a>, <a href="../../index.html#key102">solarization</a>, <a href="../../index.html#key31">sqrt-compression</a>, <a href="../../index.html#key59">standard deviation filter</a>, <a href="../../index.html#key95">statistics</a>, <a href="../../index.html#key34">stddev</a>, <a href="../../index.html#key81">summed area table</a>, <a href="../../index.html#key86">threshold</a>, <a href="../../index.html#key60">thresholding</a>, <a href="../../index.html#key105">toggle map</a>, <a href="../../index.html#key57">tophat</a>, <a href="../../index.html#key85">toroidal wrap expansion</a>, <a href="../../index.html#key64">transform</a>, <a href="../../index.html#key33">transform, fast fourier</a>, <a href="../../index.html#key23">transform, fourier</a>, <a href="../../index.html#key108">transform, inverse fourier</a>, <a href="../../index.html#key107">transformation, log-polar</a>, <a href="../../index.html#key40">translate</a>, <a href="../../index.html#key32">variance</a>, <a href="../../index.html#key4">vector</a>, <a href="../../index.html#key115">vector-field</a>, <a href="../../index.html#key20">warp</a>, <a href="../../index.html#key75">white tophat</a>, <a href="../../index.html#key51">windowing</a>, <a href="../../index.html#key55">wrap expansion</a></p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2011 Andreas Kupries<br>

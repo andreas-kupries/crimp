@@ -1,0 +1,16 @@
+set image { crimp::image::<type> <w> <h> <meta> <pixel> }
+                       |          |   |     |      |
+                       V          V   V     V      V
+                    String       Int Int   Dict  ByteArray
+                       V                           V
+                    /-----\                     +---------------+
+                    | DB  |                     |           ^   |
+                    \-----/                     |           |   |
+                       |                        |<-- w -----+-->|
+                       V                        |           |   |
+                    ----------                  | pixels    h   |
+                     size               +-+     |           |   |
+                     channels   ------> | |<-----*          V   |
+                     cname              | |     +---------------+
+                    ----------          | |
+                                        +-+

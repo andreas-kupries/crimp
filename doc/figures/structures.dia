@@ -1,0 +1,42 @@
+# -*- tcl -*- tcl.tk//DSL diagram//EN//1.0
+source [file join [file dirname [file normalize [info script]]] dsl_ctypes.inc]
+
+## ====================================================================
+
+allocated struct image {
+    field Tcl_Obj*    meta
+    field image_type* itype
+    # Dimensions of the image
+    field int         w
+    field int         h
+    # Integrated memory area for pixels.
+    field char\[...\] "pixels\n  (Integrated)" \
+	height [14 mm]
+}
+
+pointer {image meta} w w {
+    allocated type Tcl_Obj
+}
+
+pointer {image itype} e {
+    static struct image_type {
+	field char*  name
+	field int    size
+	field int    channels
+	field char** cname
+    }
+
+    pointer {image_type name} e {
+	static cstring
+    }
+
+    pointer {image_type cname} e {
+	set cname [static carray char* channels]
+
+	pointer {cname [1]} e {
+	    static cstring
+	}
+    }
+}
+
+return

@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -546,6 +546,8 @@ package require \fBcrimp::core  ?0.1?\fR
 .sp
 \fB::crimp\fR \fBkernel transpose\fR \fIkernel\fR
 .sp
+\fB::crimp\fR \fBkernel image\fR \fIkernel\fR
+.sp
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 .sp
 \fB::crimp\fR \fBmapof\fR \fItable\fR
@@ -828,8 +830,7 @@ and "fully transparent", respectively.
 .sp
 The following combinations of fore- and background image types are
 supported:
-.CS
-
+.nf
 
     Result = Foreground Background
     ------   ---------- ----------
@@ -843,7 +844,7 @@ supported:
     rgba     rgba       rgba
     ------   ---------- ----------
 
-.CE
+.fi
 .TP
 \fB::crimp\fR \fBalpha set\fR \fIimage\fR \fImask\fR
 This command takes two images, the input and a \fImask\fR, and returns
@@ -1392,14 +1393,12 @@ These two methods implement the basic set of morphology operations,
 \fIerosion\fR, and \fIdilation\fR using a flat 3x3 brick as their
 structuring element. For grayscale, which we have here, these are,
 mathematically, max and min rank-order filters, i.e.
-.CS
-
+.nf
 
     dilate = filter rank 1 99.99 (max)
     erode  = filter rank 1  0.00 (min)
 
-.CE
-.IP
+.fi
 The above definitions assume that background is \fBblack\fR, and
 foreground/object anything but black, usually \fBwhite\fR. Then it
 is easy to see that \fBdilate\fR expands the foreground/white, and
@@ -1410,77 +1409,66 @@ erode expands background/black.
 \fB::crimp\fR \fBmorph open\fR \fIimage\fR
 These two methods add to the basic set of morphology operations,
 \fIopening\fR and \fIclosing\fR. In terms of erosion and dilation:
-.CS
-
+.nf
 
     close = erode o dilate
     open  = dilate o erode
 
-.CE
+.fi
 .TP
 \fB::crimp\fR \fBmorph gradient\fR \fIimage\fR
 The morphological \fIgradient\fR is defined as
-.CS
-
+.nf
 
     [dilate $image] - [erode $image]
 
-.CE
-.IP
+.fi
 This can also be expressed as the sum of the external and internal
 gradients, see below.
 .TP
 \fB::crimp\fR \fBmorph igradient\fR \fIimage\fR
 The morphological \fIinternal gradient\fR is defined as
-.CS
-
+.nf
 
     $image - [erode image]
 
-.CE
+.fi
 .TP
 \fB::crimp\fR \fBmorph egradient\fR \fIimage\fR
 The morphological \fIexternal gradient\fR is defined as
-.CS
-
+.nf
 
     [dilate $image] - $image
 
-.CE
+.fi
 .TP
 \fB::crimp\fR \fBmorph tophatw\fR \fIimage\fR
 The \fIwhite tophat\fR transformation is defined as
-.CS
-
+.nf
 
     $image - [open $image]
 
-.CE
-.IP
+.fi
 See \fBReferences\fR 3 to 5 (page 32). This is a greyscale morphology
 operation which does not properly apply to binary images.
 .TP
 \fB::crimp\fR \fBmorph tophatb\fR \fIimage\fR
 The \fIblack tophat\fR transformation is defined as
-.CS
-
+.nf
 
     [close $image] - $image
 
-.CE
-.IP
+.fi
 See \fBReferences\fR 3 to 5 (page 33). This is a greyscale morphology
 operation which does not properly apply to binary images.
 .TP
 \fB::crimp\fR \fBmorph toggle\fR \fIimage\fR
 The \fItoggle map\fR is defined as
-.CS
-
+.nf
 
     0.5 * ([erode $image] + [dilate $image])
 
-.CE
-.IP
+.fi
 See \fBReferences\fR 5, pages 34 and 35. This is a greyscale
 morphology operation to sharpen edges.
 .TP
@@ -1557,11 +1545,9 @@ successively smaller images, each \fBdecimate\fRd by a factor two
 compared to its predecessor, for a total length of "\fIsteps\fR+1" images.
 .sp
 The convolution part of the decimation uses
-.CS
-
+.nf
  1/16 [1 4 6 4 1]
-.CE
-.IP
+.fi
 as its kernel.
 .sp
 IMAGE: pyramid_gauss
@@ -1578,11 +1564,9 @@ decimated by two compared to the preceding bandpass image. In total the result
 contains "\fIsteps\fR+2" images.
 .sp
 The convolution part of the decimation uses
-.CS
-
+.nf
  1/16 [1 4 6 4 1]
-.CE
-.IP
+.fi
 as its kernel. The internal interpolation used to generate the band pass
 images (resynthesis) doubles the weights of this kernel for its convolution
 step.
@@ -1975,8 +1959,7 @@ dictionary mapping characters to triples of integers in the range
 [0...255], specifying the red, green, and blue intensities.
 .sp
 An example of a strimj is:
-.CS
-
+.nf
 
 @...@.......@.@......
 @...@.......@.@......
@@ -1987,7 +1970,7 @@ An example of a strimj is:
 @...@.@...@.@.@.@...@
 @...@..@@@..@.@..@@@.
 
-.CE
+.fi
 .PP
 .SS SUPPORT
 .TP
@@ -2059,8 +2042,7 @@ This method takes a \fIkernel\fR as returned by the method
 the x- and y-axes are switched.
 For example
 .sp
-.CS
-
+.nf
 
                     (1)
                     (2)
@@ -2068,16 +2050,19 @@ For example
                     (2)
                     (1)
 
-.CE
+.fi
 .sp
 This method is its own inverse, i.e. application to its result returns
 the original input, i.e.
-.CS
-
+.nf
 
     [transpose [transpose $K]] == $K
 
-.CE
+.fi
+.TP
+\fB::crimp\fR \fBkernel image\fR \fIkernel\fR
+This method extracts and returns the internal image used to store
+the \fIkernel\fR's coefficients.
 .TP
 \fB::crimp\fR \fBmap\fR \fIarg\fR...
 This method accepts the same sub-methods and arguments as are accepted
@@ -2374,14 +2359,12 @@ specified it defaults to the smallest integer greater than
 \fB::crimp\fR \fBtransform affine\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR
 This method returns the affine transformation specified by the 2x3
 matrix
-.CS
-
+.nf
 
     |a b c|
     |d e f|
 
-.CE
-.IP
+.fi
 Note that it is in general easier to use the methods \fBrotate\fR,
 \fBscale\fR, and \fBtranslate\fR \fBscale\fR to generate the
 desired transformation piecemal and then use \fBchain\fR to chain the
@@ -2400,15 +2383,13 @@ projective \fItransform\fRation.
 \fB::crimp\fR \fBtransform projective\fR \fIa\fR \fIb\fR \fIc\fR \fId\fR \fIe\fR \fIf\fR \fIg\fR \fIh\fR
 This method returns the projective transformation specified by the 3x3
 matrix
-.CS
-
+.nf
 
     |a b c|
     |d e f|
     |g h 1|
 
-.CE
-.IP
+.fi
 Note that for the affine subset of projective transformation it is in
 general easier to use the methods \fBrotate\fR, \fBscale\fR, and
 \fBtranslate\fR \fBscale\fR to generate the desired
@@ -2531,34 +2512,31 @@ respectively. I.e. they operate on the rows, or columns of the image,
 respectively.
 .sp
 \fBblur\fR applies a gaussian blur in both directions, i.e.
-.CS
-
+.nf
 
     output = gauss10 (gauss01 (image))
 
-.CE
+.fi
 .sp
 \fBlaplacian\fR returns an approximation of the scalar
 second derivative, the \fIlaplacian\fR of the image. It is computed
 by applying a laplacian of a gaussian, for both X and Y directions,
 and adding the results, i.e.:
-.CS
-
+.nf
 
     laplace20 (gauss01 (image)) + laplace02 (gauss20 (image))
 
-.CE
+.fi
 .sp
 \fBgradient_mag\fR returns the magnitude of the image
 gradient. It is computed by applying a gradient of gaussian to X and Y
 directions, and computing the length of the resulting 2-vector
 (euclidean norm), i.e.
-.CS
-
+.nf
 
     hypot (gauss10 (grad10 (image)), gauss10 (grad01 (image)))
 
-.CE
+.fi
 .TP
 \fB::crimp::map_2*_*\fR \fIimage\fR \fImap\fR
 Operators applying a piecewise linear \fImap\fR to the input image.

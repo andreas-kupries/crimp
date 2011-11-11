@@ -7,11 +7,12 @@ set boxwidth [45 mm]
 allocated struct image {
     field int         refCount
     field Tcl_Obj*    meta
+    # Pixel structure information
     field image_type* itype
     # Location of the image in the infinite 2D-plane.
-    field int         x 
+    field int         x
     field int         y
-    # Dimensions of the physical image (bounding box)
+    # Dimensions of the image (bounding box)
     field int         w
     field int         h
     # The whole geometry could be put into a separate, inlined
@@ -20,8 +21,8 @@ allocated struct image {
     # multi-channel volumes --> 5D.
 
     # Operation dependent information.
-    field ClientData ops_data
-    field image_ops* ops
+    field ClientData  ops_data
+    field image_ops*  ops
     # Exposed image parameters of the operation, can be nothing.
     field int          nparam
     field image\[...\] "param\n  (Integrated)" \
@@ -76,8 +77,35 @@ pointer {image ops} e e s s s {
     }
 }
 
-pointer {image ops_data} w w {
-    allocated type ClientData
+pointer {image ops_data} w {
+    allocated struct image_physical {
+	field char*      curr_pixel
+	field image_mem  imem
+    } with Le
+
+    pointer {image_physical imem} s s {
+	allocated struct image_memory {
+	    field int   refCount
+	    field char* pixels
+	} with Ln
+
+	pointer {image_memory pixels} w {
+	    allocated type memoryblock
+	}
+    }
+
+    xpointer {image_physical curr_pixel} w \
+	then \
+	[[$memoryblock n] | [$image_physical curr_pixel w]] \
+	to [$memoryblock n]
 }
 
 return
+
+# Scratch
+if 0 {
+    # Iterator strides, in bytes. Derived from the image dimensions
+    # and type (#channels, size/channel).
+    field int   dx
+    field int   dy
+}

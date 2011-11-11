@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -287,19 +287,17 @@ etc.
 For a demonstration of CRIMP's current abilities see the
 "\fIdemos.tcl\fR" application. Within the crimp source directory run it
 as
-.CS
-
+.nf
 
     tclsh8.5 demos.tcl
 
-.CE
+.fi
 or
-.CS
-
+.nf
 
     tclsh8.5 demos.tcl /path/to/crimp/packages ...
 
-.CE
+.fi
 If CRIMP's packages have already been installed, or can be found in
 one of the paths provided as arguments, then this will simply start
 the application.
@@ -331,13 +329,75 @@ demo results can be modified using the mouse, by dragging the panel
 separators.
 .SH "DEVELOPING FOR CRIMP"
 .SS "ARCHITECTURE & CONCEPTS"
-Both overall architecture and concepts like images (image values), image-types,
+Most of the overall architecture and concepts like images (image values), image-types,
 and the general design, are all introduced in the user documentation, namely
 .IP [1]
 \fICRIMP - Introduction to CRIMP\fR, and
 .IP [2]
 \fICRIMP - Foundation\fR
 .PP
+Here we concentrate on some details of the internals. First, the main data structures
+and their relationships:
+.PP
+.PS
+.nf
+              image
+-------       ------------------
+Tcl_Obj <----* Tcl_Obj*    meta
+-------        image_type* itype *---> image_type
+               int         w           -----------------
+               int         h            char*  name  *------> "...\\0"
+               char[...]   pixel        int    size
+              -------------------       int    channels       -------------------
+                                        char** cname *------>  cname[0]
+                                       -----------------       cname[1] *------> "...\\0"
+                                                                ...
+                                                               cname[channels-1]
+                                                              -------------------
+
+.fi
+.PE
+.PP
+Yellow structures are allocated on the heap, whereas blue structures are statically
+allocated as (static, i.e. non-public) global variables.
+.PP
+The named \fIimage_type\fRs declare the structure of image pixels, i.e. how
+many channels they have, their names, and the number of bytes per channel. This can
+be queried at Tcl level.
+.PP
+Regarding the \fIimage\fRs themselves, each is represented by a single
+heap-allocated structure with references to the type, i.e. pixel structure, and
+user-specified meta data (held by a standard \fITcl_Obj\fR of type \fIdictionary\fR),
+dimensions, and the pixel data itself. The latter is part of the structure, and not
+allocated separately.
+.PP
+From the Tcl level, i.e. string representation, things looks a bit differently
+.PP
+.PS
+.nf
+set image { crimp::image::<type> <w> <h> <meta> <pixel> }
+                       |          |   |     |      |
+                       V          V   V     V      V
+                    String       Int Int   Dict  ByteArray
+                       V                           V
+                    /-----\\                     +---------------+
+                    | DB  |                     |           ^   |
+                    \\-----/                     |           |   |
+                       |                        |<-- w -----+-->|
+                       V                        |           |   |
+                    ----------                  | pixels    h   |
+                     size               +-+     |           |   |
+                     channels   ------> | |<-----*          V   |
+                     cname              | |     +---------------+
+                    ----------          | |
+                                        +-+
+
+.fi
+.PE
+.PP
+Each of the elements of an image are elements in a Tcl list, with the type string
+a pointer into the database of pixel structures and the pixel data represented by
+a bytearray.
 .SS "DIRECTORY STRUCTURE"
 .TP
 Helpers
@@ -640,8 +700,7 @@ the file, contain the C code implementing the primitive.
 .PP
 As an example, here are the contents of the "\fI.crimp\fR" file for one of
 the primitives with one of the smallest implementations:
-.CS
-
+.nf
 
 [1]     width
 [2]     Tcl_Obj* imageObj
@@ -653,7 +712,7 @@ the primitives with one of the smallest implementations:
 [8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (image->w));
 [9]     return TCL_OK;
 
-.CE
+.fi
 Line 1 contains the name of the primitive, "width".
 Line 2 is the first line of the argument block.
 Line 3 terminates this argument block.
@@ -841,7 +900,6 @@ by demos. These are:
 .IP \(bu
 .bottom
 .RE
-.IP
 These widgets are ttk::frames placed to the left, right, top and
 bottom of the demo result area and usually empty. The demo can put
 its own interface elements there, buttons, sliders, plots, etc. pp.

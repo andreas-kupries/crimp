@@ -94,13 +94,40 @@ separators.
 [comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Architecture & Concepts}]
 
-Both overall architecture and concepts like images (image values), image-types,
+Most of the overall architecture and concepts like images (image values), image-types,
 and the general design, are all introduced in the user documentation, namely
 
 [list_begin enumerated]
 [enum] [term {CRIMP - Introduction to CRIMP}], and
 [enum] [term {CRIMP - Foundation}]
 [list_end]
+
+Here we concentrate on some details of the internals. First, the main data structures
+and their relationships:
+
+[para][image structures][para]
+
+Yellow structures are allocated on the heap, whereas blue structures are statically
+allocated as (static, i.e. non-public) global variables.
+
+[para] The named [term image_type]s declare the structure of image pixels, i.e. how
+many channels they have, their names, and the number of bytes per channel. This can
+be queried at Tcl level.
+
+[para] Regarding the [term image]s themselves, each is represented by a single
+heap-allocated structure with references to the type, i.e. pixel structure, and
+user-specified meta data (held by a standard [term Tcl_Obj] of type [term dictionary]),
+dimensions, and the pixel data itself. The latter is part of the structure, and not
+allocated separately.
+
+[para] From the Tcl level, i.e. string representation, things looks a bit differently
+
+[para][image objtype][para]
+
+Each of the elements of an image are elements in a Tcl list, with the type string
+a pointer into the database of pixel structures and the pixel data represented by
+a bytearray.
+
 
 [comment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
 [subsection {Directory structure}]

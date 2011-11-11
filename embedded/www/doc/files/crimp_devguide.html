@@ -201,12 +201,30 @@ separators.</p>
 </div>
 <div id="section3" class="section"><h2><a name="section3">Developing for CRIMP</a></h2>
 <div id="subsection1" class="subsection"><h3><a name="subsection1">Architecture &amp; Concepts</a></h3>
-<p>Both overall architecture and concepts like images (image values), image-types,
+<p>Most of the overall architecture and concepts like images (image values), image-types,
 and the general design, are all introduced in the user documentation, namely</p>
 <ol class="enumerated">
 <li><p><i class="term"><a href="crimp_intro.html">CRIMP - Introduction to CRIMP</a></i>, and</p></li>
 <li><p><i class="term"><a href="crimp_core.html">CRIMP - Foundation</a></i></p></li>
 </ol>
+<p>Here we concentrate on some details of the internals. First, the main data structures
+and their relationships:</p>
+<p><img alt="structures" src="../../image/structures.png"></p>
+<p>Yellow structures are allocated on the heap, whereas blue structures are statically
+allocated as (static, i.e. non-public) global variables.</p>
+<p>The named <i class="term">image_type</i>s declare the structure of image pixels, i.e. how
+many channels they have, their names, and the number of bytes per channel. This can
+be queried at Tcl level.</p>
+<p>Regarding the <i class="term"><a href="../../index.html#key5">image</a></i>s themselves, each is represented by a single
+heap-allocated structure with references to the type, i.e. pixel structure, and
+user-specified meta data (held by a standard <i class="term">Tcl_Obj</i> of type <i class="term">dictionary</i>),
+dimensions, and the pixel data itself. The latter is part of the structure, and not
+allocated separately.</p>
+<p>From the Tcl level, i.e. string representation, things looks a bit differently</p>
+<p><img alt="objtype" src="../../image/objtype.png"></p>
+<p>Each of the elements of an image are elements in a Tcl list, with the type string
+a pointer into the database of pixel structures and the pixel data represented by
+a bytearray.</p>
 </div>
 <div id="subsection2" class="subsection"><h3><a name="subsection2">Directory structure</a></h3>
 <dl class="definitions">

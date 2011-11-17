@@ -1,0 +1,58 @@
+# -*- tcl -*- tcl.tk//DSL diagram//EN//1.0
+## ====================================================================
+## DSL for dependency diagram. Default parameters.
+
+source [file join [file dirname [file normalize [info script]]] dsl_dependencies.inc]
+
+## ====================================================================
+## Dependencies, bottom-up, one procedure per package.
+
+proc crimp_core {} { box crimp::core color red }
+
+proc crimp {} {
+    box crimp color red
+    group { down ; ---> 3 ; crimp_core }
+}
+
+proc crimp_bmp {} {
+    box crimp::bmp color red
+    group { down ; --- 6 ; r ; --- 7.5 ; d ; ---> } ;# core
+}
+
+proc crimp_tk {} {
+    box crimp::tk color red
+    group { down ; --- 6 ; l ; --- 7.5 ; d ; ---> } ;# core
+}
+
+proc crimp_ppm {} {
+    box crimp::ppm color red
+    group { down ; --- ; r ; --- 3 ; d ; ---> } ;#crimp
+    group { down ; --- 5.5 ; r ; --- 3 ; d ; ---> 1.5 } ;# core
+}
+
+proc crimp_pgm {} {
+    box crimp::pgm color red
+    group { down ; ---> 3 ; crimp }
+    group { down ; --- 0.5 ; l ; --- 1.5 ; d ; --- 3.5 ; r ; --- ; d ; ---> 2 } ;# core
+}
+
+proc crimp_pfm {} {
+    box crimp::pfm color red
+    group { down ; --- ; l ; --- 3 ; d ; ---> } ;#crimp
+    group { down ; --- 5.5 ; l ; --- 3.25 ; d ; ---> 1.5 } ;# core
+}
+
+## ====================================================================
+
+proc layout {} {
+    east
+    crimp_bmp ; move
+    crimp_ppm ; move
+    crimp_pgm ; move
+    crimp_pfm ; move
+    crimp_tk
+}
+
+## ====================================================================
+
+layout

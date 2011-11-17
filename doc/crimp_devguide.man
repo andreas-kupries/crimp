@@ -112,13 +112,15 @@ allocated as (static, i.e. non-public) global variables.
 
 [para] The named [term image_type]s declare the structure of image pixels, i.e. how
 many channels they have, their names, and the number of bytes per channel. This can
-be queried at Tcl level.
+be queried at Tcl level. The relevant declarations and definitions are in the files
+[file c/image_type.h] and [file c/image_type.c].
 
 [para] Regarding the [term image]s themselves, each is represented by a single
 heap-allocated structure with references to the type, i.e. pixel structure, and
 user-specified meta data (held by a standard [term Tcl_Obj] of type [term dictionary]),
 dimensions, and the pixel data itself. The latter is part of the structure, and not
-allocated separately.
+allocated separately. The relevant declarations and definitions are in the files
+[file c/image.h] and [file c/image.c].
 
 [para] From the Tcl level, i.e. string representation, things looks a bit differently
 

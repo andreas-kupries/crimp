@@ -53,7 +53,7 @@ this one.
 
 The [emph processing] section contains a single package as well,
 [package crimp]. Built on top of the [package crimp::core] this
-package provides the majority of CRIMPs power, manipulating and
+package provides the majority of CRIMPs power for manipulating and
 transforming images in a number of ways.
 
 [enum]
@@ -97,6 +97,17 @@ facilities.
 
 [list_end]
 [list_end]
+
+The package dependencies are shown in the next image. It is mostly
+as you would exect, with pretty much everything depending the on the
+[package crimp::core] and that depending on nothing but itself.
+
+[para] Of note however is that the [package crimp::{ppm,pgm,pfm}]
+packages all depend on the main [package crimp] package. They all
+use the [cmd {crimp convert}] ensemble, enabling them to handle not
+only their natural image types, but a number of others as well.
+
+[para][image pkg_dependencies][para]
 
 [manpage_end]
 

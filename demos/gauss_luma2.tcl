@@ -10,7 +10,7 @@ def op_gauss_iir_luma {
 	    set blurred	    [crimp::gaussian_blur_float $L $thesigma]
 	    if 0 {		# not needed for blur?
 	    set stats	    [crimp::stats_float $blurred]
-	    puts stderr "stats: $stats"
+	    log "stats: $stats"
 	    set offset	    [expr {- [dict get $stats value min]}]
 	    set range 	    [expr {[dict get $stats value max] 
 				   - [dict get $stats value min]}]

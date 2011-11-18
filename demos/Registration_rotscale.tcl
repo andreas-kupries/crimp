@@ -1,7 +1,7 @@
 def op_Registration_rotscale {
     label {Registration_rotscale }
     active {
-	expr {[bases] == 1}
+	expr {0 && [bases] == 1}
     }
     setup_image {
 	variable image1 [base] 

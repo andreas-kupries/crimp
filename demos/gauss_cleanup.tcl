@@ -3,6 +3,7 @@ def op_gauss_cleanup {
     setup_image {
 	show
     }
+    active {expr 0}
     setup {
 	variable high   200
 	variable low    150

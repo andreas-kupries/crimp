@@ -24,8 +24,8 @@ if (!crimp_eq_dim (imageF, imageB)) {
 
 result = crimp_new_like (imageF);
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	int alpha = A (imageF, x, y);
 

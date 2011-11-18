@@ -11,12 +11,12 @@ int              x, y;
 
 crimp_input (imageObj, image, rgb);
 
-red   = crimp_new (grey, image->w, image->h);
-green = crimp_new (grey, image->w, image->h);
-blue  = crimp_new (grey, image->w, image->h);
+red   = crimp_new (grey, crimp_w (image), crimp_h (image));
+green = crimp_new (grey, crimp_w (image), crimp_h (image));
+blue  = crimp_new (grey, crimp_w (image), crimp_h (image));
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
 	/*
 	 * Placing the pixels of each color channel into their own images.

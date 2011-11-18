@@ -19,10 +19,10 @@ if (!crimp_eq_dim (imageX, imageY)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_float (imageX->w, imageX->h);
+result = crimp_new_float (crimp_w (imageX), crimp_h (imageX));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	double a = atan2 (GREY16 (imageX, x, y),
 			  GREY16 (imageY, x, y)) * 57.29577951308232087679;
 	/* a in -180..0..180 */

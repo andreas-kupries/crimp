@@ -28,10 +28,10 @@ if (!crimp_eq_dim (xvector, yvector)) {
  * the coordinate fields.
  */
 
-result = crimp_new (image->itype, xvector->w, xvector->h);
+result = crimp_new (image->itype, crimp_w (xvector), crimp_h (xvector));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	int ixw, iyw;
 
 	xf = FLOATP (xvector, x, y);
@@ -53,9 +53,9 @@ for (y = 0; y < result->h; y++) {
 	{
             float val = 0;
 	    int ix, iy;
-            for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, image->h); iy++) {
+            for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, crimp_h (image)); iy++) {
                 yf = 1 - yf;
-                for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, image->w); ix++) {
+                for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, crimp_w (image)); ix++) {
                     xf = 1 - xf;
 
 		    val += GREY32 (image, ix, iy) * yf * xf;

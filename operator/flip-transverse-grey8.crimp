@@ -9,10 +9,10 @@ crimp_input (imageObj, image, grey8);
 
 result = crimp_new_like_transpose (image);
 
-for (y = 0; y < image->w; y++) {
-    for (x = 0; x < image->h; x++) {
+for (y = 0; y < crimp_w (image); y++) {
+    for (x = 0; x < crimp_h (image); x++) {
 
-	GREY8 (result, x, y) = GREY8 (image, image->w - y - 1, image->h - x - 1);
+	GREY8 (result, x, y) = GREY8 (image, crimp_w (image) - y - 1, crimp_h (image) - x - 1);
 
     }
 }

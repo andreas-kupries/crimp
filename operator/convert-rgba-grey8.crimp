@@ -7,10 +7,10 @@ int          x, y;
 
 crimp_input (imageObj, image, rgba);
 
-result = crimp_new_grey8 (image->w, image->h);
+result = crimp_new_grey8 (crimp_w (image), crimp_h (image));
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
 	/*
 	 * This conversion to a grey scale is based on the ITU-R 601-2 luma

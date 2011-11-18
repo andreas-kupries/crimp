@@ -22,10 +22,10 @@ crimp_input (imageObj, image, grey16);
 #define FILL(xo,yo) {				\
 	int xi = xo - ww;			\
 	int yi = yo - hn;			\
-	while (xi < 0) { xi += image->w; }	\
-	while (yi < 0) { yi += image->h; }	\
-	xi %= image->w;				\
-	yi %= image->h;				\
+	while (xi < 0) { xi += crimp_w (image); }	\
+	while (yi < 0) { yi += crimp_h (image); }	\
+	xi %= crimp_w (image);				\
+	yi %= crimp_h (image);				\
 						\
 	GREY16 (result, xo, yo) = GREY16 (image, xi, yi); \
     }

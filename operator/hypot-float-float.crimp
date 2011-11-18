@@ -21,8 +21,8 @@ if (!crimp_eq_dim (imageX, imageY)) {
 
 result = crimp_new_like (imageX);
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	FLOATP (result, x, y) = hypot (FLOATP (imageX, x, y),
 				       FLOATP (imageY, x, y));

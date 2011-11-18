@@ -28,10 +28,10 @@ if (factor == 1) {
     return TCL_OK;
 }
 
-result = crimp_new (image->itype, image->w*factor, image->h);
+result = crimp_new (image->itype, crimp_w (image)*factor, crimp_h (image));
 
-for (y = 0; y < image->h; y ++) {
-    for (xo = 0, xi = 0; xi < image->w; xo += factor, xi ++) {
+for (y = 0; y < crimp_h (image); y ++) {
+    for (xo = 0, xi = 0; xi < crimp_w (image); xo += factor, xi ++) {
 
 	/* Copy the pixel */
 	R (result, xo, y) = R (image, xi, y);

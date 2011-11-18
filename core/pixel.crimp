@@ -8,7 +8,7 @@ int            length;
 crimp_input_any (imageObj, image);
 
 bytes  = image->pixel;
-length = image->w * image->h * image->itype->size;
+length = crimp_image_area(image) * image->itype->size;
 
 Tcl_SetObjResult (interp, Tcl_NewByteArrayObj (bytes, length));
 return TCL_OK;

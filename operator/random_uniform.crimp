@@ -7,8 +7,8 @@ int          x, y;
 
 result = crimp_new_float (width, height);
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	FLOATP (result, x, y) =  RAND_FLOAT();
     }
 }

@@ -6,8 +6,8 @@ Tcl_Obj* list [2];
 
 crimp_input_any (imageObj, image);
 
-list [0] = Tcl_NewIntObj (image->w);
-list [1] = Tcl_NewIntObj (image->h);
+list [0] = Tcl_NewIntObj (crimp_w(image));
+list [1] = Tcl_NewIntObj (crimp_h(image));
 
 Tcl_SetObjResult (interp, Tcl_NewListObj (2, list));
 return TCL_OK;

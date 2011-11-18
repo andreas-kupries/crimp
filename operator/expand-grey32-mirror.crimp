@@ -25,13 +25,13 @@ crimp_input (imageObj, image, grey32);
 	int yi = yo - hn;					   \
 	while (1) {						   \
 	    if      (xi < 0)         { xi = 0              - xi; } \
-	    else if (xi >= image->w) { xi = 2*(image->w-1) - xi; } \
+	    else if (xi >= crimp_w (image)) { xi = 2*(crimp_w (image)-1) - xi; } \
 	    else break;						   \
 	}							   \
 								   \
 	while (1) {						   \
 	    if      (yi < 0)         { yi = 0              - yi; } \
-	    else if (yi >= image->h) { yi = 2*(image->h-1) - yi; } \
+	    else if (yi >= crimp_h (image)) { yi = 2*(crimp_h (image)-1) - yi; } \
 	    else break;						   \
 	}							   \
 								   \

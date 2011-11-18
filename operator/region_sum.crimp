@@ -24,10 +24,10 @@ if (radius <= 0) {
 }
 
 n = 2*(radius+1);
-result = crimp_new (image->itype, image->w - n, image->h - n);
+result = crimp_new (image->itype, crimp_w (image) - n, crimp_h (image) - n);
 
-for (yo = 0, yi = radius+1; yo < result->h; yo++, yi++) {
-    for (xo = 0, xi = radius+1; xo < result->w; xo++, xi++) {
+for (yo = 0, yi = radius+1; yo < crimp_h (result); yo++, yi++) {
+    for (xo = 0, xi = radius+1; xo < crimp_w (result); xo++, xi++) {
 
 	FLOATP (result, xo, yo) = 
 	      FLOATP (image, xi+radius,   yi+radius)

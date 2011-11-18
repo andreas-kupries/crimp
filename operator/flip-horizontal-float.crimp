@@ -9,10 +9,10 @@ crimp_input (imageObj, image, float);
 
 result = crimp_new_like (image);
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
-	FLOATP (result, x, y) = FLOATP (image, image->w - x - 1, y);
+	FLOATP (result, x, y) = FLOATP (image, crimp_w (image) - x - 1, y);
 
     }
 }

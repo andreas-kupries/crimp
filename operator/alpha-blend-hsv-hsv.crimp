@@ -45,8 +45,8 @@ result = crimp_new_like (imageF);
 
 #define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	H (result, x, y) = MIX (H (imageF, x, y), H (imageB, x, y));
 	S (result, x, y) = MIX (S (imageF, x, y), S (imageB, x, y));
 	V (result, x, y) = MIX (V (imageF, x, y), V (imageB, x, y));

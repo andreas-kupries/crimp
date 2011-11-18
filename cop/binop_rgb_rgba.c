@@ -13,8 +13,8 @@ if (!crimp_eq_dim (imageA, imageB)) {
 
 result = crimp_new_like (imageA);
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	R (result, x, y) = BINOP (R (imageA, x, y), R (imageB, x, y));
 	G (result, x, y) = BINOP (G (imageA, x, y), G (imageB, x, y));

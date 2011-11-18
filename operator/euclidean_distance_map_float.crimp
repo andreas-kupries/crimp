@@ -21,8 +21,8 @@ crimp_input(imageObj, image, float);
 
 /* Make the distance map */
 
-result = crimp_new_float(image->w, image->h);
-EuclideanDistanceMap2D(image->h, image->w, (float*) image->pixel,
+result = crimp_new_float(crimp_w (image), crimp_h (image));
+EuclideanDistanceMap2D(crimp_h (image), crimp_w (image), (float*) image->pixel,
 		       (float*)result->pixel);
 
 /* Return segmented image to caller */

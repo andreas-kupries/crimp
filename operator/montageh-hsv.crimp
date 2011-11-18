@@ -20,10 +20,10 @@ if (!crimp_eq_height (imageLeft, imageRight)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_hsv (imageLeft->w + imageRight->w, imageLeft->h);
+result = crimp_new_hsv (crimp_w (imageLeft) + crimp_w (imageRight), crimp_h (imageLeft));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < imageLeft->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (imageLeft); x++) {
 
 	H (result, x, y) = H (imageLeft, x, y);
 	S (result, x, y) = S (imageLeft, x, y);
@@ -31,12 +31,12 @@ for (y = 0; y < result->h; y++) {
     }
 }
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < imageRight->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (imageRight); x++) {
 
-	H (result, imageLeft->w + x, y) = H (imageRight, x, y);
-	S (result, imageLeft->w + x, y) = S (imageRight, x, y);
-	V (result, imageLeft->w + x, y) = V (imageRight, x, y);
+	H (result, crimp_w (imageLeft) + x, y) = H (imageRight, x, y);
+	S (result, crimp_w (imageLeft) + x, y) = S (imageRight, x, y);
+	V (result, crimp_w (imageLeft) + x, y) = V (imageRight, x, y);
     }
 }
 

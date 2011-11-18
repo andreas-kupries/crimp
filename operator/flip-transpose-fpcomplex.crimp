@@ -9,8 +9,8 @@ crimp_input (imageObj, image, fpcomplex);
 
 result = crimp_new_like_transpose (image);
 
-for (y = 0; y < image->w; y++) {
-    for (x = 0; x < image->h; x++) {
+for (y = 0; y < crimp_w (image); y++) {
+    for (x = 0; x < crimp_h (image); x++) {
 
 	RE (result, x, y) = RE (image, y, x);
 	IM (result, x, y) = IM (image, y, x);

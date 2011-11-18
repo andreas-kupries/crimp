@@ -25,10 +25,10 @@ if (!crimp_require_dim (color, 256, 1)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_rgba (image->w, image->h);
+result = crimp_new_rgba (crimp_w (image), crimp_h (image));
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
 	value = GREY8 (image, x, y);
 	R (result, x, y) = R (color, value, 0);

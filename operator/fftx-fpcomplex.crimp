@@ -11,11 +11,11 @@ crimp_input (imageObj, image, fpcomplex);
 
 result = crimp_new_like (image);
 
-n = image->w;
-workspace = CRIMP_ALLOC_ARRAY (4*image->w+15, real);
+n = crimp_w (image);
+workspace = CRIMP_ALLOC_ARRAY (4*crimp_w (image)+15, real);
 cffti_ (&n, workspace);
 
-for (y = 0; y < image->h; y++) {
+for (y = 0; y < crimp_h (image); y++) {
     /*
      * FFT on horizontal scan lines.  We copy each line to the result and then
      * run the FFT on it in place.  The copying makes use of the identity
@@ -23,7 +23,7 @@ for (y = 0; y < image->h; y++) {
      */
     memcpy (&RE (result, 0, y),
 	    &RE (image,  0, y),
-	    2*sizeof(float)*image->w);
+	    2*sizeof(float)*crimp_w (image));
 
     cfftf_ (&n, &RE (result, 0, y), workspace);
 }

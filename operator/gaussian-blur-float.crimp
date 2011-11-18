@@ -19,7 +19,7 @@ crimp_input (imageObj, image, float);
 
 result = crimp_new_like (image);
 
-GaussianBlur2D (filter, image->h, image->w,
+GaussianBlur2D (filter, crimp_h (image), crimp_w (image),
 		(float*)(image->pixel),
 		(float*)(result->pixel));
 

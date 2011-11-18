@@ -20,19 +20,19 @@ if (!crimp_eq_height (imageLeft, imageRight)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_float (imageLeft->w + imageRight->w, imageLeft->h);
+result = crimp_new_float (crimp_w (imageLeft) + crimp_w (imageRight), crimp_h (imageLeft));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < imageLeft->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (imageLeft); x++) {
 
 	FLOATP (result, x, y) = FLOATP (imageLeft, x, y);
     }
 }
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < imageRight->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (imageRight); x++) {
 
-	FLOATP (result, imageLeft->w + x, y) = FLOATP (imageRight, x, y);
+	FLOATP (result, crimp_w (imageLeft) + x, y) = FLOATP (imageRight, x, y);
     }
 }
 

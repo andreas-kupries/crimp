@@ -18,8 +18,8 @@ crimp_input (thresholdBObj, thresholdb, float);
 
 result = crimp_new_like (image);
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
 	R (result, x, y) = R (image, x, y) >= FLOATP (thresholdr, x, y) ? BLACK : WHITE;
 	G (result, x, y) = G (image, x, y) >= FLOATP (thresholdg, x, y) ? BLACK : WHITE;

@@ -32,10 +32,10 @@ if (!crimp_eq_dim (xvector, yvector)) {
  * the coordinate fields.
  */
 
-result = crimp_new (image->itype, xvector->w, xvector->h);
+result = crimp_new (image->itype, crimp_w (xvector), crimp_h (xvector));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	int xi, yi, outside;
 
 	xf = FLOATP (xvector, x, y);
@@ -46,7 +46,7 @@ for (y = 0; y < result->h; y++) {
 	if ((xf - xi) >= 0.5) xi++;
 	if ((yf - yi) >= 0.5) yi++;
 
-	outside = (xi < 0) || (xi >= image->w) || (yi < 0) || (yi >= image->h);
+	outside = (xi < 0) || (xi >= crimp_w (image)) || (yi < 0) || (yi >= crimp_h (image));
 
 	for (c = 0; c < image->itype->channels; c++) {
 	    CH (result, c, x, y) = outside ? BLACK : CH (image, c, xi, yi);

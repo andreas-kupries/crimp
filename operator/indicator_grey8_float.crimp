@@ -26,8 +26,8 @@ int x, y;
 /* Process inputs */
 
 crimp_input(imageObj, image, grey8);
-width = image->w;
-height = image->h;
+width = crimp_w (image);
+height = crimp_h (image);
 trial = (unsigned char) testValue;
 
 /* Make the output image */

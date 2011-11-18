@@ -24,10 +24,10 @@ crimp_input (imageObj, image, rgba);
 	int xi = xo - ww;				\
 	int yi = yo - hn;				\
 	if      (xi < 0)         { xi = 0;            } \
-	else if (xi >= image->w) { xi = (image->w-1); } \
+	else if (xi >= crimp_w (image)) { xi = (crimp_w (image)-1); } \
 							\
 	if      (yi < 0)         { yi = 0;            } \
-	else if (yi >= image->h) { yi = (image->h-1); } \
+	else if (yi >= crimp_h (image)) { yi = (crimp_h (image)-1); } \
 							\
 	R (result, xo, yo) = R (image, xi, yi);		\
 	G (result, xo, yo) = G (image, xi, yi);		\

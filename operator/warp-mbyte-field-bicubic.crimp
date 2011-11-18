@@ -32,10 +32,10 @@ if (!crimp_eq_dim (xvector, yvector)) {
  * the coordinate fields.
  */
 
-result = crimp_new (image->itype, xvector->w, xvector->h);
+result = crimp_new (image->itype, crimp_w (xvector), crimp_h (xvector));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	int ixw, iyw;
 
 	xf = FLOATP (xvector, x, y);
@@ -56,7 +56,7 @@ for (y = 0; y < result->h; y++) {
 	iyw --; yf += 1.; yf /= 3.;
 
 #undef  SAMPLE
-#define SAMPLE(dx,dy) ((((ixw+(dx)) < 0) || ((ixw+(dx)) >= image->w) || ((iyw+(dy)) < 0) || ((iyw+(dy)) >= image->h)) ? BLACK : (CH (image, c, (ixw+(dx)), (iyw+(dy)))))
+#define SAMPLE(dx,dy) ((((ixw+(dx)) < 0) || ((ixw+(dx)) >= crimp_w (image)) || ((iyw+(dy)) < 0) || ((iyw+(dy)) >= crimp_h (image))) ? BLACK : (CH (image, c, (ixw+(dx)), (iyw+(dy)))))
 
         for (c = 0; c < 4; ++c) {
 	    double p00 = SAMPLE(0,0);

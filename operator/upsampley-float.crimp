@@ -28,10 +28,10 @@ if (factor == 1) {
     return TCL_OK;
 }
 
-result = crimp_new (image->itype, image->w, image->h*factor);
+result = crimp_new (image->itype, crimp_w (image), crimp_h (image)*factor);
 
-for (yo = 0, yi = 0; yi < image->h; yo += factor, yi ++) {
-    for (x = 0; x < image->w; x ++) {
+for (yo = 0, yi = 0; yi < crimp_h (image); yo += factor, yi ++) {
+    for (x = 0; x < crimp_w (image); x ++) {
 
 	/* Copy the pixel */
 	FLOATP (result, x, yo) = FLOATP (image, x, yi);
@@ -39,7 +39,7 @@ for (yo = 0, yi = 0; yi < image->h; yo += factor, yi ++) {
 
     /* And insert factor black lines after the intput line*/
     for (dy = 1; dy < factor; dy++) {
-	for (x = 0; x < image->w; x++) {
+	for (x = 0; x < crimp_w (image); x++) {
 	    FLOATP (result, x, yo + dy) = BLACK;
 	}
     }

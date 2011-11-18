@@ -12,8 +12,8 @@ crimp_input (thresholdObj, threshold, rgb);
 
 result = crimp_new_like (image);
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
 	R (result, x, y) = R (image, x, y) >= R (threshold, x, y) ? BLACK : WHITE;
 	G (result, x, y) = G (image, x, y) >= G (threshold, x, y) ? BLACK : WHITE;

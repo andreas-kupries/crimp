@@ -18,8 +18,8 @@ crimp_input (imageObj, image, rgba);
  */
 
 pib.pixelPtr  = image->pixel;
-pib.width     = image->w;
-pib.height    = image->h;
+pib.width     = crimp_w (image);
+pib.height    = crimp_h (image);
 pib.pixelSize = 4;
 pib.pitch     = 4 * pib.width;
 pib.offset[0] = 0;

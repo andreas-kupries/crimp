@@ -13,8 +13,8 @@ crimp_input (imageObj, image, float);
 
 result = crimp_new_like (image);
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	FLOATP (result, x, y) = log (FLOATP (image, x, y));
     }

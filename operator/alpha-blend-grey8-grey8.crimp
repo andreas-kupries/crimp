@@ -32,8 +32,8 @@ ralpha = 255 - alpha;
 
 #define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	GREY8 (result, x, y) = MIX (GREY8 (imageF, x, y), GREY8 (imageB, x, y));
     }
 }

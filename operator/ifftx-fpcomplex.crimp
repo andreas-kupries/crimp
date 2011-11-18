@@ -11,11 +11,11 @@ crimp_input (imageObj, image, fpcomplex);
 
 result = crimp_new_like (image);
 
-n = image->w;
-workspace = CRIMP_ALLOC_ARRAY (4*image->w+15, real);
+n = crimp_w (image);
+workspace = CRIMP_ALLOC_ARRAY (4*crimp_w (image)+15, real);
 cffti_ (&n, workspace);
 
-for (y = 0; y < image->h; y++) {
+for (y = 0; y < crimp_h (image); y++) {
     /*
      * Inverse FFT on horizontal scan lines.  We copy each line to the result
      * and then run the iFFT on it in place.  The copying makes use of the
@@ -23,7 +23,7 @@ for (y = 0; y < image->h; y++) {
      */
     memcpy (&RE (result, 0, y),
 	    &RE (image,  0, y),
-	    2*sizeof(float)*image->w);
+	    2*sizeof(float)*crimp_w (image));
 
     cfftb_ (&n, &RE (result, 0, y), workspace);
 
@@ -32,7 +32,7 @@ for (y = 0; y < image->h; y++) {
      * the FFT routines do not normalize their results.
      */
 
-    for (x = 0; x < image->w; x++) {
+    for (x = 0; x < crimp_w (image); x++) {
 	RE (result, x, y) /= n;
 	IM (result, x, y) /= n;
 	

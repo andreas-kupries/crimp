@@ -18,8 +18,8 @@ crimp_input (imageObj, image, grey32);
 
 result = crimp_new_like (image);
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	double ran = sqrt ((-2.0f ) * log(RAND_FLOAT())) * sin (2 * M_PI * RAND_FLOAT());
 	double pix = maxval * ((GREY32 (image, x, y) / maxval) + (sqrt(variance) * ran) + mean);
 

@@ -39,11 +39,11 @@ crimp_image* resultImage;
 
 crimp_input(inImageObj, inImage, INTYPENAME);
 
-resultImage = NEWNAME(OUTTYPENAME)(inImage->w, inImage->h);
+resultImage = NEWNAME(OUTTYPENAME)(crimp_w (inImage), crimp_h (inImage));
 
 if (MAPNAME(INTYPENAME,OUTTYPENAME)(interp,
 				    mapObj,
-				    (size_t) (inImage->w * inImage->h),
+				    (size_t) (crimp_w (inImage) * crimp_h (inImage)),
 		                    (const INTYPE*)inImage->pixel, 
                                     (size_t) 1,
 				    (OUTTYPE*)resultImage->pixel, 

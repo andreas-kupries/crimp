@@ -22,26 +22,26 @@ result = crimp_new_like (imageMag);
  * Initialization of the border pixels not written to by the later phases.
  */
 
-for (y = 0; y < result->h; y++) {
+for (y = 0; y < crimp_h (result); y++) {
     FLOATP (temp,   0, y)           = BLACK;
     FLOATP (result, 0, y)           = BLACK;
-    FLOATP (temp,   result->w-1, y) = BLACK;
-    FLOATP (result, result->w-1, y) = BLACK;
+    FLOATP (temp,   crimp_w (result)-1, y) = BLACK;
+    FLOATP (result, crimp_w (result)-1, y) = BLACK;
 }
 
-for (x = 0; x < result->w; x++) {
+for (x = 0; x < crimp_w (result); x++) {
     FLOATP (temp,   x, 0)           = BLACK;
     FLOATP (result, x, 0)           = BLACK;
-    FLOATP (temp,   x, result->h-1) = BLACK;
-    FLOATP (result, x, result->h-1) = BLACK;
+    FLOATP (temp,   x, crimp_h (result)-1) = BLACK;
+    FLOATP (result, x, crimp_h (result)-1) = BLACK;
 }
 
 /*
  * Non-maxima suppression, with a dash of thresholding.
  */
 
-for (y = 1; y < result->h-1; y++) {
-    for (x = 1; x < result->w-1; x++) {
+for (y = 1; y < crimp_h (result)-1; y++) {
+    for (x = 1; x < crimp_w (result)-1; x++) {
 
 	a = FLOATP (imageAngle, x, y);
 
@@ -130,8 +130,8 @@ for (y = 1; y < result->h-1; y++) {
  * analysis.
  */
 
-for (y = 1; y < result->h - 1; y++) {
-    for (x = 1; x < result->w - 1; x++) {
+for (y = 1; y < crimp_h (result) - 1; y++) {
+    for (x = 1; x < crimp_w (result) - 1; x++) {
 	if (FLOATP (temp, x, y) == WHITE) {
 	    if((FLOATP (result, x-1, y-1) == WHITE) ||
 	       (FLOATP (result, x-1, y  ) == WHITE) ||
@@ -146,8 +146,8 @@ for (y = 1; y < result->h - 1; y++) {
     }
 }
 
-for (y = result->h - 2; y > 0; y--) {
-    for (x = result->w - 2; x > 0; x--) {
+for (y = crimp_h (result) - 2; y > 0; y--) {
+    for (x = crimp_w (result) - 2; x > 0; x--) {
 	if (FLOATP (temp, x, y) == WHITE ) {
 	    if((FLOATP (result, x-1, y+1) == WHITE) ||
 	       (FLOATP (result, x,   y+1) == WHITE) ||

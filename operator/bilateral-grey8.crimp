@@ -40,8 +40,8 @@ result = crimp_new_like (image);
  * TODO NOTE: assumes that intensity is in [0,1]).
  */
 
-bgrid_width  = 4 + 1 + (int) ceil (image->w/sigma_space);
-bgrid_height = 4 + 1 + (int) ceil (image->w/sigma_space);
+bgrid_width  = 4 + 1 + (int) ceil (crimp_w (image)/sigma_space);
+bgrid_height = 4 + 1 + (int) ceil (crimp_w (image)/sigma_space);
 bgrid_range  = 4 + 1 + (int) ceil (256/sigma_range);
 bgrid_maxdim = MAX (bgrid_width, MAX (bgrid_height, bgrid_range));
 
@@ -65,8 +65,8 @@ for (z = 0; z < bgrid_range; z++) {
  * Phase II. Update the bilateral grid with the downsampled image data.
  */
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
 	double p = GREY8 (image, x, y);
 
@@ -180,8 +180,8 @@ for (y = 2; y < bgrid_height-2; y++) {
 
 #define BETWEEN(a,b,s) ((a)*(s) + (b)*(1-(s)))
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
 	double winew, wnew, p = GREY8 (image, x, y);
 

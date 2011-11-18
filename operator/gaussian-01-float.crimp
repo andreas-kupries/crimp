@@ -21,7 +21,7 @@ crimp_input (imageObj, image, float);
 
 result = crimp_new_like (image);
 
-GaussianFilter01 (filter, whichDeriv, image->h, image->w,
+GaussianFilter01 (filter, whichDeriv, crimp_h (image), crimp_w (image),
 		  (float*)(image->pixel),
 		  (float*)(result->pixel));
 

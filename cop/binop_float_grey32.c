@@ -13,8 +13,8 @@ if (!crimp_eq_dim (imageA, imageB)) {
 
 result = crimp_new_like (imageA);
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	FLOATP (result, x, y) = BINOP (FLOATP (imageA, x, y), GREY32 (imageB, x, y));
     }

@@ -7,10 +7,10 @@ int          x, y, h, s, v;
 
 crimp_input (imageObj, image, rgb);
 
-result = crimp_new_hsv (image->w, image->h);
+result = crimp_new_hsv (crimp_w (image), crimp_h (image));
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
 	crimp_color_rgb_to_hsv (R (image, x, y),
 				G (image, x, y),

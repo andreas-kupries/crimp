@@ -43,8 +43,13 @@ crimp_new (const crimp_imagetype* itype, int w, int h)
     crimp_image* image = (crimp_image*) ckalloc (size);
 
     image->itype = itype;
-    image->w     = w;
-    image->h     = h;
+
+    image->geo.x = 0;
+    image->geo.y = 0;
+
+    image->geo.w = w;
+    image->geo.h = h;
+
     image->meta  = NULL;
 
     return image;
@@ -61,8 +66,13 @@ crimp_newm (const crimp_imagetype* itype, int w, int h, Tcl_Obj* meta)
     crimp_image* image = (crimp_image*) ckalloc (size);
 
     image->itype = itype;
-    image->w     = w;
-    image->h     = h;
+
+    image->geo.x = 0;
+    image->geo.y = 0;
+
+    image->geo.w = w;
+    image->geo.h = h;
+
     image->meta  = meta;
 
     if (meta) {
@@ -168,14 +178,14 @@ StringOfImage (Tcl_Obj* imgObjPtr)
     /* image width */
     {
 	char wstring [20];
-	sprintf (wstring, "%u", ci->w);
+	sprintf (wstring, "%u", ci->geo.w);
 	Tcl_DStringAppendElement (&ds, wstring);
     }
 
     /* image width */
     {
 	char hstring [20];
-	sprintf (hstring, "%u", ci->h);
+	sprintf (hstring, "%u", ci->geo.h);
 	Tcl_DStringAppendElement (&ds, hstring);
     }
 

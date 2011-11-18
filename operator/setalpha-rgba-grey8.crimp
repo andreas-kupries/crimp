@@ -21,8 +21,8 @@ if (!crimp_eq_dim (image, imageA)) {
 
 result = crimp_new_like (image);
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	R (result, x, y) = R (image, x, y);
 	G (result, x, y) = G (image, x, y);
 	B (result, x, y) = B (image, x, y);

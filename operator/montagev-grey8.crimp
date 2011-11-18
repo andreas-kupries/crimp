@@ -20,19 +20,19 @@ if (!crimp_eq_width (imageTop, imageBottom)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_grey8 (imageTop->w, imageTop->h + imageBottom->h);
+result = crimp_new_grey8 (crimp_w (imageTop), crimp_h (imageTop) + crimp_h (imageBottom));
 
-for (y = 0; y < imageTop->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (imageTop); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	GREY8 (result, x, y) = GREY8 (imageTop, x, y);
     }
 }
 
-for (y = 0; y < imageBottom->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (imageBottom); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
-	GREY8 (result, x, imageTop->h + y) = GREY8 (imageBottom, x, y);
+	GREY8 (result, x, crimp_h (imageTop) + y) = GREY8 (imageBottom, x, y);
     }
 }
 

@@ -7,10 +7,10 @@ int          x, y;
 
 crimp_input (imageObj, image, fpcomplex);
 
-result = crimp_new_float (image->w, image->h);
+result = crimp_new_float (crimp_w (image), crimp_h (image));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	FLOATP (result, x, y) = IM (image, x, y);
     }
 }

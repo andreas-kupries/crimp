@@ -687,6 +687,10 @@ rules below, which specify the format of the demo files.
 	[enum] [package crimp::ppm]
 	[list_end]
 
+    [call [cmd appdir]]
+        Returns the path of the directory the demo application is
+        contained in.
+
     [call [cmd base] [opt [arg N]]]
         Returns the N'th image selected by the user. Counted from 0.
         If not specified 'N' defaults 0.
@@ -694,6 +698,10 @@ rules below, which specify the format of the demo files.
     [call [cmd bases]]
         Returns the number of selected images. Most useful to the
         'active' script.
+
+    [call [cmd demodir]]
+        Returns the path of the directory the demo's sources are
+        contained in.
 
     [call [cmd thebases]]
         Returns a list containing all selected images.

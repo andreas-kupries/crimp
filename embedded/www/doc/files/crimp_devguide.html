@@ -132,13 +132,15 @@
 <div class="synopsis">
 <ul class="syntax">
 <li><a href="#1"><b class="cmd"><a href="crimp.html">crimp</a></b></a></li>
-<li><a href="#2"><b class="cmd">base</b> <span class="opt">?<i class="arg">N</i>?</span></a></li>
-<li><a href="#3"><b class="cmd">bases</b></a></li>
-<li><a href="#4"><b class="cmd">thebases</b></a></li>
-<li><a href="#5"><b class="cmd">show_image</b> <i class="arg">I</i></a></li>
-<li><a href="#6"><b class="cmd">show_slides</b> <i class="arg">LI</i></a></li>
-<li><a href="#7"><b class="cmd">log</b> <i class="arg">T</i></a></li>
-<li><a href="#8"><b class="cmd">log*</b> <i class="arg">T</i></a></li>
+<li><a href="#2"><b class="cmd">appdir</b></a></li>
+<li><a href="#3"><b class="cmd">base</b> <span class="opt">?<i class="arg">N</i>?</span></a></li>
+<li><a href="#4"><b class="cmd">bases</b></a></li>
+<li><a href="#5"><b class="cmd">demodir</b></a></li>
+<li><a href="#6"><b class="cmd">thebases</b></a></li>
+<li><a href="#7"><b class="cmd">show_image</b> <i class="arg">I</i></a></li>
+<li><a href="#8"><b class="cmd">show_slides</b> <i class="arg">LI</i></a></li>
+<li><a href="#9"><b class="cmd">log</b> <i class="arg">T</i></a></li>
+<li><a href="#10"><b class="cmd">log*</b> <i class="arg">T</i></a></li>
 </ul>
 </div>
 </div>
@@ -608,25 +610,31 @@ rules below, which specify the format of the demo files.</p>
 <li><p><b class="package">crimp::pfm</b></p></li>
 <li><p><b class="package">crimp::ppm</b></p></li>
 </ol></dd>
-<dt><a name="2"><b class="cmd">base</b> <span class="opt">?<i class="arg">N</i>?</span></a></dt>
+<dt><a name="2"><b class="cmd">appdir</b></a></dt>
+<dd><p>Returns the path of the directory the demo application is
+        contained in.</p></dd>
+<dt><a name="3"><b class="cmd">base</b> <span class="opt">?<i class="arg">N</i>?</span></a></dt>
 <dd><p>Returns the N'th image selected by the user. Counted from 0.
         If not specified 'N' defaults 0.</p></dd>
-<dt><a name="3"><b class="cmd">bases</b></a></dt>
+<dt><a name="4"><b class="cmd">bases</b></a></dt>
 <dd><p>Returns the number of selected images. Most useful to the
         'active' script.</p></dd>
-<dt><a name="4"><b class="cmd">thebases</b></a></dt>
+<dt><a name="5"><b class="cmd">demodir</b></a></dt>
+<dd><p>Returns the path of the directory the demo's sources are
+        contained in.</p></dd>
+<dt><a name="6"><b class="cmd">thebases</b></a></dt>
 <dd><p>Returns a list containing all selected images.</p></dd>
-<dt><a name="5"><b class="cmd">show_image</b> <i class="arg">I</i></a></dt>
+<dt><a name="7"><b class="cmd">show_image</b> <i class="arg">I</i></a></dt>
 <dd><p>Takes an image I and displays it in the demo result area for
         the user to see.</p></dd>
-<dt><a name="6"><b class="cmd">show_slides</b> <i class="arg">LI</i></a></dt>
+<dt><a name="8"><b class="cmd">show_slides</b> <i class="arg">LI</i></a></dt>
 <dd><p>Takes a list of images and displays them in the demo result
         area for the user to see, as a slideshow which cycles through
         the images. The user gets a bevy of buttons to start/stop the
         cycling, change cycle interval, and direction.</p></dd>
-<dt><a name="7"><b class="cmd">log</b> <i class="arg">T</i></a></dt>
+<dt><a name="9"><b class="cmd">log</b> <i class="arg">T</i></a></dt>
 <dd><p>Writes the text T to the demo log window, followed by a newline</p></dd>
-<dt><a name="8"><b class="cmd">log*</b> <i class="arg">T</i></a></dt>
+<dt><a name="10"><b class="cmd">log*</b> <i class="arg">T</i></a></dt>
 <dd><p>Writes the text T to the demo log window. No newline is added
         after the text.</p></dd>
 </dl>

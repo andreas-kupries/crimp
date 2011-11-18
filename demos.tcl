@@ -172,7 +172,7 @@ proc demo_init {} {
     }
     set demo_index(A:Unmodified) [list aaaaa N/A]
 
-    foreach f [glob -directory $selfdir/demos *.tcl] {
+    foreach f [glob -directory [demodir] *.tcl] {
 	set thedemo {}
 	source $f
 	set name [dict get $thedemo name]
@@ -909,6 +909,16 @@ proc base {{i 0}} {
     return [lindex $base $i]
     #return [crimp degamma [lindex $base $i] 2.2]
     #return [crimp gamma [lindex $base $i] 2.2]
+}
+
+proc appdir {} {
+    global selfdir
+    return $selfdir
+}
+
+proc demodir {} {
+    global selfdir
+    return $selfdir/demos
 }
 
 proc bases {} {

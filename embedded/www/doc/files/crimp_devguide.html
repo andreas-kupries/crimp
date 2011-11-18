@@ -214,12 +214,14 @@ and their relationships:</p>
 allocated as (static, i.e. non-public) global variables.</p>
 <p>The named <i class="term">image_type</i>s declare the structure of image pixels, i.e. how
 many channels they have, their names, and the number of bytes per channel. This can
-be queried at Tcl level.</p>
+be queried at Tcl level. The relevant declarations and definitions are in the files
+&quot;<b class="file">c/image_type.h</b>&quot; and &quot;<b class="file">c/image_type.c</b>&quot;.</p>
 <p>Regarding the <i class="term"><a href="../../index.html#key5">image</a></i>s themselves, each is represented by a single
 heap-allocated structure with references to the type, i.e. pixel structure, and
 user-specified meta data (held by a standard <i class="term">Tcl_Obj</i> of type <i class="term">dictionary</i>),
 dimensions, and the pixel data itself. The latter is part of the structure, and not
-allocated separately.</p>
+allocated separately. The relevant declarations and definitions are in the files
+&quot;<b class="file">c/image.h</b>&quot; and &quot;<b class="file">c/image.c</b>&quot;.</p>
 <p>From the Tcl level, i.e. string representation, things looks a bit differently</p>
 <p><img alt="objtype" src="../../image/objtype.png"></p>
 <p>Each of the elements of an image are elements in a Tcl list, with the type string

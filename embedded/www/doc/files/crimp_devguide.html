@@ -484,7 +484,7 @@ the primitives with one of the smallest implementations:</p>
 [5]
 [6]     crimp_input_any (imageObj, image);
 [7]
-[8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (image-&gt;w));
+[8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (crimp_w (image)));
 [9]     return TCL_OK;
 </pre>
 <p>Line 1 contains the name of the primitive, &quot;width&quot;.

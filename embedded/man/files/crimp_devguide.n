@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-infinite-plane/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -347,12 +347,12 @@ and their relationships:
 -------       ------------------
 Tcl_Obj <----* Tcl_Obj*    meta
 -------        image_type* itype *---> image_type
-               int         w           -----------------
-               int         h            char*  name  *------> "...\\0"
-               char[...]   pixel        int    size
-              -------------------       int    channels       -------------------
-                                        char** cname *------>  cname[0]
-                                       -----------------       cname[1] *------> "...\\0"
+               int         x           -----------------
+               int         y            char*  name  *------> "...\\0"
+               int         w            int    size
+               int         h            int    channels       -------------------
+               char[...]   pixel        char** cname *------>  cname[0]
+              -------------------      -----------------       cname[1] *------> "...\\0"
                                                                 ...
                                                                cname[channels-1]
                                                               -------------------
@@ -714,7 +714,7 @@ the primitives with one of the smallest implementations:
 [5]
 [6]     crimp_input_any (imageObj, image);
 [7]
-[8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (image->w));
+[8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (crimp_w (image)));
 [9]     return TCL_OK;
 
 .CE

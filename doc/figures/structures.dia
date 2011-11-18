@@ -6,6 +6,9 @@ source [file join [file dirname [file normalize [info script]]] dsl_ctypes.inc]
 allocated struct image {
     field Tcl_Obj*    meta
     field image_type* itype
+    # Location of the image in the infinite 2d plane
+    field int         x
+    field int         y
     # Dimensions of the image
     field int         w
     field int         h

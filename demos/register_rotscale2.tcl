@@ -1,7 +1,7 @@
 def op_register_rotscale_2 {
     label {Register Images: Rot/Scale, plain}
     active {
-	expr {[bases] == 1};	# What's this?
+	expr {0 && [bases] == 1}
     }
     setup_image {
 	show

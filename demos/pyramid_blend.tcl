@@ -39,7 +39,7 @@ def op_blend_pyramid {
 	# Merge the input pyramids into a blend result pyramid.
 	variable pblend {}
 	foreach a $pleft b $pright m $pmask {
-	    #puts "B wXh = [crimp dimensions $a]|[crimp dimensions $b]|[crimp dimensions $m]"
+	    #log "B wXh = [crimp dimensions $a]|[crimp dimensions $b]|[crimp dimensions $m]"
 	    lappend pblend [crimp add \
 			    [crimp multiply $a $m] \
 			    [crimp multiply $b [crimp invert $m]]]
@@ -51,7 +51,7 @@ def op_blend_pyramid {
 
 	variable result [lindex $pblend end]
 	foreach dog [lreverse [lrange $pblend 0 end-1]] {
-	    #puts "+ wXh = [crimp dimensions $dog]|[crimp dimensions $result]"
+	    #log "+ wXh = [crimp dimensions $dog]|[crimp dimensions $result]"
 	    set result [crimp add $dog [crimp interpolate xy $result 2 $ki]]
 	}
 

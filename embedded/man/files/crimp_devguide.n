@@ -246,9 +246,13 @@ crimp_devguide \- CRIMP - The Developer's Guide
 .SH SYNOPSIS
 \fBcrimp\fR
 .sp
+\fBappdir\fR
+.sp
 \fBbase\fR ?\fIN\fR?
 .sp
 \fBbases\fR
+.sp
+\fBdemodir\fR
 .sp
 \fBthebases\fR
 .sp
@@ -864,6 +868,10 @@ functionality. All known crimp packages are loaded, i.e.
 \fBcrimp::ppm\fR
 .RE
 .TP
+\fBappdir\fR
+Returns the path of the directory the demo application is
+contained in.
+.TP
 \fBbase\fR ?\fIN\fR?
 Returns the N'th image selected by the user. Counted from 0.
 If not specified 'N' defaults 0.
@@ -871,6 +879,10 @@ If not specified 'N' defaults 0.
 \fBbases\fR
 Returns the number of selected images. Most useful to the
 \'active' script.
+.TP
+\fBdemodir\fR
+Returns the path of the directory the demo's sources are
+contained in.
 .TP
 \fBthebases\fR
 Returns a list containing all selected images.

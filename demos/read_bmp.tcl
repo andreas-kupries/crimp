@@ -13,6 +13,6 @@ def read_bmp {
 	}
 	show_image [8x [crimp read bmp \
 			    [fileutil::cat -translation binary \
-				 $dir/images/bmpsuite/g08.bmp]]]
+				 [appdir]/images/bmpsuite/g08.bmp]]]
     }
 }

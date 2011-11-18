@@ -9,6 +9,6 @@ def read_ppm2 {
 	    variable K
 	    return [crimp interpolate xy [crimp interpolate xy [crimp interpolate xy $image 2 $K] 2 $K] 2 $K]
 	}
-	show_image [8x [8x [crimp read ppm [fileutil::cat $dir/images/colors.ppm]]]]
+	show_image [8x [8x [crimp read ppm [fileutil::cat [appdir]/images/colors.ppm]]]]
     }
 }

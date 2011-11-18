@@ -147,7 +147,7 @@ interesting commands will be found in the packages built on top of
 this one.</p></li>
 <li><p>The <em>processing</em> section contains a single package as well,
 <b class="package"><a href="crimp.html">crimp</a></b>. Built on top of the <b class="package">crimp::core</b> this
-package provides the majority of CRIMPs power, manipulating and
+package provides the majority of CRIMPs power for manipulating and
 transforming images in a number of ways.</p></li>
 <li><p>The last section, for <em>IO</em>, currently contains five packages,
 each providing the ability to import and/or export CRIMP images from a
@@ -178,6 +178,14 @@ facilities.</p></dd>
 </dl>
 </li>
 </ol>
+<p>The package dependencies are shown in the next image. It is mostly
+as you would exect, with pretty much everything depending the on the
+<b class="package">crimp::core</b> and that depending on nothing but itself.</p>
+<p>Of note however is that the <b class="package">crimp::{ppm,pgm,pfm}</b>
+packages all depend on the main <b class="package"><a href="crimp.html">crimp</a></b> package. They all
+use the <b class="cmd">crimp convert</b> ensemble, enabling them to handle not
+only their natural image types, but a number of others as well.</p>
+<p><img alt="pkg_dependencies" src="../../image/pkg_dependencies.png"></p>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
 <p><a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key4">vector</a></p>

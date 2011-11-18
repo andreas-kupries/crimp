@@ -1,0 +1,43 @@
+hypot_float_grey16
+Tcl_Obj* imageXObj
+Tcl_Obj* imageYObj
+
+/*
+ * Hypot of all pixels of the two input images.
+ */
+
+crimp_image* imageX;
+crimp_image* imageY;
+crimp_image* result;
+int          x, y;
+
+crimp_input (imageXObj, imageX, float);
+crimp_input (imageYObj, imageY, grey16);
+
+if (!crimp_eq_dim (imageX, imageY)) {
+    Tcl_SetResult(interp, "Unable to proceed, expected equally-sized inputs", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_like (imageX);
+
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+
+	FLOATP (result, x, y) = hypot (FLOATP (imageX, x, y),
+				       GREY16 (imageY, x, y));
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

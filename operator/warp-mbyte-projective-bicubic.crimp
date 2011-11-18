@@ -43,8 +43,8 @@ if (!backward) {
 
 result = crimp_geo_warp_init (image, forward, &origx, &origy);
 
-for (y = 0, yt = origy; y < result->h; y++, yt++) {
-    for (x = 0, xt = origx; x < result->w; x++, xt++) {
+for (y = 0, yt = origy; y < crimp_h (result); y++, yt++) {
+    for (x = 0, xt = origx; x < crimp_w (result); x++, xt++) {
 	int ixw, iyw;
 
 	xf = xt;
@@ -66,7 +66,7 @@ for (y = 0, yt = origy; y < result->h; y++, yt++) {
 	iyw --; yf += 1.; yf /= 3.;
 
 #undef  SAMPLE
-#define SAMPLE(dx,dy) ((((ixw+(dx)) < 0) || ((ixw+(dx)) >= image->w) || ((iyw+(dy)) < 0) || ((iyw+(dy)) >= image->h)) ? BLACK : (CH (image, c, (ixw+(dx)), (iyw+(dy)))))
+#define SAMPLE(dx,dy) ((((ixw+(dx)) < 0) || ((ixw+(dx)) >= crimp_w (image)) || ((iyw+(dy)) < 0) || ((iyw+(dy)) >= crimp_h (image))) ? BLACK : (CH (image, c, (ixw+(dx)), (iyw+(dy)))))
 
         for (c = 0; c < 4; ++c) {
 	    double p00 = SAMPLE(0,0);

@@ -1,0 +1,60 @@
+map_grey8
+Tcl_Obj* imageObj
+Tcl_Obj* mapImageObj
+
+/*
+ * This operation is a generalized per-pixel transformation, mapping
+ * pixel values to other pixel values in a completely arbitrary way.
+ * Inversion, partial inversion, histogram equalization, etc. all are
+ * possible through this.
+ *
+ * Important: For the sake of convenience the map is not provided as a
+ * (Tcl) list (of values), or array, but as an _image_ itself, a 256x1
+ * (WxH) grey8. We will have constructors for such images.
+ *
+ * The same approach will be used by the conditional mappers where the
+ * transformation of one channel in a multi-channel image will be
+ * controlled by data in a second channel, this can be represented as
+ * a 256x256 grey8 image, each row the map to be used for one of the
+ * possible controlling values.
+ */
+
+crimp_image*     result;
+crimp_image*     image;
+crimp_image*     map;
+int              x, y;
+
+crimp_input (imageObj,    image, grey8);
+crimp_input (mapImageObj, map,   grey8);
+
+if (!crimp_require_dim (map, 256, 1)) {
+    Tcl_SetResult(interp, "bad image dimension for map, expected 256x1", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_like (image);
+
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+
+	/*
+	 * Run the pixel value of the input image through the map to
+	 * produce the value for the output.
+	 */
+
+      GREY8 (result, x, y) = GREY8 (map, GREY8 (image, x, y), 0);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

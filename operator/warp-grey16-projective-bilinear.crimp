@@ -39,8 +39,8 @@ if (!backward) {
 
 result = crimp_geo_warp_init (image, forward, &origx, &origy);
 
-for (y = 0, yt = origy; y < result->h; y++, yt++) {
-    for (x = 0, xt = origx; x < result->w; x++, xt++) {
+for (y = 0, yt = origy; y < crimp_h (result); y++, yt++) {
+    for (x = 0, xt = origx; x < crimp_w (result); x++, xt++) {
 	int ixw, iyw;
 
 	xf = xt;
@@ -63,9 +63,9 @@ for (y = 0, yt = origy; y < result->h; y++, yt++) {
 	{
             float val = 0;
 	    int ix, iy;
-            for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, image->h); iy++) {
+            for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, crimp_h (image)); iy++) {
                 yf = 1 - yf;
-                for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, image->w); ix++) {
+                for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, crimp_w (image)); ix++) {
                     xf = 1 - xf;
 
 		    val += GREY16 (image, ix, iy) * yf * xf;

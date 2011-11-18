@@ -1,0 +1,38 @@
+noise_speckle_grey32
+Tcl_Obj* imageObj
+double variance
+
+/*
+ * Adding speckle-style (multiplicative) noise to the image.
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          x, y;
+double       temp;
+
+crimp_input (imageObj, image, grey32);
+
+result = crimp_new_float (crimp_w (image), crimp_h (image));
+
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+	temp = GREY32 (image, x, y) / 255.0f;
+
+	FLOATP (result, x, y) = temp +
+	    (sqrt(10.0f * variance) * temp * (RAND_FLOAT() - 0.5f));
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

@@ -1,0 +1,53 @@
+montageh_hsv
+Tcl_Obj* imageLeftObj
+Tcl_Obj* imageRightObj
+
+/*
+ * Place the two images adjacent to each other in the result, from left to
+ * right. The images have to have the same height.
+ */
+
+crimp_image*     result;
+crimp_image*     imageLeft;
+crimp_image*     imageRight;
+int x, y;
+
+crimp_input (imageLeftObj,  imageLeft,  hsv);
+crimp_input (imageRightObj, imageRight, hsv);
+
+if (!crimp_eq_height (imageLeft, imageRight)) {
+    Tcl_SetResult(interp, "image heights do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_hsv (crimp_w (imageLeft) + crimp_w (imageRight), crimp_h (imageLeft));
+
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (imageLeft); x++) {
+
+	H (result, x, y) = H (imageLeft, x, y);
+	S (result, x, y) = S (imageLeft, x, y);
+	V (result, x, y) = V (imageLeft, x, y);
+    }
+}
+
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (imageRight); x++) {
+
+	H (result, crimp_w (imageLeft) + x, y) = H (imageRight, x, y);
+	S (result, crimp_w (imageLeft) + x, y) = S (imageRight, x, y);
+	V (result, crimp_w (imageLeft) + x, y) = V (imageRight, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

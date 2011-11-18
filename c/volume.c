@@ -43,9 +43,15 @@ crimp_vnew (const crimp_imagetype* itype, int w, int h, int d)
     crimp_volume* volume = (crimp_volume*) ckalloc (size);
 
     volume->itype = itype;
-    volume->w     = w;
-    volume->h     = h;
-    volume->d     = d;
+
+    volume->geo.x = 0;
+    volume->geo.y = 0;
+    volume->geo.z = 0;
+
+    volume->geo.w = w;
+    volume->geo.h = h;
+    volume->geo.d = d;
+
     volume->meta  = NULL;
 
     return volume;
@@ -62,9 +68,15 @@ crimp_vnewm (const crimp_imagetype* itype, int w, int h, int d, Tcl_Obj* meta)
     crimp_volume* volume = (crimp_volume*) ckalloc (size);
 
     volume->itype = itype;
-    volume->w     = w;
-    volume->h     = h;
-    volume->d     = d;
+
+    volume->geo.x = 0;
+    volume->geo.y = 0;
+    volume->geo.z = 0;
+
+    volume->geo.w = w;
+    volume->geo.h = h;
+    volume->geo.d = d;
+
     volume->meta  = meta;
 
     if (meta) {
@@ -170,21 +182,21 @@ StringOfVolume (Tcl_Obj* volObjPtr)
     /* volume width */
     {
 	char wstring [20];
-	sprintf (wstring, "%u", cv->w);
+	sprintf (wstring, "%u", cv->geo.w);
 	Tcl_DStringAppendElement (&ds, wstring);
     }
 
     /* volume height */
     {
 	char hstring [20];
-	sprintf (hstring, "%u", cv->h);
+	sprintf (hstring, "%u", cv->geo.h);
 	Tcl_DStringAppendElement (&ds, hstring);
     }
 
     /* volume depth */
     {
 	char dstring [20];
-	sprintf (dstring, "%u", cv->d);
+	sprintf (dstring, "%u", cv->geo.d);
 	Tcl_DStringAppendElement (&ds, dstring);
     }
 

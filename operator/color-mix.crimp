@@ -33,8 +33,8 @@ if (!crimp_require_dim (mix, 3, 3)) {
 result = crimp_new_like (image);
 
 if (image->itype->channels == 4) {
-    for (y = 0; y < result->h; y++) {
-	for (x = 0; x < result->w; x++) {
+    for (y = 0; y < crimp_h (result); y++) {
+	for (x = 0; x < crimp_w (result); x++) {
 
 	    double r = CH (image, 0, x, y);
 	    double g = CH (image, 1, x, y);
@@ -51,8 +51,8 @@ if (image->itype->channels == 4) {
 	}
     }
 } else {
-    for (y = 0; y < result->h; y++) {
-	for (x = 0; x < result->w; x++) {
+    for (y = 0; y < crimp_h (result); y++) {
+	for (x = 0; x < crimp_w (result); x++) {
 
 	    double r = CH (image, 0, x, y);
 	    double g = CH (image, 1, x, y);

@@ -9,20 +9,20 @@ real*        workspace;
 
 crimp_input (imageObj, image, grey8);
 
-result = crimp_new_float (image->w, image->h);
+result = crimp_new_float (crimp_w (image), crimp_h (image));
 
-n = image->w;
-workspace = CRIMP_ALLOC_ARRAY (2*image->w+15, real);
+n = crimp_w (image);
+workspace = CRIMP_ALLOC_ARRAY (2*crimp_w (image)+15, real);
 rffti_ (&n, workspace);
 
-for (y = 0; y < image->h; y++) {
+for (y = 0; y < crimp_h (image); y++) {
     /*
      * Inverse FFT on horizontal scan lines.  We copy each line to the result
      * and then run the iFFT on it in place.  The copying is done with a loop,
      * as we have to cast the greyscale values into proper floats.
      */
 
-    for (x = 0; x < image->w; x++) {
+    for (x = 0; x < crimp_w (image); x++) {
 	FLOATP (result, x, y) = GREY8 (image,  x, y);
     }
 
@@ -33,7 +33,7 @@ for (y = 0; y < image->h; y++) {
      * the FFT routines do not normalize their results.
      */
 
-    for (x = 0; x < image->w; x++) {
+    for (x = 0; x < crimp_w (image); x++) {
 	FLOATP (result, x, y) /= n;
     }
 }

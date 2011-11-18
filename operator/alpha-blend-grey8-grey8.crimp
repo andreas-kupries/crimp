@@ -1,0 +1,51 @@
+alpha_blend_grey8_grey8
+Tcl_Obj* imageForeObj
+Tcl_Obj* imageBackObj
+int alpha
+
+/*
+ * Alpha-based blending of two images, foreground, and background, controlled
+ * by a scalar (and extern) alpha factor.
+ *
+ * alpha is Opacity
+ * 255 <=> Fully opaque      <=> imageF
+ * 0   <=> Fully transparent <=> imageB
+ *
+ * => OUT = F*alpha + B*(1-alpha)
+ */
+
+crimp_image*     result;
+crimp_image*     imageF;
+crimp_image*     imageB;
+int x, y, ralpha;
+
+crimp_input (imageForeObj, imageF, grey8);
+crimp_input (imageBackObj, imageB, grey8);
+
+if (!crimp_eq_dim (imageF, imageB)) {
+    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_like (imageF);
+ralpha = 255 - alpha;
+
+#define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
+
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+	GREY8 (result, x, y) = MIX (GREY8 (imageF, x, y), GREY8 (imageB, x, y));
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

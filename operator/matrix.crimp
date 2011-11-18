@@ -73,8 +73,8 @@ for (i = 0; i < 3; ++i) {
 
 crimp_input (imageObj, image, rgba);
 
-w = image->w;
-h = image->h;
+w = crimp_w (image);
+h = crimp_h (image);
 
 result = crimp_new_like (image);
 

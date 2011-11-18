@@ -10,15 +10,25 @@
 
 /*
  * Structures describing images.
+ *
+ * - A convenient name for a memory block of pixel data
+ * - The geometry (bounding box) of an image.
+ * - The image itself.
  */
 
 typedef unsigned char* crimp_pixel_array;
 
+typedef struct crimp_geometry {
+    int x; /* Location of the image in the infinite 2D plane */
+    int y; /* s.a. */
+    int w; /* Image dimension, width  */
+    int h; /* Image dimension, height */
+} crimp_geometry;
+
 typedef struct crimp_image {
     Tcl_Obj*               meta;     /* Tcl level client data */
     const crimp_imagetype* itype;    /* Reference to type descriptor */
-    int                    w;        /* Image dimension, width  */
-    int                    h;        /* Image dimension, height */
+    crimp_geometry         geo;      /* Image geometry, bounding box */
     unsigned char          pixel[4]; /* Integrated pixel storage */
 } crimp_image;
 
@@ -26,7 +36,7 @@ typedef struct crimp_image {
  * Pixel Access Macros. General access to a 'color' channel.
  */
 
-#define CRIMP_CHAN(iptr,c,x,y) ((c) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define CRIMP_CHAN(iptr,c,x,y) ((c) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
 #define CH(iptr,c,x,y)   (iptr)->pixel [CRIMP_CHAN (iptr,c,x,y)]
 
 /*
@@ -44,16 +54,16 @@ typedef struct crimp_image {
 
 #define SZ(iptr) ((iptr)->itype->size)
 
-#define RED(iptr,x,y)   (0 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
-#define GREEN(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
-#define BLUE(iptr,x,y)  (2 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
-#define ALPHA(iptr,x,y) (3 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define RED(iptr,x,y)   (0 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
+#define GREEN(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
+#define BLUE(iptr,x,y)  (2 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
+#define ALPHA(iptr,x,y) (3 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
 
 #if 0 /* Unoptimized formulas */
-#define RED(iptr,x,y)   (0 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->w)))
-#define GREEN(iptr,x,y) (1 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->w)))
-#define BLUE(iptr,x,y)  (2 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->w)))
-#define ALPHA(iptr,x,y) (3 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->w)))
+#define RED(iptr,x,y)   (0 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->geo.w)))
+#define GREEN(iptr,x,y) (1 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->geo.w)))
+#define BLUE(iptr,x,y)  (2 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->geo.w)))
+#define ALPHA(iptr,x,y) (3 + ((x)*SZ (iptr)) + ((y)*SZ (iptr)*((size_t) (iptr)->geo.w)))
 #endif
 
 #define R(iptr,x,y) (iptr)->pixel [RED   (iptr,x,y)]
@@ -70,7 +80,7 @@ typedef struct crimp_image {
 
 #define CRIMP_INDEX(iptr,x,y) \
     (((x)*SZ (iptr)) + \
-     ((y)*SZ (iptr)*(((size_t) (iptr)->w))))
+     ((y)*SZ (iptr)*(((size_t) (iptr)->geo.w))))
 
 #define GREY8(iptr,x,y)  *((unsigned char*)  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
 #define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
@@ -87,9 +97,9 @@ typedef struct crimp_image {
  * Pixel Access Macros. HSV.
  */
 
-#define HUE(iptr,x,y) (0 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
-#define SAT(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
-#define VAL(iptr,x,y) (2 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define HUE(iptr,x,y) (0 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
+#define SAT(iptr,x,y) (1 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
+#define VAL(iptr,x,y) (2 + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
 
 #define H(iptr,x,y) (iptr)->pixel [HUE (iptr,x,y)]
 #define S(iptr,x,y) (iptr)->pixel [SAT (iptr,x,y)]
@@ -99,8 +109,8 @@ typedef struct crimp_image {
  * Pixel Access Macros. FPCOMPLEX.
  */
 
-#define REAL(iptr,x,y)      (0             + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
-#define IMAGINARY(iptr,x,y) (sizeof(float) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->w)))
+#define REAL(iptr,x,y)      (0             + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
+#define IMAGINARY(iptr,x,y) (sizeof(float) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
 
 #define RE(iptr,x,y) *((float*) &((iptr)->pixel [REAL      (iptr,x,y)]))
 #define IM(iptr,x,y) *((float*) &((iptr)->pixel [IMAGINARY (iptr,x,y)]))
@@ -120,7 +130,19 @@ typedef struct crimp_image {
  */
 
 #define CRIMP_RECT_AREA(w,h) (((size_t) (w)) * (h))
-#define crimp_image_area(iptr) (CRIMP_RECT_AREA ((iptr)->w, (iptr)->h))
+#define crimp_image_area(iptr) (CRIMP_RECT_AREA (crimp_w(iptr), crimp_h(iptr)))
+
+#define crimp_place(image,ix,iy)			\
+    ((image)->geo.x = (ix), (image)->geo.y = (iy))
+
+#define crimp_inside(image,px,py) \
+    ((crimp_x(image) <= (px)) && ((px) < (crimp_x(image) + crimp_w(image))) && \
+     (crimp_y(image) <= (py)) && ((py) < (crimp_y(image) + crimp_h(image))))
+
+#define crimp_x(image) ((image)->geo.x)
+#define crimp_y(image) ((image)->geo.y)
+#define crimp_w(image) ((image)->geo.w)
+#define crimp_h(image) ((image)->geo.h)
 
 /*
  * Convenience macros for the creation of images with predefined image types.
@@ -135,8 +157,8 @@ typedef struct crimp_image {
 #define crimp_new_float(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::float"),   (w), (h)))
 #define crimp_new_fpcomplex(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::fpcomplex"), (w), (h)))
 
-#define crimp_new_like(image)           (crimp_newm ((image)->itype, (image)->w, (image)->h, (image)->meta))
-#define crimp_new_like_transpose(image) (crimp_newm ((image)->itype, (image)->h, (image)->w, (image)->meta))
+#define crimp_new_like(image)           (crimp_newm ((image)->itype, crimp_w(image), crimp_h(image), (image)->meta))
+#define crimp_new_like_transpose(image) (crimp_newm ((image)->itype, crimp_h(image), crimp_w(image), (image)->meta))
 
 /*
  * Convenience macros for input image handling.
@@ -154,22 +176,22 @@ typedef struct crimp_image {
     }
 
 #define crimp_eq_dim(imagea,imageb) \
-    (((imagea)->w == (imageb)->w) && ((imagea)->h == (imageb)->h))
+    (crimp_eq_width(imagea,imageb) && crimp_eq_height(imagea,imageb))
 
 #define crimp_eq_height(imagea,imageb) \
-    ((imagea)->h == (imageb)->h)
+    (crimp_h(imagea) == crimp_h(imageb))
 
 #define crimp_eq_width(imagea,imageb) \
-    ((imagea)->w == (imageb)->w)
+    (crimp_w(imagea) == crimp_w(imageb))
 
 #define crimp_require_dim(image,rw,rh)					\
-    (((image)->w == (rw)) && ((image)->h == (rh)))
+    ((crimp_w(image) == (rw)) && (crimp_h(image) == (rh)))
 
 #define crimp_require_height(image,rh)					\
-    ((image)->h == (rh))
+    (crimp_h(image) == (rh))
 
 #define crimp_require_width(image,rw)					\
-    ((image)->w == (rw))
+    (crimp_w(image) == (rw))
 
 
 /*

@@ -1,0 +1,24 @@
+pixel
+Tcl_Obj* imageObj
+
+crimp_image*   image;
+unsigned char* bytes;
+int            length;
+
+crimp_input_any (imageObj, image);
+
+bytes  = image->pixel;
+length = crimp_image_area(image) * image->itype->size;
+
+Tcl_SetObjResult (interp, Tcl_NewByteArrayObj (bytes, length));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

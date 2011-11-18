@@ -13,8 +13,8 @@ int maxx, minx, maxy, miny;
 
 crimp_input (imageObj, image, grey16);
 
-w = image->w;
-h = image->h;
+w = crimp_w (image);
+h = crimp_h (image);
 n = crimp_image_area (image);
 
 /* 

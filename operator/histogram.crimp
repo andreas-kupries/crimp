@@ -42,14 +42,14 @@ memset (histogram, '\0', maxv * image->itype->channels * sizeof (int));
 #define BUCKET(c,v) histogram [((c) * maxv + (v))]
 
 if (largegrey) {
-    for (y = 0; y < image->h; y++) {
-	for (x = 0; x < image->w; x++) {
+    for (y = 0; y < crimp_h (image); y++) {
+	for (x = 0; x < crimp_w (image); x++) {
 	    BUCKET (0, GREY16 (image, x, y)) ++;
 	}
     }
 } else {
-    for (y = 0; y < image->h; y++) {
-	for (x = 0; x < image->w; x++) {
+    for (y = 0; y < crimp_h (image); y++) {
+	for (x = 0; x < crimp_w (image); x++) {
 	    for (c = 0; c < image->itype->channels; c++) {
 		BUCKET (c, CH (image, c, x, y)) ++;
 	    }

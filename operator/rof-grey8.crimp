@@ -27,7 +27,7 @@ if ((percentile < 0) || (percentile > 10000)) {
     return TCL_ERROR;
 }
 
-result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
+result = crimp_new (image->itype, crimp_w (image) - 2*radius, crimp_h (image) - 2*radius);
 
 /*
  * We are using the method described by Simon Perreault and Patrick Hebert in
@@ -47,8 +47,8 @@ result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
  * yi = yo + radius, yo in (0...w-2*radius)
  */
 
-colhistogram = CRIMP_ALLOC_ARRAY (image->w * 256, int);
-memset (colhistogram,'\0', image->w * 256 * sizeof(int));
+colhistogram = CRIMP_ALLOC_ARRAY (crimp_w (image) * 256, int);
+memset (colhistogram,'\0', crimp_w (image) * 256 * sizeof(int));
 
 n = (2*radius+1);
 n = n * n;
@@ -66,7 +66,7 @@ n = n * n;
 #if 1
 #define CHINDEX(xi,value)   ((xi) * 256 + (value))
 #else
-#define CHINDEX(xi,value)   ((value) * image->w + (xi))
+#define CHINDEX(xi,value)   ((value) * crimp_w (image) + (xi))
 #endif
 #define COLHIST(xi,value) colhistogram [CHINDEX (xi, value)]
 
@@ -121,7 +121,7 @@ n = n * n;
  */
 
 for (yi = 0; yi < 2*radius+1; yi++) {
-    for (xi = 0; xi < image->w; xi++) {
+    for (xi = 0; xi < crimp_w (image); xi++) {
 	UP (xi, GREY8 (image, xi, yi));
     }
 }
@@ -142,7 +142,7 @@ for (xi = 0 ; xi < 2*radius+1; xi++) { ADD (xi); }
  */
 
 GREY8 (result, 0, 0) = crimp_rank (rowhistogram, percentile, n);
-for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
+for (xo = 1, xi = radius+1; xo < crimp_w (result); xo++, xi++) {
     SHIFT_RIGHT (xi);
     GREY8 (result, xo, 0) = crimp_rank (rowhistogram, percentile, n);
 }
@@ -151,7 +151,7 @@ for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
  * With the first row of the result done we can now sweep the remaining lines.
  */
 
-for (yo = 1, yi = radius+1; yo < result->h; yo++, yi++) {
+for (yo = 1, yi = radius+1; yo < crimp_h (result); yo++, yi++) {
 
     /* Re-initialize the row histogram for the line */
     memset (rowhistogram,'\0', 256 * sizeof(int));
@@ -161,7 +161,7 @@ for (yo = 1, yi = radius+1; yo < result->h; yo++, yi++) {
     }
 
     GREY8 (result, 0, yo) = crimp_rank (rowhistogram, percentile, n);
-    for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
+    for (xo = 1, xi = radius+1; xo < crimp_w (result); xo++, xi++) {
 	SHIFT_DOWN  (xi+radius,yi);
 	SHIFT_RIGHT (xi);
 	GREY8 (result, xo, yo) = crimp_rank (rowhistogram, percentile, n);

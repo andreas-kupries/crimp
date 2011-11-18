@@ -1,0 +1,51 @@
+region_sum
+Tcl_Obj* imageObj
+int radius
+
+/*
+ * This primitive assumes that the input image is a summed area table, i.e. an
+ * integral of some image. It computes the sum of pixels in the square region
+ * with radius r centered at point (x,y) as
+ *
+ * S(x,y) = I(x+r,y+r) - I(x-r-1,y-r-1) - I(x+r,y-r-1) + I(x-r-1,y+r)
+ *
+ * The result image is shrunken by radius+1 in all directions.
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          xi, yi, xo, yo, n;
+
+crimp_input (imageObj, image, float);
+
+if (radius <= 0) {
+    Tcl_SetResult(interp, "bad radius, expected positive value", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+n = 2*(radius+1);
+result = crimp_new (image->itype, crimp_w (image) - n, crimp_h (image) - n);
+
+for (yo = 0, yi = radius+1; yo < crimp_h (result); yo++, yi++) {
+    for (xo = 0, xi = radius+1; xo < crimp_w (result); xo++, xi++) {
+
+	FLOATP (result, xo, yo) = 
+	      FLOATP (image, xi+radius,   yi+radius)
+	    + FLOATP (image, xi-radius-1, yi-radius-1)
+	    - FLOATP (image, xi+radius,   yi-radius-1)
+	    - FLOATP (image, xi-radius-1, yi+radius);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

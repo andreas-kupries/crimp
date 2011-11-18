@@ -1,0 +1,44 @@
+join_2complex
+Tcl_Obj* realImageObj
+Tcl_Obj* imaginaryImageObj
+
+crimp_image*     result;
+crimp_image*     real;
+crimp_image*     imaginary;
+int              x, y;
+
+crimp_input (realImageObj,      real,      float);
+crimp_input (imaginaryImageObj, imaginary, float);
+
+if (!crimp_eq_dim (real, imaginary)) {
+    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_fpcomplex (crimp_w (real), crimp_h (real));
+
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+
+	/*
+	 * Assembling the pixels of each color channel from the associated
+	 * input images.
+	 */
+
+	RE (result, x, y) = FLOATP (real,   x, y);
+	IM (result, x, y) = FLOATP (imaginary, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

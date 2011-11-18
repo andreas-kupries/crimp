@@ -1,0 +1,49 @@
+montagev_grey8
+Tcl_Obj* imageTopObj
+Tcl_Obj* imageBottomObj
+
+/*
+ * Place the two images adjacent to each other in the result, from left to
+ * right. The images have to have the same width.
+ */
+
+crimp_image*     result;
+crimp_image*     imageTop;
+crimp_image*     imageBottom;
+int x, y;
+
+crimp_input (imageTopObj,    imageTop,    grey8);
+crimp_input (imageBottomObj, imageBottom, grey8);
+
+if (!crimp_eq_width (imageTop, imageBottom)) {
+    Tcl_SetResult(interp, "image widths do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_grey8 (crimp_w (imageTop), crimp_h (imageTop) + crimp_h (imageBottom));
+
+for (y = 0; y < crimp_h (imageTop); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+
+	GREY8 (result, x, y) = GREY8 (imageTop, x, y);
+    }
+}
+
+for (y = 0; y < crimp_h (imageBottom); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+
+	GREY8 (result, x, crimp_h (imageTop) + y) = GREY8 (imageBottom, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

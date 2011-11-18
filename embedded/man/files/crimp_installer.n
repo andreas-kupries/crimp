@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_installer.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_installer.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -278,11 +278,12 @@ Follow the link for ActiveTcl to find it.
 .PP
 After the installation of ActiveTcl 8.5 in a directory of your
 choice run the command
-.nf
+.CS
+
 
     teacup update
 
-.fi
+.CE
 This will install a lot more packages than found in the distribution
 alone.
 (Disclosure: I, Andreas Kupries, work for ActiveState, maintaining
@@ -321,11 +322,12 @@ When not using a starkit, you have to get and install the sources per
 the instructions at the site, i.e. \fIhttp://jcw.github.com/critcl\fR.
 .SH "BUILD & INSTALLATION"
 To install CRIMP simply run
-.nf
+.CS
+
 
     /path/to/tclsh8.5 /path/to/crimp/build.tcl install
 
-.fi
+.CE
 where "\fI/path/to/tclsh8.5\fR" is the tclsh of your Tcl installation, and
 "\fI/path/to/crimp\fR" the location of the CRIMP sources on your system.
 .PP
@@ -342,11 +344,12 @@ any arguments.
 .PP
 To get help about the methods of "\fIbuild.tcl\fR", and their complete
 syntax, invoke  "\fIbuild.tcl\fR" with argument \fBhelp\fR, i.e., like
-.nf
+.CS
+
 
     /path/to/tclsh8.5 /path/to/crimp/build.tcl help
 
-.fi
+.CE
 .SH KEYWORDS
 computer vision, document processing, image, matrix, photo, vector
 .SH COPYRIGHT

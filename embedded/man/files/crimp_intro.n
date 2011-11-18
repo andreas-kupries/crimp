@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_intro.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_intro.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -276,7 +276,7 @@ this one.
 .IP [2]
 The \fIprocessing\fR section contains a single package as well,
 \fBcrimp\fR. Built on top of the \fBcrimp::core\fR this
-package provides the majority of CRIMPs power, manipulating and
+package provides the majority of CRIMPs power for manipulating and
 transforming images in a number of ways.
 .IP [3]
 The last section, for \fIIO\fR, currently contains five packages,
@@ -311,6 +311,34 @@ photo images and vice versa. This is the \fIonly\fR package in the
 whole set which is dependent on the \fBTk\fR package and its
 facilities.
 .RE
+.PP
+The package dependencies are shown in the next image. It is mostly
+as you would exect, with pretty much everything depending the on the
+\fBcrimp::core\fR and that depending on nothing but itself.
+.PP
+Of note however is that the \fBcrimp::{ppm,pgm,pfm}\fR
+packages all depend on the main \fBcrimp\fR package. They all
+use the \fBcrimp convert\fR ensemble, enabling them to handle not
+only their natural image types, but a number of others as well.
+.PP
+.PS
+.nf
+crimp::bmp -----------------\\
+                             \\
+crimp::ppm ------\\----------\\ \\
+                 |          | |
+                 V          V V
+crimp::ppm ---> crimp ---> crimp::core
+          \\      ^         ^ ^ ^
+           \\     |         | | |
+            \\--------------/ | |
+                 |           | |
+crimp::pfm ------/-----------/ /
+                              /
+crimp::tk -------------------/
+
+.fi
+.PE
 .PP
 .SH KEYWORDS
 computer vision, document processing, image, matrix, photo, vector

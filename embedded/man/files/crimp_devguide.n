@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -287,17 +287,19 @@ etc.
 For a demonstration of CRIMP's current abilities see the
 "\fIdemos.tcl\fR" application. Within the crimp source directory run it
 as
-.nf
+.CS
+
 
     tclsh8.5 demos.tcl
 
-.fi
+.CE
 or
-.nf
+.CS
+
 
     tclsh8.5 demos.tcl /path/to/crimp/packages ...
 
-.fi
+.CE
 If CRIMP's packages have already been installed, or can be found in
 one of the paths provided as arguments, then this will simply start
 the application.
@@ -363,13 +365,15 @@ allocated as (static, i.e. non-public) global variables.
 .PP
 The named \fIimage_type\fRs declare the structure of image pixels, i.e. how
 many channels they have, their names, and the number of bytes per channel. This can
-be queried at Tcl level.
+be queried at Tcl level. The relevant declarations and definitions are in the files
+"\fIc/image_type.h\fR" and "\fIc/image_type.c\fR".
 .PP
 Regarding the \fIimage\fRs themselves, each is represented by a single
 heap-allocated structure with references to the type, i.e. pixel structure, and
 user-specified meta data (held by a standard \fITcl_Obj\fR of type \fIdictionary\fR),
 dimensions, and the pixel data itself. The latter is part of the structure, and not
-allocated separately.
+allocated separately. The relevant declarations and definitions are in the files
+"\fIc/image.h\fR" and "\fIc/image.c\fR".
 .PP
 From the Tcl level, i.e. string representation, things looks a bit differently
 .PP
@@ -700,7 +704,8 @@ the file, contain the C code implementing the primitive.
 .PP
 As an example, here are the contents of the "\fI.crimp\fR" file for one of
 the primitives with one of the smallest implementations:
-.nf
+.CS
+
 
 [1]     width
 [2]     Tcl_Obj* imageObj
@@ -712,7 +717,7 @@ the primitives with one of the smallest implementations:
 [8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (image->w));
 [9]     return TCL_OK;
 
-.fi
+.CE
 Line 1 contains the name of the primitive, "width".
 Line 2 is the first line of the argument block.
 Line 3 terminates this argument block.
@@ -900,6 +905,7 @@ by demos. These are:
 .IP \(bu
 .bottom
 .RE
+.IP
 These widgets are ttk::frames placed to the left, right, top and
 bottom of the demo result area and usually empty. The demo can put
 its own interface elements there, buttons, sliders, plots, etc. pp.

@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_sources.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_sources.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -284,19 +284,21 @@ Binaries for popular platforms can be found directly at its
 \fIdownload page\fR [http://www.fossil-scm.org/download.html].
 .PP
 With that tool available the full history can be retrieved via:
-.nf
+.CS
+
 
     fossil clone  http://chiselapp.com/user/andreas_kupries/repository/crimp  crimp.fossil
 
-.fi
+.CE
 followed by
-.nf
+.CS
+
 
     mkdir crimp
     cd crimp
     fossil open ../crimp.fossil
 
-.fi
+.CE
 to get a checkout of the head of the trunk.
 .SH KEYWORDS
 computer vision, document processing, image, matrix, photo, vector

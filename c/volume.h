@@ -46,6 +46,10 @@ typedef struct crimp_volume {
  * Convenience macros for the creation of volumes with predefined image types.
  */
 
+#define crimp_vnew_atg(type,g)       (crimp_vnew_at  ((type), (g).x, (g).y, (g).z, (g).w, (g).h, (g).d))
+#define crimp_vnew(type,w,h,d)       (crimp_vnew_at  ((type), 0, 0, 0, (w), (h), (d)))
+#define crimp_vnewm(type,w,h,d,meta) (crimp_vnewm_at ((type), 0, 0, 0, (w), (h), (d), (meta)))
+
 #define crimp_vnew_hsv(w,h,d)       (crimp_vnew (crimp_imagetype_find ("crimp::image::hsv"),     (w), (h), (d)))
 #define crimp_vnew_rgba(w,h,d)      (crimp_vnew (crimp_imagetype_find ("crimp::image::rgba"),    (w), (h), (d)))
 #define crimp_vnew_rgb(w,h,d)       (crimp_vnew (crimp_imagetype_find ("crimp::image::rgb"),     (w), (h), (d)))

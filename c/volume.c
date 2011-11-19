@@ -33,7 +33,7 @@ static Tcl_ObjType VolumeType = {
  */
 
 crimp_volume*
-crimp_vnew (const crimp_imagetype* itype, int w, int h, int d)
+crimp_vnew_at (const crimp_imagetype* itype, int x, int y, int z, int w, int h, int d)
 {
     /*
      * Note: Pixel storage and header describing it are allocated together.
@@ -44,9 +44,9 @@ crimp_vnew (const crimp_imagetype* itype, int w, int h, int d)
 
     volume->itype = itype;
 
-    volume->geo.x = 0;
-    volume->geo.y = 0;
-    volume->geo.z = 0;
+    volume->geo.x = x;
+    volume->geo.y = y;
+    volume->geo.z = z;
 
     volume->geo.w = w;
     volume->geo.h = h;
@@ -58,7 +58,7 @@ crimp_vnew (const crimp_imagetype* itype, int w, int h, int d)
 }
 
 crimp_volume*
-crimp_vnewm (const crimp_imagetype* itype, int w, int h, int d, Tcl_Obj* meta)
+crimp_vnewm_at (const crimp_imagetype* itype, int x, int y, int z, int w, int h, int d, Tcl_Obj* meta)
 {
     /*
      * Note: Pixel storage and header describing it are allocated together.
@@ -69,9 +69,9 @@ crimp_vnewm (const crimp_imagetype* itype, int w, int h, int d, Tcl_Obj* meta)
 
     volume->itype = itype;
 
-    volume->geo.x = 0;
-    volume->geo.y = 0;
-    volume->geo.z = 0;
+    volume->geo.x = x;
+    volume->geo.y = y;
+    volume->geo.z = z;
 
     volume->geo.w = w;
     volume->geo.h = h;

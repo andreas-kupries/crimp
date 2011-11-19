@@ -33,7 +33,7 @@ static Tcl_ObjType ImageType = {
  */
 
 crimp_image*
-crimp_new (const crimp_imagetype* itype, int w, int h)
+crimp_new_at (const crimp_imagetype* itype, int x, int y, int w, int h)
 {
     /*
      * Note: Pixel storage and header describing it are allocated together.
@@ -44,8 +44,8 @@ crimp_new (const crimp_imagetype* itype, int w, int h)
 
     image->itype = itype;
 
-    image->geo.x = 0;
-    image->geo.y = 0;
+    image->geo.x = x;
+    image->geo.y = y;
 
     image->geo.w = w;
     image->geo.h = h;
@@ -56,7 +56,7 @@ crimp_new (const crimp_imagetype* itype, int w, int h)
 }
 
 crimp_image*
-crimp_newm (const crimp_imagetype* itype, int w, int h, Tcl_Obj* meta)
+crimp_newm_at (const crimp_imagetype* itype, int x, int y, int w, int h, Tcl_Obj* meta)
 {
     /*
      * Note: Pixel storage and header describing it are allocated together.
@@ -67,8 +67,8 @@ crimp_newm (const crimp_imagetype* itype, int w, int h, Tcl_Obj* meta)
 
     image->itype = itype;
 
-    image->geo.x = 0;
-    image->geo.y = 0;
+    image->geo.x = x;
+    image->geo.y = y;
 
     image->geo.w = w;
     image->geo.h = h;

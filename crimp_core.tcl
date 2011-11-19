@@ -100,17 +100,22 @@ critcl::api function int crimp_get_imagetype_from_obj {
 ## image.h
 
 # API :: Core. Image lifecycle management.
-critcl::api function crimp_image* crimp_new {
+critcl::api function crimp_image* crimp_new_at {
     {const crimp_imagetype*} type
+    int x
+    int y
     int w
     int h
 }
-critcl::api function crimp_image* crimp_newm {
+critcl::api function crimp_image* crimp_newm_at {
     {const crimp_imagetype*} type
+    int x
+    int y
     int w
     int h
     Tcl_Obj* meta
 }
+
 critcl::api function crimp_image* crimp_dup  {
     crimp_image* image
 }
@@ -132,19 +137,26 @@ critcl::api function int crimp_get_image_from_obj {
 ## volume.h
 
 # API :: Core. Volume lifecycle management.
-critcl::api function crimp_volume* crimp_vnew {
+critcl::api function crimp_volume* crimp_vnew_at {
     {const crimp_imagetype*} type
+    int x
+    int y
+    int z
     int w
     int h
     int d
 }
-critcl::api function crimp_volume* crimp_vnewm {
+critcl::api function crimp_volume* crimp_vnewm_at {
     {const crimp_imagetype*} type
+    int x
+    int y
+    int z
     int w
     int h
     int d
     Tcl_Obj* meta
 }
+
 critcl::api function crimp_volume* crimp_vdup {
     crimp_volume* volume
 }

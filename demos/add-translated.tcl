@@ -1,5 +1,5 @@
-def op_add {
-    label Add
+def op_add_translated {
+    label Add/Translated
     active {
 	expr { [bases] == 2 }
     }
@@ -14,7 +14,10 @@ def op_add {
 	    variable scale
 	    variable offset
 
-	    show_image [crimp alpha opaque [crimp add [base 0] [base 1] $scale $offset]]
+	    show_image [crimp alpha opaque [crimp add \
+						[crimp place [base 0] -50 -50] \
+						[crimp place [base 1] 60 70 ] \
+						$scale $offset]]
 	    return
 	}
 

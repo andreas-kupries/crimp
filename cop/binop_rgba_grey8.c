@@ -1,25 +1,62 @@
 crimp_image*     result;
 crimp_image*     imageA;
 crimp_image*     imageB;
-int x, y;
+int px, py, lx, ly, oxa, oya, oxb, oyb;
+crimp_geometry bb;
 
 crimp_input (imageAObj, imageA, rgba);
 crimp_input (imageBObj, imageB, grey8);
 
-if (!crimp_eq_dim (imageA, imageB)) {
-    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
-    return TCL_ERROR;
-}
+/*
+ * Compute union area of the two images to process.
+ * Note how the images do not have to match in size.
+ */
 
-result = crimp_new_like (imageA);
+crimp_rect_union (&imageA->geo, &imageB->geo, &bb);
 
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
+result = crimp_new_rgba_at (bb.x, bb.y, bb.w, bb.h);
+oxa = crimp_x (imageA);
+oya = crimp_y (imageA);
+oxb = crimp_x (imageB);
+oyb = crimp_y (imageB);
 
-	R (result, x, y) = BINOP (R (imageA, x, y), GREY8 (imageB, x, y));
-	G (result, x, y) = BINOP (G (imageA, x, y), GREY8 (imageB, x, y));
-	B (result, x, y) = BINOP (B (imageA, x, y), GREY8 (imageB, x, y));
-	A (result, x, y) = A (imageA, x, y);
+/*
+ * x, y are physical coordinates in the result, starting from 0.
+ * The associated logical coordinates in the 2D plane are
+ *  lx = px + x(result)
+ *  lx = py + y(result)
+ * And when we are inside an input its physical coordinates, from the logical are
+ *  px = lx - x(input)
+ *  py = ly - y(input)
+ */
+
+for (py = 0; py < bb.h; py++) {
+    for (px = 0; px < bb.w; px++) {
+
+        int lx = px + bb.x;
+        int ly = py + bb.y;
+
+	int ina = crimp_inside (imageA, lx, ly);
+	int inb = crimp_inside (imageB, lx, ly);
+
+	/*
+	 * The result depends on where we are relative to both input.
+	 * Inside of each input we take the respective value of the
+	 * pixel. Outside of an input we take BLACK as the value
+	 * instead.
+	 */
+
+	int    a_r = ina ? R (imageA, lx - oxa, ly - oya) : BLACK;
+	int    a_g = ina ? G (imageA, lx - oxa, ly - oya) : BLACK;
+	int    a_b = ina ? B (imageA, lx - oxa, ly - oya) : BLACK;
+	int    a_a = ina ? A (imageA, lx - oxa, ly - oya) : BLACK;
+	int    b_v = inb ? GREY8 (imageB, lx - oxb, ly - oyb) : BLACK;
+	int    b_a = inb ? OPAQUE : BLACK;
+	
+	R (result, px, py) = BINOP (a_r, b_v);
+	G (result, px, py) = BINOP (a_g, b_v);
+	B (result, px, py) = BINOP (a_b, b_v);
+	A (result, px, py) = MAX   (a_a, b_a);
     }
 }
 

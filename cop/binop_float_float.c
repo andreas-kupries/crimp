@@ -1,7 +1,7 @@
 crimp_image*     result;
 crimp_image*     imageA;
 crimp_image*     imageB;
-int x, y;
+int px, py, lx, ly, oxa, oya, oxb, oyb;
 crimp_geometry bb;
 
 crimp_input (imageAObj, imageA, float);
@@ -15,34 +15,41 @@ crimp_input (imageBObj, imageB, float);
 crimp_rect_union (&imageA->geo, &imageB->geo, &bb);
 
 result = crimp_new_float_at (bb.x, bb.y, bb.w, bb.h);
+oxa = crimp_x (imageA);
+oya = crimp_y (imageA);
+oxb = crimp_x (imageB);
+oyb = crimp_y (imageB);
 
-/* x, y are physical coordinates, starting from 0.
- * The logical coordinates are
- *  x + x(image)
- *  y + y(image)
+/*
+ * x, y are physical coordinates in the result, starting from 0.
+ * The associated logical coordinates in the 2D plane are
+ *  lx = px + x(result)
+ *  lx = py + y(result)
+ * And when we are inside an input its physical coordinates, from the logical are
+ *  px = lx - x(input)
+ *  py = ly - y(input)
  */
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
 
-	int ina = crimp_inside (imageA, x + crimp_x (imageA), y + crimp_y (imageA));
-	int inb = crimp_inside (imageB, x + crimp_x (imageB), y + crimp_y (imageB));
+for (py = 0; py < bb.h; py++) {
+    for (px = 0; px < bb.w; px++) {
+
+        int lx = px + bb.x;
+        int ly = py + bb.y;
+
+	int ina = crimp_inside (imageA, lx, ly);
+	int inb = crimp_inside (imageB, lx, ly);
 
 	/*
-	 * The result depends on where we are relative to both input.  Inside
-	 * of both the input pixels are properly combined. Inside of one, but
-	 * not the other the other is assumed to be black. Outside both the
-	 * result is made from assuming both as black.
+	 * The result depends on where we are relative to both input.
+	 * Inside of each input we take the respective value of the
+	 * pixel. Outside of an input we take BLACK as the value
+	 * instead.
 	 */
 
-	if (ina && inb) {
-	    FLOATP (result, x, y) = BINOP (FLOATP (imageA, x, y), FLOATP (imageB, x, y));
-	} else if (ina) {
-	    FLOATP (result, x, y) = BINOP (FLOATP (imageA, x, y), BLACK);
-	} else if (inb) {
-	    FLOATP (result, x, y) = BINOP (BLACK, FLOATP (imageB, x, y));
-	} else {
-	    FLOATP (result, x, y) = BINOP (BLACK, BLACK);
-	}
+	double a_v = ina ? FLOATP (imageA, lx - oxa, ly - oya) : BLACK;
+	double b_v = inb ? FLOATP (imageB, lx - oxb, ly - oyb) : BLACK;
+	
+	FLOATP (result, px, py) = BINOP (a_v, b_v);
     }
 }
 

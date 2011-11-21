@@ -4,8 +4,8 @@ crimp_image*     imageB;
 int px, py, lx, ly, oxa, oya, oxb, oyb;
 crimp_geometry bb;
 
-crimp_input (imageAObj, imageA, float);
-crimp_input (imageBObj, imageB, grey32);
+crimp_input (imageAObj, imageA, grey32);
+crimp_input (imageBObj, imageB, fpcomplex);
 
 /*
  * Compute union area of the two images to process.
@@ -14,7 +14,7 @@ crimp_input (imageBObj, imageB, grey32);
 
 crimp_rect_union (&imageA->geo, &imageB->geo, &bb);
 
-result = crimp_new_float_at (bb.x, bb.y, bb.w, bb.h);
+result = crimp_new_fpcomplex_at (bb.x, bb.y, bb.w, bb.h);
 oxa = crimp_x (imageA);
 oya = crimp_y (imageA);
 oxb = crimp_x (imageB);
@@ -46,10 +46,12 @@ for (py = 0; py < bb.h; py++) {
 	 * instead.
 	 */
 
-	double a_v = ina ? FLOATP (imageA, lx - oxa, ly - oya) : BLACK;
-	int    b_v = inb ? GREY32 (imageB, lx - oxb, ly - oyb) : BLACK;
+	int    a_v = ina ? GREY32 (imageA, lx - oxa, ly - oya) : BLACK;
+	double b_re = inb ? RE (imageB, lx - oxb, ly - oyb) : BLACK;
+	double b_im = inb ? IM (imageB, lx - oxb, ly - oyb) : BLACK;
 	
-	FLOATP (result, px, py) = BINOP (a_v, b_v);
+	RE (result, px, py) = BINOP (a_v, b_re);
+	IM (result, px, py) = BINOP (a_v, b_im);
     }
 }
 

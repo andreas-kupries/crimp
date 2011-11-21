@@ -1,22 +1,55 @@
 crimp_image*     result;
 crimp_image*     imageA;
 crimp_image*     imageB;
-int x, y;
+int px, py, lx, ly, oxa, oya, oxb, oyb;
+crimp_geometry bb;
 
 crimp_input (imageAObj, imageA, float);
 crimp_input (imageBObj, imageB, grey16);
 
-if (!crimp_eq_dim (imageA, imageB)) {
-    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
-    return TCL_ERROR;
-}
+/*
+ * Compute union area of the two images to process.
+ * Note how the images do not have to match in size.
+ */
 
-result = crimp_new_like (imageA);
+crimp_rect_union (&imageA->geo, &imageB->geo, &bb);
 
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
+result = crimp_new_float_at (bb.x, bb.y, bb.w, bb.h);
+oxa = crimp_x (imageA);
+oya = crimp_y (imageA);
+oxb = crimp_x (imageB);
+oyb = crimp_y (imageB);
 
-	FLOATP (result, x, y) = BINOP (FLOATP (imageA, x, y), GREY16 (imageB, x, y));
+/*
+ * x, y are physical coordinates in the result, starting from 0.
+ * The associated logical coordinates in the 2D plane are
+ *  lx = px + x(result)
+ *  lx = py + y(result)
+ * And when we are inside an input its physical coordinates, from the logical are
+ *  px = lx - x(input)
+ *  py = ly - y(input)
+ */
+
+for (py = 0; py < bb.h; py++) {
+    for (px = 0; px < bb.w; px++) {
+
+        int lx = px + bb.x;
+        int ly = py + bb.y;
+
+	int ina = crimp_inside (imageA, lx, ly);
+	int inb = crimp_inside (imageB, lx, ly);
+
+	/*
+	 * The result depends on where we are relative to both input.
+	 * Inside of each input we take the respective value of the
+	 * pixel. Outside of an input we take BLACK as the value
+	 * instead.
+	 */
+
+	double a_v = ina ? FLOATP (imageA, lx - oxa, ly - oya) : BLACK;
+	int    b_v = inb ? GREY16 (imageB, lx - oxb, ly - oyb) : BLACK;
+	
+	FLOATP (result, px, py) = BINOP (a_v, b_v);
     }
 }
 

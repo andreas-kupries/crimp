@@ -1,5 +1,5 @@
-def op_alpha_over_revers {
-    label {Over Revers}
+def op_alpha_over_revers_translated {
+    label {Over Revers/Translated}
     active { expr { [bases] == 2 } }
     setup_image {
 	# We use the foreground image's luma as opacity (bright =
@@ -9,9 +9,11 @@ def op_alpha_over_revers {
 
 	show_image [crimp convert 2rgb \
 			[crimp alpha over \
-			     [crimp alpha set \
-				  [base 1] \
-				  [crimp convert 2grey8 [base 1]]] \
-			     [base 0]]]
+			     [crimp place \
+				  [crimp alpha set \
+				       [base 1] \
+				       [crimp convert 2grey8 [base 1]]] \
+				  60 70] \
+			     [crimp place [base 0] -50 -50]]]
     }
 }

@@ -15,7 +15,7 @@ def op_add_translated {
 	    show_image [crimp alpha opaque \
 			    [crimp add \
 				 [crimp place [base 0] -50 -50] \
-				 [crimp place [base 1] 60 70 ] \
+				 [crimp place [base 1]  60  70] \
 				 $scale $offset]]
 	    return
 	}

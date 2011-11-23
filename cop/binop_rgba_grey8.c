@@ -2,6 +2,7 @@ crimp_image*     result;
 crimp_image*     imageA;
 crimp_image*     imageB;
 int px, py, lx, ly, oxa, oya, oxb, oyb;
+int pxa, pya, pxb, pyb;
 crimp_geometry bb;
 
 crimp_input (imageAObj, imageA, rgba);
@@ -26,15 +27,19 @@ oyb = crimp_y (imageB);
  *  lx = px + x(result)
  *  lx = py + y(result)
  * And when we are inside an input its physical coordinates, from the logical are
- *  px = lx - x(input)
- *  py = ly - y(input)
+ *  px' = lx - x(input)
+ *  py' = ly - y(input)
+ * Important to note, we can compute all these directly as loop variables, as
+ * they are all linearly related to each other.
  */
 
-for (py = 0; py < bb.h; py++) {
-    for (px = 0; px < bb.w; px++) {
+for (py = 0, ly = bb.y, pya = bb.y - oya, pyb = bb.y - oyb;
+     py < bb.h;
+     py++, ly++, pya++, pyb++) {
 
-        int lx = px + bb.x;
-        int ly = py + bb.y;
+    for (px = 0, lx = bb.x, pxa = bb.x - oxa, pxb = bb.x - oxb;
+	 px < bb.w;
+	 px++, lx++, pxa++, pxb++) {
 
 	int ina = crimp_inside (imageA, lx, ly);
 	int inb = crimp_inside (imageB, lx, ly);
@@ -46,11 +51,11 @@ for (py = 0; py < bb.h; py++) {
 	 * instead.
 	 */
 
-	int    a_r = ina ? R (imageA, lx - oxa, ly - oya) : BLACK;
-	int    a_g = ina ? G (imageA, lx - oxa, ly - oya) : BLACK;
-	int    a_b = ina ? B (imageA, lx - oxa, ly - oya) : BLACK;
-	int    a_a = ina ? A (imageA, lx - oxa, ly - oya) : BLACK;
-	int    b_v = inb ? GREY8 (imageB, lx - oxb, ly - oyb) : BLACK;
+	int    a_r = ina ? R (imageA, pxa, pya) : BLACK;
+	int    a_g = ina ? G (imageA, pxa, pya) : BLACK;
+	int    a_b = ina ? B (imageA, pxa, pya) : BLACK;
+	int    a_a = ina ? A (imageA, pxa, pya) : BLACK;
+	int    b_v = inb ? GREY8 (imageB, pxb, pyb) : BLACK;
 	int    b_a = inb ? OPAQUE : BLACK;
 	
 	R (result, px, py) = BINOP (a_r, b_v);

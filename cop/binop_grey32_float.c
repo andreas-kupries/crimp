@@ -2,6 +2,7 @@ crimp_image*     result;
 crimp_image*     imageA;
 crimp_image*     imageB;
 int px, py, lx, ly, oxa, oya, oxb, oyb;
+int pxa, pya, pxb, pyb;
 crimp_geometry bb;
 
 crimp_input (imageAObj, imageA, grey32);
@@ -26,15 +27,19 @@ oyb = crimp_y (imageB);
  *  lx = px + x(result)
  *  lx = py + y(result)
  * And when we are inside an input its physical coordinates, from the logical are
- *  px = lx - x(input)
- *  py = ly - y(input)
+ *  px' = lx - x(input)
+ *  py' = ly - y(input)
+ * Important to note, we can compute all these directly as loop variables, as
+ * they are all linearly related to each other.
  */
 
-for (py = 0; py < bb.h; py++) {
-    for (px = 0; px < bb.w; px++) {
+for (py = 0, ly = bb.y, pya = bb.y - oya, pyb = bb.y - oyb;
+     py < bb.h;
+     py++, ly++, pya++, pyb++) {
 
-        int lx = px + bb.x;
-        int ly = py + bb.y;
+    for (px = 0, lx = bb.x, pxa = bb.x - oxa, pxb = bb.x - oxb;
+	 px < bb.w;
+	 px++, lx++, pxa++, pxb++) {
 
 	int ina = crimp_inside (imageA, lx, ly);
 	int inb = crimp_inside (imageB, lx, ly);
@@ -46,8 +51,8 @@ for (py = 0; py < bb.h; py++) {
 	 * instead.
 	 */
 
-	int    a_v = ina ? GREY32 (imageA, lx - oxa, ly - oya) : BLACK;
-	double b_v = inb ? FLOATP (imageB, lx - oxb, ly - oyb) : BLACK;
+	int    a_v = ina ? GREY32 (imageA, pxa, pya) : BLACK;
+	double b_v = inb ? FLOATP (imageB, pxb, pyb) : BLACK;
 	
 	FLOATP (result, px, py) = BINOP (a_v, b_v);
     }

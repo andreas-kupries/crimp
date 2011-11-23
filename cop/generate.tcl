@@ -53,11 +53,11 @@ proc retrieve {type input image zero {expand 0} {alpha {}}} {
 
     set vprefix ${input}_
     set guard   in$input
-    set ox      ox$input
-    set oy      oy$input
+    set ox      px$input
+    set oy      py$input
 
     foreach {get var} $accessor($type) {
-	lappend lines "$ctype($type) $vprefix$var = $guard ? $get ($image, lx - $ox, ly - $oy) : $zero;"
+	lappend lines "$ctype($type) $vprefix$var = $guard ? $get ($image, $ox, $oy) : $zero;"
 	lappend variables $vprefix$var
     }
 

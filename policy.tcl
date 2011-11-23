@@ -1370,7 +1370,8 @@ proc ::crimp::crop {image ww hn we hs} {
 
 proc ::crimp::cut {image x y w h} {
     lassign [dimensions $image] iw ih
-
+    if {$x < 0} { set x 0 }
+    if {$y < 0} { set y 0 }
     set south [expr {$y + $h}]
     set east  [expr {$x + $w}]
     if {$south > $ih} { set south $ih }

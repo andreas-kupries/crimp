@@ -9,6 +9,6 @@ def read_strimj {
 	    variable K
 	    return [crimp interpolate xy [crimp interpolate xy [crimp interpolate xy $image 2 $K] 2 $K] 2 $K]
 	}
-	show_image [8x [8x [crimp read strimj [fileutil::cat $dir/images/hello.strimj]]]]
+	show_image [8x [8x [crimp read strimj [fileutil::cat [appdir]/images/hello.strimj]]]]
     }
 }

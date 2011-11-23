@@ -9,6 +9,6 @@ def read_pgm {
 	    variable K
 	    return [crimp interpolate xy [crimp interpolate xy [crimp interpolate xy $image 2 $K] 2 $K] 2 $K]
 	}
-	show_image [8x [8x [crimp read pgm [fileutil::cat $dir/images/feep.pgm]]]]
+	show_image [8x [8x [crimp read pgm [fileutil::cat [appdir]/images/feep.pgm]]]]
     }
 }

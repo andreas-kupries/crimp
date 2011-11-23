@@ -538,7 +538,11 @@ representation.</p>
 <dt><a name="12"><b class="cmd">::crimp</b> <b class="method">cut</b> <i class="arg">image</i> <i class="arg">x</i> <i class="arg">y</i> <i class="arg">w</i> <i class="arg">h</i></a></dt>
 <dd><p>This method cuts the rectangular region specified throught its <i class="arg">x</i>/<i class="arg">y</i>
 position relative to the upper-left corner of the input <i class="arg">image</i> and its
-dimensions, and returns it as its own image.</p></dd>
+dimensions, and returns it as its own image.</p>
+<p>Locations and dimensions reaching outside of the input image
+are restricted to the interior of the input image. This means that
+both location and dimensions of the result may differ from what was
+specified by the arguments.</p></dd>
 <dt><a name="13"><b class="cmd">::crimp</b> <b class="method">decimate xy</b> <i class="arg">image</i> <i class="arg">factor</i> <i class="arg">kernel</i></a></dt>
 <dd></dd>
 <dt><a name="14"><b class="cmd">::crimp</b> <b class="method">decimate x</b> <i class="arg">image</i> <i class="arg">factor</i> <i class="arg">kernel</i></a></dt>

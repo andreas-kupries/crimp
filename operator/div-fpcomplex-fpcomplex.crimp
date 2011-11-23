@@ -25,11 +25,12 @@ result = crimp_new_like (imageA);
 
 for (y = 0; y < crimp_h (result); y++) {
     for (x = 0; x < crimp_w (result); x++) {
-    temp = pow(RE (imageB, x, y) , 2) + pow(IM (imageB, x, y) , 2) ;
+	temp = pow(RE (imageB, x, y) , 2) + pow(IM (imageB, x, y) , 2) ;
 	temp = fabs(temp) <= pow(2,-24) ? WHITE : temp ;
+
 	RE (result, x, y) = (( RE (imageA, x, y) * RE (imageB, x, y) ) + ( IM (imageA, x, y)  * IM (imageB, x, y) ) ) / temp ;
 	IM (result, x, y) = (( RE (imageB, x, y) * IM (imageA, x, y) ) - ( RE (imageA, x, y)  * IM (imageB, x, y) ) ) / temp ;
-	}
+    }
 }
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));

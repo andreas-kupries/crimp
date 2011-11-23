@@ -13,13 +13,16 @@ def read_bmp2 {
 			     [crimp interpolate xy $image 2 $K] 2 $K] 2 $K]
 	}
 
-	proc SHOW {path} {
+	proc SHOW {path label} {
 	    if {[catch {
 		set bmp [crimp read bmp [fileutil::cat -translation binary $path]]
 	    } msg]} {
 		log ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		log BMP\t:$path\t([file size $path])
 		log $msg error
+		if {$label eq "g04rle"} {
+		    log "The error is correct, the image in question is bad." note
+		}
 		log ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		return
 	    }
@@ -33,10 +36,10 @@ def read_bmp2 {
 		set b .left.$ix
 		ttk::button $b \
 		    -text $ix \
-		    -command [list ::DEMO::SHOW $i]
+		    -command [list ::DEMO::SHOW $i $ix]
 		grid $b -row $r -column 0 -sticky swen
 		incr r
 	    }
-	}} [lsort -dict [glob -directory $dir/images/bmpsuite *.bmp]]
+	}} [lsort -dict [glob -directory [appdir]/images/bmpsuite *.bmp]]
     }
 }

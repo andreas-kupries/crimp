@@ -10,7 +10,7 @@ int offset
  * it (modulo).
  */
 
-#define BINOP(a,b) ((((b) == 0 ? WHITE : ((a) / (b))) / scale) + offset)
+#define BINOP(a,b) ((((b) == 0 ? WHITE : (MAXVAL_GREY8 * (a) / (b))) / scale) + offset)
 #include "binop_rgba_grey8.c"
 #undef BINOP
 

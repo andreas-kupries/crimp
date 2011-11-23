@@ -21,7 +21,7 @@ oxb = crimp_x (imageB);
 oyb = crimp_y (imageB);
 
 /*
- * x, y are physical coordinates in the result, starting from 0.
+ * px, py are physical coordinates in the result, starting from 0.
  * The associated logical coordinates in the 2D plane are
  *  lx = px + x(result)
  *  lx = py + y(result)

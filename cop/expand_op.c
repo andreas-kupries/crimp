@@ -14,7 +14,11 @@
 	return TCL_ERROR;
     }
 
-    result = crimp_new (image->itype, crimp_w (image) + ww + we, crimp_h (image) + hn + hs);
+    result = crimp_new_at (image->itype, 
+			   crimp_x (image) - ww,
+			   crimp_y (image) - hn,
+			   crimp_w (image) + ww + we,
+			   crimp_h (image) + hn + hs);
 
     /*
      * Nine quadrants to fill:

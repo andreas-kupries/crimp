@@ -1,8 +1,6 @@
 def op_add {
     label Add
-    active {
-	expr { [bases] == 2 }
-    }
+    active { expr { [bases] == 2 } }
     setup_image {
 	show
     }

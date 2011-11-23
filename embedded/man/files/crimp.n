@@ -944,6 +944,11 @@ V  |      |           |      |
 This method cuts the rectangular region specified throught its \fIx\fR/\fIy\fR
 position relative to the upper-left corner of the input \fIimage\fR and its
 dimensions, and returns it as its own image.
+.sp
+Locations and dimensions reaching outside of the input image
+are restricted to the interior of the input image. This means that
+both location and dimensions of the result may differ from what was
+specified by the arguments.
 .TP
 \fB::crimp\fR \fBdecimate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
 .TP

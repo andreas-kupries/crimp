@@ -161,8 +161,8 @@ typedef struct crimp_image {
 #define crimp_new_float(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::float"),   (w), (h)))
 #define crimp_new_fpcomplex(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::fpcomplex"), (w), (h)))
 
-#define crimp_new_like(image)           (crimp_newm ((image)->itype, crimp_w(image), crimp_h(image), (image)->meta))
-#define crimp_new_like_transpose(image) (crimp_newm ((image)->itype, crimp_h(image), crimp_w(image), (image)->meta))
+#define crimp_new_like(image)           (crimp_newm_at ((image)->itype, crimp_x(image), crimp_y(image), crimp_w(image), crimp_h(image), (image)->meta))
+#define crimp_new_like_transpose(image) (crimp_newm_at ((image)->itype, crimp_x(image), crimp_y(image), crimp_h(image), crimp_w(image), (image)->meta))
 
 #define crimp_new_hsv_at(x,yw,h)        (crimp_new_at (crimp_imagetype_find ("crimp::image::hsv"),       (x), (y), (w), (h)))
 #define crimp_new_rgba_at(x,y,w,h)      (crimp_new_at (crimp_imagetype_find ("crimp::image::rgba"),      (x), (y), (w), (h)))

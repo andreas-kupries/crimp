@@ -32,12 +32,6 @@ pcx_read_header (Tcl_Interp*     interp,
 		 crimp_buffer*   buf,
 		 pcx_info*       info)
 {
-    unsigned int   fsize, pixOffset, c, w, nMap;
-    unsigned int   nBits, compression, nPix, nColors;
-    int            h;
-    int            topdown = 0; /* bottom-up storage, default */
-    unsigned char* colorMap = 0;
-
     /*
      * Reference
      *	http://en.wikipedia.org/wiki/PCX
@@ -125,11 +119,75 @@ pcx_read_header (Tcl_Interp*     interp,
      *
      */
 
+    unsigned int version, compression, numBitsPixelPlane, numPlanes, numBytesLine, reserved;
+    unsigned int left, right, top, bottom;
+    unsigned char* colorMap = 0;
+
     if (!crimp_buf_has   (buf, 128) ||
 	!crimp_buf_match (buf, 1, "\n")) {
 	Tcl_SetResult (interp, "Not a PCX image", TCL_STATIC);
 	return 0;
     }
+
+    crimp_buf_read_uint8    (buf, &version);
+    crimp_buf_read_uint8    (buf, &compression);
+    crimp_buf_read_uint8    (buf, &numBitsPixelPlane);
+    crimp_buf_read_uint16le (buf, &left);
+    crimp_buf_read_uint16le (buf, &right);
+    crimp_buf_read_uint16le (buf, &top);
+    crimp_buf_read_uint16le (buf, &bottom);
+    crimp_buf_skip          (buf, 4);  /* 2x2 h/v DPI. FUTURE: meta data */
+    colorMap = crimp_buf_at (buf);     /* EGA palette. */
+    crimp_buf_skip          (buf, 48); /* Jump EGA palette */
+    crimp_buf_read_uint8    (buf, &reserved);
+    crimp_buf_read_uint8    (buf, &numPlanes);
+    crimp_buf_read_uint16le (buf, &numBytesLine);
+    crimp_buf_skip          (buf, 50); /* Palette type, screen & reserved2 */
+
+    /*
+     * Check the internal consistency of the data retrieved so far.
+     */
+
+    if ((version != 0) &&
+	(version != 2) &&
+	(version != 3) &&
+	(version != 4) &&
+	(version != 5)) {
+	Tcl_SetResult (interp, "Bad PCX image (bad version)", TCL_STATIC);
+	return 0;
+    }
+    if (compression != 1) {
+	Tcl_SetResult (interp, "Bad PCX image (bad encoding)", TCL_STATIC);
+	return 0;
+    }
+    if ((numBitsPixelPlane != 1) &&
+	(numBitsPixelPlane != 2) &&
+	(numBitsPixelPlane != 4) &&
+	(numBitsPixelPlane != 8)) {
+	Tcl_SetResult (interp, "Bad PCX image (bad bits/pixel)", TCL_STATIC);
+	return 0;
+    }
+    if ((numPlanes != 1) &&
+	(numPlanes != 3) &&
+	(numPlanes != 4)) {
+	Tcl_SetResult (interp, "Bad PCX image (bad #planes)", TCL_STATIC);
+	return 0;
+    }
+
+    /*
+     * Save results for caller, including derivatives.
+     */
+
+    info->x             = left;
+    info->y             = top;
+    info->w             = right - left + 1;
+    info->h             = bottom - top + 1;
+    info->colorMap      = colorMap;
+    //info->numColors     = nColors;
+    info->numBits       = numBitsPixelPlane;
+    info->numPlanes     = numPlanes;
+    info->bytesLine     = numBytesLine;
+    info->input         = buf;
 
     return 1;
 }

@@ -1,5 +1,5 @@
-def op_alpha_blend_hsv {
-    label {Blend HSV}
+def op_alpha_blend_hsv_translated {
+    label {Blend HSV/Translated}
     active { expr { [bases] == 2 } }
     setup {
 	# We manage a cache of the blended images to make the
@@ -8,10 +8,10 @@ def op_alpha_blend_hsv {
 	# blends.
 	variable  cache
 	array set cache {}
-	set cache(255) [base 0]
-	set cache(0)   [base 1]
-	variable fore  [crimp convert 2hsv [base 0]]
-	variable back  [crimp convert 2hsv [base 1]]
+	set cache(255) [crimp place [base 0]  50  40]
+	set cache(0)   [crimp place [base 1] -40 -50]
+	variable fore  [crimp place [crimp convert 2hsv [base 0]]  50  40]
+	variable back  [crimp place [crimp convert 2hsv [base 1]] -40 -50]
 	variable alpha 255
 
 	scale .left.s -variable DEMO::alpha \

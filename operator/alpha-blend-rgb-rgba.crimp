@@ -5,7 +5,8 @@ int alpha
 
 /*
  * Alpha-based blending of two images, foreground, and background, controlled
- * by a scalar (and extern) alpha factor.
+ * by a scalar (and extern) alpha factor. The result's alpha is the alpha
+ * factor attenuated by the background's alpha.
  *
  * alpha is Opacity
  * 255 <=> Fully opaque      <=> imageF
@@ -17,31 +18,81 @@ int alpha
 crimp_image*     result;
 crimp_image*     imageF;
 crimp_image*     imageB;
-int x, y, ralpha;
+int ralpha, px, py, oxf, oyf, oxb, oyb;
+crimp_geometry bb;
 
 crimp_input (imageForeObj, imageF, rgb);
 crimp_input (imageBackObj, imageB, rgba);
 
-if (!crimp_eq_dim (imageF, imageB)) {
-    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
-    return TCL_ERROR;
+/* alpha == 255: Should return foreground, but have to return RGBA, not RGB.
+ * Easiest handled by falling through into the actual mixer. Better would be
+ * to have a loop specialized to the operation (clone the RGB, and drop the
+ * alpha).
+ */
+if (alpha == 0) {
+    Tcl_SetObjResult(interp, imageBackObj);
+    return TCL_OK;
 }
 
-result = crimp_new_like (imageF);
+/*
+ * True alpha mixture.
+ */
+
 ralpha = 255 - alpha;
+
+crimp_rect_union (&imageF->geo, &imageB->geo, &bb);
+
+result = crimp_new_rgb_at (bb.x, bb.y, bb.w, bb.h);
+oxf = crimp_x (imageF);
+oyf = crimp_y (imageF);
+oxb = crimp_x (imageB);
+oyb = crimp_y (imageB);
+
+/*
+ * px, py are physical coordinates in the result, starting from 0.
+ * The associated logical coordinates in the 2D plane are
+ *  lx = px + x(result)
+ *  lx = py + y(result)
+ * And when we are inside an input its physical coordinates, from the logical are
+ *  px = lx - x(input)
+ *  py = ly - y(input)
+ */
 
 #define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
 
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-	R (result, x, y) = MIX (R (imageF, x, y), R (imageB, x, y));
-	G (result, x, y) = MIX (G (imageF, x, y), G (imageB, x, y));
-	B (result, x, y) = MIX (B (imageF, x, y), B (imageB, x, y));
+for (py = 0; py < bb.h; py++) {
+    for (px = 0; px < bb.w; px++) {
+
+        int lx = px + bb.x;
+        int ly = py + bb.y;
+
+	int inf = crimp_inside (imageF, lx, ly);
+	int inb = crimp_inside (imageB, lx, ly);
+
+	/*
+	 * The result depends on where we are relative to both input.
+	 * Inside of each input we take the respective value of the
+	 * pixel. Outside of an input we take BLACK as the value
+	 * instead, and TRANSPARENT for the ALPHA.
+	 */
+
+	int forer = inf ? R (imageF, lx - oxf, ly - oyf) : BLACK;
+	int foreg = inf ? G (imageF, lx - oxf, ly - oyf) : BLACK;
+	int foreb = inf ? B (imageF, lx - oxf, ly - oyf) : BLACK;
+
+	int backr = inb ? R (imageB, lx - oxb, ly - oyb) : BLACK;
+	int backg = inb ? G (imageB, lx - oxb, ly - oyb) : BLACK;
+	int backb = inb ? B (imageB, lx - oxb, ly - oyb) : BLACK;
+
+	R (result, px, py) = MIX (forer, backr);
+	G (result, px, py) = MIX (foreg, backg);
+	B (result, px, py) = MIX (foreb, backb);
     }
 }
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;
+#undef MIX
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

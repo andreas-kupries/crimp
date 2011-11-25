@@ -16,8 +16,7 @@ typedef struct pcx_info {
     unsigned int    y;
     unsigned int    w;             /* Image width */
     unsigned int    h;             /* Image height */
-    unsigned char*  colorMap;      /* Palette, NULL if not used */
-    unsigned int    mapEntrySize;  /* #bytes per colorMap entry */
+    unsigned char*  colorMap;      /* Palette */
     unsigned int    numColors;     /* #colors in the palette */
     unsigned int    numBits;       /* bits/pixel/plane */
     unsigned int    numPlanes;     /* number of planes */

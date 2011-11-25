@@ -1,0 +1,43 @@
+read::pcx
+Tcl_Obj* pcxdata
+
+#include "pcx.h"
+
+/*
+ * Reader for images in PCX format (ZSoft Personal Computer eXchange)
+ * See http://en.wikipedia.org/wiki/PCX
+ */
+
+crimp_buffer   buf;
+pcx_info       pcx;
+crimp_image*   result;
+
+/*
+ * Check input, i.e. verify structure and extract dimensions
+ */
+
+crimp_buf_init (&buf, pcxdata);
+if (!pcx_read_header (interp, &buf, &pcx)) {
+    return TCL_ERROR;
+}
+
+/* XXX - Choose output format depending on header information, may be grey */
+
+result = crimp_new_rgb_at (pcx.x, pcx.y, pcx.w, pcx.h);
+
+if (!pcx_read_pixels (&pcx, result)) {
+    Tcl_SetResult (interp, "Bad PCX image (Pixel decode failure)", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

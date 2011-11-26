@@ -1,0 +1,12 @@
+http://www.martinreddy.net/gfx/2d/PCX.txt
+http://www.martinreddy.net/gfx/2d-hi.html
+http://www.daubnet.com/en/file-format-pcx
+http://www.coolutils.com/Formats/PCX
+http://units.tauniverse.com/tutorials/tadesign/tadesign/pcxdesc.htm
+http://www.globalmapper.com/product/formats_raster.htm
+http://en.wikipedia.org/wiki/PCX
+http://www.fileformat.info/format/pcx/index.dir
+http://www.fileformat.info/format/pcx/egff.htm
+http://www.fileformat.info/format/pcx/corion.htm
+
+http://courses.engr.illinois.edu/ece390/books/labmanual/graphics-pcx.html

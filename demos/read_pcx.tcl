@@ -23,7 +23,7 @@ def read_pcx {
 		log ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		return
 	    }
-	    show_image [8x $pcx]
+	    show_image $pcx
 	}
 
 	::apply {{images} {

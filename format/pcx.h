@@ -20,6 +20,7 @@ typedef struct pcx_info {
     unsigned int    numColors;     /* #colors in the palette */
     unsigned int    numBits;       /* bits/pixel/plane */
     unsigned int    numPlanes;     /* number of planes */
+    unsigned int    paletteType;   /* palette color/mono/grey */
     unsigned int    bytesLine;     /* Space needed to decode single scanline */
     crimp_buffer*   input;         /* buffer holding the PCX */
 } pcx_info;
@@ -35,7 +36,7 @@ pcx_read_header (Tcl_Interp*     interp,
 
 extern int
 pcx_read_pixels (pcx_info*      info,
-		 crimp_image*   destination);
+		 crimp_image**  destination);
 
 /*
  * Local Variables:

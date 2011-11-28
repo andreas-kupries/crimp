@@ -21,11 +21,7 @@ if (!pcx_read_header (interp, &buf, &pcx)) {
     return TCL_ERROR;
 }
 
-/* XXX - Choose output format depending on header information, may be grey */
-
-result = crimp_new_rgb (pcx.w, pcx.h);
-
-if (!pcx_read_pixels (&pcx, result)) {
+if (!pcx_read_pixels (&pcx, &result)) {
     Tcl_SetResult (interp, "Bad PCX image (Pixel decode failure)", TCL_STATIC);
     return TCL_ERROR;
 }

@@ -10,3 +10,6 @@ http://www.fileformat.info/format/pcx/egff.htm
 http://www.fileformat.info/format/pcx/corion.htm
 
 http://courses.engr.illinois.edu/ece390/books/labmanual/graphics-pcx.html
+http://www.shikadi.net/moddingwiki/PCX_Format
+http://bespin.org/~qz/pc-gpe/pcx.txt
+http://web.archive.org/web/20030111010058/http://www.nist.fss.ru/hr/doc/spec/pcx.htm

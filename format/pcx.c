@@ -42,6 +42,12 @@ decode_grey8 (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
 static int
 decode_2c (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
 
+static int
+decode_4c (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
+
+static int
+decode_16c (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
+
 static void
 map_color (unsigned char* colorMap, int index, unsigned char* pix);
 
@@ -331,6 +337,20 @@ pcx_read_pixels (pcx_info*      info,
 	result = decode_rgb_raw (info, buf, dst);
 	break;
 
+    case CODE(4,1):
+	TRACE (("PCX (4/1 16 color, EGA palette)\n"));
+
+	dst    = crimp_new_grey8 (info->w, info->h);
+	result = decode_16c (info, buf, dst);
+	break;
+
+    case CODE(2,1):
+	TRACE (("PCX (2/1 4 color, EGA palette)\n"));
+
+	dst    = crimp_new_grey8 (info->w, info->h);
+	result = decode_4c (info, buf, dst);
+	break;
+
     case CODE(1,1):
 	TRACE (("PCX (1/1 BW direct, no palette)\n"));
 
@@ -352,6 +372,110 @@ pcx_read_pixels (pcx_info*      info,
     } 
     return result;
 #undef CODE
+}
+
+static int
+decode_16c (pcx_info*      info,
+	   crimp_buffer*  buf,
+	   crimp_image*   destination)
+{
+    int   scanbytes;
+    unsigned char* scanline;
+    unsigned char* map;
+    int x, y, ok = 1;
+
+    /*
+     * Allocate a buffer for the scanline. Decompress each line and then copy
+     * it over to the destination, unchanged.
+     */
+
+    alloc_line (info, 1, &scanbytes, &scanline);
+
+    map = info->colorMap;
+
+    for (y=0; y < info->h; y++) {
+	TRACE (("PCX DATA %d ", y));
+	if (!decode_line (buf, scanbytes, scanline))
+	    goto error;
+
+	/*
+	 * Now expanding the bits/bytes we got into a stream of palette
+	 * indices and map them through the palette.
+	 */
+
+	TRACE (("PIX: "));
+        for (x = 0; x < info->w; x++) {
+	    int pix;
+	    pix = (scanline [x/2] & (0xf0 >> (4*(x%2)))) >> (4*(x%2));
+	    map_color (map, pix, &R(destination, x, y));
+	    TRACE ((" %d", pix));
+	    /*
+	     * Consider unrolling the above, plus constants for the bitmasks.
+	     * See similar code in the BMP reader.
+	     */
+	}
+	TRACE (("\n"));
+    }
+
+    goto cleanup;
+
+ error:
+    ok = 0;
+ cleanup:
+    ckfree ((char*) scanline);
+    return ok;
+}
+
+static int
+decode_4c (pcx_info*      info,
+	   crimp_buffer*  buf,
+	   crimp_image*   destination)
+{
+    int   scanbytes;
+    unsigned char* scanline;
+    unsigned char* map;
+    int x, y, ok = 1;
+
+    /*
+     * Allocate a buffer for the scanline. Decompress each line and then copy
+     * it over to the destination, unchanged.
+     */
+
+    alloc_line (info, 1, &scanbytes, &scanline);
+
+    map = info->colorMap;
+
+    for (y=0; y < info->h; y++) {
+	TRACE (("PCX DATA %d ", y));
+	if (!decode_line (buf, scanbytes, scanline))
+	    goto error;
+
+	/*
+	 * Now expanding the bits/bytes we got into a stream of palette
+	 * indices and map them through the palette.
+	 */
+
+	TRACE (("PIX: "));
+        for (x = 0; x < info->w; x++) {
+	    int pix;
+	    pix = (scanline [x/4] & (0xf0 >> (2*(x%4)))) >> (2*(x%4));
+	    map_color (map, pix, &R(destination, x, y));
+	    TRACE ((" %d", pix));
+	    /*
+	     * Consider unrolling the above, plus constants for the bitmasks.
+	     * See similar code in the BMP reader.
+	     */
+	}
+	TRACE (("\n"));
+    }
+
+    goto cleanup;
+
+ error:
+    ok = 0;
+ cleanup:
+    ckfree ((char*) scanline);
+    return ok;
 }
 
 static int
@@ -411,9 +535,8 @@ decode_grey8 (pcx_info*      info,
 	      crimp_buffer*  buf,
 	      crimp_image*   destination)
 {
-    int   scanbytes;
+    int            scanbytes;
     unsigned char* scanline;
-    unsigned char* map;
     int x, y, ok = 1;
 
     /*

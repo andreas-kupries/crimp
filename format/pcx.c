@@ -17,7 +17,7 @@
  * Debugging Help. Mainly the RLE decoders.
  */
 
-#define PCX_TRACE 1
+/* #define PCX_TRACE 1 */
 #ifdef PCX_TRACE
 #define TRACE(x) { printf x ; fflush (stdout); }
 #define DUMP(map,n) dump_palette (map,n)
@@ -49,6 +49,15 @@ decode_4c (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
 
 static int
 decode_16c (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
+
+static int
+decode_striped4c (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
+
+static int
+decode_striped8c (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
+
+static int
+decode_striped16c (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
 
 static void
 map_color (unsigned char* colorMap, int index, unsigned char* pix);
@@ -215,17 +224,22 @@ pcx_read_header (Tcl_Interp*     interp,
 	return 0;
     }
     if ((numPlanes != 1) &&
+	(numPlanes != 2) &&
 	(numPlanes != 3) &&
 	(numPlanes != 4)) {
 	Tcl_SetResult (interp, "Bad PCX image (bad #planes)", TCL_STATIC);
 	return 0;
     }
-
-    if (((numBitsPixelPlane == 1) ||
-	 (numBitsPixelPlane == 2) ||
-	 (numBitsPixelPlane == 4)) &&
-	(numPlanes != 1)) {
-
+    if (!(((numPlanes == 1) && ((numBitsPixelPlane == 1) ||
+				(numBitsPixelPlane == 2) ||
+				(numBitsPixelPlane == 4))) ||
+	  ((numBitsPixelPlane == 1) && ((numPlanes == 1) ||
+					(numPlanes == 2) ||
+					(numPlanes == 3) ||
+					(numPlanes == 4))) ||
+	  ((numBitsPixelPlane == 8) && ((numPlanes == 1) ||
+					(numPlanes == 3) ||
+					(numPlanes == 4))))) {
 	/*
 	 * When using less than 8 bits/pixel the image MUST have a single
 	 * plane of pixel values, a stream of palette indices.
@@ -365,6 +379,27 @@ pcx_read_pixels (pcx_info*      info,
 	result = decode_2c (info, buf, dst);
 	break;
 
+    case CODE(1,4):
+	TRACE (("PCX (1/4 16 color striped, EGA palette)\n"));
+
+	dst    = crimp_new_rgb (info->w, info->h);
+	result = decode_striped16c (info, buf, dst);
+	break;
+
+    case CODE(1,3):
+	TRACE (("PCX (1/3 8 color striped, EGA palette)\n"));
+
+	dst    = crimp_new_rgb (info->w, info->h);
+	result = decode_striped8c (info, buf, dst);
+	break;
+
+    case CODE(1,2):
+	TRACE (("PCX (1/2 4 color striped, EGA palette)\n"));
+
+	dst    = crimp_new_rgb (info->w, info->h);
+	result = decode_striped4c (info, buf, dst);
+	break;
+
     default:
 	TRACE (("PCX (%d/%d unknown)\n", info->numBits, info->numPlanes));
 	break;
@@ -382,9 +417,405 @@ pcx_read_pixels (pcx_info*      info,
 }
 
 static int
-decode_16c (pcx_info*      info,
-	   crimp_buffer*  buf,
-	   crimp_image*   destination)
+decode_striped4c (pcx_info*     info,
+		  crimp_buffer* buf,
+		  crimp_image*  destination)
+{
+    int   scanbytes;
+    unsigned char* scanline;
+    unsigned char* msb;
+    unsigned char* lsb;
+    unsigned char* map;
+    int x, y, ok = 1;
+    unsigned int l, la, lb, lc, ld, le, lf, lg, lh;
+    unsigned int m, ma, mb, mc, md, me, mf, mg, mh;
+    unsigned int    va, vb, vc, vd, ve, vf, vg, vh;
+
+    /*
+     * Allocate a buffer for the scanline. Decompress each line and then copy
+     * it over to the destination, unchanged.
+     */
+
+    alloc_line (info, 1, &scanbytes, &scanline);
+
+    lsb = scanline;
+    msb = lsb + info->bytesLine;
+
+    map = info->colorMap;
+    DUMP (map, 4);
+
+    for (y=0; y < info->h; y++) {
+	TRACE (("PCX DATA %d ", y));
+	if (!decode_line (buf, scanbytes, scanline))
+	    goto error;
+
+	/*
+	 * Now expanding the bits/bytes we got into grey8 pixels.
+	 */
+
+#define GET_INDEX(l,m)	\
+	(l) = lsb[x/8];	\
+	(m) = msb[x/8]
+
+#define NEXTX		\
+	x++ ; if (info->w <= x) break
+
+#define MAKE_INDEX(v,l,m)		\
+	(v) = ((l) | ((m) << 1))
+
+#define MAP(v)		\
+	map_color (map, (v), &R(destination, x, y));	\
+	TRACE ((" %d", (v)));
+
+
+	TRACE (("PIX: "));
+        for (x = 0; x < info->w; x++) {
+	    GET_INDEX (l,m);
+
+	    la  = (l & 0x80) >> 7;
+	    ma  = (m & 0x80) >> 7;
+	    MAKE_INDEX (va,la,ma);
+	    MAP  (va);
+	    NEXTX;
+
+	    lb  = (l & 0x40) >> 6;
+	    mb  = (m & 0x40) >> 6;
+	    MAKE_INDEX (vb,lb,mb);
+	    MAP  (vb);
+	    NEXTX;
+
+	    lc  = (l & 0x20) >> 5;
+	    mc  = (m & 0x20) >> 5;
+	    MAKE_INDEX (vc,lc,mc);
+	    MAP  (vc);
+	    NEXTX;
+
+	    ld  = (l & 0x10) >> 4;
+	    md  = (m & 0x10) >> 4;
+	    MAKE_INDEX (vd,ld,md);
+	    MAP  (vd);
+	    NEXTX;
+
+	    le  = (l & 0x08) >> 3;
+	    me  = (m & 0x08) >> 3;
+	    MAKE_INDEX (ve,le,me);
+	    MAP  (ve);
+	    NEXTX;
+
+	    lf  = (l & 0x04) >> 2;
+	    mf  = (m & 0x04) >> 2;
+	    MAKE_INDEX (vf,lf,mf);
+	    MAP  (vf);
+	    NEXTX;
+
+	    lg  = (l & 0x02) >> 1;
+	    mg  = (m & 0x02) >> 1;
+	    MAKE_INDEX (vg,lg,mg);
+	    MAP  (vg);
+	    NEXTX;
+
+	    lh  = (l & 0x01);
+	    mh  = (m & 0x01);
+	    MAKE_INDEX (vh,lh,mh);
+	    MAP  (vh);
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+#undef MAKE_INDEX
+#undef NEXTX
+#undef GET_INDEX
+
+    goto cleanup;
+
+ error:
+    ok = 0;
+ cleanup:
+    ckfree ((char*) scanline);
+    return ok;
+}
+
+static int
+decode_striped8c (pcx_info*     info,
+		  crimp_buffer* buf,
+		  crimp_image*  destination)
+{
+    int   scanbytes;
+    unsigned char* scanline;
+    unsigned char* msb;
+    unsigned char* usb;
+    unsigned char* lsb;
+    unsigned char* map;
+    int x, y, ok = 1;
+    unsigned int l, la, lb, lc, ld, le, lf, lg, lh;
+    unsigned int m, ma, mb, mc, md, me, mf, mg, mh;
+    unsigned int u, ua, ub, uc, ud, ue, uf, ug, uh;
+    unsigned int    va, vb, vc, vd, ve, vf, vg, vh;
+
+    /*
+     * Allocate a buffer for the scanline. Decompress each line and then copy
+     * it over to the destination, unchanged.
+     */
+
+    alloc_line (info, 1, &scanbytes, &scanline);
+
+    lsb = scanline;
+    usb = lsb + info->bytesLine;
+    msb = usb + info->bytesLine;
+
+    map = info->colorMap;
+    DUMP (map, 8);
+
+    for (y=0; y < info->h; y++) {
+	TRACE (("PCX DATA %d ", y));
+	if (!decode_line (buf, scanbytes, scanline))
+	    goto error;
+
+	/*
+	 * Now expanding the bits/bytes we got into grey8 pixels.
+	 */
+
+#define GET_INDEX	\
+	l = lsb[x/8];	\
+	u = usb[x/8];	\
+	m = msb[x/8]
+
+#define NEXTX		\
+	x++ ; if (info->w <= x) break
+
+#define MAKE_INDEX(v,l,u,m)			\
+	(v) = ((l) | ((u) << 1) | ((m) << 2))
+
+#define MAP(v)		\
+	map_color (map, (v), &R(destination, x, y));	\
+	TRACE ((" %d", (v)));
+
+
+	TRACE (("PIX: "));
+        for (x = 0; x < info->w; x++) {
+	    GET_INDEX;
+
+	    la  = (l & 0x80) >> 7;
+	    ua  = (u & 0x80) >> 7;
+	    ma  = (m & 0x80) >> 7;
+	    MAKE_INDEX (va,la,ua,ma);
+	    MAP  (va);
+	    NEXTX;
+
+	    lb  = (l & 0x40) >> 6;
+	    ub  = (u & 0x40) >> 6;
+	    mb  = (m & 0x40) >> 6;
+	    MAKE_INDEX (vb,lb,ub,mb);
+	    MAP  (vb);
+	    NEXTX;
+
+	    lc  = (l & 0x20) >> 5;
+	    uc  = (u & 0x20) >> 5;
+	    mc  = (m & 0x20) >> 5;
+	    MAKE_INDEX (vc,lc,uc,mc);
+	    MAP  (vc);
+	    NEXTX;
+
+	    ld  = (l & 0x10) >> 4;
+	    ud  = (u & 0x10) >> 4;
+	    md  = (m & 0x10) >> 4;
+	    MAKE_INDEX (vd,ld,ud,md);
+	    MAP  (vd);
+	    NEXTX;
+
+	    le  = (l & 0x08) >> 3;
+	    ue  = (u & 0x08) >> 3;
+	    me  = (m & 0x08) >> 3;
+	    MAKE_INDEX (ve,le,ue,me);
+	    MAP  (ve);
+	    NEXTX;
+
+	    lf  = (l & 0x04) >> 2;
+	    uf  = (u & 0x04) >> 2;
+	    mf  = (m & 0x04) >> 2;
+	    MAKE_INDEX (vf,lf,uf,mf);
+	    MAP  (vf);
+	    NEXTX;
+
+	    lg  = (l & 0x02) >> 1;
+	    ug  = (u & 0x02) >> 1;
+	    mg  = (m & 0x02) >> 1;
+	    MAKE_INDEX (vg,lg,ug,mg);
+	    MAP  (vg);
+	    NEXTX;
+
+	    lh  = (l & 0x01);
+	    uh  = (u & 0x01);
+	    mh  = (m & 0x01);
+	    MAKE_INDEX (vh,lh,uh,mh);
+	    MAP  (vh);
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+#undef MAKE_INDEX
+#undef NEXTX
+#undef GET_INDEX
+
+    goto cleanup;
+
+ error:
+    ok = 0;
+ cleanup:
+    ckfree ((char*) scanline);
+    return ok;
+}
+
+static int
+decode_striped16c (pcx_info*     info,
+		   crimp_buffer* buf,
+		   crimp_image*  destination)
+{
+    int   scanbytes;
+    unsigned char* scanline;
+    unsigned char* msb;
+    unsigned char* wsb;
+    unsigned char* usb;
+    unsigned char* lsb;
+    unsigned char* map;
+    int x, y, ok = 1;
+    unsigned int l, la, lb, lc, ld, le, lf, lg, lh;
+    unsigned int m, ma, mb, mc, md, me, mf, mg, mh;
+    unsigned int u, ua, ub, uc, ud, ue, uf, ug, uh;
+    unsigned int w, wa, wb, wc, wd, we, wf, wg, wh;
+    unsigned int    va, vb, vc, vd, ve, vf, vg, vh;
+
+    /*
+     * Allocate a buffer for the scanline. Decompress each line and then copy
+     * it over to the destination, unchanged.
+     */
+
+    alloc_line (info, 1, &scanbytes, &scanline);
+
+    lsb = scanline;
+    usb = lsb + info->bytesLine;
+    wsb = usb + info->bytesLine;
+    msb = wsb + info->bytesLine;
+
+    map = info->colorMap;
+    DUMP (map, 16);
+
+    for (y=0; y < info->h; y++) {
+	TRACE (("PCX DATA %d ", y));
+	if (!decode_line (buf, scanbytes, scanline))
+	    goto error;
+
+	/*
+	 * Now expanding the bits/bytes we got into grey8 pixels.
+	 */
+
+#define GET_INDEX	\
+	l = lsb[x/8];	\
+	u = usb[x/8];	\
+	w = wsb[x/8];	\
+	m = msb[x/8]
+
+#define NEXTX		\
+	x++ ; if (info->w <= x) break
+
+#define MAKE_INDEX(v,l,u,w,m)					\
+	(v) = ((l) | ((u) << 1) | ((w) << 2) | ((m) << 3))
+
+#define MAP(v)		\
+	map_color (map, (v), &R(destination, x, y));	\
+	TRACE ((" %d", (v)));
+
+
+	TRACE (("PIX: "));
+        for (x = 0; x < info->w; x++) {
+	    GET_INDEX;
+
+	    la  = (l & 0x80) >> 7;
+	    ua  = (u & 0x80) >> 7;
+	    wa  = (w & 0x80) >> 7;
+	    ma  = (m & 0x80) >> 7;
+	    MAKE_INDEX (va,la,ua,wa,ma);
+	    MAP  (va);
+	    NEXTX;
+
+	    lb  = (l & 0x40) >> 6;
+	    ub  = (u & 0x40) >> 6;
+	    wb  = (w & 0x40) >> 6;
+	    mb  = (m & 0x40) >> 6;
+	    MAKE_INDEX (vb,lb,ub,wb,mb);
+	    MAP  (vb);
+	    NEXTX;
+
+	    lc  = (l & 0x20) >> 5;
+	    uc  = (u & 0x20) >> 5;
+	    wc  = (w & 0x20) >> 5;
+	    mc  = (m & 0x20) >> 5;
+	    MAKE_INDEX (vc,lc,uc,wc,mc);
+	    MAP  (vc);
+	    NEXTX;
+
+	    ld  = (l & 0x10) >> 4;
+	    ud  = (u & 0x10) >> 4;
+	    wd  = (w & 0x10) >> 4;
+	    md  = (m & 0x10) >> 4;
+	    MAKE_INDEX (vd,ld,ud,wd,md);
+	    MAP  (vd);
+	    NEXTX;
+
+	    le  = (l & 0x08) >> 3;
+	    ue  = (u & 0x08) >> 3;
+	    we  = (w & 0x08) >> 3;
+	    me  = (m & 0x08) >> 3;
+	    MAKE_INDEX (ve,le,ue,we,me);
+	    MAP  (ve);
+	    NEXTX;
+
+	    lf  = (l & 0x04) >> 2;
+	    uf  = (u & 0x04) >> 2;
+	    wf  = (w & 0x04) >> 2;
+	    mf  = (m & 0x04) >> 2;
+	    MAKE_INDEX (vf,lf,uf,wf,mf);
+	    MAP  (vf);
+	    NEXTX;
+
+	    lg  = (l & 0x02) >> 1;
+	    ug  = (u & 0x02) >> 1;
+	    wg  = (w & 0x02) >> 1;
+	    mg  = (m & 0x02) >> 1;
+	    MAKE_INDEX (vg,lg,ug,wg,mg);
+	    MAP  (vg);
+	    NEXTX;
+
+	    lh  = (l & 0x01);
+	    uh  = (u & 0x01);
+	    wh  = (w & 0x01);
+	    mh  = (m & 0x01);
+	    MAKE_INDEX (vh,lh,uh,wh,mh);
+	    MAP  (vh);
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+#undef MAKE_INDEX
+#undef NEXTX
+#undef GET_INDEX
+
+    goto cleanup;
+
+ error:
+    ok = 0;
+ cleanup:
+    ckfree ((char*) scanline);
+    return ok;
+}
+
+static int
+decode_16c (pcx_info*     info,
+	    crimp_buffer* buf,
+	    crimp_image*  destination)
 {
     int   scanbytes;
     unsigned char* scanline;

@@ -20,8 +20,10 @@
 #define PCX_TRACE 1
 #ifdef PCX_TRACE
 #define TRACE(x) { printf x ; fflush (stdout); }
+#define DUMP(map,n) dump_palette (map,n)
 #else
 #define TRACE(x)
+#define DUMP(map,n)
 #endif
 
 static void
@@ -50,6 +52,11 @@ decode_16c (pcx_info* info, crimp_buffer* buf, crimp_image* destination);
 
 static void
 map_color (unsigned char* colorMap, int index, unsigned char* pix);
+
+#ifdef PCX_TRACE
+static void
+dump_palette (unsigned char* map, int n);
+#endif
 
 /*
  * Definitions :: Core.
@@ -340,14 +347,14 @@ pcx_read_pixels (pcx_info*      info,
     case CODE(4,1):
 	TRACE (("PCX (4/1 16 color, EGA palette)\n"));
 
-	dst    = crimp_new_grey8 (info->w, info->h);
+	dst    = crimp_new_rgb (info->w, info->h);
 	result = decode_16c (info, buf, dst);
 	break;
 
     case CODE(2,1):
 	TRACE (("PCX (2/1 4 color, EGA palette)\n"));
 
-	dst    = crimp_new_grey8 (info->w, info->h);
+	dst    = crimp_new_rgb (info->w, info->h);
 	result = decode_4c (info, buf, dst);
 	break;
 
@@ -383,6 +390,7 @@ decode_16c (pcx_info*      info,
     unsigned char* scanline;
     unsigned char* map;
     int x, y, ok = 1;
+    unsigned int v, va, vb;
 
     /*
      * Allocate a buffer for the scanline. Decompress each line and then copy
@@ -392,6 +400,7 @@ decode_16c (pcx_info*      info,
     alloc_line (info, 1, &scanbytes, &scanline);
 
     map = info->colorMap;
+    DUMP (map, 16);
 
     for (y=0; y < info->h; y++) {
 	TRACE (("PCX DATA %d ", y));
@@ -403,19 +412,34 @@ decode_16c (pcx_info*      info,
 	 * indices and map them through the palette.
 	 */
 
+#define GET_INDEX(v)	\
+	(v) = scanline[x/2]
+
+#define NEXTX		\
+	x++ ; if (info->w <= x) break
+
+#define MAP(v)		\
+	map_color (map, (v), &R(destination, x, y));	\
+	TRACE ((" %d", (v)));
+
+
 	TRACE (("PIX: "));
         for (x = 0; x < info->w; x++) {
-	    int pix;
-	    pix = (scanline [x/2] & (0xf0 >> (4*(x%2)))) >> (4*(x%2));
-	    map_color (map, pix, &R(destination, x, y));
-	    TRACE ((" %d", pix));
-	    /*
-	     * Consider unrolling the above, plus constants for the bitmasks.
-	     * See similar code in the BMP reader.
-	     */
+	    GET_INDEX (v);
+
+	    va  = (v & 0xF0) >> 4;
+	    MAP (va);
+	    NEXTX;
+
+	    vb = (v & 0x0F);
+	    MAP (vb);
 	}
 	TRACE (("\n"));
     }
+
+#undef MAP
+#undef NEXTX
+#undef GET_INDEX
 
     goto cleanup;
 
@@ -435,6 +459,7 @@ decode_4c (pcx_info*      info,
     unsigned char* scanline;
     unsigned char* map;
     int x, y, ok = 1;
+    unsigned int v, va, vb, vc, vd;
 
     /*
      * Allocate a buffer for the scanline. Decompress each line and then copy
@@ -444,6 +469,7 @@ decode_4c (pcx_info*      info,
     alloc_line (info, 1, &scanbytes, &scanline);
 
     map = info->colorMap;
+    DUMP (map, 4);
 
     for (y=0; y < info->h; y++) {
 	TRACE (("PCX DATA %d ", y));
@@ -455,19 +481,42 @@ decode_4c (pcx_info*      info,
 	 * indices and map them through the palette.
 	 */
 
+#define GET_INDEX(v)	\
+	(v) = scanline[x/4]
+
+#define NEXTX		\
+	x++ ; if (info->w <= x) break
+
+#define MAP(v)		\
+	map_color (map, (v), &R(destination, x, y));	\
+	TRACE ((" %d", (v)));
+
+
 	TRACE (("PIX: "));
         for (x = 0; x < info->w; x++) {
-	    int pix;
-	    pix = (scanline [x/4] & (0xf0 >> (2*(x%4)))) >> (2*(x%4));
-	    map_color (map, pix, &R(destination, x, y));
-	    TRACE ((" %d", pix));
-	    /*
-	     * Consider unrolling the above, plus constants for the bitmasks.
-	     * See similar code in the BMP reader.
-	     */
+	    GET_INDEX (v);
+
+	    va  = (v & 0xC0) >> 6;
+	    MAP (va);
+	    NEXTX;
+
+	    vb  = (v & 0x30) >> 4;
+	    MAP (vb);
+	    NEXTX;
+
+	    vc  = (v & 0x0C) >> 2;
+	    MAP (vc);
+	    NEXTX;
+
+	    vd  = (v & 0x03);
+	    MAP (vd);
 	}
 	TRACE (("\n"));
     }
+
+#undef MAP
+#undef NEXTX
+#undef GET_INDEX
 
     goto cleanup;
 
@@ -487,6 +536,7 @@ decode_2c (pcx_info*      info,
     unsigned char* scanline;
     unsigned char* map;
     int x, y, ok = 1;
+    unsigned int v, va, vb, vc, vd, ve, vf, vg, vh;
 
     /*
      * Allocate a buffer for the scanline. Decompress each line and then copy
@@ -504,22 +554,59 @@ decode_2c (pcx_info*      info,
 	 * Now expanding the bits/bytes we got into grey8 pixels.
 	 */
 
+#define GET_INDEX(v)	\
+	(v) = scanline[x/8]
+
+#define NEXTX		\
+	x++ ; if (info->w <= x) break
+
+#define MAP(v)		\
+	(v) = ((v) ? WHITE : BLACK);		\
+	GREY8 (destination, x, y) = (v);	\
+	TRACE (("%c", (v) ? '_' : '*'));
+
+
 	TRACE (("PIX: "));
         for (x = 0; x < info->w; x++) {
-	    int pix;
-	    pix = scanline [x/8] & (128 >> (x%8))
-		? WHITE
-		: BLACK
-		;
-	    GREY8 (destination, x, y) = pix;
-	    TRACE (("%c", pix? '_':'*'));
-	    /*
-	     * Consider unrolling the above, plus constants for the bitmasks.
-	     * See similar code in the BMP reader.
-	     */
+	    GET_INDEX (v);
+
+	    va  = (v & 0x80) >> 7;
+	    MAP (va);
+	    NEXTX;
+
+	    vb  = (v & 0x40) >> 6;
+	    MAP (vb);
+	    NEXTX;
+
+	    vc  = (v & 0x20) >> 5;
+	    MAP (vc);
+	    NEXTX;
+
+	    vd  = (v & 0x10) >> 4;
+	    MAP (vd);
+	    NEXTX;
+
+	    ve  = (v & 0x08) >> 3;
+	    MAP (ve);
+	    NEXTX;
+
+	    vf  = (v & 0x04) >> 2;
+	    MAP (vf);
+	    NEXTX;
+
+	    vg  = (v & 0x02) >> 1;
+	    MAP (vg);
+	    NEXTX;
+
+	    vh  = (v & 0x01);
+	    MAP (vh);
 	}
 	TRACE (("\n"));
     }
+
+#undef MAP
+#undef NEXTX
+#undef GET_INDEX
 
     goto cleanup;
 
@@ -604,6 +691,8 @@ decode_rgb_vga (pcx_info*      info,
      */
 
     map = crimp_buf_at (buf);
+    DUMP (map, 256);
+
     for (y=0, scanline = indices;
 	 y < info->h;
 	 y++, scanline += scanbytes) {
@@ -733,6 +822,23 @@ decode_line (crimp_buffer* buf, int bytes, unsigned char* scanline)
     TRACE (("\nEOL %d\n", count));
     return 1;
 }
+
+#ifdef PCX_TRACE
+static void
+dump_palette (unsigned char* map, int n)
+{
+    int i;
+
+    printf ("PCX Palette [%d]\n", n);
+    printf ("PCX ===============\n");
+
+    for (i = 0; i < n; i++) {
+	printf ("PCX RGB [%3d] = %3d, %3d, %3d\n", i, map[i*3+0], map[i*3+1], map[i*3+2]);
+    }
+
+    printf ("PCX ===============\n");
+}
+#endif
 
 /*
  * Local Variables:

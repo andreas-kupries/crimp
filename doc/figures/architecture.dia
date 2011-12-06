@@ -43,6 +43,8 @@ block {
 	xbox crimp::ppm crimp::pgm crimp::pfm
 	move
 	xbox crimp::tk
+	move
+	xbox crimp::pcx
     } at $IO
 }
 group {

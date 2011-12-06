@@ -255,36 +255,6 @@ pcx_read_header (Tcl_Interp*     interp,
     }
 
     /*
-     * Work out the (non-)presence of a VGA palette, for the image formats
-     * where this is actually possible. For anything else we keep using the
-     * EGA palette from the header.
-     */
-#if BOGUS
-    if ((version == 5) &&
-	(numPlanes == 1) &&
-	(numBitsPixelPlane == 8) &&
-	(crimp_buf_size (buf) > (128+769))) {
-	int at = crimp_buf_tell (buf);
-
-	TRACE (("PCX (VGA):       5/1/8/size --> possible\n"));
-
-	crimp_buf_moveto (buf, crimp_buf_size (buf) - 769);
-
-	/*
-	 * Check for marker byte (0x0C == 0o14 == \f, and the color black
-	 */
-	if (crimp_buf_match (buf, 4, "\f\0\0\0")) {
-	    colorMap = crimp_buf_at (buf) - 3;
-
-	    TRACE (("PCX (VGA):       %p\n", colorMap));
-	} else {
-	    TRACE (("PCX (VGA):       not found\n"));
-	}
-
-	crimp_buf_moveto (buf, at);
-    }
-#endif
-    /*
      * Save results for caller, including derivatives.
      */
 
@@ -328,10 +298,19 @@ pcx_read_pixels (pcx_info*      info,
      *
      * bpp | #pl | 
      * ----+-----+--------------------------
-     *   1 |   1 | 2-color 1:255 0:0, no palette.
+     *   1 |   1 | 2-color,  1:255 0:0, no palette.
+     *   4 |   1 | 4-color,  EGA palette
+     *   2 |   1 | 16-color, EGA palette
+     * ----+-----+--------------------------
+     *   1 |   2 | 4-color,  bit-striped, EGA palette.
+     *   1 |   3 | 8-color,  bit-striped, EGA palette.
+     *   1 |   4 | 16-color, bit-striped, EGA palette.
+     * ----+-----+--------------------------
      *   8 |   1 | RGB data via end-saved VGA palette
-     *   8 |   1 | Grey scale data
+     *   8 |   1 | Grey scale data, no palette
+     * ----+-----+--------------------------
      *   8 |   3 | RGB data, separated by plane
+     * ----+-----+--------------------------
      *   X |   X | unknown, fail.
      * ----+-----+--------------------------
      */
@@ -453,9 +432,9 @@ decode_striped4c (pcx_info*     info,
 	 * Now expanding the bits/bytes we got into grey8 pixels.
 	 */
 
-#define GET_INDEX(l,m)	\
-	(l) = lsb[x/8];	\
-	(m) = msb[x/8]
+#define GET_INDEX	\
+	l = lsb[x/8];	\
+	m = msb[x/8]
 
 #define NEXTX		\
 	x++ ; if (info->w <= x) break
@@ -470,7 +449,7 @@ decode_striped4c (pcx_info*     info,
 
 	TRACE (("PIX: "));
         for (x = 0; x < info->w; x++) {
-	    GET_INDEX (l,m);
+	    GET_INDEX;
 
 	    la  = (l & 0x80) >> 7;
 	    ma  = (m & 0x80) >> 7;

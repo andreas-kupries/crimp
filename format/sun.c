@@ -47,6 +47,18 @@ decode_2map (sun_info*      info,
 	     unsigned int   plength,
 	     crimp_image*   destination);
 
+static int
+decode_256fix (sun_info*      info,
+	       unsigned char* pixel,
+	       unsigned int   plength,
+	       crimp_image*   destination);
+
+static int
+decode_256map (sun_info*      info,
+	       unsigned char* pixel,
+	       unsigned int   plength,
+	       crimp_image*   destination);
+
 /*
  * Definitions :: Core.
  */
@@ -262,7 +274,13 @@ sun_read_pixels (sun_info*      info,
 	CRIMP_ASSERT (0,"Not yet implemented");
 	break;
     case 8:
-	CRIMP_ASSERT (0,"Not yet implemented");
+	if (info->colorMap) {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_256map (info, pixel, plength, dst);
+	} else {
+	    dst = crimp_new_grey8 (info->w, info->h);
+	    result = decode_256fix (info, pixel, plength, dst);
+	}
 	break;
     case 1:
 	if (info->colorMap) {
@@ -310,7 +328,7 @@ sun_read_pixels (sun_info*      info,
     x++ ; if (info->w <= x) break
 
 #define CHECK_INDEX(v) \
-    if (info->numColors < (v)) { return 0; }
+    if (mapSize < (v)) { return 0; }
 
 
 static int
@@ -339,6 +357,7 @@ decode_2fix (sun_info*      info,
     TRACE (("%c", (v) ? '_' : '*'));
 
     for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
 	for (x = 0; x < info->w; x++) {
 	    GET_VALUE (v);
 
@@ -377,6 +396,7 @@ decode_2fix (sun_info*      info,
 	if ((pixel-base)%2) {
 	    pixel ++;
 	}
+	TRACE (("\n"));
     }
 
 #undef MAP
@@ -403,6 +423,7 @@ decode_2map (sun_info*      info,
     int mapSize = info->numColors;
 
     CRIMP_ASSERT (info->numBits == 1, "Bad format");
+    CRIMP_ASSERT (info->numColors == 2, "Bad format");
     CRIMP_ASSERT_IMGTYPE (destination, rgb);
 
 #define MAP(v)		\
@@ -410,6 +431,7 @@ decode_2map (sun_info*      info,
     TRACE ((" %d", (v)));
 
     for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
 	for (x = 0; x < info->w; x++) {
 	    GET_VALUE (v);
 
@@ -448,12 +470,97 @@ decode_2map (sun_info*      info,
 	if ((pixel-base)%2) {
 	    pixel ++;
 	}
+	TRACE (("\n"));
     }
 
 #undef MAP
     return 1;
 }
 
+static int
+decode_256fix (sun_info*      info,
+	       unsigned char* pixel,
+	       unsigned int   plength,
+	       crimp_image*   destination)
+{
+    /*
+     * Indexed data at 1 pixel/byte (eq 1 byte/pixel). Left to right is
+     * MSB to LSB. Each scan-line is 2-aligned relative to its start. For each
+     * octet we make sure that we have not run over the buffer-end. The result
+     * is a plain grey scale image (fixed color mapping, identity).
+     */
+
+    int x, y;
+    unsigned int v;
+    unsigned char* base = pixel;
+
+    CRIMP_ASSERT (info->numBits == 8, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, grey8);
+
+#define MAP(v)					\
+    GREY8 (destination, x, y) = (v);		\
+    TRACE ((" %d", (v)));
+
+    for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
+	for (x = 0; x < info->w; x++) {
+	    GET_VALUE (v);
+	    MAP (v);
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+    return 1;
+}
+
+static int
+decode_256map (sun_info*      info,
+	       unsigned char* pixel,
+	       unsigned int   plength,
+	       crimp_image*   destination)
+{
+    /*
+     * Indexed data at 1 pixel/byte (eq 1 byte/pixel). Left to right is
+     * MSB to LSB. Each scan-line is 2-aligned relative to its start. For each
+     * octet we make sure that we have not run over the buffer-end. The result
+     * is a rgb image (color mapping out of info).
+     */
+
+    int x, y;
+    unsigned int v;
+    unsigned char* base = pixel;
+    unsigned char* map = info->colorMap;
+    int mapSize = info->numColors;
+
+    CRIMP_ASSERT (info->numBits == 8, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, rgb);
+
+#define MAP(v)							\
+    map_color (map, mapSize, (v), &R(destination, x, y));	\
+    TRACE ((" %d", (v)));
+
+    for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
+	for (x = 0; x < info->w; x++) {
+	    GET_VALUE (v);
+	    CHECK_INDEX (v);
+	    MAP (v);
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+    return 1;
+}
 
 #undef NEXTX
 #undef GET_VALUE

@@ -84,16 +84,16 @@ decode_grey32map (sun_info*      info,
 		  crimp_image*   destination);
 
 static int
-decode_rgba (sun_info*      info,
-	     unsigned char* pixel,
-	     unsigned int   plength,
-	     crimp_image*   destination);
+decode_padrgb (sun_info*      info,
+	       unsigned char* pixel,
+	       unsigned int   plength,
+	       crimp_image*   destination);
 
 static int
-decode_bgra (sun_info*      info,
-	     unsigned char* pixel,
-	     unsigned int   plength,
-	     crimp_image*   destination);
+decode_padbgr (sun_info*      info,
+	       unsigned char* pixel,
+	       unsigned int   plength,
+	       crimp_image*   destination);
 
 /*
  * Definitions :: Core.
@@ -145,10 +145,10 @@ sun_read_header (Tcl_Interp*     interp,
 
     TRACE (("SUN (WxH):         %dx%d\n", width, height));
     TRACE (("SUN (bits/pix):    %d\n", bpp));
-    TRACE (("SUN (#PixelBytes): %d\n", plength));
     TRACE (("SUN (raster type): %d\n", rtype));
     TRACE (("SUN (map type):    %d\n", cmtype));
     TRACE (("SUN (map length):  %d\n", cmlength));
+    TRACE (("SUN (#PixelBytes): %d\n", plength));
 
     /*
      * Check the internal consistency of the header.
@@ -215,6 +215,7 @@ sun_read_header (Tcl_Interp*     interp,
     info->type          = rtype;
     info->mapType       = cmtype;
     info->input         = buf;
+    info->numPixelBytes = plength;
 
     /*
      * Time to read the color map, if any.
@@ -285,68 +286,81 @@ sun_read_pixels (sun_info*      info,
      * Note how this means that RLE compressed full-color images are always
      * using BGR order.
      *
-     * Note that 24 bpp full color images still use 32 bits/pixel,
-     * i.e. 4byte/pixel, with the last byte in each pixel a pad byte we have
-     * to ignore.
+     * Note that 32 bpp true-color images only use 24 bits/pixel, i.e.
+     * 3byte/pixel, with the first byte in each pixel a pad byte we have to
+     * ignore.
      */
 
     pixel   = crimp_buf_at (buf);
     plength = info->numPixelBytes;
 
+    TRACE (("SUN LEFT %8d INITIAL\n", plength));
+
     if (info->type == sun_raster_rle) {
-	CRIMP_ASSERT (0,"RLE decoder is not yet implemented");
+	TRACE (("SUN unable to handle RLE, not yet implemented\n"));
 	/* TODO: RLE decoder.
 	 * Currently none of the examples use RL compression.
 	 * pixel   = ...; -- allocated, see (a) for release.
 	 * plength = ...;
 	 */
+	goto done;
     }
 
     switch (info->numBits) {
     case 32:
 	if (info->colorMap) {
+	    TRACE (("SUN 32bpp + color map\n"));
 	    dst = crimp_new_rgb (info->w, info->h);
 	    result = decode_grey32map (info, pixel, plength, dst);
 	} else if (info->type == sun_raster_rgb) {
-	    dst = crimp_new_rgba (info->w, info->h);
-	    result = decode_rgba (info, pixel, plength, dst);
-	} else {
+	    TRACE (("SUN 32bpp true color RGB\n"));
 	    dst = crimp_new_rgb (info->w, info->h);
-	    result = decode_bgra (info, pixel, plength, dst);
+	    result = decode_padrgb (info, pixel, plength, dst);
+	} else {
+	    TRACE (("SUN 32bpp true color BGR\n"));
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_padbgr (info, pixel, plength, dst);
 	}
 	break;
     case 24:
 	if (info->colorMap) {
+	    TRACE (("SUN 24bpp + color map\n"));
 	    dst = crimp_new_rgb (info->w, info->h);
 	    result = decode_grey24map (info, pixel, plength, dst);
 	} else if (info->type == sun_raster_rgb) {
+	    TRACE (("SUN 24bpp true color RGB\n"));
 	    dst = crimp_new_rgb (info->w, info->h);
 	    result = decode_rgb (info, pixel, plength, dst);
 	} else {
+	    TRACE (("SUN 24bpp true color BGR\n"));
 	    dst = crimp_new_rgb (info->w, info->h);
 	    result = decode_bgr (info, pixel, plength, dst);
 	}
 	break;
     case 8:
 	if (info->colorMap) {
+	    TRACE (("SUN 8bpp + color map\n"));
 	    dst = crimp_new_rgb (info->w, info->h);
 	    result = decode_grey8map (info, pixel, plength, dst);
 	} else {
+	    TRACE (("SUN 8bpp grey scale\n"));
 	    dst = crimp_new_grey8 (info->w, info->h);
 	    result = decode_grey8fix (info, pixel, plength, dst);
 	}
 	break;
     case 1:
 	if (info->colorMap) {
+	    TRACE (("SUN 1bpp + color map\n"));
 	    dst = crimp_new_rgb (info->w, info->h);
 	    result = decode_2map (info, pixel, plength, dst);
 	} else {
+	    TRACE (("SUN 1bpp black/white\n"));
 	    dst = crimp_new_grey8 (info->w, info->h);
 	    result = decode_2fix (info, pixel, plength, dst);
 	}
 	break;
     default:
-	CRIMP_ASSERT (0,"Unsupported number of bits/pixel");
+	TRACE (("SUN %d bpp, unknown to decode\n", info->numBits));
 	break;
     }
 
@@ -358,6 +372,7 @@ sun_read_pixels (sun_info*      info,
     /*
      */
 
+ done:
     if (dst) {
 	if (result) {
 	    *destination = dst;
@@ -411,7 +426,7 @@ decode_2fix (sun_info*      info,
     TRACE (("%c", (v) ? '_' : '*'));
 
     for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
+	TRACE (("SUN LEFT %8d PIX: ", plength));
 	for (x = 0; x < info->w; x++) {
 	    GET_VALUE (v);
 
@@ -448,12 +463,15 @@ decode_2fix (sun_info*      info,
 	}
 
 	if ((pixel-base)%2) {
+	    TRACE ((" ALIGN % 2"));
 	    pixel ++;
+	    plength --;
 	}
 	TRACE (("\n"));
     }
 
 #undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
     return 1;
 }
 
@@ -485,7 +503,7 @@ decode_2map (sun_info*      info,
     TRACE ((" %d", (v)));
 
     for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
+	TRACE (("SUN LEFT %8d PIX: ", plength));
 	for (x = 0; x < info->w; x++) {
 	    GET_VALUE (v);
 
@@ -522,12 +540,15 @@ decode_2map (sun_info*      info,
 	}
 
 	if ((pixel-base)%2) {
+	    TRACE ((" ALIGN % 2"));
 	    pixel ++;
+	    plength --;
 	}
 	TRACE (("\n"));
     }
 
 #undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
     return 1;
 }
 
@@ -556,19 +577,22 @@ decode_grey8fix (sun_info*      info,
     TRACE ((" %d", (v)));
 
     for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
+	TRACE (("SUN LEFT %8d PIX: ", plength));
 	for (x = 0; x < info->w; x++) {
 	    GET_VALUE (v);
 	    MAP (v);
 	}
 
 	if ((pixel-base)%2) {
+	    TRACE ((" ALIGN % 2"));
 	    pixel ++;
+	    plength --;
 	}
 	TRACE (("\n"));
     }
 
 #undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
     return 1;
 }
 
@@ -599,7 +623,7 @@ decode_grey8map (sun_info*      info,
     TRACE ((" %d", (v)));
 
     for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
+	TRACE (("SUN LEFT %8d PIX: ", plength));
 	for (x = 0; x < info->w; x++) {
 	    GET_VALUE (v);
 	    CHECK_INDEX (v);
@@ -607,12 +631,15 @@ decode_grey8map (sun_info*      info,
 	}
 
 	if ((pixel-base)%2) {
+	    TRACE ((" ALIGN % 2"));
 	    pixel ++;
+	    plength --;
 	}
 	TRACE (("\n"));
     }
 
 #undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
     return 1;
 }
 
@@ -643,7 +670,7 @@ decode_grey24map (sun_info*      info,
     TRACE ((" %d", (v)));
 
     for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
+	TRACE (("SUN LEFT %8d PIX: ", plength));
 	for (x = 0; x < info->w; x++) {
 
 	    GET_VALUE (v3);
@@ -652,18 +679,22 @@ decode_grey24map (sun_info*      info,
 	    GET_VALUE (dummy);
 
 	    v = (v3 << 16) | (v2 << 8) | v1;
+	    TRACE ((" %d", v));
 
 	    CHECK_INDEX (v);
 	    MAP (v);
 	}
 
 	if ((pixel-base)%2) {
+	    TRACE ((" ALIGN % 2"));
 	    pixel ++;
+	    plength --;
 	}
 	TRACE (("\n"));
     }
 
 #undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
     return 1;
 }
 
@@ -674,9 +705,9 @@ decode_rgb (sun_info*      info,
 	    crimp_image*   destination)
 {
     /*
-     * True color with 4 byte/pixel (RGB + 1 byte padding). Each scan-line is
-     * 2-aligned relative to its start. For each octet we make sure that we
-     * have not run over the buffer-end. The result is an rgb image
+     * True color with 3 byte/pixel (RGB). Each scan-line is 2-aligned
+     * relative to its start. For each octet we make sure that we have not run
+     * over the buffer-end. The result is an rgb image.
      */
 
     int x, y;
@@ -687,13 +718,14 @@ decode_rgb (sun_info*      info,
     CRIMP_ASSERT_IMGTYPE (destination, rgb);
 
     for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
+	TRACE (("SUN LEFT %8d PIX: ", plength));
 	for (x = 0; x < info->w; x++) {
 
 	    GET_VALUE (r);
 	    GET_VALUE (g);
 	    GET_VALUE (b);
-	    GET_VALUE (dummy);
+
+	    TRACE ((" (%d,%d,%d)", r,g,b));
 
 	    R (destination, x, y) = r;
 	    G (destination, x, y) = g;
@@ -701,12 +733,15 @@ decode_rgb (sun_info*      info,
 	}
 
 	if ((pixel-base)%2) {
+	    TRACE ((" ALIGN % 2"));
 	    pixel ++;
+	    plength --;
 	}
 	TRACE (("\n"));
     }
 
 #undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
     return 1;
 }
 
@@ -717,9 +752,9 @@ decode_bgr (sun_info*      info,
 	    crimp_image*   destination)
 {
     /*
-     * True color with 4 byte/pixel (BGR + 1 byte padding). Each scan-line is
-     * 2-aligned relative to its start. For each octet we make sure that we
-     * have not run over the buffer-end. The result is an rgb image
+     * True color with 3 byte/pixel (BGR). Each scan-line is 2-aligned
+     * relative to its start. For each octet we make sure that we have not run
+     * over the buffer-end. The result is an rgb image.
      */
 
     int x, y;
@@ -730,13 +765,14 @@ decode_bgr (sun_info*      info,
     CRIMP_ASSERT_IMGTYPE (destination, rgb);
 
     for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
+	TRACE (("SUN LEFT %8d PIX: ", plength));
 	for (x = 0; x < info->w; x++) {
 
 	    GET_VALUE (b);
 	    GET_VALUE (g);
 	    GET_VALUE (r);
-	    GET_VALUE (dummy);
+
+	    TRACE ((" (%d,%d,%d)", r,g,b));
 
 	    R (destination, x, y) = r;
 	    G (destination, x, y) = g;
@@ -744,12 +780,15 @@ decode_bgr (sun_info*      info,
 	}
 
 	if ((pixel-base)%2) {
+	    TRACE ((" ALIGN % 2"));
 	    pixel ++;
+	    plength --;
 	}
 	TRACE (("\n"));
     }
 
 #undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
     return 1;
 }
 
@@ -762,8 +801,7 @@ decode_grey32map (sun_info*      info,
     /*
      * Indexed data at 4 byte/pixel. Big-endian long words. Each scan-line is
      * 2-aligned relative to its start. For each octet we make sure that we
-     * have not run over the buffer-end. The result is an rgb image (color
-     * mapping out of info).
+     * have not run over the buffer-end. The result is an rgb image.
      */
 
     int x, y;
@@ -780,7 +818,7 @@ decode_grey32map (sun_info*      info,
     TRACE ((" %d", (v)));
 
     for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
+	TRACE (("SUN LEFT %8d PIX: ", plength));
 	for (x = 0; x < info->w; x++) {
 
 	    GET_VALUE (v4);
@@ -789,106 +827,101 @@ decode_grey32map (sun_info*      info,
 	    GET_VALUE (v1);
 
 	    v = (v4 << 24) | (v3 << 16) | (v2 << 8) | v1;
+	    TRACE ((" %d", v));
 
 	    CHECK_INDEX (v);
 	    MAP (v);
 	}
 
-	if ((pixel-base)%2) {
-	    pixel ++;
-	}
 	TRACE (("\n"));
     }
 
 #undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
     return 1;
 }
 
 static int
-decode_rgba (sun_info*      info,
-	     unsigned char* pixel,
-	     unsigned int   plength,
-	     crimp_image*   destination)
+decode_padrgb (sun_info*      info,
+	       unsigned char* pixel,
+	       unsigned int   plength,
+	       crimp_image*   destination)
 {
     /*
-     * True color with 4 byte/pixel (RGBA). Each scan-line is 2-aligned
+     * True color with 4 byte/pixel (pad + RGB). Each scan-line is 2-aligned
      * relative to its start. For each octet we make sure that we have not run
      * over the buffer-end. The result is an rgb image
      */
 
     int x, y;
-    unsigned int r, g, b, a;
+    unsigned int r, g, b, dummy;
+    unsigned char* base = pixel;
+
+    CRIMP_ASSERT (info->numBits == 32, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, rgb);
+
+    for (y = 0; y < info->h; y++) {
+	TRACE (("SUN LEFT %8d PIX: ", plength));
+	for (x = 0; x < info->w; x++) {
+
+	    GET_VALUE (dummy);
+	    GET_VALUE (r);
+	    GET_VALUE (g);
+	    GET_VALUE (b);
+
+	    TRACE ((" (%d,%d,%d)", r,g,b));
+
+	    R (destination, x, y) = r;
+	    G (destination, x, y) = g;
+	    B (destination, x, y) = b;
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
+    return 1;
+}
+
+static int
+decode_padbgr (sun_info*      info,
+	       unsigned char* pixel,
+	       unsigned int   plength,
+	       crimp_image*   destination)
+{
+    /*
+     * True color with 4 byte/pixel (pad + BGR). Each scan-line is 2-aligned
+     * relative to its start. For each octet we make sure that we have not run
+     * over the buffer-end. The result is an rgb image
+     */
+
+    int x, y;
+    unsigned int r, g, b, dummy;
     unsigned char* base = pixel;
 
     CRIMP_ASSERT (info->numBits == 32, "Bad format");
     CRIMP_ASSERT_IMGTYPE (destination, rgba);
 
     for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
+	TRACE (("SUN LEFT %8d PIX: ", plength));
 	for (x = 0; x < info->w; x++) {
 
-	    GET_VALUE (r);
-	    GET_VALUE (g);
+	    GET_VALUE (dummy);
 	    GET_VALUE (b);
-	    GET_VALUE (a);
+	    GET_VALUE (g);
+	    GET_VALUE (r);
+
+	    TRACE ((" (%d,%d,%d)", r,g,b));
 
 	    R (destination, x, y) = r;
 	    G (destination, x, y) = g;
 	    B (destination, x, y) = b;
-	    A (destination, x, y) = a;
-	}
-
-	if ((pixel-base)%2) {
-	    pixel ++;
 	}
 	TRACE (("\n"));
     }
 
 #undef MAP
-    return 1;
-}
-
-static int
-decode_bgra (sun_info*      info,
-	     unsigned char* pixel,
-	     unsigned int   plength,
-	     crimp_image*   destination)
-{
-    /*
-     * True color with 4 byte/pixel (BGRA). Each scan-line is 2-aligned
-     * relative to its start. For each octet we make sure that we have not run
-     * over the buffer-end. The result is an rgb image
-     */
-
-    int x, y;
-    unsigned int r, g, b, a;
-    unsigned char* base = pixel;
-
-    CRIMP_ASSERT (info->numBits == 32, "Bad format");
-    CRIMP_ASSERT_IMGTYPE (destination, rgba);
-
-    for (y = 0; y < info->h; y++) {
-	TRACE (("PIX: "));
-	for (x = 0; x < info->w; x++) {
-
-	    GET_VALUE (b);
-	    GET_VALUE (g);
-	    GET_VALUE (r);
-	    GET_VALUE (a);
-
-	    R (destination, x, y) = r;
-	    G (destination, x, y) = g;
-	    B (destination, x, y) = b;
-	    A (destination, x, y) = a;
-	}
-
-	if ((pixel-base)%2) {
-	    pixel ++;
-	}
-	TRACE (("\n"));
-    }
-
-#undef MAP
+    TRACE (("SUN LEFT %8d DONE\n", plength));
     return 1;
 }
 

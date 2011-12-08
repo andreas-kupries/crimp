@@ -35,6 +35,18 @@ static void
 dump_palette (unsigned char* map, int n);
 #endif
 
+static int
+decode_2fix (sun_info*      info,
+	     unsigned char* pixel,
+	     unsigned int   plength,
+	     crimp_image*   destination);
+
+static int
+decode_2map (sun_info*      info,
+	     unsigned char* pixel,
+	     unsigned int   plength,
+	     crimp_image*   destination);
+
 /*
  * Definitions :: Core.
  */
@@ -164,6 +176,14 @@ sun_read_header (Tcl_Interp*     interp,
 	info->numColors = cmlength / 3;
 	info->colorMap  = crimp_buf_at (buf);
 	crimp_buf_skip (buf, cmlength);
+
+	DUMP (info->colorMap, info->numColors);
+
+	/*
+	 * TODO: Should validate num colors against max number of colors
+	 * implied by the bit depth.
+	 */
+
     } else {
 	info->numColors = 0;
 	info->colorMap  = NULL;
@@ -191,15 +211,77 @@ sun_read_pixels (sun_info*      info,
     crimp_buffer* buf = info->input;
     crimp_image*  dst = NULL;
     int           result = 0;
-
-#define CODE(bpp,planes) (((bpp)<<4)|(planes))
+    unsigned char* pixel;
+    unsigned int   plength;
 
     /*
      * We assume that:
      * - The buffer is positioned at the start of the pixel data.
      *
      * 'sun_read_header', see above, ensures these conditions.
+     *
+     * Information influencing the decoding priocess:
+     * - bits/pixel
+     * - presence of color map
+     * - raster_type (RLE or not, RGB or not)
+     *
+     * The run-length coding scheme (type sun_raster_rle) may be present for
+     * ANY type of image data. It is byte based, without a concept of pixels
+     * or scanlines. We should consider it as a pre-decode step when present.
+     *
+     * Note that the pixel data (after decompression) is scan-line oriented,
+     * and each scan-line must be of even length, regardless of image width.
+     *
+     * Note that full-color images (bpp 24/32) which are not of type
+     * "sun_raster_rgb" store the color channels of a pixel in BGR order.
+     * Note how this means that RLE compressed full-color images are always
+     * using BGR order.
+     *
+     * Note that 24 bpp full color images still use 32 bits/pixel,
+     * i.e. 4byte/pixel, with the last byte in each pixel a pad byte we have
+     * to ignore.
      */
+
+    pixel   = crimp_buf_at (buf);
+    plength = info->numPixelBytes;
+
+    if (info->type == sun_raster_rle) {
+	CRIMP_ASSERT (0,"RLE decoder is not yet implemented");
+	/* TODO: RLE decoder.
+	 * Currently none of the examples use RL compression.
+	 * pixel   = ...; -- allocated, see (a) for release.
+	 * plength = ...;
+	 */
+    }
+
+    switch (info->numBits) {
+    case 32:
+	CRIMP_ASSERT (0,"Not yet implemented");
+	break;
+    case 24:
+	CRIMP_ASSERT (0,"Not yet implemented");
+	break;
+    case 8:
+	CRIMP_ASSERT (0,"Not yet implemented");
+	break;
+    case 1:
+	if (info->colorMap) {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_2map (info, pixel, plength, dst);
+	} else {
+	    dst = crimp_new_grey8 (info->w, info->h);
+	    result = decode_2fix (info, pixel, plength, dst);
+	}
+	break;
+    default:
+	CRIMP_ASSERT (0,"Unsupported number of bits/pixel");
+	break;
+    }
+
+    if (pixel != crimp_buf_at (buf)) {
+	/* (a) Release of buffer holding decompresion result */
+	ckfree ((char*) pixel);
+    }
 
     /*
      */
@@ -212,9 +294,194 @@ sun_read_pixels (sun_info*      info,
 	}
     } 
     return result;
-#undef CODE
+}
+
+/*
+ * Pixel decoder functions. Plus helper macros.
+ */
+
+#define GET_VALUE(v)			\
+    if (plength == 0) { return 0; } ;	\
+    (v) = *pixel;			\
+    pixel ++;				\
+    plength --;
+
+#define NEXTX \
+    x++ ; if (info->w <= x) break
+
+#define CHECK_INDEX(v) \
+    if (info->numColors < (v)) { return 0; }
+
+
+static int
+decode_2fix (sun_info*      info,
+	     unsigned char* pixel,
+	     unsigned int   plength,
+	     crimp_image*   destination)
+{
+    /*
+     * Indexed data at 8 pixel/byte (Each pixel is 1 bit). Left to right is
+     * MSB to LSB. Each scan-line is 2-aligned relative to its start. For each
+     * octet we make sure that we have not run over the buffer-end. The color
+     * mapping is fixed, hardwired: 0 -> black, 1 -> white, grey8 result
+     */
+
+    int x, y;
+    unsigned int v, va, vb, vc, vd, ve, vf, vg, vh;
+    unsigned char* base = pixel;
+
+    CRIMP_ASSERT (info->numBits == 1, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, grey8);
+
+#define MAP(v)					\
+    (v) = ((v) ? WHITE : BLACK);		\
+    GREY8 (destination, x, y) = (v);		\
+    TRACE (("%c", (v) ? '_' : '*'));
+
+    for (y = 0; y < info->h; y++) {
+	for (x = 0; x < info->w; x++) {
+	    GET_VALUE (v);
+
+	    va  = (v & 0x80) >> 7;
+	    MAP (va);
+	    NEXTX;
+
+	    vb  = (v & 0x40) >> 6;
+	    MAP (vb);
+	    NEXTX;
+
+	    vc  = (v & 0x20) >> 5;
+	    MAP (vc);
+	    NEXTX;
+
+	    vd  = (v & 0x10) >> 4;
+	    MAP (vd);
+	    NEXTX;
+
+	    ve  = (v & 0x08) >> 3;
+	    MAP (ve);
+	    NEXTX;
+
+	    vf  = (v & 0x04) >> 2;
+	    MAP (vf);
+	    NEXTX;
+
+	    vg  = (v & 0x02) >> 1;
+	    MAP (vg);
+	    NEXTX;
+
+	    vh  = (v & 0x01);
+	    MAP (vh);
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+    }
+
+#undef MAP
+    return 1;
 }
 
+static int
+decode_2map (sun_info*      info,
+	     unsigned char* pixel,
+	     unsigned int   plength,
+	     crimp_image*   destination)
+{
+    /*
+     * Indexed data at 8 pixel/byte (Each pixel is 1 bit). Left to right is
+     * MSB to LSB. Each scan-line is 2-aligned relative to its start. For each
+     * octet we make sure that we have not run over the buffer-end. The color
+     * mapping comes out of info.
+     */
+
+    int x, y;
+    unsigned int v, va, vb, vc, vd, ve, vf, vg, vh;
+    unsigned char* base = pixel;
+    unsigned char* map = info->colorMap;
+    int mapSize = info->numColors;
+
+    CRIMP_ASSERT (info->numBits == 1, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, rgb);
+
+#define MAP(v)		\
+    map_color (map, mapSize, (v), &R(destination, x, y));	\
+    TRACE ((" %d", (v)));
+
+    for (y = 0; y < info->h; y++) {
+	for (x = 0; x < info->w; x++) {
+	    GET_VALUE (v);
+
+	    va  = (v & 0x80) >> 7;
+	    MAP (va);
+	    NEXTX;
+
+	    vb  = (v & 0x40) >> 6;
+	    MAP (vb);
+	    NEXTX;
+
+	    vc  = (v & 0x20) >> 5;
+	    MAP (vc);
+	    NEXTX;
+
+	    vd  = (v & 0x10) >> 4;
+	    MAP (vd);
+	    NEXTX;
+
+	    ve  = (v & 0x08) >> 3;
+	    MAP (ve);
+	    NEXTX;
+
+	    vf  = (v & 0x04) >> 2;
+	    MAP (vf);
+	    NEXTX;
+
+	    vg  = (v & 0x02) >> 1;
+	    MAP (vg);
+	    NEXTX;
+
+	    vh  = (v & 0x01);
+	    MAP (vh);
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+    }
+
+#undef MAP
+    return 1;
+}
+
+
+#undef NEXTX
+#undef GET_VALUE
+#undef CHECK_INDEX
+
+/* Run-Length coding of sun raster data.
+ * We have 3 types of code "packets":
+ *
+ * (a) 0x80 0x00                --> Run of 1 times 0x80
+ * (b) 0x80 <count> <value> [1] --> Run of count times value
+ * (c) <any>                [2] -->  Run of 1 times <any>
+ *
+ * [1] count in 1..255
+ *     value in 0.255
+ *     Note how count is > 0, distinguishing (b) packets from (a).
+ *
+ * [2] To be clear, <any> excludes 0x80, distinguishing (c) from
+ *     (a) and (b).
+ *
+ * Alternate phrasing:
+ * - 0x80 is a flag value introducing runs.
+ * - Any other bytes are literal.
+ * - After the flag comes a count byte.
+ * - A count of 0 signals a literal 0x80, escaping the flag value.
+ * - Any other count is followed by the byte to repeat.
+ */
+
+
 static void
 map_color (unsigned char* colorMap,
 	   unsigned size,

@@ -376,6 +376,9 @@ crimp_install_guide
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.TP
 \fBfiles/crimp_pfm.n\fR
 crimp_pfm
 .TP
@@ -387,6 +390,9 @@ crimp_ppm
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -460,6 +466,9 @@ crimp_install_guide
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.TP
 \fBfiles/crimp_pfm.n\fR
 crimp_pfm
 .TP
@@ -471,6 +480,9 @@ crimp_ppm
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -523,6 +535,12 @@ Export image, BMP
 \fBfiles/crimp_bmp.n\fR
 crimp_bmp
 .RE
+Export image, PCX
+.RS
+.TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.RE
 Export image, PFM
 .RS
 .TP
@@ -541,6 +559,18 @@ Export image, PPM
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
 .RE
+Export image, SUN Raster
+.RS
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
+.RE
+Export PCX image
+.RS
+.TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.RE
 Export PFM image
 .RS
 .TP
@@ -558,6 +588,12 @@ Export PPM image
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.RE
+Export SUN Raster image
+.RS
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
 .RE
 Export tk photo
 .RS
@@ -670,6 +706,9 @@ crimp_install_guide
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.TP
 \fBfiles/crimp_pfm.n\fR
 crimp_pfm
 .TP
@@ -681,6 +720,9 @@ crimp_ppm
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -709,6 +751,12 @@ Import image, BMP
 \fBfiles/crimp_bmp.n\fR
 crimp_bmp
 .RE
+Import image, PCX
+.RS
+.TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.RE
 Import image, PFM
 .RS
 .TP
@@ -727,6 +775,18 @@ Import image, PPM
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
 .RE
+Import image, SUN Raster
+.RS
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
+.RE
+Import PCX image
+.RS
+.TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.RE
 Import PFM image
 .RS
 .TP
@@ -744,6 +804,12 @@ Import PPM image
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.RE
+Import SUN Raster image
+.RS
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
 .RE
 Import tk photo
 .RS
@@ -808,6 +874,9 @@ crimp_install_guide
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.TP
 \fBfiles/crimp_pfm.n\fR
 crimp_pfm
 .TP
@@ -819,6 +888,9 @@ crimp_ppm
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -907,6 +979,24 @@ otsu threshold
 \fBfiles/crimp.n\fR
 crimp
 .RE
+PCX
+.RS
+.TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.RE
+PCX image export
+.RS
+.TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.RE
+PCX image import
+.RS
+.TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.RE
 perspective
 .RS
 .TP
@@ -970,6 +1060,9 @@ crimp_install_guide
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.TP
 \fBfiles/crimp_pfm.n\fR
 crimp_pfm
 .TP
@@ -981,6 +1074,9 @@ crimp_ppm
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk
@@ -1165,6 +1261,24 @@ summed area table
 \fBfiles/crimp.n\fR
 crimp
 .RE
+SUN
+.RS
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
+.RE
+SUN Raster image export
+.RS
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
+.RE
+SUN Raster image import
+.RS
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
+.RE
 threshold
 .RS
 .TP
@@ -1270,6 +1384,9 @@ crimp_install_guide
 \fBfiles/crimp_intro.n\fR
 crimp_introduction
 .TP
+\fBfiles/crimp_pcx.n\fR
+crimp_pcx
+.TP
 \fBfiles/crimp_pfm.n\fR
 crimp_pfm
 .TP
@@ -1281,6 +1398,9 @@ crimp_ppm
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
+.TP
+\fBfiles/crimp_sun.n\fR
+crimp_sun
 .TP
 \fBfiles/crimp_tk.n\fR
 crimp_tk

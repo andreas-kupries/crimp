@@ -48,16 +48,52 @@ decode_2map (sun_info*      info,
 	     crimp_image*   destination);
 
 static int
-decode_256fix (sun_info*      info,
-	       unsigned char* pixel,
-	       unsigned int   plength,
-	       crimp_image*   destination);
+decode_grey8fix (sun_info*      info,
+		 unsigned char* pixel,
+		 unsigned int   plength,
+		 crimp_image*   destination);
 
 static int
-decode_256map (sun_info*      info,
-	       unsigned char* pixel,
-	       unsigned int   plength,
-	       crimp_image*   destination);
+decode_grey8map (sun_info*      info,
+		 unsigned char* pixel,
+		 unsigned int   plength,
+		 crimp_image*   destination);
+
+static int
+decode_grey24map (sun_info*      info,
+		  unsigned char* pixel,
+		  unsigned int   plength,
+		  crimp_image*   destination);
+
+static int
+decode_rgb (sun_info*      info,
+	    unsigned char* pixel,
+	    unsigned int   plength,
+	    crimp_image*   destination);
+
+static int
+decode_bgr (sun_info*      info,
+	    unsigned char* pixel,
+	    unsigned int   plength,
+	    crimp_image*   destination);
+
+static int
+decode_grey32map (sun_info*      info,
+		  unsigned char* pixel,
+		  unsigned int   plength,
+		  crimp_image*   destination);
+
+static int
+decode_rgba (sun_info*      info,
+	     unsigned char* pixel,
+	     unsigned int   plength,
+	     crimp_image*   destination);
+
+static int
+decode_bgra (sun_info*      info,
+	     unsigned char* pixel,
+	     unsigned int   plength,
+	     crimp_image*   destination);
 
 /*
  * Definitions :: Core.
@@ -268,18 +304,36 @@ sun_read_pixels (sun_info*      info,
 
     switch (info->numBits) {
     case 32:
-	CRIMP_ASSERT (0,"Not yet implemented");
+	if (info->colorMap) {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_grey32map (info, pixel, plength, dst);
+	} else if (info->type == sun_raster_rgb) {
+	    dst = crimp_new_rgba (info->w, info->h);
+	    result = decode_rgba (info, pixel, plength, dst);
+	} else {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_bgra (info, pixel, plength, dst);
+	}
 	break;
     case 24:
-	CRIMP_ASSERT (0,"Not yet implemented");
+	if (info->colorMap) {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_grey24map (info, pixel, plength, dst);
+	} else if (info->type == sun_raster_rgb) {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_rgb (info, pixel, plength, dst);
+	} else {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_bgr (info, pixel, plength, dst);
+	}
 	break;
     case 8:
 	if (info->colorMap) {
 	    dst = crimp_new_rgb (info->w, info->h);
-	    result = decode_256map (info, pixel, plength, dst);
+	    result = decode_grey8map (info, pixel, plength, dst);
 	} else {
 	    dst = crimp_new_grey8 (info->w, info->h);
-	    result = decode_256fix (info, pixel, plength, dst);
+	    result = decode_grey8fix (info, pixel, plength, dst);
 	}
 	break;
     case 1:
@@ -478,10 +532,10 @@ decode_2map (sun_info*      info,
 }
 
 static int
-decode_256fix (sun_info*      info,
-	       unsigned char* pixel,
-	       unsigned int   plength,
-	       crimp_image*   destination)
+decode_grey8fix (sun_info*      info,
+		 unsigned char* pixel,
+		 unsigned int   plength,
+		 crimp_image*   destination)
 {
     /*
      * Indexed data at 1 pixel/byte (eq 1 byte/pixel). Left to right is
@@ -519,10 +573,10 @@ decode_256fix (sun_info*      info,
 }
 
 static int
-decode_256map (sun_info*      info,
-	       unsigned char* pixel,
-	       unsigned int   plength,
-	       crimp_image*   destination)
+decode_grey8map (sun_info*      info,
+		 unsigned char* pixel,
+		 unsigned int   plength,
+		 crimp_image*   destination)
 {
     /*
      * Indexed data at 1 pixel/byte (eq 1 byte/pixel). Left to right is
@@ -550,6 +604,282 @@ decode_256map (sun_info*      info,
 	    GET_VALUE (v);
 	    CHECK_INDEX (v);
 	    MAP (v);
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+    return 1;
+}
+
+static int
+decode_grey24map (sun_info*      info,
+		  unsigned char* pixel,
+		  unsigned int   plength,
+		  crimp_image*   destination)
+{
+    /*
+     * Indexed data at 4 byte/pixel, although only 3 are used. Big-endian long
+     * words. Each scan-line is 2-aligned relative to its start. For each
+     * octet we make sure that we have not run over the buffer-end. The result
+     * is an rgb image (color mapping out of info).
+     */
+
+    int x, y;
+    unsigned int v, v3, v2, v1, dummy;
+    unsigned char* base = pixel;
+    unsigned char* map = info->colorMap;
+    int mapSize = info->numColors;
+
+    CRIMP_ASSERT (info->numBits == 24, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, rgb);
+
+#define MAP(v)							\
+    map_color (map, mapSize, (v), &R(destination, x, y));	\
+    TRACE ((" %d", (v)));
+
+    for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
+	for (x = 0; x < info->w; x++) {
+
+	    GET_VALUE (v3);
+	    GET_VALUE (v2);
+	    GET_VALUE (v1);
+	    GET_VALUE (dummy);
+
+	    v = (v3 << 16) | (v2 << 8) | v1;
+
+	    CHECK_INDEX (v);
+	    MAP (v);
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+    return 1;
+}
+
+static int
+decode_rgb (sun_info*      info,
+	    unsigned char* pixel,
+	    unsigned int   plength,
+	    crimp_image*   destination)
+{
+    /*
+     * True color with 4 byte/pixel (RGB + 1 byte padding). Each scan-line is
+     * 2-aligned relative to its start. For each octet we make sure that we
+     * have not run over the buffer-end. The result is an rgb image
+     */
+
+    int x, y;
+    unsigned int r, g, b, dummy;
+    unsigned char* base = pixel;
+
+    CRIMP_ASSERT (info->numBits == 24, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, rgb);
+
+    for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
+	for (x = 0; x < info->w; x++) {
+
+	    GET_VALUE (r);
+	    GET_VALUE (g);
+	    GET_VALUE (b);
+	    GET_VALUE (dummy);
+
+	    R (destination, x, y) = r;
+	    G (destination, x, y) = g;
+	    B (destination, x, y) = b;
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+    return 1;
+}
+
+static int
+decode_bgr (sun_info*      info,
+	    unsigned char* pixel,
+	    unsigned int   plength,
+	    crimp_image*   destination)
+{
+    /*
+     * True color with 4 byte/pixel (BGR + 1 byte padding). Each scan-line is
+     * 2-aligned relative to its start. For each octet we make sure that we
+     * have not run over the buffer-end. The result is an rgb image
+     */
+
+    int x, y;
+    unsigned int r, g, b, dummy;
+    unsigned char* base = pixel;
+
+    CRIMP_ASSERT (info->numBits == 24, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, rgb);
+
+    for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
+	for (x = 0; x < info->w; x++) {
+
+	    GET_VALUE (b);
+	    GET_VALUE (g);
+	    GET_VALUE (r);
+	    GET_VALUE (dummy);
+
+	    R (destination, x, y) = r;
+	    G (destination, x, y) = g;
+	    B (destination, x, y) = b;
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+    return 1;
+}
+
+static int
+decode_grey32map (sun_info*      info,
+		  unsigned char* pixel,
+		  unsigned int   plength,
+		  crimp_image*   destination)
+{
+    /*
+     * Indexed data at 4 byte/pixel. Big-endian long words. Each scan-line is
+     * 2-aligned relative to its start. For each octet we make sure that we
+     * have not run over the buffer-end. The result is an rgb image (color
+     * mapping out of info).
+     */
+
+    int x, y;
+    unsigned int v, v4, v3, v2, v1;
+    unsigned char* base = pixel;
+    unsigned char* map = info->colorMap;
+    int mapSize = info->numColors;
+
+    CRIMP_ASSERT (info->numBits == 24, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, rgb);
+
+#define MAP(v)							\
+    map_color (map, mapSize, (v), &R(destination, x, y));	\
+    TRACE ((" %d", (v)));
+
+    for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
+	for (x = 0; x < info->w; x++) {
+
+	    GET_VALUE (v4);
+	    GET_VALUE (v3);
+	    GET_VALUE (v2);
+	    GET_VALUE (v1);
+
+	    v = (v4 << 24) | (v3 << 16) | (v2 << 8) | v1;
+
+	    CHECK_INDEX (v);
+	    MAP (v);
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+    return 1;
+}
+
+static int
+decode_rgba (sun_info*      info,
+	     unsigned char* pixel,
+	     unsigned int   plength,
+	     crimp_image*   destination)
+{
+    /*
+     * True color with 4 byte/pixel (RGBA). Each scan-line is 2-aligned
+     * relative to its start. For each octet we make sure that we have not run
+     * over the buffer-end. The result is an rgb image
+     */
+
+    int x, y;
+    unsigned int r, g, b, a;
+    unsigned char* base = pixel;
+
+    CRIMP_ASSERT (info->numBits == 32, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, rgba);
+
+    for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
+	for (x = 0; x < info->w; x++) {
+
+	    GET_VALUE (r);
+	    GET_VALUE (g);
+	    GET_VALUE (b);
+	    GET_VALUE (a);
+
+	    R (destination, x, y) = r;
+	    G (destination, x, y) = g;
+	    B (destination, x, y) = b;
+	    A (destination, x, y) = a;
+	}
+
+	if ((pixel-base)%2) {
+	    pixel ++;
+	}
+	TRACE (("\n"));
+    }
+
+#undef MAP
+    return 1;
+}
+
+static int
+decode_bgra (sun_info*      info,
+	     unsigned char* pixel,
+	     unsigned int   plength,
+	     crimp_image*   destination)
+{
+    /*
+     * True color with 4 byte/pixel (BGRA). Each scan-line is 2-aligned
+     * relative to its start. For each octet we make sure that we have not run
+     * over the buffer-end. The result is an rgb image
+     */
+
+    int x, y;
+    unsigned int r, g, b, a;
+    unsigned char* base = pixel;
+
+    CRIMP_ASSERT (info->numBits == 32, "Bad format");
+    CRIMP_ASSERT_IMGTYPE (destination, rgba);
+
+    for (y = 0; y < info->h; y++) {
+	TRACE (("PIX: "));
+	for (x = 0; x < info->w; x++) {
+
+	    GET_VALUE (b);
+	    GET_VALUE (g);
+	    GET_VALUE (r);
+	    GET_VALUE (a);
+
+	    R (destination, x, y) = r;
+	    G (destination, x, y) = g;
+	    B (destination, x, y) = b;
+	    A (destination, x, y) = a;
 	}
 
 	if ((pixel-base)%2) {

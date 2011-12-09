@@ -5,7 +5,7 @@ crimp_image* image;
 
 crimp_input_any (imageObj, image);
 
-Tcl_SetObjResult (interp, Tcl_NewIntObj (crimp_y(image)));
+Tcl_SetObjResult (interp, Tcl_NewIntObj (crimp_y (image)));
 return TCL_OK;
 
 

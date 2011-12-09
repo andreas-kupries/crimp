@@ -5,7 +5,7 @@ crimp_image* image;
 
 crimp_input_any (imageObj, image);
 
-Tcl_SetObjResult (interp, Tcl_NewIntObj (image->geo.h));
+Tcl_SetObjResult (interp, Tcl_NewIntObj (crimp_h (image)));
 return TCL_OK;
 
 

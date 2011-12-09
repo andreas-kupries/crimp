@@ -21,7 +21,8 @@ crimp_input(imageObj, image, float);
 
 /* Make the distance map */
 
-result = crimp_new_float(crimp_w (image), crimp_h (image));
+result = crimp_new_float_at (crimp_x (image), crimp_y (image),
+			     crimp_w (image), crimp_h (image));
 EuclideanDistanceMap2D(crimp_h (image), crimp_w (image), (float*) image->pixel,
 		       (float*)result->pixel);
 

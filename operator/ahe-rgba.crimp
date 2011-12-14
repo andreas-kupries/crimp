@@ -27,7 +27,11 @@ int*             colhistograma;
 
 crimp_input (imageObj, image, rgba);
 
-result = crimp_new (image->itype, crimp_w (image) - 2*radius, crimp_h (image) - 2*radius);
+result = crimp_new_at (image->itype,
+		       crimp_x (image) + radius,
+		       crimp_y (image) + radius,
+		       crimp_w (image) - 2*radius,
+		       crimp_h (image) - 2*radius);
 
 /*
  * We are using the method described by Simon Perreault and Patrick Hebert in

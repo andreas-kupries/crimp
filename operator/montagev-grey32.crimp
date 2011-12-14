@@ -1,10 +1,10 @@
-montagev_rgb
+montagev_grey32
 Tcl_Obj* imageTopObj
 Tcl_Obj* imageBottomObj
 
 /*
- * Place the two images adjacent to each other in the result, from top to
- * bottom. The images have to have the same width.
+ * Place the two images adjacent to each other in the result, from left to
+ * right. The images have to have the same width.
  */
 
 crimp_image*     result;
@@ -12,32 +12,28 @@ crimp_image*     imageTop;
 crimp_image*     imageBottom;
 int x, y;
 
-crimp_input (imageTopObj,    imageTop,    rgb);
-crimp_input (imageBottomObj, imageBottom, rgb);
+crimp_input (imageTopObj,    imageTop,    grey32);
+crimp_input (imageBottomObj, imageBottom, grey32);
 
 if (!crimp_eq_width (imageTop, imageBottom)) {
     Tcl_SetResult(interp, "image widths do not match", TCL_STATIC);
     return TCL_ERROR;
 }
 
-result = crimp_new_rgb_at (crimp_x (imageTop), crimp_y (imageTop),
-			   crimp_w (imageTop), crimp_h (imageTop) + crimp_h (imageBottom));
+result = crimp_new_grey32_at (crimp_x (imageTop), crimp_y (imageTop),
+			     crimp_w (imageTop), crimp_h (imageTop) + crimp_h (imageBottom));
 
 for (y = 0; y < crimp_h (imageTop); y++) {
     for (x = 0; x < crimp_w (result); x++) {
 
-	R (result, x, y) = R (imageTop, x, y);
-	G (result, x, y) = G (imageTop, x, y);
-	B (result, x, y) = B (imageTop, x, y);
+	GREY32 (result, x, y) = GREY32 (imageTop, x, y);
     }
 }
 
 for (y = 0; y < crimp_h (imageBottom); y++) {
     for (x = 0; x < crimp_w (result); x++) {
 
-	R (result, x, crimp_h (imageTop) + y) = R (imageBottom, x, y);
-	G (result, x, crimp_h (imageTop) + y) = G (imageBottom, x, y);
-	B (result, x, crimp_h (imageTop) + y) = B (imageBottom, x, y);
+	GREY32 (result, x, crimp_h (imageTop) + y) = GREY32 (imageBottom, x, y);
     }
 }
 

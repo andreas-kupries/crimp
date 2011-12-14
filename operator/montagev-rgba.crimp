@@ -20,7 +20,8 @@ if (!crimp_eq_width (imageTop, imageBottom)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_rgba (crimp_w (imageTop), crimp_h (imageTop) + crimp_h (imageBottom));
+result = crimp_new_rgba_at (crimp_x (imageTop), crimp_y (imageTop),
+			    crimp_w (imageTop), crimp_h (imageTop) + crimp_h (imageBottom));
 
 for (y = 0; y < crimp_h (imageTop); y++) {
     for (x = 0; x < crimp_w (result); x++) {

@@ -29,7 +29,9 @@ if (factor == 1) {
     return TCL_OK;
 }
 
-result = crimp_new (image->itype, crimp_w (image)/factor, crimp_h (image)/factor);
+result = crimp_new_at (image->itype,
+		       crimp_x (image), crimp_y (image),
+		       crimp_w (image)/factor, crimp_h (image)/factor);
 
 for (yo = 0, yi = 0; yo < crimp_h (result); yo++, yi += factor) {
     for (xo = 0, xi = 0; xo < crimp_w (result); xo++, xi += factor) {

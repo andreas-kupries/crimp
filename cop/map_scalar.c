@@ -28,7 +28,7 @@
 #define MAPNAME2(IN,OUT) crimp_piecewise_linear_map_ ## IN ## _ ## OUT
 #define MAPNAME(IN,OUT) MAPNAME2(IN,OUT)
 
-#define NEWNAME2(OUT) crimp_new_ ## OUT
+#define NEWNAME2(OUT) crimp_new_ ## OUT ## _at
 #define NEWNAME(OUT) NEWNAME2(OUT)
 
 #define STRINGIZE2(NAME) #NAME
@@ -39,7 +39,8 @@ crimp_image* resultImage;
 
 crimp_input(inImageObj, inImage, INTYPENAME);
 
-resultImage = NEWNAME(OUTTYPENAME)(crimp_w (inImage), crimp_h (inImage));
+resultImage = NEWNAME(OUTTYPENAME)(crimp_x (inImage), crimp_y (inImage),
+				   crimp_w (inImage), crimp_h (inImage));
 
 if (MAPNAME(INTYPENAME,OUTTYPENAME)(interp,
 				    mapObj,

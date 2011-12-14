@@ -17,7 +17,8 @@ int          x, y;
 
 crimp_input (imageObj, image, grey8);
 
-result = crimp_new_float (crimp_w (image), crimp_h (image));
+result = crimp_new_float_at (crimp_x (image), crimp_y (image),
+			     crimp_w (image), crimp_h (image));
 
 /* Initialize the accumulator */
 FLOATP (result, 0, 0) = GREY8 (image, 0, 0);

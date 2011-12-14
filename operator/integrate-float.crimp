@@ -17,7 +17,7 @@ int          x, y;
 
 crimp_input (imageObj, image, float);
 
-result = crimp_new_float (crimp_w (image), crimp_h (image));
+result = crimp_new_like (image);
 
 /* Initialize the accumulator */
 FLOATP (result, 0, 0) = FLOATP (image, 0, 0);

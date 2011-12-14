@@ -20,7 +20,8 @@ if (!crimp_eq_height (imageLeft, imageRight)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_rgba (crimp_w (imageLeft) + crimp_w (imageRight), crimp_h (imageLeft));
+result = crimp_new_rgba_at (crimp_x (imageLeft), crimp_y (imageLeft),
+			    crimp_w (imageLeft) + crimp_w (imageRight), crimp_h (imageLeft));
 
 for (y = 0; y < crimp_h (result); y++) {
     for (x = 0; x < crimp_w (imageLeft); x++) {

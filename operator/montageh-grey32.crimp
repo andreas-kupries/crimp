@@ -1,4 +1,4 @@
-montageh_hsv
+montageh_grey32
 Tcl_Obj* imageLeftObj
 Tcl_Obj* imageRightObj
 
@@ -12,32 +12,28 @@ crimp_image*     imageLeft;
 crimp_image*     imageRight;
 int x, y;
 
-crimp_input (imageLeftObj,  imageLeft,  hsv);
-crimp_input (imageRightObj, imageRight, hsv);
+crimp_input (imageLeftObj,  imageLeft,  grey32);
+crimp_input (imageRightObj, imageRight, grey32);
 
 if (!crimp_eq_height (imageLeft, imageRight)) {
     Tcl_SetResult(interp, "image heights do not match", TCL_STATIC);
     return TCL_ERROR;
 }
 
-result = crimp_new_hsv_at (crimp_x (imageLeft), crimp_y (imageLeft),
-			   crimp_w (imageLeft) + crimp_w (imageRight), crimp_h (imageLeft));
+result = crimp_new_grey32_at (crimp_x (imageLeft), crimp_y (imageLeft),
+			     crimp_w (imageLeft) + crimp_w (imageRight), crimp_h (imageLeft));
 
 for (y = 0; y < crimp_h (result); y++) {
     for (x = 0; x < crimp_w (imageLeft); x++) {
 
-	H (result, x, y) = H (imageLeft, x, y);
-	S (result, x, y) = S (imageLeft, x, y);
-	V (result, x, y) = V (imageLeft, x, y);
+	GREY32 (result, x, y) = GREY32 (imageLeft, x, y);
     }
 }
 
 for (y = 0; y < crimp_h (result); y++) {
     for (x = 0; x < crimp_w (imageRight); x++) {
 
-	H (result, crimp_w (imageLeft) + x, y) = H (imageRight, x, y);
-	S (result, crimp_w (imageLeft) + x, y) = S (imageRight, x, y);
-	V (result, crimp_w (imageLeft) + x, y) = V (imageRight, x, y);
+	GREY32 (result, crimp_w (imageLeft) + x, y) = GREY32 (imageRight, x, y);
     }
 }
 

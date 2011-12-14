@@ -9,7 +9,8 @@ real*        workspace;
 
 crimp_input (imageObj, image, grey8);
 
-result = crimp_new_float (crimp_w (image), crimp_h (image));
+result = crimp_new_float_at (crimp_x (image), crimp_y (image),
+			     crimp_w (image), crimp_h (image));
 
 n = crimp_w (image);
 workspace = CRIMP_ALLOC_ARRAY (2*crimp_w (image)+15, real);

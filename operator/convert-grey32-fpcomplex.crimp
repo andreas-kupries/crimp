@@ -7,7 +7,7 @@ int          x, y;
 
 crimp_input (imageObj, image, grey32);
 
-result = crimp_new_fpcomplex (crimp_w (image), crimp_h (image));
+result = crimp_new_fpcomplex_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
 
 for (y = 0; y < crimp_h (result); y++) {
     for (x = 0; x < crimp_w (result); x++) {

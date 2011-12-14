@@ -12,10 +12,14 @@ int              x, y;
 
 crimp_input (imageObj, image, rgba);
 
-red   = crimp_new (grey, crimp_w (image), crimp_h (image));
-green = crimp_new (grey, crimp_w (image), crimp_h (image));
-blue  = crimp_new (grey, crimp_w (image), crimp_h (image));
-alpha = crimp_new (grey, crimp_w (image), crimp_h (image));
+red   = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			    crimp_w (image), crimp_h (image));
+green = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			    crimp_w (image), crimp_h (image));
+blue  = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			    crimp_w (image), crimp_h (image));
+alpha = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			    crimp_w (image), crimp_h (image));
 
 for (y = 0; y < crimp_h (image); y++) {
     for (x = 0; x < crimp_w (image); x++) {

@@ -31,7 +31,7 @@ if (((crimp_w (kernel) % 2) == 0) ||
 kw = crimp_w (kernel)/2;
 kh = crimp_h (kernel)/2;
 
-result = crimp_new (image->itype, crimp_w (image) - 2*kw, crimp_h (image) - 2*kh);
+result = crimp_new_at (image->itype, crimp_x (image) + kw, crimp_y (image) + kh, crimp_w (image) - 2*kw, crimp_h (image) - 2*kh);
 
 for (yo = 0, yi = kh; yo < crimp_h (result); yo++, yi++) {
     for (xo = 0, xi = kw; xo < crimp_w (result); xo++, xi++) {

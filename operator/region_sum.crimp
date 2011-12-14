@@ -24,7 +24,11 @@ if (radius <= 0) {
 }
 
 n = 2*(radius+1);
-result = crimp_new (image->itype, crimp_w (image) - n, crimp_h (image) - n);
+result = crimp_new_at (image->itype,
+		       crimp_x (image) + radius+1,
+		       crimp_y (image) + radius+1,
+		       crimp_w (image) - n,
+		       crimp_h (image) - n);
 
 for (yo = 0, yi = radius+1; yo < crimp_h (result); yo++, yi++) {
     for (xo = 0, xi = radius+1; xo < crimp_w (result); xo++, xi++) {

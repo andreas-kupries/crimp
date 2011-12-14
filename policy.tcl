@@ -1368,18 +1368,16 @@ proc ::crimp::crop {image ww hn we hs} {
     return [::crimp::$f $image $ww $hn $we $hs]
 }
 
-proc ::crimp::cut {image x y w h} {
-    lassign [dimensions $image] iw ih
-    if {$x < 0} { set x 0 }
-    if {$y < 0} { set y 0 }
-    set south [expr {$y + $h}]
-    set east  [expr {$x + $w}]
-    if {$south > $ih} { set south $ih }
-    if {$east  > $iw} { set east  $iw }
-    set dw [expr {$iw - $east}]
-    set dh [expr {$ih - $south}]
-
-    return [crop $image $x $y $dw $dh]
+proc ::crimp::cut {image dx dy w h} {
+    set type [TypeOf $image]
+    set f    cut_$type
+    if {![::crimp::Has $f]} {
+	return -code error "Cutting is not supported for images of type \"$type\""
+    }
+    lassign [::crimp::at $image] ox oy
+    incr ox $dx
+    incr oy $dy
+    return [::crimp::$f $image $ox $oy $w $h]
 }
 
 # # ## ### ##### ######## #############

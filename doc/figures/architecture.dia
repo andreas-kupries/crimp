@@ -28,11 +28,13 @@ set boxwidth   [90 mm]
 set movelength  [5 mm]
 
 block {
-    set P [area " Processing" height [40 mm]]
+    set hx [60 mm]
+
+    set P [area " Processing" height $hx]
     group { text at $P "crimp" }
 
     east ; move
-    set IO [area " Input / Output" height [40 mm]]
+    set IO [area " Input / Output" height $hx]
     block {
 	set fillcolor white
 	set boxwidth  [25 mm]
@@ -43,6 +45,12 @@ block {
 	xbox crimp::ppm crimp::pgm crimp::pfm
 	move
 	xbox crimp::tk
+	south
+	move
+	xbox crimp::pcx
+	west
+	move
+	xbox crimp::sun
     } at $IO
 }
 group {

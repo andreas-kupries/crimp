@@ -11,7 +11,7 @@ float offset
  */
 
 #define BINOP(a,b) ((((a) + (b)) / scale) + offset)
-#include "binop_fpcomplex_fpcomplex.c"
+#include "binop_fpcomplex_fpcomplex_fpcomplex.c"
 #undef BINOP
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */

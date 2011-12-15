@@ -11,7 +11,7 @@ int offset
  */
 
 #define BINOP(a,b) ((((a) - (b)) / scale) + offset)
-#include "binop_rgba_rgb.c"
+#include "binop_rgba_rgb_rgba.c"
 #undef BINOP
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */

@@ -116,7 +116,7 @@ proc gen {a b z} {
 
     #puts \t[join $lines \n\t]
 
-    set dst [file join $basedir binop_${a}_${b}.c]
+    set dst [file join $basedir binop_${a}_${b}_${z}.c]
     set ch  [open $dst w]
     puts -nonewline $ch [string map $map $template]
     close $ch
@@ -238,6 +238,22 @@ generate grey8     float     float
 generate grey8     grey16    grey16
 generate grey8     grey32    grey32
 generate grey8     grey8     grey8
+
+# # ## ### ##### ######## ############# ######################
+## Some operation always generate float, regardless of input types
+## Examples: hypot, atan2, pow.
+
+generate grey16    grey16    float
+generate grey16    grey32    float
+generate grey16    grey8     float
+
+generate grey32    grey16    float
+generate grey32    grey32    float
+generate grey32    grey8     float
+
+generate grey8     grey16    float
+generate grey8     grey32    float
+generate grey8     grey8     float
 
 # # ## ### ##### ######## ############# ######################
 ## Complex vs. others, self and simple.

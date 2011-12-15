@@ -1,0 +1,21 @@
+difference_rgb_rgb
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+
+/*
+ * Pixel- and channel-wise absolute difference of two images. The images have
+ * to have equal dimensions.
+ */
+
+#define BINOP(a,b) (abs((a) - (b)))
+#include "binop_rgb_rgb_rgb.c"
+#undef BINOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

@@ -21,7 +21,7 @@ proc crimp_bmp {} {
 
 proc crimp_tk {} {
     box crimp::tk color red
-    group { down ; --- 6 ; l ; --- 7.5 ; d ; ---> } ;# core
+    group { down ; --- 5.25 ; l ; --- 8 ; d ; ---> 1.75 } ;# core
 }
 
 proc crimp_ppm {} {
@@ -39,7 +39,17 @@ proc crimp_pgm {} {
 proc crimp_pfm {} {
     box crimp::pfm color red
     group { down ; --- ; l ; --- 3 ; d ; ---> } ;#crimp
-    group { down ; --- 5.5 ; l ; --- 3.25 ; d ; ---> 1.5 } ;# core
+    group { down ; --- 5 ; l ; --- 3.5 ; d ; ---> 2 } ;# core
+}
+
+proc crimp_pcx {} {
+    box crimp::pcx color red
+    group { down ; --- 5.5 ; l ; --- 12.5 ; d ; ---> 1.5 } ;# core
+}
+
+proc crimp_sun {} {
+    box crimp::sun color red
+    group { down ; --- 5.75 ; l ; --- 17.25 ; d ; ---> 1.25 } ;# core
 }
 
 ## ====================================================================
@@ -50,7 +60,9 @@ proc layout {} {
     crimp_ppm ; move
     crimp_pgm ; move
     crimp_pfm ; move
-    crimp_tk
+    crimp_tk  ; move
+    crimp_pcx ; move
+    crimp_sun
 }
 
 ## ====================================================================

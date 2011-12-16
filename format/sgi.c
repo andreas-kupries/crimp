@@ -33,6 +33,14 @@ static void
 dump_offsets (unsigned long* start, unsigned long* length, int h, int d);
 #endif
 
+static int decode_rgbpacked (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
+static int decode_grey8     (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
+static int decode_rgb       (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
+static int decode_rgba      (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
+
+static int
+decode_rle (crimp_buffer* buf, unsigned char* dst, int delta, int n, int start, int length);
+
 /*
  * Definitions :: Core.
  */
@@ -273,7 +281,6 @@ sgi_read_pixels (sgi_info*      info,
     crimp_buffer*  buf = info->input;
     crimp_image*   dst = NULL;
     int            result = 0;
-    unsigned char* pixel;
 
     /*
      * We assume that:
@@ -288,10 +295,28 @@ sgi_read_pixels (sgi_info*      info,
      * - normal/dithered (only for depth == 1).
      */
 
-    pixel = crimp_buf_at (buf);
-
-    /*
-     */
+    switch (info->d) {
+    case 1:
+	if (info->mapType == sgi_colormap_dithered) {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_rgbpacked (info, buf, dst);
+	} else {
+	    dst    = crimp_new_grey8 (info->w, info->h);
+	    result = decode_grey8 (info, buf, dst);
+	}
+	break;
+    case 3:
+	dst = crimp_new_rgb (info->w, info->h);
+	result = decode_rgb (info, buf, dst);
+	break;
+    case 4:
+	dst = crimp_new_rgb (info->w, info->h);
+	result = decode_rgba (info, buf, dst);
+	break;
+    default:
+	TRACE (("SGI unsupported format\n"));
+	break;
+    }
 
  done:
     if (dst) {
@@ -307,6 +332,313 @@ sgi_read_pixels (sgi_info*      info,
 /*
  * Pixel decoder functions. Plus helper macros.
  */
+
+static int
+decode_rgbpacked (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
+{
+    int x, y, w, h, value, r, g, b;
+    CRIMP_ASSERT_IMGTYPE (dst, rgb);
+    TRACE (("SGI RGB packed\n"));
+
+    w = info->w;
+    h = info->h;
+
+    if (info->storage == sgi_storage_verbatim) {
+	unsigned char* pixel = crimp_buf_at (buf);
+
+	for (y = h-1; y >= 0; y--) {
+	    for (x=0; x < w; x++) {
+		value = *pixel ++;
+
+		/* value = BBB.GGG.RR (bit-packed 3:3:2, ordered BGR) */
+		/*         765 432 10 */
+
+		b = (value & 0xe0) >> 5;
+		g = (value & 0x1c) >> 2;
+		r = (value & 0x03);
+
+		R (dst, x, y) = r;
+		G (dst, x, y) = g;
+		B (dst, x, y) = b;
+	    }
+	}
+    } else {
+	unsigned long* os = info->ostart;
+	unsigned long* ol = info->olength;
+	int i;
+
+	for (y = h-1, i = 0;
+	     y >= 0;
+	     y--, i++) {
+
+	    /* Decompress into destination, avoiding a temp buffer */
+
+	    TRACE (("SGI PIX DATA %8d", y));
+
+	    if (!decode_rle (buf, &R (dst, 0, y), 3, w, os[i], ol[i])) {
+		return 0;
+	    }
+
+	    /* Expand the bit packing in place */
+
+	    for (x = 0; x < w; x++) {
+		value = R (dst, x, y);
+
+		/* value = BBB.GGG.RR (bit-packed 3:3:2, ordered BGR) */
+		/*         765 432 10 */
+
+		b = (value & 0xe0) >> 5;
+		g = (value & 0x1c) >> 2;
+		r = (value & 0x03);
+
+		R (dst, x, y) = r;
+		G (dst, x, y) = g;
+		B (dst, x, y) = b;
+	    }
+
+#ifdef SGI_TRACE
+	    TRACE (("SGI PIX RGB ="));
+	    for (x=0;x<w;x++) {
+		TRACE ((" (%d, %d, %d)", R(dst,x,y), G(dst,x,y), B(dst,x,y)));
+	    }
+	    TRACE (("\n"));
+#endif
+	}
+    }
+}
+
+static int
+decode_grey8 (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
+{
+    int x, y, w, h;
+    CRIMP_ASSERT_IMGTYPE (dst, grey8);
+    TRACE (("SGI GREY8\n"));
+
+    w = info->w;
+    h = info->h;
+
+    if (info->storage == sgi_storage_verbatim) {
+	unsigned char* pixel = crimp_buf_at (buf);
+
+	for (y = h-1; y >= 0; y--) {
+	    for (x=0; x < w; x++) {
+		GREY8 (dst, x, y) = *pixel ++;
+	    }
+	}
+    } else {
+	unsigned long* os = info->ostart;
+	unsigned long* ol = info->olength;
+	int i;
+
+	for (y = h-1, i = 0;
+	     y >= 0;
+	     y--, i++) {
+
+	    TRACE (("SGI PIX DATA %8d", y));
+	    if (!decode_rle (buf, &GREY8 (dst, 0, y), 1, w, os[i], ol[i])) {
+		return 0;
+	    }
+
+#ifdef SGI_TRACE
+	    TRACE (("SGI PIX GREY8 ="));
+	    for (x=0;x<w;x++) {
+		TRACE ((" %d", GREY8(dst,x,y)));
+	    }
+	    TRACE (("\n"));
+#endif
+	}
+    }
+}
+
+static int
+decode_rgb (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
+{
+    int x, y, w, h;
+    CRIMP_ASSERT_IMGTYPE (dst, rgb);
+    TRACE (("SGI RGB\n"));
+
+    w = info->w;
+    h = info->h;
+
+    if (info->storage == sgi_storage_verbatim) {
+	int            n = w * h;
+	unsigned char* r = crimp_buf_at (buf);
+	unsigned char* g = r + n;
+	unsigned char* b = g + n;
+
+	for (y = h-1; y >= 0; y--) {
+	    for (x=0; x < w; x++) {
+		R (dst, x, y) = *r ++;
+		G (dst, x, y) = *g ++;
+		B (dst, x, y) = *b ++;
+	    }
+	}
+    } else {
+	unsigned long* os = info->ostart;
+	unsigned long* ol = info->olength;
+	int r, g, b;
+
+	for (y = h-1, r = 0, g = h, b = h+h;
+	     y >= 0;
+	     y--, r++, g++, b++) {
+
+	    TRACE (("SGI PIX DATA %8d R", y));
+	    if (!decode_rle (buf, &R (dst, 0, y), 3, w, os[r], ol[r])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d G", y));
+	    if (!decode_rle (buf, &G (dst, 0, y), 3, w, os[g], ol[g])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d B", y));
+	    if (!decode_rle (buf, &B (dst, 0, y), 3, w, os[b], ol[b])) {
+		return 0;
+	    }
+
+#ifdef SGI_TRACE
+	    TRACE (("SGI PIX RGB ="));
+	    for (x=0;x<w;x++) {
+		TRACE ((" (%d, %d, %d)", R(dst,x,y), G(dst,x,y), B(dst,x,y)));
+	    }
+	    TRACE (("\n"));
+#endif
+	}
+    }
+
+    return 1;
+}
+
+static int
+decode_rgba (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
+{
+    int x, y, w, h;
+    CRIMP_ASSERT_IMGTYPE (dst, rgba);
+    TRACE (("SGI RGBA\n"));
+
+    w = info->w;
+    h = info->h;
+
+    if (info->storage == sgi_storage_verbatim) {
+	int            n = w * h;
+	unsigned char* r = crimp_buf_at (buf);
+	unsigned char* g = r + n;
+	unsigned char* b = g + n;
+	unsigned char* a = b + n;
+
+	for (y = h-1; y >= 0; y--) {
+	    for (x=0; x < w; x++) {
+		R (dst, x, y) = *r ++;
+		G (dst, x, y) = *g ++;
+		B (dst, x, y) = *b ++;
+		A (dst, x, y) = *a ++;
+	    }
+	}
+    } else {
+	unsigned long* os = info->ostart;
+	unsigned long* ol = info->olength;
+	int r, g, b, a;
+
+	for (y = h-1, r = 0, g = h, b = g+h, a = b+h;
+	     y >= 0;
+	     y--, r++, g++, b++, a++) {
+
+	    TRACE (("SGI PIX DATA %8d R", y));
+	    if (!decode_rle (buf, &R (dst, 0, y), 4, w, os[r], ol[r])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d G", y));
+	    if (!decode_rle (buf, &G (dst, 0, y), 4, w, os[g], ol[g])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d B", y));
+	    if (!decode_rle (buf, &B (dst, 0, y), 4, w, os[b], ol[b])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d A", y));
+	    if (!decode_rle (buf, &A (dst, 0, y), 4, w, os[a], ol[a])) {
+		return 0;
+	    }
+
+#ifdef SGI_TRACE
+	    TRACE (("SGI PIX RGBA ="));
+	    for (x=0;x<w;x++) {
+		TRACE ((" (%d, %d, %d, %d)", R(dst,x,y), G(dst,x,y), B(dst,x,y), A(dst,x,y)));
+	    }
+	    TRACE (("\n"));
+#endif
+	}
+    }
+}
+
+static int
+decode_rle (crimp_buffer* buf,
+	    unsigned char* dst, int delta, int n,
+	    int start, int length)
+{
+    int value, count, done = 0;
+    unsigned char* src;
+
+    TRACE ((" RLE (%d,%d): ", start, length));
+
+    crimp_buf_moveto (buf, start);
+    src = crimp_buf_at (buf);
+
+    while (n >= 0) {
+	value = *src ++;
+	count = value & 0x7f;
+
+	TRACE ((" %d -> %d", value, count));
+
+	if (!count) {
+	    TRACE ((" EOL"));
+	    /* RLE packet type C - end of scanline */
+	    done = 1;
+	    break;
+	}
+
+	if (value & 0x80) {
+	    /* RLE packet type A - literal pixels to copy */
+	    TRACE (("=("));
+	    while (count--) {
+		if (!n) goto error;
+
+		value = *src ++;
+		TRACE ((" %d",value));
+		*dst = value;
+		dst += delta;
+		n--;
+	    }
+	    TRACE ((")"));
+
+	} else {
+	    /* RLE packet type B - replicate next */
+	    value = *src ++;
+	    TRACE (("x(%d)",value));
+	    while (count--) {
+		if (!n) goto error;
+		*dst = value;
+		dst += delta;
+		n--;
+	    }
+	}
+    }
+
+    TRACE (("\n"));
+
+    if (!done) {
+    error:
+	TRACE (("SGI RLE rle/scanline mismatch"));
+	return 0;
+    }
+
+    return 1;
+}
+
 
 #ifdef SGI_TRACE
 static void

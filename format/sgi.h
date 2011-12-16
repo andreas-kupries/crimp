@@ -29,7 +29,7 @@
  * i.e. identical rows of pixels sharing the compressed data,
  * including sharing between channels.
  *
- * Header 512 bytes
+ * == Header 512 bytes ==
  *
  *   0..  1 |   2 : Magic (Decimal 474, Hex 0x01da)
  *   2..  2 |   1 : Storage format --> sgi_storage_type
@@ -45,7 +45,8 @@
  * 104..107 |   4 : Colormap id --> sgi_colormap_type
  * 108..511 | 404 : Reserved, to fill to 512.
  *
- * Offset tables
+ * == Offset tables ==
+ *
  * - Are present if and only if pixels are stored RLE compressed.
  * - We have 2 * 'depth' (#channels) tables. Per channel a table of
  *   start offsets, and a table of lengths.
@@ -60,14 +61,16 @@
  * - The offsets are relative to the beginning of the file, i.e. absolute
  *   in the file.
  *
- * Pixel data
+ * == Pixel data ==
+ *
  * - When stored direct the data of the first channel is provided first,
  *   followed by the others, in order.
  * - The size of each pixel is determined by Bytes/Pixel/Channel.
  * - When stored RLE the data is stored by scan line using the compression
  *   method below.
  *
- * RLE compression
+ * == RLE compression ==
+ *
  * - Depending on bytes/pixel/channel the elements below are treated as either
  *   chars, or shorts.
  * - We have x types of packets:
@@ -77,6 +80,12 @@
  *
  * Note that even when elements are shorts the flag and count information for
  * the various packet types is still in the low-order byte of the value.
+ *
+ * == Line ordering ==
+ *
+ * SGI puts the coordinate origin into the lower left corner. This means that
+ * the first scanline is the bottom row of the image. IOW the scan lines are
+ * stored from bottom to top.
  */
 
 typedef enum {

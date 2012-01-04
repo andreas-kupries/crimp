@@ -388,6 +388,9 @@ crimp_pgm
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
 .TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
+.TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
 .TP
@@ -478,6 +481,9 @@ crimp_pgm
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
 .TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
+.TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
 .TP
@@ -559,6 +565,12 @@ Export image, PPM
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
 .RE
+Export image, SGI Raster
+.RS
+.TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
+.RE
 Export image, SUN Raster
 .RS
 .TP
@@ -588,6 +600,12 @@ Export PPM image
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.RE
+Export SGI Raster image
+.RS
+.TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
 .RE
 Export SUN Raster image
 .RS
@@ -718,6 +736,9 @@ crimp_pgm
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
 .TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
+.TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
 .TP
@@ -775,6 +796,12 @@ Import image, PPM
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
 .RE
+Import image, SGI Raster
+.RS
+.TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
+.RE
 Import image, SUN Raster
 .RS
 .TP
@@ -804,6 +831,12 @@ Import PPM image
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.RE
+Import SGI Raster image
+.RS
+.TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
 .RE
 Import SUN Raster image
 .RS
@@ -885,6 +918,9 @@ crimp_pgm
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
@@ -1072,6 +1108,9 @@ crimp_pgm
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
 .TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
+.TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources
 .TP
@@ -1206,6 +1245,24 @@ scharr
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.RE
+SGI
+.RS
+.TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
+.RE
+SGI Raster image export
+.RS
+.TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
+.RE
+SGI Raster image import
+.RS
+.TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
 .RE
 sharpen
 .RS
@@ -1395,6 +1452,9 @@ crimp_pgm
 .TP
 \fBfiles/crimp_ppm.n\fR
 crimp_ppm
+.TP
+\fBfiles/crimp_sgi.n\fR
+crimp_sgi
 .TP
 \fBfiles/crimp_sources.n\fR
 crimp_sources

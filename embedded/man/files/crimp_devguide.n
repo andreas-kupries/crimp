@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -293,13 +293,11 @@ For a demonstration of CRIMP's current abilities see the
 as
 .CS
 
-
     tclsh8.5 demos.tcl
 
 .CE
 or
 .CS
-
 
     tclsh8.5 demos.tcl /path/to/crimp/packages ...
 
@@ -710,7 +708,6 @@ As an example, here are the contents of the "\fI.crimp\fR" file for one of
 the primitives with one of the smallest implementations:
 .CS
 
-
 [1]     width
 [2]     Tcl_Obj* imageObj
 [3]
@@ -917,7 +914,6 @@ by demos. These are:
 .IP \(bu
 .bottom
 .RE
-.IP
 These widgets are ttk::frames placed to the left, right, top and
 bottom of the demo result area and usually empty. The demo can put
 its own interface elements there, buttons, sliders, plots, etc. pp.

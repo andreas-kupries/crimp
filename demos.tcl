@@ -59,6 +59,7 @@ if {[catch {
 	crimp::bmp
 	crimp::pcx
 	crimp::sun
+	crimp::sgi
     } {
 	package require $p
 	puts "Using prebuilt $p [package present $p]"
@@ -117,6 +118,7 @@ if {[catch {
 	crimp_bmp.tcl  crimp::bmp   {Read/write Windows bitmaps}
 	crimp_pcx.tcl  crimp::pcx   {Read/write zSoft PCX}
 	crimp_sun.tcl  crimp::sun   {Read/write Sun Raster}
+	crimp_sgi.tcl  crimp::sgi   {Read/write SGI Raster}
     } {
 	puts "Trying dynamically compiled package \"$p\""
 	# Directly access the package

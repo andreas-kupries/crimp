@@ -17,7 +17,7 @@
     dtplite -o ../embedded/www -merge html  .
     dtplite -o ../embedded/www -merge html  .
 )
-
+exit
 echo ___ MAN /show _________
 less embedded/man/files/crimp.n
 

@@ -269,6 +269,9 @@ doc
 \fBcrimp_ppm\fR
 \fIfiles/crimp_ppm.n\fR: CRIMP - PPM handling, NetPBM
 .TP
+\fBcrimp_sgi\fR
+\fIfiles/crimp_sgi.n\fR: CRIMP - SGI RASTER handling
+.TP
 \fBcrimp_sun\fR
 \fIfiles/crimp_sun.n\fR: CRIMP - SUN RASTER handling
 .TP

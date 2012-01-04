@@ -289,6 +289,10 @@ the \fBcrimp::core\fR are
 This package provides the ability to read BMP images, i.e. the Windows
 bitmap format, as defined at \fIhttp://en.wikipedia.org/wiki/BMP_file_format\fR.
 .TP
+\fBcrimp::pcx\fR
+This package provides the ability to read PCX images, as defined at
+\fIhttp://en.wikipedia.org/wiki/PCX\fR.
+.TP
 \fBcrimp::pfm\fR
 This package provides the ability to read from and write to PFM
 images, i.e. the "Portable Float Map" format. This format is an
@@ -304,6 +308,14 @@ images, i.e. the "Portable Grey Map" format as specified at
 This package provides the ability to read from and write to PPM
 images, i.e. the "Portable Pix Map" format as specified at
 \fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
+.TP
+\fBcrimp::sgi\fR
+This package provides the ability to read SGI raster images, as
+defined at \fIhttp://en.wikipedia.org/wiki/Silicon_Graphics_Image\fR.
+.TP
+\fBcrimp::sun\fR
+This package provides the ability to read SUN raster images, as
+defined at \fIhttp://www.fileformat.info/format/sunraster/egff.htm\fR.
 .TP
 \fBcrimp::tk\fR
 This package provides the ability to convert CRIMP images into Tk

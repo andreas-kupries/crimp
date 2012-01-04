@@ -327,12 +327,18 @@ files found in this directory, converting them into proper
 <dl class="definitions">
 <dt>&quot;<b class="file">crimp_bmp.tcl</b>&quot;</dt>
 <dd><p>&quot;<b class="file">format/*bmp*.crimp</b>&quot;</p></dd>
+<dt>&quot;<b class="file">crimp_pcx.tcl</b>&quot;</dt>
+<dd><p>&quot;<b class="file">format/*pcx*.crimp</b>&quot;</p></dd>
 <dt>&quot;<b class="file">crimp_pfm.tcl</b>&quot;</dt>
 <dd><p>&quot;<b class="file">format/*pfm*.crimp</b>&quot;</p></dd>
 <dt>&quot;<b class="file">crimp_pgm.tcl</b>&quot;</dt>
 <dd><p>&quot;<b class="file">format/*pgm*.crimp</b>&quot;</p></dd>
 <dt>&quot;<b class="file">crimp_ppm.tcl</b>&quot;</dt>
 <dd><p>&quot;<b class="file">format/*ppm*.crimp</b>&quot;</p></dd>
+<dt>&quot;<b class="file">crimp_sgi.tcl</b>&quot;</dt>
+<dd><p>&quot;<b class="file">format/*sgi*.crimp</b>&quot;</p></dd>
+<dt>&quot;<b class="file">crimp_sun.tcl</b>&quot;</dt>
+<dd><p>&quot;<b class="file">format/*sun*.crimp</b>&quot;</p></dd>
 <dt>&quot;<b class="file">crimp_tk.tcl</b>&quot;</dt>
 <dd><p>&quot;<b class="file">format/*tk*.crimp</b>&quot;</p></dd>
 </dl></dd>
@@ -412,6 +418,15 @@ framework when CRIMP is loaded.</p></dd>
 <dt>&quot;<b class="file">format/bmp.[ch]</b>&quot;</dt>
 <dd></dd>
 </dl></dd>
+<dt><b class="package">crimp::pcx</b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp_pcx.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">policy_pcx.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">format/*pcx*.crimp</b>&quot;</dt>
+<dd></dd>
+</dl></dd>
 <dt><b class="package">crimp::pfm</b></dt>
 <dd><dl class="definitions">
 <dt>&quot;<b class="file">crimp_pfm.tcl</b>&quot;</dt>
@@ -437,6 +452,24 @@ framework when CRIMP is loaded.</p></dd>
 <dt>&quot;<b class="file">policy_ppm.tcl</b>&quot;</dt>
 <dd></dd>
 <dt>&quot;<b class="file">format/*ppm*.crimp</b>&quot;</dt>
+<dd></dd>
+</dl></dd>
+<dt><b class="package">crimp::sgi</b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp_sgi.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">policy_sgi.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">format/*sgi*.crimp</b>&quot;</dt>
+<dd></dd>
+</dl></dd>
+<dt><b class="package">crimp::sun</b></dt>
+<dd><dl class="definitions">
+<dt>&quot;<b class="file">crimp_sun.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">policy_sun.tcl</b>&quot;</dt>
+<dd></dd>
+<dt>&quot;<b class="file">format/*sun*.crimp</b>&quot;</dt>
 <dd></dd>
 </dl></dd>
 <dt><b class="package">crimp::tk</b></dt>
@@ -604,11 +637,14 @@ rules below, which specify the format of the demo files.</p>
 <ol class="enumerated">
 	
 <li><p><b class="package"><a href="crimp.html">crimp</a></b></p></li>
-<li><p><b class="package">crimp::tk</b></p></li>
 <li><p><b class="package">crimp::bmp</b></p></li>
-<li><p><b class="package">crimp::pgm</b></p></li>
+<li><p><b class="package">crimp::pcx</b></p></li>
 <li><p><b class="package">crimp::pfm</b></p></li>
+<li><p><b class="package">crimp::pgm</b></p></li>
 <li><p><b class="package">crimp::ppm</b></p></li>
+<li><p><b class="package">crimp::sgi</b></p></li>
+<li><p><b class="package">crimp::sun</b></p></li>
+<li><p><b class="package">crimp::tk</b></p></li>
 </ol></dd>
 <dt><a name="2"><b class="cmd">appdir</b></a></dt>
 <dd><p>Returns the path of the directory the demo application is

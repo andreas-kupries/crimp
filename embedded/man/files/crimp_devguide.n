@@ -528,6 +528,9 @@ files found in this directory, converting them into proper
 "\fIcrimp_bmp.tcl\fR"
 "\fIformat/*bmp*.crimp\fR"
 .TP
+"\fIcrimp_pcx.tcl\fR"
+"\fIformat/*pcx*.crimp\fR"
+.TP
 "\fIcrimp_pfm.tcl\fR"
 "\fIformat/*pfm*.crimp\fR"
 .TP
@@ -536,6 +539,12 @@ files found in this directory, converting them into proper
 .TP
 "\fIcrimp_ppm.tcl\fR"
 "\fIformat/*ppm*.crimp\fR"
+.TP
+"\fIcrimp_sgi.tcl\fR"
+"\fIformat/*sgi*.crimp\fR"
+.TP
+"\fIcrimp_sun.tcl\fR"
+"\fIformat/*sun*.crimp\fR"
 .TP
 "\fIcrimp_tk.tcl\fR"
 "\fIformat/*tk*.crimp\fR"
@@ -631,6 +640,16 @@ Regarding "\fIc/*\fR" only those not claimed by \fBcrimp::core\fR, see above.
 "\fIformat/bmp.[ch]\fR"
 .RE
 .TP
+\fBcrimp::pcx\fR
+.RS
+.TP
+"\fIcrimp_pcx.tcl\fR"
+.TP
+"\fIpolicy_pcx.tcl\fR"
+.TP
+"\fIformat/*pcx*.crimp\fR"
+.RE
+.TP
 \fBcrimp::pfm\fR
 .RS
 .TP
@@ -659,6 +678,26 @@ Regarding "\fIc/*\fR" only those not claimed by \fBcrimp::core\fR, see above.
 "\fIpolicy_ppm.tcl\fR"
 .TP
 "\fIformat/*ppm*.crimp\fR"
+.RE
+.TP
+\fBcrimp::sgi\fR
+.RS
+.TP
+"\fIcrimp_sgi.tcl\fR"
+.TP
+"\fIpolicy_sgi.tcl\fR"
+.TP
+"\fIformat/*sgi*.crimp\fR"
+.RE
+.TP
+\fBcrimp::sun\fR
+.RS
+.TP
+"\fIcrimp_sun.tcl\fR"
+.TP
+"\fIpolicy_sun.tcl\fR"
+.TP
+"\fIformat/*sun*.crimp\fR"
 .RE
 .TP
 \fBcrimp::tk\fR
@@ -854,15 +893,21 @@ functionality. All known crimp packages are loaded, i.e.
 .IP [1]
 \fBcrimp\fR
 .IP [2]
-\fBcrimp::tk\fR
-.IP [3]
 \fBcrimp::bmp\fR
+.IP [3]
+\fBcrimp::pcx\fR
 .IP [4]
-\fBcrimp::pgm\fR
-.IP [5]
 \fBcrimp::pfm\fR
+.IP [5]
+\fBcrimp::pgm\fR
 .IP [6]
 \fBcrimp::ppm\fR
+.IP [7]
+\fBcrimp::sgi\fR
+.IP [8]
+\fBcrimp::sun\fR
+.IP [9]
+\fBcrimp::tk\fR
 .RE
 .TP
 \fBappdir\fR

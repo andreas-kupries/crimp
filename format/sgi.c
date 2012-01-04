@@ -34,12 +34,20 @@ dump_offsets (unsigned long* start, unsigned long* length, int h, int d);
 #endif
 
 static int decode_rgbpacked (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
+
 static int decode_grey8     (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
 static int decode_rgb       (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
 static int decode_rgba      (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
 
 static int
 decode_rle (crimp_buffer* buf, unsigned char* dst, int delta, int n, int start, int length);
+
+static int decode_grey8_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
+static int decode_rgb_short   (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
+static int decode_rgba_short  (sgi_info* info, crimp_buffer* buf, crimp_image* dst);
+
+static int
+decode_rle_short (crimp_buffer* buf, unsigned char* dst, int delta, int n, int start, int length);
 
 /*
  * Definitions :: Core.
@@ -147,15 +155,18 @@ sgi_read_header (Tcl_Interp*     interp,
 		       TCL_STATIC);
 	return 0;
     }
+    if ((cmtype == sgi_colormap_dithered) &&
+	(bpp != 1)) {
+	Tcl_SetResult (interp,
+		       "Bad SGI raster image (dithered/bpp mismatch)",
+		       TCL_STATIC);
+	return 0;
+    }
 
     /*
      * Next, check for values and combinations we are not supporting.
      */
 
-    if (bpp == 2) {
-	Tcl_SetResult (interp, "unable to handle 2 bytes/pixel)", TCL_STATIC);
-	return 0;
-    }
     if (cmtype == sgi_colormap_screen) {
 	Tcl_SetResult (interp, "Unable to handle color-indexed images)", TCL_STATIC);
 	return 0;
@@ -252,14 +263,10 @@ sgi_read_header (Tcl_Interp*     interp,
 	 * Compute number of bytes needed for the pixel data and check that
 	 * that much of data is present. Because of the validated height and
 	 * depth values (== 1 for the lower dimensions) we can simply multiply
-	 * everything without have to special case anything. The bytes/pixel
-	 * can be left out of this due to us restricting it to 1 during
-	 * validation of the header. The assert ensures that a change in that
-	 * condition is caught.
+	 * everything without have to special case anything.
 	 */
 
-	CRIMP_ASSERT (bpp == 1,"Unexpected byte/channel/pixel != 1");
-	plength = width * height * depth; /* * bpp */
+	plength = width * height * depth * bpp;
 
 	TRACE (("SGI (pixel direct): %d", plength));
 
@@ -293,25 +300,43 @@ sgi_read_pixels (sgi_info*      info,
      * - #channels, aka 'depth'
      * - verbatim/rle
      * - normal/dithered (only for depth == 1).
+     * - bytes/pixel (1..2, i.e byte or short).
+     *   Note: Shorts are stored bigendian, and reduced to the
+     *         MSB to fit them into the existing crimp image
+     *         types.
      */
 
     switch (info->d) {
     case 1:
 	if (info->mapType == sgi_colormap_dithered) {
+	    CRIMP_ASSERT (info->bpp == 1,"Expected 1 byte/pixel for packed rgb");
 	    dst = crimp_new_rgb (info->w, info->h);
 	    result = decode_rgbpacked (info, buf, dst);
+	} else if (info->bpp == 2) {
+	    dst    = crimp_new_grey8 (info->w, info->h);
+	    result = decode_grey8_short (info, buf, dst);
 	} else {
 	    dst    = crimp_new_grey8 (info->w, info->h);
 	    result = decode_grey8 (info, buf, dst);
 	}
 	break;
     case 3:
-	dst = crimp_new_rgb (info->w, info->h);
-	result = decode_rgb (info, buf, dst);
+	if (info->bpp == 2) {
+	    dst    = crimp_new_rgb (info->w, info->h);
+	    result = decode_rgb_short (info, buf, dst);
+	} else {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_rgb (info, buf, dst);
+	}
 	break;
     case 4:
-	dst = crimp_new_rgb (info->w, info->h);
-	result = decode_rgba (info, buf, dst);
+	if (info->bpp == 2) {
+	    dst    = crimp_new_rgb (info->w, info->h);
+	    result = decode_rgba_short (info, buf, dst);
+	} else {
+	    dst = crimp_new_rgb (info->w, info->h);
+	    result = decode_rgba (info, buf, dst);
+	}
 	break;
     default:
 	TRACE (("SGI unsupported format\n"));
@@ -450,6 +475,49 @@ decode_grey8 (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
     }
 }
 
+decode_grey8_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
+{
+    int x, y, w, h;
+    CRIMP_ASSERT_IMGTYPE (dst, grey8);
+    TRACE (("SGI GREY8 /SHORT\n"));
+
+    w = info->w;
+    h = info->h;
+
+    if (info->storage == sgi_storage_verbatim) {
+	unsigned char* pixel = crimp_buf_at (buf);
+
+	for (y = h-1; y >= 0; y--) {
+	    for (x=0; x < w; x++) {
+		GREY8 (dst, x, y) = *pixel; /* Read MSB */
+		pixel += 2;                 /* Next short, LSB skipped */
+	    }
+	}
+    } else {
+	unsigned long* os = info->ostart;
+	unsigned long* ol = info->olength;
+	int i;
+
+	for (y = h-1, i = 0;
+	     y >= 0;
+	     y--, i++) {
+
+	    TRACE (("SGI PIX DATA %8d", y));
+	    if (!decode_rle_short (buf, &GREY8 (dst, 0, y), 1, w, os[i], ol[i])) {
+		return 0;
+	    }
+
+#ifdef SGI_TRACE
+	    TRACE (("SGI PIX GREY8 ="));
+	    for (x=0;x<w;x++) {
+		TRACE ((" %d", GREY8(dst,x,y)));
+	    }
+	    TRACE (("\n"));
+#endif
+	}
+    }
+}
+
 static int
 decode_rgb (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 {
@@ -494,6 +562,67 @@ decode_rgb (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 
 	    TRACE (("SGI PIX DATA %8d B", y));
 	    if (!decode_rle (buf, &B (dst, 0, y), 3, w, os[b], ol[b])) {
+		return 0;
+	    }
+
+#ifdef SGI_TRACE
+	    TRACE (("SGI PIX RGB ="));
+	    for (x=0;x<w;x++) {
+		TRACE ((" (%d, %d, %d)", R(dst,x,y), G(dst,x,y), B(dst,x,y)));
+	    }
+	    TRACE (("\n"));
+#endif
+	}
+    }
+
+    return 1;
+}
+
+static int
+decode_rgb_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
+{
+    int x, y, w, h;
+    CRIMP_ASSERT_IMGTYPE (dst, rgb);
+    TRACE (("SGI RGB /SHORT\n"));
+
+    w = info->w;
+    h = info->h;
+
+    if (info->storage == sgi_storage_verbatim) {
+	int            n = w * h * sizeof (short);
+	unsigned char* r = crimp_buf_at (buf);
+	unsigned char* g = r + n;
+	unsigned char* b = g + n;
+
+	for (y = h-1; y >= 0; y--) {
+	    for (x=0; x < w; x++) {
+		/* Read only MSB, skip LSB */
+		R (dst, x, y) = *r; r += 2;
+		G (dst, x, y) = *g; g += 2;
+		B (dst, x, y) = *b; b += 2;
+	    }
+	}
+    } else {
+	unsigned long* os = info->ostart;
+	unsigned long* ol = info->olength;
+	int r, g, b;
+
+	for (y = h-1, r = 0, g = h, b = h+h;
+	     y >= 0;
+	     y--, r++, g++, b++) {
+
+	    TRACE (("SGI PIX DATA %8d R", y));
+	    if (!decode_rle_short (buf, &R (dst, 0, y), 3, w, os[r], ol[r])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d G", y));
+	    if (!decode_rle_short (buf, &G (dst, 0, y), 3, w, os[g], ol[g])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d B", y));
+	    if (!decode_rle_short (buf, &B (dst, 0, y), 3, w, os[b], ol[b])) {
 		return 0;
 	    }
 
@@ -576,6 +705,72 @@ decode_rgba (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 }
 
 static int
+decode_rgba_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
+{
+    int x, y, w, h;
+    CRIMP_ASSERT_IMGTYPE (dst, rgba);
+    TRACE (("SGI RGBA /SHORT\n"));
+
+    w = info->w;
+    h = info->h;
+
+    if (info->storage == sgi_storage_verbatim) {
+	int            n = w * h * sizeof (short);
+	unsigned char* r = crimp_buf_at (buf);
+	unsigned char* g = r + n;
+	unsigned char* b = g + n;
+	unsigned char* a = b + n;
+
+	for (y = h-1; y >= 0; y--) {
+	    for (x=0; x < w; x++) {
+		/* Read only MSB, skip LSB */
+		R (dst, x, y) = *r; r += 2;
+		G (dst, x, y) = *g; g += 2;
+		B (dst, x, y) = *b; b += 2;
+		A (dst, x, y) = *a; a += 2;
+	    }
+	}
+    } else {
+	unsigned long* os = info->ostart;
+	unsigned long* ol = info->olength;
+	int r, g, b, a;
+
+	for (y = h-1, r = 0, g = h, b = g+h, a = b+h;
+	     y >= 0;
+	     y--, r++, g++, b++, a++) {
+
+	    TRACE (("SGI PIX DATA %8d R", y));
+	    if (!decode_rle_short (buf, &R (dst, 0, y), 4, w, os[r], ol[r])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d G", y));
+	    if (!decode_rle_short (buf, &G (dst, 0, y), 4, w, os[g], ol[g])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d B", y));
+	    if (!decode_rle_short (buf, &B (dst, 0, y), 4, w, os[b], ol[b])) {
+		return 0;
+	    }
+
+	    TRACE (("SGI PIX DATA %8d A", y));
+	    if (!decode_rle_short (buf, &A (dst, 0, y), 4, w, os[a], ol[a])) {
+		return 0;
+	    }
+
+#ifdef SGI_TRACE
+	    TRACE (("SGI PIX RGBA ="));
+	    for (x=0;x<w;x++) {
+		TRACE ((" (%d, %d, %d, %d)", R(dst,x,y), G(dst,x,y), B(dst,x,y), A(dst,x,y)));
+	    }
+	    TRACE (("\n"));
+#endif
+	}
+    }
+}
+
+static int
 decode_rle (crimp_buffer* buf,
 	    unsigned char* dst, int delta, int n,
 	    int start, int length)
@@ -639,6 +834,70 @@ decode_rle (crimp_buffer* buf,
     return 1;
 }
 
+
+static int
+decode_rle_short (crimp_buffer* buf,
+		  unsigned char* dst, int delta, int n,
+		  int start, int length)
+{
+    int value, count, done = 0;
+    unsigned short* src;
+
+    TRACE ((" RLE SHORT (%d,%d): ", start, length));
+
+    crimp_buf_moveto (buf, start);
+    src = (unsigned short*) crimp_buf_at (buf);
+
+    while (n >= 0) {
+	value = *src ++;
+	count = value & 0x007f;
+
+	TRACE ((" %d -> %d", value, count));
+
+	if (!count) {
+	    TRACE ((" EOL"));
+	    /* RLE packet type C - end of scanline */
+	    done = 1;
+	    break;
+	}
+
+	if (value & 0x0080) {
+	    /* RLE packet type A - literal pixels to copy */
+	    TRACE (("=("));
+	    while (count--) {
+		if (!n) goto error;
+
+		value = (*src ++) >> 8; /* Restrict to MSB */
+		TRACE ((" %d",value));
+		*dst = value;
+		dst += delta;
+		n--;
+	    }
+	    TRACE ((")"));
+
+	} else {
+	    /* RLE packet type B - replicate next */
+	    value = (*src ++) >> 8; /* Restrict to MSB */
+	    TRACE (("x(%d)",value));
+	    while (count--) {
+		if (!n) goto error;
+		*dst = value;
+		dst += delta;
+		n--;
+	    }
+	}
+    }
+
+    TRACE (("\n"));
+
+    if (!done) {
+    error:
+	TRACE (("SGI RLE rle/scanline mismatch"));
+	return 0;
+    }
+
+    return 1;
+}
 
 #ifdef SGI_TRACE
 static void

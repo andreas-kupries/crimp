@@ -11,3 +11,6 @@ crimp::ppm ---> crimp ---> crimp::core
 crimp::pfm ------/-----------/ /
                               /
 crimp::tk -------------------/
+crimp::pcx -----------------/
+crimp::sun ----------------/
+crimp::sgi ---------------/

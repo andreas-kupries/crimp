@@ -8,7 +8,7 @@ proc default {var value} {
     set v $value
 }
 
-default grid [5 mm]
+default grid [3 mm]
 default bw   8
 default bh   4
 default ll   2

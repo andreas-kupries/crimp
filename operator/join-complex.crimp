@@ -15,7 +15,8 @@ if (!crimp_eq_dim (real, imaginary)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_fpcomplex (crimp_w (real), crimp_h (real));
+result = crimp_new_fpcomplex_at (crimp_x (real), crimp_y (real),
+				 crimp_w (real), crimp_h (real));
 
 for (y = 0; y < crimp_h (result); y++) {
     for (x = 0; x < crimp_w (result); x++) {

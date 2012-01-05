@@ -15,6 +15,11 @@ double a, max, sum = 0.0f;
 crimp_input (imageMagObj,   imageMag,   float);
 crimp_input (imageAngleObj, imageAngle, float);
 
+if (!crimp_eq_geo (imageMag, imageAngle)) {
+    Tcl_SetResult(interp, "Unable to process, expected images of identical geometry", TCL_STATIC);
+    return TCL_ERROR;
+}
+
 temp   = crimp_new_like (imageMag);
 result = crimp_new_like (imageMag);
 

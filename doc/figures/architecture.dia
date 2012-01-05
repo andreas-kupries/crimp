@@ -51,6 +51,8 @@ block {
 	west
 	move
 	xbox crimp::sun
+	move
+	xbox crimp::sgi
     } at $IO
 }
 group {

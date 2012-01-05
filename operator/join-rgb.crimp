@@ -19,7 +19,8 @@ if (!crimp_eq_dim (red, green) ||
     return TCL_ERROR;
 }
 
-result = crimp_new_rgb (crimp_w (red), crimp_h (red));
+result = crimp_new_rgb_at (crimp_x (red), crimp_y (red),
+			   crimp_w (red), crimp_h (red));
 
 for (y = 0; y < crimp_h (result); y++) {
     for (x = 0; x < crimp_w (result); x++) {

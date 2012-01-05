@@ -33,6 +33,10 @@ oyb = crimp_y (imageB);
  * they are all linearly related to each other.
  */
 
+#ifndef BINOP_GLOBAL
+#define BINOP_GLOBAL(a,b,c,d)
+#endif
+
 for (py = 0, ly = bb.y, pya = bb.y - oya, pyb = bb.y - oyb;
      py < bb.h;
      py++, ly++, pya++, pyb++) {
@@ -62,6 +66,10 @@ for (py = 0, ly = bb.y, pya = bb.y - oya, pyb = bb.y - oyb;
 	IM (result, px, py) = BINOP_IM (a_re, a_im, b_re, b_im);
     }
 }
+
+#undef BINOP_RE
+#undef BINOP_IM
+#undef BINOP_GLOBAL
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;

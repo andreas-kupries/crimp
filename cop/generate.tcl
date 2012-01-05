@@ -77,11 +77,18 @@ proc retrieve {type input image zero {expand 0} {alpha {}}} {
 
 proc assign {type avariables bvariables} {
     upvar 1 lines lines
-    global accessor
+    global accessor ctype
 
     lappend lines {}
-    foreach {put _} $accessor($type) av $avariables bv $bvariables {
-	lappend lines "$put (result, px, py) = BINOP ($av, $bv);"
+    foreach av $avariables bv $bvariables {
+	set zv z_[lindex [split $av _] end][lindex [split $bv _] end]
+	lappend zvariables $zv
+	lappend lines "$ctype($type) $zv = BINOP ($av, $bv);"
+    }
+
+    lappend lines {}
+    foreach {put _} $accessor($type) zv $zvariables av $avariables bv $bvariables {
+	lappend lines "$put (result, px, py) = BINOP_POST ($zv);"
     }
     return
 }

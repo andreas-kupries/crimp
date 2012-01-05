@@ -33,6 +33,10 @@ oyb = crimp_y (imageB);
  * they are all linearly related to each other.
  */
 
+#ifndef BINOP_POST
+#define BINOP_POST(z) z
+#endif
+
 for (py = 0, ly = bb.y, pya = bb.y - oya, pyb = bb.y - oyb;
      py < bb.h;
      py++, ly++, pya++, pyb++) {
@@ -64,6 +68,9 @@ for (py = 0, ly = bb.y, pya = bb.y - oya, pyb = bb.y - oyb;
 	A (result, px, py) = MAX   (a_a, b_a);
     }
 }
+
+#undef BINOP
+#undef BINOP_POST
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;

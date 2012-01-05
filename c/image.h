@@ -188,8 +188,20 @@ typedef struct crimp_image {
 	return TCL_ERROR; \
     }
 
+#define crimp_eq_geo(imagea,imageb) \
+    (crimp_eq_dim(imagea,imageb) && crimp_eq_loc(imagea,imageb))
+
 #define crimp_eq_dim(imagea,imageb) \
     (crimp_eq_width(imagea,imageb) && crimp_eq_height(imagea,imageb))
+
+#define crimp_eq_loc(imagea,imageb) \
+    (crimp_eq_x(imagea,imageb) && crimp_eq_y(imagea,imageb))
+
+#define crimp_eq_x(imagea,imageb) \
+    (crimp_x(imagea) == crimp_x(imageb))
+
+#define crimp_eq_y(imagea,imageb) \
+    (crimp_y(imagea) == crimp_y(imageb))
 
 #define crimp_eq_height(imagea,imageb) \
     (crimp_h(imagea) == crimp_h(imageb))

@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev-infinite-plane/embedded/man/files/crimp_installer.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-infinite-plane/embedded/man/files/crimp_installer.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -280,7 +280,6 @@ After the installation of ActiveTcl 8.5 in a directory of your
 choice run the command
 .CS
 
-
     teacup update
 
 .CE
@@ -324,7 +323,6 @@ the instructions at the site, i.e. \fIhttp://jcw.github.com/critcl\fR.
 To install CRIMP simply run
 .CS
 
-
     /path/to/tclsh8.5 /path/to/crimp/build.tcl install
 
 .CE
@@ -345,7 +343,6 @@ any arguments.
 To get help about the methods of "\fIbuild.tcl\fR", and their complete
 syntax, invoke  "\fIbuild.tcl\fR" with argument \fBhelp\fR, i.e., like
 .CS
-
 
     /path/to/tclsh8.5 /path/to/crimp/build.tcl help
 

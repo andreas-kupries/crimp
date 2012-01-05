@@ -300,9 +300,12 @@ files found in this directory, converting them into proper
 
 [list_begin definitions]
 [def [file crimp_bmp.tcl]]	[file format/*bmp*.crimp]
+[def [file crimp_pcx.tcl]]	[file format/*pcx*.crimp]
 [def [file crimp_pfm.tcl]]	[file format/*pfm*.crimp]
 [def [file crimp_pgm.tcl]]	[file format/*pgm*.crimp]
 [def [file crimp_ppm.tcl]]	[file format/*ppm*.crimp]
+[def [file crimp_sgi.tcl]]	[file format/*sgi*.crimp]
+[def [file crimp_sun.tcl]]	[file format/*sun*.crimp]
 [def [file crimp_tk.tcl]]	[file format/*tk*.crimp]
 [list_end]
 
@@ -400,6 +403,14 @@ Regarding [file c/*] only those not claimed by [package crimp::core], see above.
 [def [file format/bmp.[lb]ch[rb]]]
 [list_end]
 
+[def [package crimp::pcx]]
+
+[list_begin definitions]
+[def [file crimp_pcx.tcl]]
+[def [file policy_pcx.tcl]]
+[def [file format/*pcx*.crimp]]
+[list_end]
+
 [def [package crimp::pfm]]
 
 [list_begin definitions]
@@ -422,6 +433,22 @@ Regarding [file c/*] only those not claimed by [package crimp::core], see above.
 [def [file crimp_ppm.tcl]]
 [def [file policy_ppm.tcl]]
 [def [file format/*ppm*.crimp]]
+[list_end]
+
+[def [package crimp::sgi]]
+
+[list_begin definitions]
+[def [file crimp_sgi.tcl]]
+[def [file policy_sgi.tcl]]
+[def [file format/*sgi*.crimp]]
+[list_end]
+
+[def [package crimp::sun]]
+
+[list_begin definitions]
+[def [file crimp_sun.tcl]]
+[def [file policy_sun.tcl]]
+[def [file format/*sun*.crimp]]
 [list_end]
 
 [def [package crimp::tk]]
@@ -680,11 +707,14 @@ rules below, which specify the format of the demo files.
 
 	[list_begin enumerated]
 	[enum] [package crimp]
-	[enum] [package crimp::tk]
 	[enum] [package crimp::bmp]
-	[enum] [package crimp::pgm]
+	[enum] [package crimp::pcx]
 	[enum] [package crimp::pfm]
+	[enum] [package crimp::pgm]
 	[enum] [package crimp::ppm]
+	[enum] [package crimp::sgi]
+	[enum] [package crimp::sun]
+	[enum] [package crimp::tk]
 	[list_end]
 
     [call [cmd appdir]]

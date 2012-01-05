@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-infinite-plane/embedded/man/files/crimp_intro.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-infinite-plane/embedded/man/files/crimp_pcx.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -239,121 +239,53 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_introduction" n 1 doc "C Raster Image Manipulation Package"
+.TH "crimp_pcx" n 0.1 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
-crimp_introduction \- CRIMP - Introduction to CRIMP
-.SH DESCRIPTION
-Welcome to CRIMP, the C Raster Image Manipulation Package, a set of
-extensions of \fITcl\fR for the handling and processing of
-images. Due to the nature of images as a 2-dimensional table of
-numbers some of the commands may reach into matrix and vector
-mathematics as well.
-.SH "RELATED DOCUMENTS"
-.IP [1]
-\fICRIMP - How To Get The Sources\fR.
-.IP [2]
-\fICRIMP - The Installer's Guide\fR.
-.IP [3]
-\fICRIMP - The Developer's Guide\fR.
-.PP
-.SH "SYSTEM ARCHITECTURE"
-The system can be split into roughly three sections, as seen in the
-figure below
-.PP
-IMAGE: architecture
-.PP
-These sections are:
-.IP [1]
-At the \fIcore\fR is a single package, \fBcrimp::core\fR,
-providing both C and Tcl level data types and accessors for images,
-plus rudimentary IO capabilities (conversion to and construction from
-matrices of numbers, represented by nested Tcl lists).
+crimp_pcx \- CRIMP - PCX handling
+.SH SYNOPSIS
+package require \fBTcl  8.5\fR
 .sp
-While this package is functional on its own most of the truly
-interesting commands will be found in the packages built on top of
-this one.
-.IP [2]
-The \fIprocessing\fR section contains a single package as well,
-\fBcrimp\fR. Built on top of the \fBcrimp::core\fR this
-package provides the majority of CRIMPs power for manipulating and
-transforming images in a number of ways.
-.IP [3]
-The last section, for \fIIO\fR, currently contains five packages,
-each providing the ability to import and/or export CRIMP images from a
-specific external image format. These packages, all built on top of
-the \fBcrimp::core\fR are
-.RS
-.TP
-\fBcrimp::bmp\fR
-This package provides the ability to read BMP images, i.e. the Windows
-bitmap format, as defined at \fIhttp://en.wikipedia.org/wiki/BMP_file_format\fR.
-.TP
-\fBcrimp::pcx\fR
-This package provides the ability to read PCX images, as defined at
-\fIhttp://en.wikipedia.org/wiki/PCX\fR.
-.TP
-\fBcrimp::pfm\fR
-This package provides the ability to read from and write to PFM
-images, i.e. the "Portable Float Map" format. This format is an
-unofficial derivative of the "Portable Grey Map" (see below), with the
-integer numbers of that format replaced with floating point values.
-.TP
-\fBcrimp::pgm\fR
-This package provides the ability to read from and write to PGM
-images, i.e. the "Portable Grey Map" format as specified at
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
-.TP
-\fBcrimp::ppm\fR
-This package provides the ability to read from and write to PPM
-images, i.e. the "Portable Pix Map" format as specified at
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
-.TP
-\fBcrimp::sgi\fR
-This package provides the ability to read SGI raster images, as
-defined at \fIhttp://en.wikipedia.org/wiki/Silicon_Graphics_Image\fR.
-.TP
-\fBcrimp::sun\fR
-This package provides the ability to read SUN raster images, as
-defined at \fIhttp://www.fileformat.info/format/sunraster/egff.htm\fR.
-.TP
-\fBcrimp::tk\fR
-This package provides the ability to convert CRIMP images into Tk
-photo images and vice versa. This is the \fIonly\fR package in the
-whole set which is dependent on the \fBTk\fR package and its
-facilities.
-.RE
+package require \fBcrimp::pcx  ?0.1?\fR
+.sp
+\fB::crimp\fR \fBread pcx\fR \fIstring\fR
+.sp
+.BE
+.SH DESCRIPTION
+This package provides commands for the conversion of ZSoft Personal
+Computer eXChange (PCX) images into CRIMP images. \fINote\fR that
+this package does \fInot\fR provide the ability to write images
+in the PCX format.
 .PP
-The package dependencies are shown in the next image. It is mostly
-as you would exect, with pretty much everything depending the on the
-\fBcrimp::core\fR and that depending on nothing but itself.
+For a basic introduction of the whole CRIMP eco-system please
+read the \fICRIMP - Introduction to CRIMP\fR (sic!).
+The basic concepts used here, like images, image types, etc. are
+described in the reference manpage for the \fICRIMP - Foundation\fR.
+We will not repeat them here, but assume that the reader knows them
+already.
 .PP
-Of note however is that the \fBcrimp::{ppm,pgm,pfm}\fR
-packages all depend on the main \fBcrimp\fR package. They all
-use the \fBcrimp convert\fR ensemble, enabling them to handle not
-only their natural image types, but a number of others as well.
+In the overall architecture this package resides in the middle
+layer of the system's architecture, between core and applications, as
+shown at
 .PP
-.PS
-.nf
-crimp::bmp -----------------\\
-                             \\
-crimp::ppm ------\\----------\\ \\
-                 |          | |
-                 V          V V
-crimp::ppm ---> crimp ---> crimp::core
-          \\      ^         ^ ^ ^
-           \\     |         | | |
-            \\--------------/ | |
-                 |           | |
-crimp::pfm ------/-----------/ /
-                              /
-crimp::tk -------------------/
-
-.fi
-.PE
+IMAGE: arch_pcx
+.PP
+.PP
+The commands it provides all fall into the I/O category of the
+general design.
+.SH "TCL API"
+.TP
+\fB::crimp\fR \fBread pcx\fR \fIstring\fR
+This method extends the \fB::crimp read\fR ensemble. It takes the
+(possibly binary) string holding an image in the PCX format and
+returns an image of type \fBrgb\fR containing it.
+.PP
+.SH REFERENCES
+.IP [1]
+\fIhttp://en.wikipedia.org/wiki/PCX\fR
 .PP
 .SH KEYWORDS
-computer vision, document processing, image, matrix, photo, vector
+Export PCX image, Export image, PCX, Import PCX image, Import image, PCX, PCX, PCX image export, PCX image import, computer vision, document processing, image, matrix, photo, vector
 .SH COPYRIGHT
 .nf
 Copyright (c) 2011 Andreas Kupries

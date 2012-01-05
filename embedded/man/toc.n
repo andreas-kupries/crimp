@@ -257,6 +257,9 @@ doc
 \fBcrimp\fR
 \fIfiles/crimp.n\fR: CRIMP - Manipulation and Processing
 .TP
+\fBcrimp_pcx\fR
+\fIfiles/crimp_pcx.n\fR: CRIMP - PCX handling
+.TP
 \fBcrimp_pfm\fR
 \fIfiles/crimp_pfm.n\fR: CRIMP - PFM handling, NetPBM
 .TP
@@ -265,6 +268,12 @@ doc
 .TP
 \fBcrimp_ppm\fR
 \fIfiles/crimp_ppm.n\fR: CRIMP - PPM handling, NetPBM
+.TP
+\fBcrimp_sgi\fR
+\fIfiles/crimp_sgi.n\fR: CRIMP - SGI RASTER handling
+.TP
+\fBcrimp_sun\fR
+\fIfiles/crimp_sun.n\fR: CRIMP - SUN RASTER handling
 .TP
 \fBcrimp_devguide\fR
 \fIfiles/crimp_devguide.n\fR: CRIMP - The Developer's Guide

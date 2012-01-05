@@ -6,13 +6,9 @@ Tcl_Obj* imageBObj
  * Pixel wise multiplication of two images.
  */
 
-#define BINOP_GLOBAL(ar,ai,br,bi)
 #define BINOP_RE(ar,ai,br,bi) (((ar) * (br)) - ((ai) *(bi)))
 #define BINOP_IM(ar,ai,br,bi) (((ar) * (bi)) + ((br) *(ai)))
 #include "binop_fpcomplex_fpcomplex_fpcomplex2.c"
-#undef BINOP_RE
-#undef BINOP_IM
-#undef BINOP_GLOBAL
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

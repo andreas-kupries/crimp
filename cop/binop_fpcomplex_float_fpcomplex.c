@@ -33,6 +33,10 @@ oyb = crimp_y (imageB);
  * they are all linearly related to each other.
  */
 
+#ifndef BINOP_POST
+#define BINOP_POST(z) z
+#endif
+
 for (py = 0, ly = bb.y, pya = bb.y - oya, pyb = bb.y - oyb;
      py < bb.h;
      py++, ly++, pya++, pyb++) {
@@ -55,10 +59,16 @@ for (py = 0, ly = bb.y, pya = bb.y - oya, pyb = bb.y - oyb;
 	double a_im = ina ? IM (imageA, pxa, pya) : BLACK;
 	double b_v = inb ? FLOATP (imageB, pxb, pyb) : BLACK;
 	
-	RE (result, px, py) = BINOP (a_re, b_v);
-	IM (result, px, py) = BINOP (a_im, b_v);
+	double z_rev = BINOP (a_re, b_v);
+	double z_imv = BINOP (a_im, b_v);
+	
+	RE (result, px, py) = BINOP_POST (z_rev);
+	IM (result, px, py) = BINOP_POST (z_imv);
     }
 }
+
+#undef BINOP
+#undef BINOP_POST
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;

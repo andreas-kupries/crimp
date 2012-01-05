@@ -32,7 +32,7 @@ crimp_input (imageObj,  image, grey8);
 crimp_input (wimageObj, wimage, grey8);
 
 if (!crimp_eq_dim (image, wimage)) {
-    Tcl_SetResult(interp, "Unable to  filter, expected equally-sized images", TCL_STATIC);
+    Tcl_SetResult(interp, "Unable to filter, expected equally-sized images", TCL_STATIC);
     return TCL_ERROR;
 }
 

@@ -1,4 +1,4 @@
-threshold_grey32_grey32
+threshold_fpcomplex_fpcomplex
 Tcl_Obj* imageAObj
 Tcl_Obj* imageBObj
 
@@ -8,7 +8,7 @@ Tcl_Obj* imageBObj
  */
 
 #define BINOP(p,t) ((p) >= (t) ? BLACK : WHITE)
-#include "binop_grey32_grey32_grey32.c"
+#include "binop_fpcomplex_fpcomplex_fpcomplex.c"
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

@@ -729,15 +729,31 @@ proc ::crimp::threshold::local {image args} {
 	}
     }
 
-    set f threshold_${itype}_$mtype
-    if {![::crimp::Has $f]} {
-	return -code error "Unable to locally threshold images of type \"$itype\" with maps of type \"$mtype\""
-    }
+    # Multi-channel inputs with single-channel thresholds are handled
+    # specially. Not only are we shrinking or extending the set of
+    # thresholding maps if too many or not enough were specified (the
+    # latter by replicating the last map), but we also have to split
+    # the input and then rejoin the results. This may also require us
+    # to resize the separate planes to match as the individual binary
+    # operations may have left us with results of differing geometries.
 
-    # Shrink or extend the set of thresholding maps if too many or not
-    # enough were specified, the latter by replicating the last map.
-
-    switch -- $itype/$mtype {
+    set multi 0
+    switch -glob -- $itype/$mtype {
+	fpcomplex/fpcomplex - rgba/rgba - rgb/rgb - hsv/hsv {
+	    # Nothing to do. Handled later by the generic branch.
+	}
+	fpcomplex/float -
+	fpcomplex/grey8 - {
+	    if {[llength $args]} {
+		while {[llength $args] < 2} {
+		    lappend args [lindex $args end]
+		}
+	    }
+	    if {[llength $args] > 2} {
+		set args [lrange $args 0 1]
+	    }
+	    set multi 1
+	}
 	hsv/float - rgb/float -
 	hsv/grey8 - rgb/grey8 {
 	    if {[llength $args]} {
@@ -748,6 +764,7 @@ proc ::crimp::threshold::local {image args} {
 	    if {[llength $args] > 3} {
 		set args [lrange $args 0 2]
 	    }
+	    set multi 1
 	}
 	rgba/float -
 	rgba/grey8 {
@@ -759,7 +776,32 @@ proc ::crimp::threshold::local {image args} {
 	    if {[llength $args] > 4} {
 		set args [lrange $args 0 3]
 	    }
+	    set multi 1
 	}
+	fpcomplex/* - rgba/* - rgb/* - hsv/* {
+	    return -code error "Unable to locally threshold images of type \"$itype\" with maps of type \"$mtype\""
+	}
+    }
+
+    if {$multi} {
+	foreach plane [::crimp::split $image] threshold $args {
+	    lappend result [local $plane $threshold]
+	}
+
+	# Match geometries... Compute the union bounding box from the
+	# result planes, then expand the planes to match it, at last
+	# join them.
+
+	set bbox [::crimp::bbox {*}$result]
+	foreach plane $result {
+	    lappend matched [::crimp::matchgeo $plane $bbox]
+	}
+	return [::crimp::join::2$itype {*}$matched]
+    }
+
+    set f threshold_${itype}_$mtype
+    if {![::crimp::Has $f]} {
+	return -code error "Unable to locally threshold images of type \"$itype\" with maps of type \"$mtype\""
     }
 
     return [::crimp::$f $image {*}$args]
@@ -2435,6 +2477,39 @@ proc ::crimp::window { image }  {
 }
 
 # # ## ### ##### ######## #############
+
+proc ::crimp::matchgeo {image bbox} {
+    # Modify the image to match the bounding box. This works only if
+    # the image is fully contained in that box. We check this by
+    # testing that the union of image and box is the box itself.
+
+    lassign $bbox                           x y w h
+    lassign [bbox2 [geometry $image] $bbox] a b c d
+
+    if {($x != $a) || ($y != $b) || ($w != c) || ($h != d)} {
+	return -code error "The is image not fully contained in the bounding box to match to."
+    }
+
+    lassign [geometry $image] ix iy iw ih
+
+    # Due to the 'contained' check above we can be sure of the
+    # following contraints of image geometry to bounding box.
+
+    # (1) ix      >= x
+    # (2) iy      >= y
+    # (3) (ix+iw) <= (x+w)
+    # (4) (iy+ih) <= (y+h)
+
+    # This then provides us easily with the sizes of the various areas
+    # by which to extend the image to match that bounding box.
+
+    set w [expr {$ix - $x}]
+    set e [expr {$x+$w-$ix-$iw}]
+    set n [expr {$iy - $y}]
+    set s [expr {$y+$h-$iy-$ih}]
+
+    return [expand const $image $w $n $e $s 0]
+}
 
 proc ::crimp::matchsize {image1 image2} {
 

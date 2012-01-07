@@ -28,7 +28,7 @@ if (!crimp_eq_dim (xvector, yvector)) {
  * the coordinate fields.
  */
 
-result = crimp_new (image->itype, crimp_w (xvector), crimp_h (xvector));
+result = crimp_new_at (image->itype, crimp_x (xvector), crimp_y (xvector), crimp_w (xvector), crimp_h (xvector));
 
 for (y = 0; y < crimp_h (result); y++) {
     for (x = 0; x < crimp_w (result); x++) {

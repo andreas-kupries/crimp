@@ -3,7 +3,7 @@ Tcl_Obj* imageObj
 
 /*
  * This converter maps from float to grey16 using identity. Values outside of
- * the destination range are clampled to the maximum and minimum values,
+ * the destination range are clamped to the maximum and minimum values,
  * respectively. I.e. saturated arithmetic is used.
  *
  * FUTURE: Either extend this converter to take semi-arbitrary mapping

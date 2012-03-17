@@ -1403,9 +1403,11 @@ conjugate of the input.
 [call [cmd ::crimp] [method {join 2rgba}] [arg redImage] [arg greenImage] [arg blueImage] [arg alphaImage]]
 [call [cmd ::crimp] [method {join 2rgb}] [arg redImage] [arg greenImage] [arg blueImage]]
 [call [cmd ::crimp] [method {join 2complex}] [arg realImage] [arg imaginaryImage]]
+[call [cmd ::crimp] [method {join 2grey16}] [arg msbImage] [arg lsbImage]]
+[call [cmd ::crimp] [method {join 2grey32}] [arg mmsbImage] [arg lmsbImage] [arg mlsbImage] [arg llsbImage]]
 
 This set of methods is the complement of method [method split]. Each
-take a set of [const grey8] images and fuse them together into an
+takes a set of [const grey8] images and fuses them together into an
 image of the given type, with each input image becoming one channel of
 the fusing result, which is returned as the result of the command. All
 input images have to have the same dimensions.
@@ -1413,10 +1415,16 @@ input images have to have the same dimensions.
 [para] The command [method {join 2complex}] is an exception regarding
 the input. It accepts images of type [const float], not [const grey8].
 
+[para] The commands [method {join 2grey*}] are slightly different
+too. As the result has only one color channel, what is to join ? Their
+pixels are multi-byte, 2 and 4 respectively. The input images are not
+color channel, but become the msb and lsb of the respective pixel in
+the result.
+
 [call [cmd ::crimp] [method split] [arg image]]
 
 This method takes an image of one of the multi-channel types, i.e.
-[const rgb], const rgba], [const hsv], and [const fpcomplex] and
+[const rgb], [const rgba], [const hsv], and [const fpcomplex] and
 returns a list of [const grey8] images, each of which contains the
 contents of one of the channels found in the input image.
 
@@ -1424,10 +1432,14 @@ contents of one of the channels found in the input image.
 regarding the output. It returns images of type [const float], not
 [const grey8].
 
-[para]
+[para] The method is also able to take an image of one of the
+single-channel multi-byte types, i.e.  [const grey16], and
+[const grey32] and returns a list of 2 (4) [const grey8] images, each
+of which contains one of the bytes a pixel is made out of, in msb to
+lsb order.
 
-The channel images in the result are provided in the same order as
-they are accepted by the complementary [method join] method, see
+[para] The channel images in the result are provided in the same order
+as they are accepted by the complementary [method join] method, see
 above.
 
 [list_end]

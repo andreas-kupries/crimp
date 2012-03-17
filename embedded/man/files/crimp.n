@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -522,6 +522,10 @@ package require \fBcrimp::core  ?0.1?\fR
 .sp
 \fB::crimp\fR \fBjoin 2complex\fR \fIrealImage\fR \fIimaginaryImage\fR
 .sp
+\fB::crimp\fR \fBjoin 2grey16\fR \fImsbImage\fR \fIlsbImage\fR
+.sp
+\fB::crimp\fR \fBjoin 2grey32\fR \fImmsbImage\fR \fIlmsbImage\fR \fImlsbImage\fR \fIllsbImage\fR
+.sp
 \fB::crimp\fR \fBsplit\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBread pgm\fR \fIstring\fR
@@ -831,6 +835,7 @@ and "fully transparent", respectively.
 The following combinations of fore- and background image types are
 supported:
 .CS
+
 
     Result = Foreground Background
     ------   ---------- ----------
@@ -1400,10 +1405,12 @@ structuring element. For grayscale, which we have here, these are,
 mathematically, max and min rank-order filters, i.e.
 .CS
 
+
     dilate = filter rank 1 99.99 (max)
     erode  = filter rank 1  0.00 (min)
 
 .CE
+.IP
 The above definitions assume that background is \fBblack\fR, and
 foreground/object anything but black, usually \fBwhite\fR. Then it
 is easy to see that \fBdilate\fR expands the foreground/white, and
@@ -1416,6 +1423,7 @@ These two methods add to the basic set of morphology operations,
 \fIopening\fR and \fIclosing\fR. In terms of erosion and dilation:
 .CS
 
+
     close = erode o dilate
     open  = dilate o erode
 
@@ -1425,15 +1433,18 @@ These two methods add to the basic set of morphology operations,
 The morphological \fIgradient\fR is defined as
 .CS
 
+
     [dilate $image] - [erode $image]
 
 .CE
+.IP
 This can also be expressed as the sum of the external and internal
 gradients, see below.
 .TP
 \fB::crimp\fR \fBmorph igradient\fR \fIimage\fR
 The morphological \fIinternal gradient\fR is defined as
 .CS
+
 
     $image - [erode image]
 
@@ -1443,6 +1454,7 @@ The morphological \fIinternal gradient\fR is defined as
 The morphological \fIexternal gradient\fR is defined as
 .CS
 
+
     [dilate $image] - $image
 
 .CE
@@ -1451,9 +1463,11 @@ The morphological \fIexternal gradient\fR is defined as
 The \fIwhite tophat\fR transformation is defined as
 .CS
 
+
     $image - [open $image]
 
 .CE
+.IP
 See \fBReferences\fR 3 to 5 (page 32). This is a greyscale morphology
 operation which does not properly apply to binary images.
 .TP
@@ -1461,9 +1475,11 @@ operation which does not properly apply to binary images.
 The \fIblack tophat\fR transformation is defined as
 .CS
 
+
     [close $image] - $image
 
 .CE
+.IP
 See \fBReferences\fR 3 to 5 (page 33). This is a greyscale morphology
 operation which does not properly apply to binary images.
 .TP
@@ -1471,9 +1487,11 @@ operation which does not properly apply to binary images.
 The \fItoggle map\fR is defined as
 .CS
 
+
     0.5 * ([erode $image] + [dilate $image])
 
 .CE
+.IP
 See \fBReferences\fR 5, pages 34 and 35. This is a greyscale
 morphology operation to sharpen edges.
 .TP
@@ -1551,8 +1569,10 @@ compared to its predecessor, for a total length of "\fIsteps\fR+1" images.
 .sp
 The convolution part of the decimation uses
 .CS
+
  1/16 [1 4 6 4 1]
 .CE
+.IP
 as its kernel.
 .sp
 IMAGE: pyramid_gauss
@@ -1570,8 +1590,10 @@ contains "\fIsteps\fR+2" images.
 .sp
 The convolution part of the decimation uses
 .CS
+
  1/16 [1 4 6 4 1]
 .CE
+.IP
 as its kernel. The internal interpolation used to generate the band pass
 images (resynthesis) doubles the weights of this kernel for its convolution
 step.
@@ -1918,18 +1940,28 @@ conjugate of the input.
 \fB::crimp\fR \fBjoin 2rgb\fR \fIredImage\fR \fIgreenImage\fR \fIblueImage\fR
 .TP
 \fB::crimp\fR \fBjoin 2complex\fR \fIrealImage\fR \fIimaginaryImage\fR
+.TP
+\fB::crimp\fR \fBjoin 2grey16\fR \fImsbImage\fR \fIlsbImage\fR
+.TP
+\fB::crimp\fR \fBjoin 2grey32\fR \fImmsbImage\fR \fIlmsbImage\fR \fImlsbImage\fR \fIllsbImage\fR
 This set of methods is the complement of method \fBsplit\fR. Each
-take a set of \fBgrey8\fR images and fuse them together into an
+takes a set of \fBgrey8\fR images and fuses them together into an
 image of the given type, with each input image becoming one channel of
 the fusing result, which is returned as the result of the command. All
 input images have to have the same dimensions.
 .sp
 The command \fBjoin 2complex\fR is an exception regarding
 the input. It accepts images of type \fBfloat\fR, not \fBgrey8\fR.
+.sp
+The commands \fBjoin 2grey*\fR are slightly different
+too. As the result has only one color channel, what is to join ? Their
+pixels are multi-byte, 2 and 4 respectively. The input images are not
+color channel, but become the msb and lsb of the respective pixel in
+the result.
 .TP
 \fB::crimp\fR \fBsplit\fR \fIimage\fR
 This method takes an image of one of the multi-channel types, i.e.
-\fBrgb\fR, const rgba], \fBhsv\fR, and \fBfpcomplex\fR and
+\fBrgb\fR, \fBrgba\fR, \fBhsv\fR, and \fBfpcomplex\fR and
 returns a list of \fBgrey8\fR images, each of which contains the
 contents of one of the channels found in the input image.
 .sp
@@ -1937,8 +1969,14 @@ The input image type \fBfpcomplex\fR is an exception
 regarding the output. It returns images of type \fBfloat\fR, not
 \fBgrey8\fR.
 .sp
-The channel images in the result are provided in the same order as
-they are accepted by the complementary \fBjoin\fR method, see
+The method is also able to take an image of one of the
+single-channel multi-byte types, i.e.  \fBgrey16\fR, and
+\fBgrey32\fR and returns a list of 2 (4) \fBgrey8\fR images, each
+of which contains one of the bytes a pixel is made out of, in msb to
+lsb order.
+.sp
+The channel images in the result are provided in the same order
+as they are accepted by the complementary \fBjoin\fR method, see
 above.
 .PP
 .SS "I/O COMMANDS"
@@ -1965,6 +2003,7 @@ dictionary mapping characters to triples of integers in the range
 .sp
 An example of a strimj is:
 .CS
+
 
 @...@.......@.@......
 @...@.......@.@......
@@ -2049,6 +2088,7 @@ For example
 .sp
 .CS
 
+
                     (1)
                     (2)
     {1 2 4 2 1} ==> (4)
@@ -2060,6 +2100,7 @@ For example
 This method is its own inverse, i.e. application to its result returns
 the original input, i.e.
 .CS
+
 
     [transpose [transpose $K]] == $K
 
@@ -2366,10 +2407,12 @@ This method returns the affine transformation specified by the 2x3
 matrix
 .CS
 
+
     |a b c|
     |d e f|
 
 .CE
+.IP
 Note that it is in general easier to use the methods \fBrotate\fR,
 \fBscale\fR, and \fBtranslate\fR \fBscale\fR to generate the
 desired transformation piecemal and then use \fBchain\fR to chain the
@@ -2390,11 +2433,13 @@ This method returns the projective transformation specified by the 3x3
 matrix
 .CS
 
+
     |a b c|
     |d e f|
     |g h 1|
 
 .CE
+.IP
 Note that for the affine subset of projective transformation it is in
 general easier to use the methods \fBrotate\fR, \fBscale\fR, and
 \fBtranslate\fR \fBscale\fR to generate the desired
@@ -2519,6 +2564,7 @@ respectively.
 \fBblur\fR applies a gaussian blur in both directions, i.e.
 .CS
 
+
     output = gauss10 (gauss01 (image))
 
 .CE
@@ -2529,6 +2575,7 @@ by applying a laplacian of a gaussian, for both X and Y directions,
 and adding the results, i.e.:
 .CS
 
+
     laplace20 (gauss01 (image)) + laplace02 (gauss20 (image))
 
 .CE
@@ -2538,6 +2585,7 @@ gradient. It is computed by applying a gradient of gaussian to X and Y
 directions, and computing the length of the resulting 2-vector
 (euclidean norm), i.e.
 .CS
+
 
     hypot (gauss10 (grad10 (image)), gauss10 (grad01 (image)))
 

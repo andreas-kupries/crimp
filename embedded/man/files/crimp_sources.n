@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_sources.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_sources.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -286,11 +286,13 @@ Binaries for popular platforms can be found directly at its
 With that tool available the full history can be retrieved via:
 .CS
 
+
     fossil clone  http://chiselapp.com/user/andreas_kupries/repository/crimp  crimp.fossil
 
 .CE
 followed by
 .CS
+
 
     mkdir crimp
     cd crimp

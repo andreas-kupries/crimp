@@ -55,6 +55,88 @@ proc ::crimp::write::Chan_pgm-raw_grey8 {chan image} {
 
 # # ## ### ##### ######## ############# #####################
 
+if {$::tcl_platform(byteOrder) eq "bigEndian"} {
+    # Big-endian machine. Stored pixel data matches the PGM 2-byte
+    # storage format.
+
+    proc ::crimp::write::Str_pgm-plain_grey16 {image} {
+	# assert TypeOf (image) == grey16
+	set res "P2 [::crimp dimensions $image] 65535"
+	foreach {ca cb} [::split [::crimp pixel $image] {}] {
+	    binary scan $ca$cb Su g
+	    append res " " $g
+	}
+	return $res
+    }
+
+    proc ::crimp::write::Str_pgm-raw_grey16 {image} {
+	# assert TypeOf (image) == grey16
+	return "P5 [::crimp dimensions $image] 65535 [::crimp pixel $image]"
+    }
+
+    proc ::crimp::write::Chan_pgm-plain_grey16 {chan image} {
+	# assert TypeOf (image) == grey16
+	puts -nonewline $chan "P2 [::crimp dimensions $image] 65535"
+	foreach {ca cb} [::split [::crimp pixel $image] {}] {
+	    binary scan $ca$cb Su g
+	    puts -nonewline $chan " $g"
+	}
+	puts $chan ""
+	return
+    }
+
+    proc ::crimp::write::Chan_pgm-raw_grey16 {chan image} {
+	# assert TypeOf (image) == grey16
+	puts -nonewline $chan "P5 [::crimp dimensions $image] 65535 "
+	puts -nonewline $chan [::crimp pixel $image]
+	return
+    }
+} else {
+    # Small-endian machine. Stored pixel data is swapped compared to
+    # the PGM 2-byte storage format, which is is big-endian.
+
+    proc ::crimp::write::Str_pgm-plain_grey16 {image} {
+	# assert TypeOf (image) == grey16
+	set res "P2 [::crimp dimensions $image] 65535"
+	foreach {ca cb} [::split [::crimp pixel $image] {}] {
+	    binary scan $ca$cb su g
+	    append res " " $g
+	}
+	return $res
+    }
+
+    proc ::crimp::write::Str_pgm-raw_grey16 {image} {
+	# assert TypeOf (image) == grey16
+	set data "P5 [::crimp dimensions $image] 65535 "
+	foreach {ca cb} [::split [::crimp pixel $image] {}] {
+	    append data $cb$ca
+	}
+	return $data
+    }
+
+    proc ::crimp::write::Chan_pgm-plain_grey16 {chan image} {
+	# assert TypeOf (image) == grey16
+	puts -nonewline $chan "P2 [::crimp dimensions $image] 65535"
+	foreach {ca cb} [::split [::crimp pixel $image] {}] {
+	    binary scan $ca$cb su g
+	    puts -nonewline $chan " $g"
+	}
+	puts $chan ""
+	return
+    }
+
+    proc ::crimp::write::Chan_pgm-raw_grey16 {chan image} {
+	# assert TypeOf (image) == grey16
+	puts -nonewline $chan "P5 [::crimp dimensions $image] 65535 "
+	foreach {ca cb} [::split [::crimp pixel $image] {}] {
+	    puts -nonewline $chan $cb$ca
+	}
+	return
+    }
+}
+
+# # ## ### ##### ######## ############# #####################
+
 proc ::crimp::write::Str_pgm-plain_rgb {image} {
     # assert TypeOf (image) == rgb
     return [Str_pgm-plain_grey8 [::crimp convert 2grey8 $image]]

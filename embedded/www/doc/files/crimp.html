@@ -890,7 +890,7 @@ arguments this method may need, except for the size of the expansion.</p>
 <dd></dd>
 <dt><a name="69"><b class="cmd">::crimp</b> <b class="method">morph erode</b> <i class="arg">image</i></a></dt>
 <dd><p>These two methods implement the basic set of morphology operations,
-<i class="term"><a href="../../index.html#key142">erosion</a></i>, and <i class="term"><a href="../../index.html#key76">dilation</a></i> using a flat 3x3 brick as their
+<i class="term"><a href="../../index.html#key138">erosion</a></i>, and <i class="term"><a href="../../index.html#key72">dilation</a></i> using a flat 3x3 brick as their
 structuring element. For grayscale, which we have here, these are,
 mathematically, max and min rank-order filters, i.e.</p>
 <pre class="example">
@@ -905,47 +905,47 @@ erode expands background/black.</p></dd>
 <dd></dd>
 <dt><a name="71"><b class="cmd">::crimp</b> <b class="method">morph open</b> <i class="arg">image</i></a></dt>
 <dd><p>These two methods add to the basic set of morphology operations,
-<i class="term"><a href="../../index.html#key145">opening</a></i> and <i class="term"><a href="../../index.html#key67">closing</a></i>. In terms of erosion and dilation:</p>
+<i class="term"><a href="../../index.html#key141">opening</a></i> and <i class="term"><a href="../../index.html#key63">closing</a></i>. In terms of erosion and dilation:</p>
 <pre class="example">
     close = erode o dilate
     open  = dilate o erode
 </pre>
 </dd>
 <dt><a name="72"><b class="cmd">::crimp</b> <b class="method">morph gradient</b> <i class="arg">image</i></a></dt>
-<dd><p>The morphological <i class="term"><a href="../../index.html#key156">gradient</a></i> is defined as</p>
+<dd><p>The morphological <i class="term"><a href="../../index.html#key152">gradient</a></i> is defined as</p>
 <pre class="example">
     [dilate $image] - [erode $image]
 </pre>
 <p>This can also be expressed as the sum of the external and internal
 gradients, see below.</p></dd>
 <dt><a name="73"><b class="cmd">::crimp</b> <b class="method">morph igradient</b> <i class="arg">image</i></a></dt>
-<dd><p>The morphological <i class="term"><a href="../../index.html#key74">internal gradient</a></i> is defined as</p>
+<dd><p>The morphological <i class="term"><a href="../../index.html#key70">internal gradient</a></i> is defined as</p>
 <pre class="example">
     $image - [erode image]
 </pre>
 </dd>
 <dt><a name="74"><b class="cmd">::crimp</b> <b class="method">morph egradient</b> <i class="arg">image</i></a></dt>
-<dd><p>The morphological <i class="term"><a href="../../index.html#key57">external gradient</a></i> is defined as</p>
+<dd><p>The morphological <i class="term"><a href="../../index.html#key53">external gradient</a></i> is defined as</p>
 <pre class="example">
     [dilate $image] - $image
 </pre>
 </dd>
 <dt><a name="75"><b class="cmd">::crimp</b> <b class="method">morph tophatw</b> <i class="arg">image</i></a></dt>
-<dd><p>The <i class="term"><a href="../../index.html#key114">white tophat</a></i> transformation is defined as</p>
+<dd><p>The <i class="term"><a href="../../index.html#key110">white tophat</a></i> transformation is defined as</p>
 <pre class="example">
     $image - [open $image]
 </pre>
 <p>See <span class="sectref"><a href="#section3">References</a></span> 3 to 5 (page 32). This is a greyscale morphology
 operation which does not properly apply to binary images.</p></dd>
 <dt><a name="76"><b class="cmd">::crimp</b> <b class="method">morph tophatb</b> <i class="arg">image</i></a></dt>
-<dd><p>The <i class="term"><a href="../../index.html#key89">black tophat</a></i> transformation is defined as</p>
+<dd><p>The <i class="term"><a href="../../index.html#key85">black tophat</a></i> transformation is defined as</p>
 <pre class="example">
     [close $image] - $image
 </pre>
 <p>See <span class="sectref"><a href="#section3">References</a></span> 3 to 5 (page 33). This is a greyscale morphology
 operation which does not properly apply to binary images.</p></dd>
 <dt><a name="77"><b class="cmd">::crimp</b> <b class="method">morph toggle</b> <i class="arg">image</i></a></dt>
-<dd><p>The <i class="term"><a href="../../index.html#key144">toggle map</a></i> is defined as</p>
+<dd><p>The <i class="term"><a href="../../index.html#key140">toggle map</a></i> is defined as</p>
 <pre class="example">
     0.5 * ([erode $image] + [dilate $image])
 </pre>
@@ -1070,7 +1070,7 @@ multiplication of the inverted input images. I.e.</p>
 <dt><a name="92"><b class="cmd">::crimp</b> <b class="method">solarize</b> <i class="arg">image</i> <i class="arg">threshold</i></a></dt>
 <dd><p>This method takes an image, runs it through the <b class="function">solarize</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
-image as it result. This is also known as the <i class="term"><a href="../../index.html#key135">sabattier effect</a></i>.
+image as it result. This is also known as the <i class="term"><a href="../../index.html#key131">sabattier effect</a></i>.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map solarize</b> <i class="arg">threshold</i>&quot;.
 This method supports all image types supported by the method
@@ -1088,7 +1088,7 @@ specified.</p></dd>
 <dd><p>This method takes an image, runs it through the <b class="function">threshold above</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
 image as it result. As the result only contains black and white,
-i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key152">binarization</a></i> or
+i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key148">binarization</a></i> or
 foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold above</b> <i class="arg">threshold</i>&quot;.
@@ -1098,7 +1098,7 @@ This method supports all image types supported by the method
 <dd><p>This method takes an image, runs it through the <b class="function">threshold below</b>
 function with parameter <i class="arg">threshold</i>, and returns the modified
 image as it result. As the result only contains black and white,
-i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key152">binarization</a></i>, or
+i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key148">binarization</a></i>, or
 foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold below</b> <i class="arg">threshold</i>&quot;.
@@ -1108,7 +1108,7 @@ This method supports all image types supported by the method
 <dd><p>This method takes an image, runs it through the <b class="function">threshold inside</b>
 function with parameters <i class="arg">min</i> and <i class="arg">max</i>, and returns the
 modified image as it result. As the result only contains black and
-white, i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key152">binarization</a></i>
+white, i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key148">binarization</a></i>
 or foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold above</b> <i class="arg">threshold</i>&quot;.
@@ -1118,7 +1118,7 @@ This method supports all image types supported by the method
 <dd><p>This method takes an image, runs it through the <b class="function">threshold outside</b>
 function with parameters <i class="arg">min</i> and <i class="arg">max</i>, and returns the
 modified image as it result. As the result only contains black and
-white, i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key152">binarization</a></i>,
+white, i.e. 2 colors, this process is also called <i class="term"><a href="../../index.html#key148">binarization</a></i>,
 or foreground/background segmentation.
 This is an application of method <b class="method">remap</b>, using the mapping
 returned by &quot;<b class="method">map threshold below</b> <i class="arg">threshold</i>&quot;.
@@ -1145,7 +1145,7 @@ other pixels are set to white. Each map is applied to one color
 channel of the input image. If there are too many maps the remainder
 is ignored. If there are not enough maps the last map is replicated.</p>
 <p>This is the core for all methods of non-global
-<i class="term"><a href="../../index.html#key152">binarization</a></i>, i.e. foreground/background segmentation. Their
+<i class="term"><a href="../../index.html#key148">binarization</a></i>, i.e. foreground/background segmentation. Their
 differences are just in the calculation of the maps.</p>
 <p>This method supports all image types with one or more
 single-byte channels, i.e. all but <b class="const">grey16</b>, <b class="const">grey32</b>, and
@@ -1554,7 +1554,7 @@ values 0 to 255 through the <b class="function">solarize</b> function, with para
 <p>Note how the function is the <b class="function">identity</b> for values under the
 threshold, and the <b class="function">inverse</b> for values at and above it. Its
 application to an image produces what is known as either
-<i class="term"><a href="../../index.html#key141">solarization</a></i> or <i class="term"><a href="../../index.html#key135">sabattier effect</a></i>.</p></dd>
+<i class="term"><a href="../../index.html#key137">solarization</a></i> or <i class="term"><a href="../../index.html#key131">sabattier effect</a></i>.</p></dd>
 <dt><a name="167"><b class="cmd">::crimp</b> <b class="method">table sqrt</b> <span class="opt">?<i class="arg">max</i>?</span></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
 values 0 to 255 through the <b class="function">sqrt-compression</b> function with
@@ -1569,23 +1569,23 @@ between. Values below <i class="arg">min</i> and above <i class="arg">max</i> ar
 and 255 respectively.</p></dd>
 <dt><a name="169"><b class="cmd">::crimp</b> <b class="method">table threshold above</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key152">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key148">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-ge" src="../../image/threshold-ge.png"></p></dd>
 <dt><a name="170"><b class="cmd">::crimp</b> <b class="method">table threshold below</b> <i class="arg">threshold</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key152">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key148">binarization</a></i>)
 function, with parameter <i class="arg">threshold</i>. This function is defined as:</p>
 <p><img alt="threshold-le" src="../../image/threshold-le.png"></p></dd>
 <dt><a name="171"><b class="cmd">::crimp</b> <b class="method">table threshold inside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key152">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key148">binarization</a></i>)
 function, with parameters <i class="arg">min</i> and <i class="arg">max</i>. This function is
 defined as:</p>
 <p><img alt="threshold-inside" src="../../image/threshold-inside.png"></p></dd>
 <dt><a name="172"><b class="cmd">::crimp</b> <b class="method">table threshold outside</b> <i class="arg">min</i> <i class="arg">max</i></a></dt>
 <dd><p>This method returns a list of 256 values, the result of running the
-values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key152">binarization</a></i>)
+values 0 to 255 through a <b class="function">thresholding</b> (or <i class="term"><a href="../../index.html#key148">binarization</a></i>)
 function, with parameters <i class="arg">min</i> and <i class="arg">max</i>. This function is
 defined as:</p>
 <p><img alt="threshold-outside" src="../../image/threshold-outside.png"></p></dd>
@@ -1771,7 +1771,7 @@ to saturation or value, value dependent color-shifts, etc.</p>
 <p>Not exposed yet, unclear how the higher level API should
 look like.</p></dd>
 <dt><a name="200"><b class="cmd">::crimp::region_sum</b> <i class="arg">image</i> <i class="arg">radius</i></a></dt>
-<dd><p>Takes a <i class="term"><a href="../../index.html#key120">summed area table</a></i> as input and computes the sums
+<dd><p>Takes a <i class="term"><a href="../../index.html#key116">summed area table</a></i> as input and computes the sums
 for square windows of the <i class="arg">radius</i> around each pixel. Time
 is constant per pixel, independent of the radius, because of the
 nature of the input. Only used internally so far.</p></dd>
@@ -1818,7 +1818,7 @@ translational registration. Might be useful in general.</p></dd>
 </ol>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p><a href="../../index.html#key113">affine</a>, <a href="../../index.html#key137">affine transform</a>, <a href="../../index.html#key66">alpha</a>, <a href="../../index.html#key151">alpha blending</a>, <a href="../../index.html#key68">alpha channel</a>, <a href="../../index.html#key88">average</a>, <a href="../../index.html#key152">binarization</a>, <a href="../../index.html#key89">black tophat</a>, <a href="../../index.html#key101">blending</a>, <a href="../../index.html#key116">canny</a>, <a href="../../index.html#key77">charcoal</a>, <a href="../../index.html#key102">clockwise</a>, <a href="../../index.html#key67">closing</a>, <a href="../../index.html#key157">composite blending</a>, <a href="../../index.html#key136">composition</a>, <a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key64">const expansion</a>, <a href="../../index.html#key139">convolution filter</a>, <a href="../../index.html#key148">counter-clockwise</a>, <a href="../../index.html#key60">cropping</a>, <a href="../../index.html#key69">cut region</a>, <a href="../../index.html#key110">cyclic wrap expansion</a>, <a href="../../index.html#key76">dilation</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key87">edge shrinking</a>, <a href="../../index.html#key86">edge-detection</a>, <a href="../../index.html#key138">effect</a>, <a href="../../index.html#key131">emboss</a>, <a href="../../index.html#key142">erosion</a>, <a href="../../index.html#key78">expansion</a>, <a href="../../index.html#key106">extend expansion</a>, <a href="../../index.html#key57">external gradient</a>, <a href="../../index.html#key84">extract rectangle</a>, <a href="../../index.html#key143">extract region</a>, <a href="../../index.html#key108">fast fourier transform</a>, <a href="../../index.html#key83">fft</a>, <a href="../../index.html#key107">filter</a>, <a href="../../index.html#key61">flip</a>, <a href="../../index.html#key159">fourier transform</a>, <a href="../../index.html#key75">gamma correction</a>, <a href="../../index.html#key119">geometry</a>, <a href="../../index.html#key156">gradient</a>, <a href="../../index.html#key126">histogram</a>, <a href="../../index.html#key63">hypot</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key115">integral image</a>, <a href="../../index.html#key74">internal gradient</a>, <a href="../../index.html#key121">inverse fourier transform</a>, <a href="../../index.html#key122">inversion</a>, <a href="../../index.html#key85">log-compression</a>, <a href="../../index.html#key155">log-polar transformation</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key109">max</a>, <a href="../../index.html#key130">max-filter</a>, <a href="../../index.html#key150">mean</a>, <a href="../../index.html#key127">mean filter</a>, <a href="../../index.html#key80">median</a>, <a href="../../index.html#key97">median-filter</a>, <a href="../../index.html#key93">middle</a>, <a href="../../index.html#key104">min</a>, <a href="../../index.html#key158">min-filter</a>, <a href="../../index.html#key129">mirror expansion</a>, <a href="../../index.html#key100">montage</a>, <a href="../../index.html#key82">morphology</a>, <a href="../../index.html#key145">opening</a>, <a href="../../index.html#key56">otsu threshold</a>, <a href="../../index.html#key58">perspective</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key65">pixel mapping</a>, <a href="../../index.html#key92">prewitt</a>, <a href="../../index.html#key133">projective</a>, <a href="../../index.html#key91">projective transform</a>, <a href="../../index.html#key162">rank-order filter</a>, <a href="../../index.html#key117">rectangle cut</a>, <a href="../../index.html#key140">rectangle extraction</a>, <a href="../../index.html#key128">region cut</a>, <a href="../../index.html#key153">remapping</a>, <a href="../../index.html#key118">replicate edge expansion</a>, <a href="../../index.html#key111">rescale</a>, <a href="../../index.html#key132">resize</a>, <a href="../../index.html#key149">roberts</a>, <a href="../../index.html#key81">rotate</a>, <a href="../../index.html#key95">rotation</a>, <a href="../../index.html#key135">sabattier effect</a>, <a href="../../index.html#key112">scale</a>, <a href="../../index.html#key161">scharr</a>, <a href="../../index.html#key160">sharpen</a>, <a href="../../index.html#key105">shrinking</a>, <a href="../../index.html#key123">sobel</a>, <a href="../../index.html#key141">solarization</a>, <a href="../../index.html#key70">sqrt-compression</a>, <a href="../../index.html#key98">standard deviation filter</a>, <a href="../../index.html#key134">statistics</a>, <a href="../../index.html#key73">stddev</a>, <a href="../../index.html#key120">summed area table</a>, <a href="../../index.html#key125">threshold</a>, <a href="../../index.html#key99">thresholding</a>, <a href="../../index.html#key144">toggle map</a>, <a href="../../index.html#key96">tophat</a>, <a href="../../index.html#key124">toroidal wrap expansion</a>, <a href="../../index.html#key103">transform</a>, <a href="../../index.html#key72">transform, fast fourier</a>, <a href="../../index.html#key62">transform, fourier</a>, <a href="../../index.html#key147">transform, inverse fourier</a>, <a href="../../index.html#key146">transformation, log-polar</a>, <a href="../../index.html#key79">translate</a>, <a href="../../index.html#key71">variance</a>, <a href="../../index.html#key4">vector</a>, <a href="../../index.html#key154">vector-field</a>, <a href="../../index.html#key59">warp</a>, <a href="../../index.html#key114">white tophat</a>, <a href="../../index.html#key90">windowing</a>, <a href="../../index.html#key94">wrap expansion</a></p>
+<p><a href="../../index.html#key109">affine</a>, <a href="../../index.html#key133">affine transform</a>, <a href="../../index.html#key62">alpha</a>, <a href="../../index.html#key147">alpha blending</a>, <a href="../../index.html#key64">alpha channel</a>, <a href="../../index.html#key84">average</a>, <a href="../../index.html#key148">binarization</a>, <a href="../../index.html#key85">black tophat</a>, <a href="../../index.html#key97">blending</a>, <a href="../../index.html#key112">canny</a>, <a href="../../index.html#key73">charcoal</a>, <a href="../../index.html#key98">clockwise</a>, <a href="../../index.html#key63">closing</a>, <a href="../../index.html#key153">composite blending</a>, <a href="../../index.html#key132">composition</a>, <a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key60">const expansion</a>, <a href="../../index.html#key135">convolution filter</a>, <a href="../../index.html#key144">counter-clockwise</a>, <a href="../../index.html#key56">cropping</a>, <a href="../../index.html#key65">cut region</a>, <a href="../../index.html#key106">cyclic wrap expansion</a>, <a href="../../index.html#key72">dilation</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key83">edge shrinking</a>, <a href="../../index.html#key82">edge-detection</a>, <a href="../../index.html#key134">effect</a>, <a href="../../index.html#key127">emboss</a>, <a href="../../index.html#key138">erosion</a>, <a href="../../index.html#key74">expansion</a>, <a href="../../index.html#key102">extend expansion</a>, <a href="../../index.html#key53">external gradient</a>, <a href="../../index.html#key80">extract rectangle</a>, <a href="../../index.html#key139">extract region</a>, <a href="../../index.html#key104">fast fourier transform</a>, <a href="../../index.html#key79">fft</a>, <a href="../../index.html#key103">filter</a>, <a href="../../index.html#key57">flip</a>, <a href="../../index.html#key155">fourier transform</a>, <a href="../../index.html#key71">gamma correction</a>, <a href="../../index.html#key115">geometry</a>, <a href="../../index.html#key152">gradient</a>, <a href="../../index.html#key122">histogram</a>, <a href="../../index.html#key59">hypot</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key111">integral image</a>, <a href="../../index.html#key70">internal gradient</a>, <a href="../../index.html#key117">inverse fourier transform</a>, <a href="../../index.html#key118">inversion</a>, <a href="../../index.html#key81">log-compression</a>, <a href="../../index.html#key151">log-polar transformation</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key105">max</a>, <a href="../../index.html#key126">max-filter</a>, <a href="../../index.html#key146">mean</a>, <a href="../../index.html#key123">mean filter</a>, <a href="../../index.html#key76">median</a>, <a href="../../index.html#key93">median-filter</a>, <a href="../../index.html#key89">middle</a>, <a href="../../index.html#key100">min</a>, <a href="../../index.html#key154">min-filter</a>, <a href="../../index.html#key125">mirror expansion</a>, <a href="../../index.html#key96">montage</a>, <a href="../../index.html#key78">morphology</a>, <a href="../../index.html#key141">opening</a>, <a href="../../index.html#key52">otsu threshold</a>, <a href="../../index.html#key54">perspective</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key61">pixel mapping</a>, <a href="../../index.html#key88">prewitt</a>, <a href="../../index.html#key129">projective</a>, <a href="../../index.html#key87">projective transform</a>, <a href="../../index.html#key158">rank-order filter</a>, <a href="../../index.html#key113">rectangle cut</a>, <a href="../../index.html#key136">rectangle extraction</a>, <a href="../../index.html#key124">region cut</a>, <a href="../../index.html#key149">remapping</a>, <a href="../../index.html#key114">replicate edge expansion</a>, <a href="../../index.html#key107">rescale</a>, <a href="../../index.html#key128">resize</a>, <a href="../../index.html#key145">roberts</a>, <a href="../../index.html#key77">rotate</a>, <a href="../../index.html#key91">rotation</a>, <a href="../../index.html#key131">sabattier effect</a>, <a href="../../index.html#key108">scale</a>, <a href="../../index.html#key157">scharr</a>, <a href="../../index.html#key156">sharpen</a>, <a href="../../index.html#key101">shrinking</a>, <a href="../../index.html#key119">sobel</a>, <a href="../../index.html#key137">solarization</a>, <a href="../../index.html#key66">sqrt-compression</a>, <a href="../../index.html#key94">standard deviation filter</a>, <a href="../../index.html#key130">statistics</a>, <a href="../../index.html#key69">stddev</a>, <a href="../../index.html#key116">summed area table</a>, <a href="../../index.html#key121">threshold</a>, <a href="../../index.html#key95">thresholding</a>, <a href="../../index.html#key140">toggle map</a>, <a href="../../index.html#key92">tophat</a>, <a href="../../index.html#key120">toroidal wrap expansion</a>, <a href="../../index.html#key99">transform</a>, <a href="../../index.html#key68">transform, fast fourier</a>, <a href="../../index.html#key58">transform, fourier</a>, <a href="../../index.html#key143">transform, inverse fourier</a>, <a href="../../index.html#key142">transformation, log-polar</a>, <a href="../../index.html#key75">translate</a>, <a href="../../index.html#key67">variance</a>, <a href="../../index.html#key4">vector</a>, <a href="../../index.html#key150">vector-field</a>, <a href="../../index.html#key55">warp</a>, <a href="../../index.html#key110">white tophat</a>, <a href="../../index.html#key86">windowing</a>, <a href="../../index.html#key90">wrap expansion</a></p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2011 Andreas Kupries<br>

@@ -59,7 +59,7 @@ critcl::tsources policy_pgm.tcl
 # # ## ### ##### ######## #############
 ## C-level API (i.e. stubs and types)
 
-critcl::api import crimp::core 0.1
+critcl::api import crimp::core 0.2
 
 # # ## ### ##### ######## #############
 ## Main C section.
@@ -85,7 +85,7 @@ if {![critcl::load]} {
 
 # # ## ### ##### ######## #############
 
-package provide crimp::pgm 0.1.1
+package provide crimp::pgm 0.2
 return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

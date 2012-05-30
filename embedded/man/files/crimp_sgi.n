@@ -239,14 +239,14 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_sgi" n 0.1 doc "C Raster Image Manipulation Package"
+.TH "crimp_sgi" n 0.2 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
 crimp_sgi \- CRIMP - SGI RASTER handling
 .SH SYNOPSIS
 package require \fBTcl  8.5\fR
 .sp
-package require \fBcrimp::sgi  ?0.1?\fR
+package require \fBcrimp::sgi  ?0.2?\fR
 .sp
 \fB::crimp\fR \fBread sgi\fR \fIstring\fR
 .sp

@@ -1,11 +1,11 @@
 [comment {-*- tcl -*- doctools manpage}]
-[manpage_begin crimp n 0.1]
+[manpage_begin crimp n 0.2]
 [include include/module.inc]
 [titledesc {CRIMP - Manipulation and Processing}]
 [require Tcl 8.5]
 [require Tk 8.5]
-[require crimp [opt 0.1]]
-[require crimp::core [opt 0.1]]
+[require crimp [opt 0.2]]
+[require crimp::core [opt 0.2]]
 [description]
 
 This package, built on top of the [package crimp::core] package

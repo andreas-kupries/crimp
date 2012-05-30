@@ -1,11 +1,7 @@
 # -*- tcl -*-
-# CRIMP, BMP	Reader for the BMP image file format.
+# CRIMP, SUN	Reader for the SUN raster image file format.
 #
 # (c) 2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
-#
-# Redeveloped after reading the TkImg BMP reader/writer implementation.
-# Copyright (c) 1997-2003 Jan Nijtmans    <nijtmans@users.sourceforge.net>
-# Copyright (c) 2002      Andreas Kupries <andreas_kupries@users.sourceforge.net>
 #
 
 # # ## ### ##### ######## #############
@@ -16,7 +12,7 @@ package require critcl       3
 # # ## ### ##### ######## #############
 
 if {![critcl::compiling]} {
-    error "Unable to build CRIMP::BMP, no proper compiler found."
+    error "Unable to build CRIMP::SUN, no proper compiler found."
 }
 
 # # ## ### ##### ######## #############
@@ -37,15 +33,15 @@ critcl::license \
     {Under a BSD license.}
 
 critcl::summary \
-    {Extension of the CRIMP core to handle import and export of BMP images}
+    {Extension of the CRIMP core to handle import and export of SUN raster images}
 
 critcl::description {
     This package provides the CRIMP eco-system with the functionality to handle
-    images stored as Windows Bitmap (BMP).
+    images stored as SUN raster images.
 }
 
-critcl::subject image {BMP image} {Portable PixMap} {BMP import} {BMP export}
-critcl::subject image {image import} {image export}
+critcl::subject image {SUN raster image} {SUN raster import} {SUN raster export}
+critcl::subject image {image import} {image export} SUN
 
 # # ## ### ##### ######## #############
 ## Implementation.
@@ -57,7 +53,7 @@ critcl::tcl 8.5
 ## commands. After the Tcl-based readers and writers to properly pick
 ## them up too in the ensembles.
 
-critcl::tsources policy_bmp.tcl
+critcl::tsources policy_sun.tcl
 
 # # ## ### ##### ######## #############
 ## C-level API (i.e. stubs and types)
@@ -69,25 +65,26 @@ critcl::api import crimp::core 0.2
 
 critcl::ccode {}
 
-critcl::csources format/bmp.c
-critcl::cheaders format/bmp.h
+critcl::csources format/sun.c
+critcl::cheaders format/sun.h
 
 # # ## ### ##### ######## #############
-## Pull in the BMP-specific pieces. These are fit under the read/write namespaces.
+## Pull in the SUN raster-specific pieces. These are fit under the
+## read/write namespaces.
 
-critcl::owns        format/*bmp*.crimp
-crimp_source_cproc {format/*bmp*.crimp}
+critcl::owns        format/*sun*.crimp
+crimp_source_cproc {format/*sun*.crimp}
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.
 
 if {![critcl::load]} {
-    error "Building and loading CRIMP::BMP failed."
+    error "Building and loading CRIMP::SUN failed."
 }
 
 # # ## ### ##### ######## #############
 
-package provide crimp::bmp 0.2
+package provide crimp::sun 0.2
 return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

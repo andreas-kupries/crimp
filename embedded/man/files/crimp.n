@@ -430,6 +430,8 @@ package require \fBcrimp::core  ?0.1?\fR
 .sp
 \fB::crimp\fR \fBmatchsize\fR \fIimage1\fR \fIimage2\fR
 .sp
+\fB::crimp\fR \fBmatchgeo\fR \fIimage\fR \fIbbox\fR
+.sp
 \fB::crimp\fR \fBscale\fR \fIimage\fR \fIscale\fR
 .sp
 \fB::crimp\fR \fBscreen\fR \fIimage1\fR \fIimage2\fR
@@ -1620,6 +1622,14 @@ This method takes two images, forces them to be of the same size by
 expanding the smaller dimensions with black pixels, and then returns a
 list of the expanded images. The images in the result are in the same
 order as as arguments.
+.TP
+\fB::crimp\fR \fBmatchgeo\fR \fIimage\fR \fIbbox\fR
+This method takes an image and a bounding box (list of x, y, w, and h),
+and expands the image with black pixels to match the box. The result of
+the expansion is returned.
+.sp
+An error is thrown if the image is not fully contained within
+the bounding box.
 .TP
 \fB::crimp\fR \fBscale\fR \fIimage\fR \fIscale\fR
 This method performs a pixel-wise multiplication of the image with a

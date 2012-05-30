@@ -239,7 +239,7 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp" n 0.1 doc "C Raster Image Manipulation Package"
+.TH "crimp" n 0.2 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
 crimp \- CRIMP - Manipulation and Processing
@@ -248,9 +248,9 @@ package require \fBTcl  8.5\fR
 .sp
 package require \fBTk  8.5\fR
 .sp
-package require \fBcrimp  ?0.1?\fR
+package require \fBcrimp  ?0.2?\fR
 .sp
-package require \fBcrimp::core  ?0.1?\fR
+package require \fBcrimp::core  ?0.2?\fR
 .sp
 \fB::crimp\fR \fBhistogram\fR \fIimage\fR
 .sp

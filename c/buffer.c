@@ -96,7 +96,7 @@ crimp_buf_match (crimp_buffer* buf, int n, char* str)
 
     CRIMP_ASSERT_BOUNDS (n,(buf->sentinel - buf->here));
 
-    if (strncmp(buf->here, (unsigned char*) str, n) != 0) {
+    if (strncmp((char*) buf->here, str, n) != 0) {
 	return 0;
     }
 
@@ -126,7 +126,7 @@ crimp_buf_read_uint16le (crimp_buffer* buf, unsigned int* res)
 }
 
 void
-crimp_buf_read_uint32le (crimp_buffer* buf, unsigned int* res)
+crimp_buf_read_uint32le (crimp_buffer* buf, unsigned long* res)
 {
     CRIMP_ASSERT_BOUNDS (3,(buf->sentinel - buf->here));
 
@@ -150,7 +150,7 @@ crimp_buf_read_uint16be (crimp_buffer* buf, unsigned int* res)
 }
 
 void
-crimp_buf_read_uint32be (crimp_buffer* buf, unsigned int* res)
+crimp_buf_read_uint32be (crimp_buffer* buf, unsigned long* res)
 {
     CRIMP_ASSERT_BOUNDS (3,(buf->sentinel - buf->here));
 

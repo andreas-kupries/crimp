@@ -62,7 +62,8 @@ sgi_read_header (Tcl_Interp*     interp,
      * See sgi.h for details.
      */
 
-    unsigned int width, height, depth, bpp, rank, minvalue, maxvalue;
+    unsigned int width, height, depth, bpp, rank;
+    unsigned long minvalue, maxvalue, cmtypecode;
     sgi_storage_type storage;
     sgi_colormap_type cmtype;
 #ifdef SGI_TRACE
@@ -86,7 +87,8 @@ sgi_read_header (Tcl_Interp*     interp,
     crimp_buf_read_uint32be (buf, &minvalue);
     crimp_buf_read_uint32be (buf, &maxvalue);
     crimp_buf_skip          (buf, 84); /* Ignore reserved and name/comment following */
-    crimp_buf_read_uint32be (buf, &cmtype);
+    crimp_buf_read_uint32be (buf, &cmtypecode);
+    cmtype = cmtypecode;
     crimp_buf_skip          (buf, 404); /* Ignore reserved2 */
 
     TRACE (("SGI (WxHxD)         %d (%dx%dx%d)\n", rank, width, height, depth));

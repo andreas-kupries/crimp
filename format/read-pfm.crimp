@@ -156,7 +156,7 @@ if (israw) {
     for (dst = &(FLOATP (result,0,0)); (at < stop) && (npix > 0); ) {
 	/*fprintf(stderr,"P [%4d] s%d '%c' /%d\n",at-bytes,state,*at, npix);fflush(stderr);*/
 
-	*dst = atof (at);
+	*dst = atof ((char*) at);
 
 	/*fprintf(stderr,"\tsaved %d (%d)\n", (int)*dst, npix);fflush(stderr);*/
 

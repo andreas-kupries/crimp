@@ -1,0 +1,213 @@
+read::pfm
+Tcl_Obj* pfmdata
+
+/*
+ * Reader for images in PFM format (Portable Float Map).
+ * This format is derived from 'Portable Grey Map' (PGM), see
+ * See http://en.wikipedia.org/wiki/Netpbm_format
+ *
+ * It is not an official format in the series however.
+ * The code handles both raw and plain formats.
+ *
+ * Create a float image from PFM data. Which is pretty much a list of floating
+ * point values, with a bit of heading. The pixels can be coded in binary
+ * (bytes, not really portable), or ASCII decimal numbers. The header tells us
+ * which. The code here uses direct string access and splits the data on its
+ * own, instead of using Tcl's list functionality.
+ */
+
+unsigned char* bytes;
+int            length;
+size_t npix;
+int state, lstate, israw, w, h, value;
+unsigned char* stop;
+unsigned char* at;
+unsigned char* next;
+float* dst;
+
+crimp_image* result;
+
+/*
+ * Check input, i.e. verify structure and extract dimensions
+ */
+
+bytes = Tcl_GetByteArrayFromObj(pfmdata, &length);
+
+at   = bytes;
+stop = bytes + length;
+
+/*
+ * State machine based parsing of the image header.
+ */
+
+#define SKIP (-1) /* In a comment, skipping */
+#define GETP  (0) /* Expecting 'F' marker */
+#define GETT  (1) /* Expecting type code ('2' or '5') */
+#define SEP   (2) /* Expecting separator (spaces) */
+#define GETW  (3) /* Read image width */
+#define SEPW  (4) /* Expecting separator (spaces) */
+#define GETH  (5) /* Read image height */
+#define SEPH  (6) /* Expecting separator (spaces) */
+#define STOP  (7) /* End of header */
+
+#define PFM_DIGIT(c) (('0' <= (c)) && ((c) <= '9'))
+#define PFM_SPACE(c) (((c) == ' ') || ((c) == '\n') || ((c) == '\r') || ((c) == '\t'))
+
+lstate = w = h = value = israw = 0;
+for (at = bytes, state = GETP; (at < stop) && (state != STOP); at ++) {
+
+    /*fprintf(stderr,"H [%4d] s%d '%c'\n",at-bytes,state,*at);fflush(stderr);*/
+
+    /* In a comment we skip ahead until the next linefeed */
+    if ((state == SKIP) && (*at == '\n')) {
+	state = lstate;
+	continue;
+    }
+    /* A comment can start anywhere, i.e. in the middle of a number. */
+    if (*at == '#') { 
+	lstate = state;
+	state = SKIP;
+	continue;
+    }
+    switch (state) {
+    case GETP:
+	if (*at == 'P') { state = GETT ; continue; }
+	/*fprintf(stderr,"bad mark\n");fflush(stderr);*/
+    notpfm:
+	Tcl_SetResult(interp, "Not a PFM image", TCL_STATIC);
+	return TCL_ERROR;
+	break;
+    case GETT:
+	if (*at == '2') {             state = SEP ; continue; }
+	if (*at == '5') { israw = 1 ; state = SEP ; continue; }
+	/*fprintf(stderr,"bad type\n");fflush(stderr);*/
+	goto notpfm;
+    case SEP:
+    case SEPW:
+    case SEPH:
+	if (PFM_SPACE (*at)) continue;
+	/*fprintf(stderr,"\tnot space\n");fflush(stderr);*/
+	at --;
+	state ++; /* SEP -> GETW, SEPW -> GETH, SEPH -> STOP */
+	value = 0;
+	break;
+    case GETW:
+    case GETH:
+	if (PFM_SPACE (*at)) {
+	    switch (state) {
+	    case GETW: w   = value; value = 0; break;
+	    case GETH: h   = value; value = 0; break;
+	    }
+	    state ++ ; /* GETW -> SEPW, GETH -> (SEPH ->) STOP */
+	    if (state == SEPH) {
+		/*
+		 * The height has exactly ONE space after it (which we found
+		 * above), and the next byte is the beginning of the pixel
+		 * data, regardless of content. No comments, no whitespace
+		 */
+		state = STOP;
+	    }
+	    continue;
+	}
+	if (PFM_DIGIT (*at)) {
+	    value = value*10 + (*at - '0');
+	    continue;
+	}
+	/*fprintf(stderr,"bad number\n");fflush(stderr);*/
+	goto notpfm;
+    }
+}
+
+if (state != STOP) {
+    /*fprintf(stderr,"bad state (end of header)\n");fflush(stderr);*/
+    goto notpfm;
+}
+
+/*fprintf(stderr,"raw=%d, w=%d, h=%d\n", israw,w,h);fflush(stderr);*/
+
+/*
+ * Here 'at' now points to the first byte of the pixel data, which are either,
+ * depending on 'israw', float (4 bytes), or a series of ascii-encoding
+ * float-point numbers separated by single spaces. Here, in the raster,
+ * comments are NOT allowed anymore. We can now allocate and initialize the
+ * result, and then parse/copy the pixel data over into it.
+ *
+ * For the binary data we can do a memcpy, luckily, there is no 'max' value to
+ * scale the pixels by.
+ */
+
+result = crimp_new_float (w, h);
+npix   = CRIMP_RECT_AREA (w, h);
+
+/*fprintf(stderr,"raw=%d, w=%d, h=%d /%d\n", israw,w,h,npix);fflush(stderr);*/
+
+if (israw) {
+    /*
+     * Binary pixel data, 4-byte floating point. A simple memcopy handles everything.
+     * Nearly a memcpy, if not for the re-scaling by 'max'.
+     */
+
+    memcpy (&(FLOATP (result,0,0)), at, npix * sizeof (float));
+} else {
+    /*
+     * Text pixel data.
+     */
+
+    for (dst = &(FLOATP (result,0,0)); (at < stop) && (npix > 0); ) {
+	/*fprintf(stderr,"P [%4d] s%d '%c' /%d\n",at-bytes,state,*at, npix);fflush(stderr);*/
+
+	*dst = atof ((char*) at);
+
+	/*fprintf(stderr,"\tsaved %d (%d)\n", (int)*dst, npix);fflush(stderr);*/
+
+	dst ++;
+	npix --;
+
+	/* Emulate 'index'. Not implemented on windows */
+	next = at;
+	while (*next != '\0' && *next != ' ') next++;
+
+	if (*next == ' ') {
+	    at = next + 1;	    
+	} else if (npix) {
+	    goto notpfm;
+	}
+    }
+}
+
+if (npix > 0) {
+    /*fprintf(stderr,"not enough pixels, %d left @%d\n", npix,at-bytes);fflush(stderr);*/
+    goto notpfm;
+}
+
+/*
+ * Note that (at < stop) is acceptable.  A PFM file may contain multiple
+ * images.  We are reading only the first.
+ */
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+#undef SKIP
+#undef GETP
+#undef GETT
+#undef SEP 
+#undef GETW
+#undef SEPW
+#undef GETH
+#undef SEPH
+#undef STOP
+#undef MSB
+#undef LSB
+#undef PFM_DIGIT
+#undef PFM_SPACE
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

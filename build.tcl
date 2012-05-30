@@ -203,9 +203,9 @@ proc _debug {{ldir {}} {config {}}} {
 
 	file delete -force [pwd]/BUILD.$p
 	if {$config ne {}} {
-	    RunCritcl -target $config -keep -debug symbols -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
+	    RunCritcl -target $config -keep -debug all -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
 	} else {
-	    RunCritcl -keep -debug symbols -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
+	    RunCritcl -keep -debug all -cache [pwd]/BUILD.$p -libdir $ldir -includedir $idir -pkg $src
 	}
 
 	file delete -force $ldir/$p$version

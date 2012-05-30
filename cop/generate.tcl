@@ -17,6 +17,7 @@ array set accessor {
     grey32    {GREY32 v}
     grey16    {GREY16 v}
     grey8     {GREY8  v}
+    hsv       {H h S s V v}
     rgb       {R r G g B b}
     rgba      {R r G g B b A a}
     fpcomplex {RE re IM im}
@@ -27,6 +28,7 @@ array set ctype {
     grey32    {int   }
     grey16    {int   }
     grey8     {int   }
+    hsv       {int   }
     rgb       {int   }
     rgba      {int   }
     fpcomplex double
@@ -263,6 +265,13 @@ generate grey8     grey32    float
 generate grey8     grey8     float
 
 # # ## ### ##### ######## ############# ######################
+## Thresholding against spatial floating point.
+
+generate grey8     float     grey8
+generate grey16    float     grey16
+generate grey32    float     grey32
+
+# # ## ### ##### ######## ############# ######################
 ## Complex vs. others, self and simple.
 
 generate fpcomplex fpcomplex fpcomplex
@@ -284,6 +293,10 @@ generate rgb       rgb       rgb
 
 generate grey8     rgb       rgb
 generate rgb       grey8     rgb
+
+# # ## ### ##### ######## ############# ######################
+
+generate hsv       hsv       hsv
 
 # # ## ### ##### ######## ############# ######################
 ## RGBA vs self, RGB, and simple (grey8 only).

@@ -1,0 +1,47 @@
+split_grey16
+Tcl_Obj* imageObj
+
+Tcl_Obj*         list[2];
+const crimp_imagetype* grey = crimp_imagetype_find ("crimp::image::grey8");
+crimp_image*     image;
+crimp_image*     lsb;
+crimp_image*     msb;
+crimp_image*     blue;
+int              x, y;
+
+crimp_input (imageObj, image, grey16);
+
+lsb = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+		          crimp_w (image), crimp_h (image));
+msb = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+		          crimp_w (image), crimp_h (image));
+
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
+
+	/*
+	 * Splitting the bytes of a pixel into their own images.
+	 */
+
+	int value = GREY16 (image, x, y);
+
+	GREY8 (msb, x, y) = (value >> 8) & 0xff;
+	GREY8 (lsb, x, y) = (value)      & 0xff;
+    }
+}
+
+list [0] = crimp_new_image_obj (msb);
+list [1] = crimp_new_image_obj (lsb);
+
+Tcl_SetObjResult(interp, Tcl_NewListObj (2, list));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

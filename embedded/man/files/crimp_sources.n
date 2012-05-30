@@ -284,19 +284,19 @@ Binaries for popular platforms can be found directly at its
 \fIdownload page\fR [http://www.fossil-scm.org/download.html].
 .PP
 With that tool available the full history can be retrieved via:
-.CS
+.nf
 
     fossil clone  http://chiselapp.com/user/andreas_kupries/repository/crimp  crimp.fossil
 
-.CE
+.fi
 followed by
-.CS
+.nf
 
     mkdir crimp
     cd crimp
     fossil open ../crimp.fossil
 
-.CE
+.fi
 to get a checkout of the head of the trunk.
 .SH KEYWORDS
 computer vision, document processing, image, matrix, photo, vector

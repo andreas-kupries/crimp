@@ -319,8 +319,6 @@ GaussianFilter01(
     float* outputImage		/* Output image */
 ) {
     int i;
-    int area = height * width;
-    float* tempImage = ckalloc(area * sizeof(float));
     for (i = 0; i < height; ++i) {
 	GaussianApplyFilter(filterPtr, whichDeriv, width,
 			    inputImage + i * width, 1, 
@@ -357,8 +355,6 @@ GaussianFilter10(
     float* outputImage		/* Output image */
 ) {
     int i;
-    int area = height * width;
-    float* tempImage = ckalloc(area * sizeof(float));
     for (i = 0; i < width; ++i) {
 	GaussianApplyFilter(filterPtr, whichDeriv, height,
 			    inputImage + i, width, 

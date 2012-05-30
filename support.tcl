@@ -23,6 +23,7 @@ proc crimp_source_cproc {accept {reject {}}} {
 	    if {!$take} continue
 
 	    #critcl::msg -nonewline " \[[file rootname [file tail $filename]]\]"
+	    critcl::msg -nonewline .
 
 	    set chan [open $here/$filename r]
 	    set name ::crimp::[gets $chan]

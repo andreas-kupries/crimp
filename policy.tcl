@@ -1480,6 +1480,17 @@ proc ::crimp::alpha::over {fore back} {
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::scale {a scale} {
+    set type [TypeOf $a]
+    set f     scale_${type}
+    if {![Has $f]} {
+	return -code error "Scale is not supported by \"$atype\""
+    }
+    return [$f $a $scale]
+}
+
+# # ## ### ##### ######## #############
+
 proc ::crimp::add {a b {scale 1} {offset 0}} {
     set atype [TypeOf $a]
     set btype [TypeOf $b]
@@ -3910,7 +3921,7 @@ namespace eval ::crimp {
     namespace export type width height dimensions channels cut color
     namespace export read write convert join flip split table hypot
     namespace export invert solarize gamma degamma remap map atan2
-    namespace export wavy psychedelia matrix blank filter crop
+    namespace export wavy psychedelia matrix blank filter crop scale
     namespace export alpha histogram max min screen add pixel
     namespace export subtract difference multiply pyramid mapof
     namespace export downsample upsample decimate interpolate logpolar

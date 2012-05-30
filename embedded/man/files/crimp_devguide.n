@@ -291,17 +291,17 @@ etc.
 For a demonstration of CRIMP's current abilities see the
 "\fIdemos.tcl\fR" application. Within the crimp source directory run it
 as
-.CS
+.nf
 
     tclsh8.5 demos.tcl
 
-.CE
+.fi
 or
-.CS
+.nf
 
     tclsh8.5 demos.tcl /path/to/crimp/packages ...
 
-.CE
+.fi
 If CRIMP's packages have already been installed, or can be found in
 one of the paths provided as arguments, then this will simply start
 the application.
@@ -745,7 +745,7 @@ the file, contain the C code implementing the primitive.
 .PP
 As an example, here are the contents of the "\fI.crimp\fR" file for one of
 the primitives with one of the smallest implementations:
-.CS
+.nf
 
 [1]     width
 [2]     Tcl_Obj* imageObj
@@ -757,7 +757,7 @@ the primitives with one of the smallest implementations:
 [8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (crimp_w (image)));
 [9]     return TCL_OK;
 
-.CE
+.fi
 Line 1 contains the name of the primitive, "width".
 Line 2 is the first line of the argument block.
 Line 3 terminates this argument block.

@@ -32,77 +32,26 @@ available in a directory of your choice.
 
 [section Requisites]
 
-[subsection Tcl]
+Before Crimp can be build and used a number of requisites must be installed. These are:
 
-A working Tcl installation is needed, however as we are building a Tcl
-package that should be pretty much obvious, and I will not belabor the
-point.
+[list_begin enumerated]
+[enum] The scripting language Tcl.
+       For details see [sectref Tcl].
+[enum] The [package critcl] package (C embedding) for [syscmd Tcl].
+       For details see [sectref CriTcl].
+[enum] Various packages from the Tcllib/Tklib bundles for [syscmd Tcl].
+       For details see [sectref {Tcllib & Tklib}].
+[list_end]
 
-[para] Use whatever you are comfortable with, as long as it provides
-Tcl 8.5, or higher.
+This list assumes that the machine where Crimp is to be installed is
+essentially clean. Of course, if parts of the dependencies listed
+below are already installed the associated steps can be skipped. It is
+still recommended to read their sections though, to validate that the
+dependencies they talk about are indeed installed.
 
-[para] An easy way to get an installation of a recent Tcl 8.5, which I
-recommend, is to download and install
-[uri http://www.activestate.com ActiveState's]
-[uri http://www.activestate.com/activetcl ActiveTcl] for your platform.
-Follow the link for ActiveTcl to find it.
-
-[para] After the installation of ActiveTcl 8.5 in a directory of your
-choice run the command
-
-[example {
-    teacup update
-}]
-
-This will install a lot more packages than found in the distribution
-alone.
-
-(Disclosure: I, Andreas Kupries, work for ActiveState, maintaining
-ActiveTcl and TclDevKit).
-
-
-[subsection CriTcl]
-
-The tool [uri http://jcw.github.com/critcl critcl] is required to
-build CRIMP, either as an application found in the PATH, or as a Tcl
-package available to the [cmd tclsh] used to run CRIMP's
-[sectref {Build & Installation}] process.
-
-[para] Version 3 is required, or higher
-
-[para]
-
-The link for critcl goes it its official website which explains how to
-get its sources, or as a starkit.
-
-[para]
-
-As a starkit simply put the file into your PATH. A good place would be
-the directory your [cmd tclsh] is found in, as that directory should
-already be listed in the PATH environment variable.
-
-[para] If the [cmd tclsh] in question resides in a directory
-accessible only to the system's administrator it may be necessary to
-login as that administrator, or at least run the commands with admin
-privileges (on linux: su -, sudo).
-
-[para][lb]I am pretty much assuming here that the developer knows his
-or her way around a Linux system.[rb]
-
-[para]
-
-On Windows it may be necessary to rename the starkit, adding the
-extension [file .tcl], to trigger the association with a working tclsh
-as its runtime.
-
-[para] On unix it may be necessary to make [cmd tclsh] available under
-the name of [cmd tclkit] for the starkit to work.
-
-[para]
-
-When not using a starkit, you have to get and install the sources per
-the instructions at the site, i.e. [uri http://jcw.github.com/critcl].
-
+[include include/rq_tcl.inc]
+[include include/rq_critcl.inc]
+[include include/rq_tcllib.inc]
 
 [section {Build & Installation}]
 

@@ -120,6 +120,7 @@
 <ul>
 <li class="subsection"><a href="#subsection1">Accessors</a></li>
 <li class="subsection"><a href="#subsection2">I/O commands</a></li>
+<li class="subsection"><a href="#subsection3">Support</a></li>
 </ul>
 </li>
 <li class="section"><a href="#section6">C API</a></li>
@@ -137,34 +138,37 @@
 <li><a href="#1"><b class="cmd">::crimp</b> <i class="arg">...</i></a></li>
 <li><a href="#2"><b class="cmd">::crimp</b> <b class="method">channels</b> <i class="arg">image</i></a></li>
 <li><a href="#3"><b class="cmd">::crimp</b> <b class="method">dimensions</b> <i class="arg">image</i></a></li>
-<li><a href="#4"><b class="cmd">::crimp</b> <b class="method">height</b> <i class="arg">image</i></a></li>
-<li><a href="#5"><b class="cmd">::crimp</b> <b class="method">meta append</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">string</i>...?</span></a></li>
-<li><a href="#6"><b class="cmd">::crimp</b> <b class="method">meta create</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></li>
-<li><a href="#7"><b class="cmd">::crimp</b> <b class="method">meta exists</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
-<li><a href="#8"><b class="cmd">::crimp</b> <b class="method">meta filter</b> <i class="arg">image</i> <i class="arg">args</i>...</a></li>
-<li><a href="#9"><b class="cmd">::crimp</b> <b class="method">meta for</b> <i class="arg">image</i> {<i class="arg">keyVar</i> <i class="arg">valueVar</i>} <i class="arg">body</i></a></li>
-<li><a href="#10"><b class="cmd">::crimp</b> <b class="method">meta get</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
-<li><a href="#11"><b class="cmd">::crimp</b> <b class="method">meta incr</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">increment</i>?</span></a></li>
-<li><a href="#12"><b class="cmd">::crimp</b> <b class="method">meta info</b> <i class="arg">image</i></a></li>
-<li><a href="#13"><b class="cmd">::crimp</b> <b class="method">meta keys</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></li>
-<li><a href="#14"><b class="cmd">::crimp</b> <b class="method">meta lappend</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">value</i>...?</span></a></li>
-<li><a href="#15"><b class="cmd">::crimp</b> <b class="method">meta merge</b> <i class="arg">image</i> <span class="opt">?<i class="arg">dictionaryValue</i>...?</span></a></li>
-<li><a href="#16"><b class="cmd">::crimp</b> <b class="method">meta remove</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
-<li><a href="#17"><b class="cmd">::crimp</b> <b class="method">meta replace</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></li>
-<li><a href="#18"><b class="cmd">::crimp</b> <b class="method">meta set</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span> <i class="arg">value</i></a></li>
-<li><a href="#19"><b class="cmd">::crimp</b> <b class="method">meta size</b> <i class="arg">image</i></a></li>
-<li><a href="#20"><b class="cmd">::crimp</b> <b class="method">meta unset</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
-<li><a href="#21"><b class="cmd">::crimp</b> <b class="method">meta values</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></li>
-<li><a href="#22"><b class="cmd">::crimp</b> <b class="method">pixel</b> <i class="arg">image</i></a></li>
-<li><a href="#23"><b class="cmd">::crimp</b> <b class="method">type</b> <i class="arg">image</i></a></li>
-<li><a href="#24"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></li>
-<li><a href="#25"><b class="cmd">::crimp</b> <b class="method">read</b> <i class="arg">...</i></a></li>
-<li><a href="#26"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></li>
-<li><a href="#27"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></li>
-<li><a href="#28"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></li>
-<li><a href="#29"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></li>
-<li><a href="#30"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></li>
-<li><a href="#31"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></li>
+<li><a href="#4"><b class="cmd">::crimp</b> <b class="method">geometry</b> <i class="arg">image</i></a></li>
+<li><a href="#5"><b class="cmd">::crimp</b> <b class="method">height</b> <i class="arg">image</i></a></li>
+<li><a href="#6"><b class="cmd">::crimp</b> <b class="method">meta append</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">string</i>...?</span></a></li>
+<li><a href="#7"><b class="cmd">::crimp</b> <b class="method">meta create</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></li>
+<li><a href="#8"><b class="cmd">::crimp</b> <b class="method">meta exists</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
+<li><a href="#9"><b class="cmd">::crimp</b> <b class="method">meta filter</b> <i class="arg">image</i> <i class="arg">args</i>...</a></li>
+<li><a href="#10"><b class="cmd">::crimp</b> <b class="method">meta for</b> <i class="arg">image</i> {<i class="arg">keyVar</i> <i class="arg">valueVar</i>} <i class="arg">body</i></a></li>
+<li><a href="#11"><b class="cmd">::crimp</b> <b class="method">meta get</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
+<li><a href="#12"><b class="cmd">::crimp</b> <b class="method">meta incr</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">increment</i>?</span></a></li>
+<li><a href="#13"><b class="cmd">::crimp</b> <b class="method">meta info</b> <i class="arg">image</i></a></li>
+<li><a href="#14"><b class="cmd">::crimp</b> <b class="method">meta keys</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></li>
+<li><a href="#15"><b class="cmd">::crimp</b> <b class="method">meta lappend</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">value</i>...?</span></a></li>
+<li><a href="#16"><b class="cmd">::crimp</b> <b class="method">meta merge</b> <i class="arg">image</i> <span class="opt">?<i class="arg">dictionaryValue</i>...?</span></a></li>
+<li><a href="#17"><b class="cmd">::crimp</b> <b class="method">meta remove</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
+<li><a href="#18"><b class="cmd">::crimp</b> <b class="method">meta replace</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></li>
+<li><a href="#19"><b class="cmd">::crimp</b> <b class="method">meta set</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span> <i class="arg">value</i></a></li>
+<li><a href="#20"><b class="cmd">::crimp</b> <b class="method">meta size</b> <i class="arg">image</i></a></li>
+<li><a href="#21"><b class="cmd">::crimp</b> <b class="method">meta unset</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></li>
+<li><a href="#22"><b class="cmd">::crimp</b> <b class="method">meta values</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></li>
+<li><a href="#23"><b class="cmd">::crimp</b> <b class="method">pixel</b> <i class="arg">image</i></a></li>
+<li><a href="#24"><b class="cmd">::crimp</b> <b class="method">type</b> <i class="arg">image</i></a></li>
+<li><a href="#25"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></li>
+<li><a href="#26"><b class="cmd">::crimp</b> <b class="method">read</b> <i class="arg">...</i></a></li>
+<li><a href="#27"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#28"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#29"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></li>
+<li><a href="#30"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></li>
+<li><a href="#31"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></li>
+<li><a href="#32"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></li>
+<li><a href="#33"><b class="cmd">::crimp</b> <b class="method">bbox</b> <i class="arg">image</i>...</a></li>
+<li><a href="#34"><b class="cmd">::crimp</b> <b class="method">bbox2</b> <i class="arg">box1</i> <i class="arg">box2</i></a></li>
 </ul>
 </div>
 </div>
@@ -397,42 +401,48 @@ underneath which anything else is arranged and made available.</p></dd>
 pixels).  The result is a 2-element list containing width and height,
 in this order.</p>
 <p>The method supports all image types.</p></dd>
-<dt><a name="4"><b class="cmd">::crimp</b> <b class="method">height</b> <i class="arg">image</i></a></dt>
+<dt><a name="4"><b class="cmd">::crimp</b> <b class="method">geometry</b> <i class="arg">image</i></a></dt>
+<dd><p>This method returns the <i class="term"><a href="../../index.html#key115">geometry</a></i> of the <i class="arg">image</i> (in
+pixels). The result is a 4-element list containing x-, y-location,
+width and height, in this order. This is also called the
+<i class="term"><a href="../../index.html#key163">bounding box</a></i> of the image.</p>
+<p>The method supports all image types.</p></dd>
+<dt><a name="5"><b class="cmd">::crimp</b> <b class="method">height</b> <i class="arg">image</i></a></dt>
 <dd><p>This method returns the height of the <i class="arg">image</i> (in pixels).</p>
 <p>The method supports all image types.</p></dd>
-<dt><a name="5"><b class="cmd">::crimp</b> <b class="method">meta append</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">string</i>...?</span></a></dt>
+<dt><a name="6"><b class="cmd">::crimp</b> <b class="method">meta append</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">string</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="6"><b class="cmd">::crimp</b> <b class="method">meta create</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></dt>
+<dt><a name="7"><b class="cmd">::crimp</b> <b class="method">meta create</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="7"><b class="cmd">::crimp</b> <b class="method">meta exists</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
+<dt><a name="8"><b class="cmd">::crimp</b> <b class="method">meta exists</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="8"><b class="cmd">::crimp</b> <b class="method">meta filter</b> <i class="arg">image</i> <i class="arg">args</i>...</a></dt>
+<dt><a name="9"><b class="cmd">::crimp</b> <b class="method">meta filter</b> <i class="arg">image</i> <i class="arg">args</i>...</a></dt>
 <dd></dd>
-<dt><a name="9"><b class="cmd">::crimp</b> <b class="method">meta for</b> <i class="arg">image</i> {<i class="arg">keyVar</i> <i class="arg">valueVar</i>} <i class="arg">body</i></a></dt>
+<dt><a name="10"><b class="cmd">::crimp</b> <b class="method">meta for</b> <i class="arg">image</i> {<i class="arg">keyVar</i> <i class="arg">valueVar</i>} <i class="arg">body</i></a></dt>
 <dd></dd>
-<dt><a name="10"><b class="cmd">::crimp</b> <b class="method">meta get</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
+<dt><a name="11"><b class="cmd">::crimp</b> <b class="method">meta get</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="11"><b class="cmd">::crimp</b> <b class="method">meta incr</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">increment</i>?</span></a></dt>
+<dt><a name="12"><b class="cmd">::crimp</b> <b class="method">meta incr</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">increment</i>?</span></a></dt>
 <dd></dd>
-<dt><a name="12"><b class="cmd">::crimp</b> <b class="method">meta info</b> <i class="arg">image</i></a></dt>
+<dt><a name="13"><b class="cmd">::crimp</b> <b class="method">meta info</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="13"><b class="cmd">::crimp</b> <b class="method">meta keys</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></dt>
+<dt><a name="14"><b class="cmd">::crimp</b> <b class="method">meta keys</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></dt>
 <dd></dd>
-<dt><a name="14"><b class="cmd">::crimp</b> <b class="method">meta lappend</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">value</i>...?</span></a></dt>
+<dt><a name="15"><b class="cmd">::crimp</b> <b class="method">meta lappend</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">value</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="15"><b class="cmd">::crimp</b> <b class="method">meta merge</b> <i class="arg">image</i> <span class="opt">?<i class="arg">dictionaryValue</i>...?</span></a></dt>
+<dt><a name="16"><b class="cmd">::crimp</b> <b class="method">meta merge</b> <i class="arg">image</i> <span class="opt">?<i class="arg">dictionaryValue</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="16"><b class="cmd">::crimp</b> <b class="method">meta remove</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
+<dt><a name="17"><b class="cmd">::crimp</b> <b class="method">meta remove</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="17"><b class="cmd">::crimp</b> <b class="method">meta replace</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></dt>
+<dt><a name="18"><b class="cmd">::crimp</b> <b class="method">meta replace</b> <i class="arg">image</i> <span class="opt">?<i class="arg">key</i> <i class="arg">value</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="18"><b class="cmd">::crimp</b> <b class="method">meta set</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span> <i class="arg">value</i></a></dt>
+<dt><a name="19"><b class="cmd">::crimp</b> <b class="method">meta set</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span> <i class="arg">value</i></a></dt>
 <dd></dd>
-<dt><a name="19"><b class="cmd">::crimp</b> <b class="method">meta size</b> <i class="arg">image</i></a></dt>
+<dt><a name="20"><b class="cmd">::crimp</b> <b class="method">meta size</b> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="20"><b class="cmd">::crimp</b> <b class="method">meta unset</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
+<dt><a name="21"><b class="cmd">::crimp</b> <b class="method">meta unset</b> <i class="arg">image</i> <i class="arg">key</i> <span class="opt">?<i class="arg">key</i>...?</span></a></dt>
 <dd></dd>
-<dt><a name="21"><b class="cmd">::crimp</b> <b class="method">meta values</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></dt>
+<dt><a name="22"><b class="cmd">::crimp</b> <b class="method">meta values</b> <i class="arg">image</i> <span class="opt">?<i class="arg">globPattern</i>?</span></a></dt>
 <dd><p>These methods provide access to the meta data slot of images, treating
 its contents as a dictionary. As such all the methods provided here
 have an appropriate counterpart in the methods of Tcl's builtin
@@ -443,20 +453,20 @@ The converse is not true, as <b class="cmd">dict</b>'s methods <b class="method"
 <p>Please read the documentation of Tcl's <b class="cmd">dict</b> command for reference.</p>
 <p><em>NOTE</em> that the toplevel key <b class="const">crimp</b> is reserved for
 use by CRIMP itself.</p></dd>
-<dt><a name="22"><b class="cmd">::crimp</b> <b class="method">pixel</b> <i class="arg">image</i></a></dt>
+<dt><a name="23"><b class="cmd">::crimp</b> <b class="method">pixel</b> <i class="arg">image</i></a></dt>
 <dd><p>This method returns the raw pixels of the <i class="arg">image</i> as a Tcl ByteArray.</p>
 <p>The method supports all image types.</p></dd>
-<dt><a name="23"><b class="cmd">::crimp</b> <b class="method">type</b> <i class="arg">image</i></a></dt>
+<dt><a name="24"><b class="cmd">::crimp</b> <b class="method">type</b> <i class="arg">image</i></a></dt>
 <dd><p>This method returns the type of the <i class="arg">image</i>.</p>
 <p>The method supports all image types.</p></dd>
-<dt><a name="24"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></dt>
+<dt><a name="25"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></dt>
 <dd><p>This method returns the width of the <i class="arg">image</i> (in pixels).</p>
 <p>The method supports all image types.</p></dd>
 </dl>
 </div>
 <div id="subsection2" class="subsection"><h3><a name="subsection2">I/O commands</a></h3>
 <dl class="definitions">
-<dt><a name="25"><b class="cmd">::crimp</b> <b class="method">read</b> <i class="arg">...</i></a></dt>
+<dt><a name="26"><b class="cmd">::crimp</b> <b class="method">read</b> <i class="arg">...</i></a></dt>
 <dd><p>This ensemble command is the umbrella underneath which any and all
 functionality for reading images from external formats must be placed.</p>
 <p>This command is an <i class="term">extension point</i>. I.e., other packages
@@ -474,7 +484,7 @@ in question, to reduce the probability of naming conflicts.</p>
 their argument signature, although they are expected to return an image.</p>
 <p>This package provides only rudimentary import facilities from
 Tcl data structures, as described next.</p></dd>
-<dt><a name="26"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></dt>
+<dt><a name="27"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></dt>
 <dd><p>This method takes the <i class="arg">pixelmatrix</i>, a list of rows, with each row
 a list of pixel values in the domain [0..255] and returns an
 image of type <b class="const">grey8</b> whose height is the number of rows, i.e.
@@ -482,14 +492,14 @@ the length of the outer list, and whose width is the maximum length
 found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
 <b class="const">0</b>.</p></dd>
-<dt><a name="27"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></dt>
+<dt><a name="28"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></dt>
 <dd><p>This method takes the <i class="arg">pixelmatrix</i>, a list of rows, with each row
 a list of floating point values for pixel values and returns an image
 of type <b class="const">float</b> whose height is the number of rows, i.e.  the
 length of the outer list, and whose width is the maximum length found
 among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with a pixel value of <b class="const">0</b>.</p></dd>
-<dt><a name="28"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></dt>
+<dt><a name="29"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></dt>
 <dd><p>This ensemble command is the umbrella underneath which any and all
 functionality for writing images to external formats must be placed.</p>
 <p>This command is an <i class="term">extension point</i>. I.e., other packages
@@ -506,11 +516,11 @@ in question, to reduce the probability of naming conflicts.</p>
 <p>The commands used to extend the ensemble are not restricted in
 their argument signature, although they are expected to take at least
 an image as argument.</p></dd>
-<dt><a name="29"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></dt>
+<dt><a name="30"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="30"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></dt>
+<dt><a name="31"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="31"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></dt>
+<dt><a name="32"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></dt>
 <dd><p>This family of methods extends the basic <b class="cmd">::crimp write</b> ensemble.
 The input <i class="arg">image</i> is returned as either a binary string in the
 specified <i class="arg">format</i>, or written to the open channel <i class="arg">chan</i>, or
@@ -537,13 +547,24 @@ writing it to channel or file.</p>
 </dl></dd>
 </dl>
 </div>
+<div id="subsection3" class="subsection"><h3><a name="subsection3">Support</a></h3>
+<dl class="definitions">
+<dt><a name="33"><b class="cmd">::crimp</b> <b class="method">bbox</b> <i class="arg">image</i>...</a></dt>
+<dd><p>This method takes one or more images and computes the union of their
+geometries. The result is returned as a bounding box, a list of 4
+numbers (x, y, width, and height).</p></dd>
+<dt><a name="34"><b class="cmd">::crimp</b> <b class="method">bbox2</b> <i class="arg">box1</i> <i class="arg">box2</i></a></dt>
+<dd><p>This method takes two bounding boxes (lists of 4 numbers (x, y, width,
+and height)) and returns their union bounding box.</p></dd>
+</dl>
+</div>
 </div>
 <div id="section6" class="section"><h2><a name="section6">C API</a></h2>
 <p>The C API of the core is of no interest to users of CRIMP, the audience
 towards which this manpage is geared to.</p>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p><a href="../../index.html#key159">channels</a>, <a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key160">dimensions</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key161">image accessors</a>, <a href="../../index.html#key162">image type</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key4">vector</a></p>
+<p><a href="../../index.html#key163">bounding box</a>, <a href="../../index.html#key161">channels</a>, <a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key160">dimensions</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key115">geometry</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key159">image accessors</a>, <a href="../../index.html#key162">image type</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key4">vector</a></p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2011 Andreas Kupries<br>

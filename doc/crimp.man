@@ -1043,6 +1043,15 @@ expanding the smaller dimensions with black pixels, and then returns a
 list of the expanded images. The images in the result are in the same
 order as as arguments.
 
+[call [cmd ::crimp] [method matchgeo] [arg image] [arg bbox]]
+
+This method takes an image and a bounding box (list of x, y, w, and h), 
+and expands the image with black pixels to match the box. The result of
+the expansion is returned.
+
+[para] An error is thrown if the image is not fully contained within
+the bounding box.
+
 [call [cmd ::crimp] [method scale] [arg image] [arg scale]]
 
 This method performs a pixel-wise multiplication of the image with a

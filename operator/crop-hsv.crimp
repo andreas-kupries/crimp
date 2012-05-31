@@ -18,19 +18,23 @@ crimp_input (imageObj, image, hsv);
 if ((ww < 0) || (hn < 0) || (we < 0) || (hs < 0)) {
     Tcl_SetResult(interp, "bad image border size, expected non-negative values", TCL_STATIC);
     return TCL_ERROR;
-} else if (((ww + we) > image->w) || ((hn + hs) > image->h)) {
+} else if (((ww + we) > crimp_w (image)) || ((hn + hs) > crimp_h (image))) {
     Tcl_SetResult(interp, "bad image border size, larger than image dimensions", TCL_STATIC);
     return TCL_ERROR;
 }
 
-result = crimp_new (image->itype, image->w - ww - we, image->h - hn - hs);
+result = crimp_new_at (image->itype,
+		       crimp_x (image) + ww,
+		       crimp_y (image) + hn,
+		       crimp_w (image) - ww - we,
+		       crimp_h (image) - hn - hs);
 
 /*
  * Copy the un-cropped part of the input image.
  */
 
-for (yo = 0, yi = hn; yo < result->h; yo++, yi++) {
-    for (xo = 0, xi = ww; xo < result->w; xo++, xi++) {
+for (yo = 0, yi = hn; yo < crimp_h (result); yo++, yi++) {
+    for (xo = 0, xi = ww; xo < crimp_w (result); xo++, xi++) {
 	H (result, xo, yo) = H (image, xi, yi);
 	S (result, xo, yo) = S (image, xi, yi);
 	V (result, xo, yo) = V (image, xi, yi);

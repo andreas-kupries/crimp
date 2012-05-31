@@ -1,0 +1,94 @@
+alpha_blend_grey16_grey16
+Tcl_Obj* imageForeObj
+Tcl_Obj* imageBackObj
+int alpha
+
+/*
+ * Alpha-based blending of two images, foreground, and background, controlled
+ * by a scalar (and extern) alpha factor.
+ *
+ * alpha is Opacity
+ * 255 <=> Fully opaque      <=> imageF
+ * 0   <=> Fully transparent <=> imageB
+ *
+ * => OUT = F*alpha + B*(1-alpha)
+ */
+
+crimp_image*     result;
+crimp_image*     imageF;
+crimp_image*     imageB;
+int ralpha, px, py, oxf, oyf, oxb, oyb;
+crimp_geometry bb;
+
+crimp_input (imageForeObj, imageF, grey16);
+crimp_input (imageBackObj, imageB, grey16);
+
+if (alpha == 255) {
+    Tcl_SetObjResult(interp, imageForeObj);
+    return TCL_OK;
+} else if (alpha == 0) {
+    Tcl_SetObjResult(interp, imageBackObj);
+    return TCL_OK;
+}
+
+/*
+ * True alpha mixture.
+ */
+
+ralpha = 255 - alpha;
+
+crimp_rect_union (&imageF->geo, &imageB->geo, &bb);
+
+result = crimp_new_grey16_at (bb.x, bb.y, bb.w, bb.h);
+oxf = crimp_x (imageF);
+oyf = crimp_y (imageF);
+oxb = crimp_x (imageB);
+oyb = crimp_y (imageB);
+
+/*
+ * px, py are physical coordinates in the result, starting from 0.
+ * The associated logical coordinates in the 2D plane are
+ *  lx = px + x(result)
+ *  lx = py + y(result)
+ * And when we are inside an input its physical coordinates, from the logical are
+ *  px = lx - x(input)
+ *  py = ly - y(input)
+ */
+
+#define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
+
+for (py = 0; py < bb.h; py++) {
+    for (px = 0; px < bb.w; px++) {
+
+        int lx = px + bb.x;
+        int ly = py + bb.y;
+
+	int inf = crimp_inside (imageF, lx, ly);
+	int inb = crimp_inside (imageB, lx, ly);
+
+	/*
+	 * The result depends on where we are relative to both input.
+	 * Inside of each input we take the respective value of the
+	 * pixel. Outside of an input we take BLACK as the value
+	 * instead, and TRANSPARENT for the ALPHA.
+	 */
+
+	int fore = inf ? GREY16 (imageF, lx - oxf, ly - oyf) : BLACK;
+	int back = inb ? GREY16 (imageB, lx - oxb, ly - oyb) : BLACK;
+
+	GREY16 (result, px, py) = MIX (fore, back);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+#undef MIX
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

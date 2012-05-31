@@ -20,10 +20,11 @@ if (!crimp_eq_height (imageLeft, imageRight)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_rgba (imageLeft->w + imageRight->w, imageLeft->h);
+result = crimp_new_rgba_at (crimp_x (imageLeft), crimp_y (imageLeft),
+			    crimp_w (imageLeft) + crimp_w (imageRight), crimp_h (imageLeft));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < imageLeft->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (imageLeft); x++) {
 
 	R (result, x, y) = R (imageLeft, x, y);
 	G (result, x, y) = G (imageLeft, x, y);
@@ -32,13 +33,13 @@ for (y = 0; y < result->h; y++) {
     }
 }
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < imageRight->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (imageRight); x++) {
 
-	R (result, imageLeft->w + x, y) = R (imageRight, x, y);
-	G (result, imageLeft->w + x, y) = G (imageRight, x, y);
-	B (result, imageLeft->w + x, y) = B (imageRight, x, y);
-	A (result, imageLeft->w + x, y) = A (imageRight, x, y);
+	R (result, crimp_w (imageLeft) + x, y) = R (imageRight, x, y);
+	G (result, crimp_w (imageLeft) + x, y) = G (imageRight, x, y);
+	B (result, crimp_w (imageLeft) + x, y) = B (imageRight, x, y);
+	A (result, crimp_w (imageLeft) + x, y) = A (imageRight, x, y);
     }
 }
 

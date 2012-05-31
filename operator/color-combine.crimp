@@ -35,10 +35,11 @@ wr = FLOATP (combine, 0, 0);
 wg = FLOATP (combine, 1, 0);
 wb = FLOATP (combine, 2, 0);
 
-result = crimp_new_grey8 (image->w, image->h);
+result = crimp_new_grey8_at (crimp_x (image), crimp_y (image),
+			     crimp_w (image), crimp_h (image));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	double r = CH (image, 0, x, y);
 	double g = CH (image, 1, x, y);

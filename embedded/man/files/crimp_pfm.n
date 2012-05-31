@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_pfm.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-infinite-plane/embedded/man/files/crimp_pfm.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -239,14 +239,14 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_pfm" n 0.1 doc "C Raster Image Manipulation Package"
+.TH "crimp_pfm" n 0.2 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
 crimp_pfm \- CRIMP - PFM handling, NetPBM
 .SH SYNOPSIS
 package require \fBTcl  8.5\fR
 .sp
-package require \fBcrimp::pfm  ?0.1?\fR
+package require \fBcrimp::pfm  ?0.2?\fR
 .sp
 \fB::crimp\fR \fBread pfm\fR \fIstring\fR
 .sp

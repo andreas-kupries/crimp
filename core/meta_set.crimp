@@ -33,7 +33,7 @@ if (!Tcl_IsShared(imageObj)) {
  * identical.
  */
 
-image = crimp_newm (image->itype, image->w, image->h, metaObj);
+image = crimp_newm (image->itype, crimp_w(image), crimp_h(image), metaObj);
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (image));
 return TCL_OK;

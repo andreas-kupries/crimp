@@ -19,10 +19,11 @@ if (!crimp_eq_dim (red, green) ||
     return TCL_ERROR;
 }
 
-result = crimp_new_rgb (red->w, red->h);
+result = crimp_new_rgb_at (crimp_x (red), crimp_y (red),
+			   crimp_w (red), crimp_h (red));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	/*
 	 * Assembling the pixels of each color channel from the associated

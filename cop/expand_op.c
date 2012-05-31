@@ -14,7 +14,11 @@
 	return TCL_ERROR;
     }
 
-    result = crimp_new (image->itype, image->w + ww + we, image->h + hn + hs);
+    result = crimp_new_at (image->itype, 
+			   crimp_x (image) - ww,
+			   crimp_y (image) - hn,
+			   crimp_w (image) + ww + we,
+			   crimp_h (image) + hn + hs);
 
     /*
      * Nine quadrants to fill:
@@ -76,7 +80,7 @@
 
     if (hn) {
 	for (yo = 0; yo < hn; yo++) {
-	    for (xo = 0; xo < image->w; xo++) {
+	    for (xo = 0; xo < crimp_w (image); xo++) {
 		FILL_N (xo + ww, yo);
 	    }
 	}
@@ -89,7 +93,7 @@
     if (hn && we) {
 	for (yo = 0; yo < hn; yo++) {
 	    for (xo = 0; xo < we; xo++) {
-		FILL_NE (xo + image->w + ww, yo);
+		FILL_NE (xo + crimp_w (image) + ww, yo);
 	    }
 	}
     }
@@ -100,7 +104,7 @@
 
     if (ww) {
 	for (xo = 0; xo < ww; xo++) {
-	    for (yo = 0; yo < image->h; yo++) {
+	    for (yo = 0; yo < crimp_h (image); yo++) {
 		FILL_W (xo, yo + hn);
 	    }
 	}
@@ -112,8 +116,8 @@
 
     if (we) {
 	for (xo = 0; xo < we; xo++) {
-	    for (yo = 0; yo < image->h; yo++) {
-		FILL_E (xo + image->w + ww, yo + hn);
+	    for (yo = 0; yo < crimp_h (image); yo++) {
+		FILL_E (xo + crimp_w (image) + ww, yo + hn);
 	    }
 	}
     }
@@ -125,7 +129,7 @@
     if (hs && ww) {
 	for (yo = 0; yo < hs; yo++) {
 	    for (xo = 0; xo < ww; xo++) {
-		FILL_SW (xo, yo + image->h + hn);
+		FILL_SW (xo, yo + crimp_h (image) + hn);
 	    }
 	}
     }
@@ -136,8 +140,8 @@
 
     if (hs) {
 	for (yo = 0; yo < hs; yo++) {
-	    for (xo = 0; xo < image->w; xo++) {
-		FILL_S (xo + ww, yo + image->h + hn);
+	    for (xo = 0; xo < crimp_w (image); xo++) {
+		FILL_S (xo + ww, yo + crimp_h (image) + hn);
 	    }
 	}
     }
@@ -149,7 +153,7 @@
     if (hs && we) {
 	for (yo = 0; yo < hs; yo++) {
 	    for (xo = 0; xo < we; xo++) {
-		FILL_SE (xo + image->w + ww, yo + image->h + hn);
+		FILL_SE (xo + crimp_w (image) + ww, yo + crimp_h (image) + hn);
 	    }
 	}
     }
@@ -158,8 +162,8 @@
      * Central. Copy of the input image.
      */
 
-    for (yo = hn, yi = 0; yi < image->h; yo++, yi++) {
-	for (xo = ww, xi = 0; xi < image->w; xo++, xi++) {
+    for (yo = hn, yi = 0; yi < crimp_h (image); yo++, yi++) {
+	for (xo = ww, xi = 0; xi < crimp_w (image); xo++, xi++) {
 	    COPY (xo, yo, xi, yi);
 	}
     }

@@ -7,10 +7,10 @@ int          x, y;
 
 crimp_input (imageObj, image, grey32);
 
-result = crimp_new_float (image->w, image->h);
+result = crimp_new_float_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
 	FLOATP (result, x, y) = GREY32 (image, x, y);
     }

@@ -27,7 +27,11 @@ int*             colhistograma;
 
 crimp_input (imageObj, image, rgba);
 
-result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
+result = crimp_new_at (image->itype,
+		       crimp_x (image) + radius,
+		       crimp_y (image) + radius,
+		       crimp_w (image) - 2*radius,
+		       crimp_h (image) - 2*radius);
 
 /*
  * We are using the method described by Simon Perreault and Patrick Hebert in
@@ -47,10 +51,10 @@ result = crimp_new (image->itype, image->w - 2*radius, image->h - 2*radius);
  * yi = yo + radius, yo in (0...w-2*radius)
  */
 
-colhistogramr = CRIMP_ALLOC_ARRAY (image->w * 256, int); memset (colhistogramr,'\0', image->w * 256 * sizeof(int));
-colhistogramg = CRIMP_ALLOC_ARRAY (image->w * 256, int); memset (colhistogramg,'\0', image->w * 256 * sizeof(int));
-colhistogramb = CRIMP_ALLOC_ARRAY (image->w * 256, int); memset (colhistogramb,'\0', image->w * 256 * sizeof(int));
-colhistograma = CRIMP_ALLOC_ARRAY (image->w * 256, int); memset (colhistograma,'\0', image->w * 256 * sizeof(int));
+colhistogramr = CRIMP_ALLOC_ARRAY (crimp_w (image) * 256, int); memset (colhistogramr,'\0', crimp_w (image) * 256 * sizeof(int));
+colhistogramg = CRIMP_ALLOC_ARRAY (crimp_w (image) * 256, int); memset (colhistogramg,'\0', crimp_w (image) * 256 * sizeof(int));
+colhistogramb = CRIMP_ALLOC_ARRAY (crimp_w (image) * 256, int); memset (colhistogramb,'\0', crimp_w (image) * 256 * sizeof(int));
+colhistograma = CRIMP_ALLOC_ARRAY (crimp_w (image) * 256, int); memset (colhistograma,'\0', crimp_w (image) * 256 * sizeof(int));
 
 n = (2*radius+1);
 n = n * n;
@@ -68,7 +72,7 @@ n = n * n;
 #if 1
 #define CHINDEX(xi,value)   ((xi) * 256 + (value))
 #else
-#define CHINDEX(xi,value)   ((value) * image->w + (xi))
+#define CHINDEX(xi,value)   ((value) * crimp_w (image) + (xi))
 #endif
 #define COLHISTR(xi,value) colhistogramr [CHINDEX (xi, value)]
 #define COLHISTG(xi,value) colhistogramg [CHINDEX (xi, value)]
@@ -148,7 +152,7 @@ n = n * n;
  */
 
 for (yi = 0; yi < 2*radius+1; yi++) {
-    for (xi = 0; xi < image->w; xi++) {
+    for (xi = 0; xi < crimp_w (image); xi++) {
 	UPR (xi, R (image, xi, yi));
 	UPG (xi, G (image, xi, yi));
 	UPB (xi, B (image, xi, yi));
@@ -177,7 +181,7 @@ R (result, 0, 0) = crimp_ahe_transfer (rowhistogramr, R (image, radius, radius),
 G (result, 0, 0) = crimp_ahe_transfer (rowhistogramg, G (image, radius, radius), n);
 B (result, 0, 0) = crimp_ahe_transfer (rowhistogramb, B (image, radius, radius), n);
 A (result, 0, 0) = crimp_ahe_transfer (rowhistograma, A (image, radius, radius), n);
-for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
+for (xo = 1, xi = radius+1; xo < crimp_w (result); xo++, xi++) {
     SHIFT_RIGHT (xi);
     R (result, xo, 0) = crimp_ahe_transfer (rowhistogramr, R (image, xi, radius), n);
     G (result, xo, 0) = crimp_ahe_transfer (rowhistogramg, G (image, xi, radius), n);
@@ -189,7 +193,7 @@ for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
  * With the first row of the result done we can now sweep the remaining lines.
  */
 
-for (yo = 1, yi = radius+1; yo < result->h; yo++, yi++) {
+for (yo = 1, yi = radius+1; yo < crimp_h (result); yo++, yi++) {
 
     /* Re-initialize the row histogram for the line */
     memset (rowhistogramr,'\0', 256 * sizeof(int));
@@ -208,7 +212,7 @@ for (yo = 1, yi = radius+1; yo < result->h; yo++, yi++) {
     G (result, 0, yo) = crimp_ahe_transfer (rowhistogramg, G (image, radius, yi), n);
     B (result, 0, yo) = crimp_ahe_transfer (rowhistogramb, B (image, radius, yi), n);
     A (result, 0, yo) = crimp_ahe_transfer (rowhistograma, A (image, radius, yi), n);
-    for (xo = 1, xi = radius+1; xo < result->w; xo++, xi++) {
+    for (xo = 1, xi = radius+1; xo < crimp_w (result); xo++, xi++) {
 	SHIFT_DOWN  (xi+radius,yi);
 	SHIFT_RIGHT (xi);
 	R (result, xo, yo) = crimp_ahe_transfer (rowhistogramr, R (image, xi, yi), n);

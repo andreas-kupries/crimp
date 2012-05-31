@@ -1,11 +1,6 @@
 def op_subtract {
     label Subtract
-    active {
-	expr {
-	      ([bases] == 2) &&
-	      ([crimp dimensions [base 0]] eq [crimp dimensions [base 1]])
-	  }
-    }
+    active { expr { [bases] == 2 } }
     setup_image {
 	show
     }

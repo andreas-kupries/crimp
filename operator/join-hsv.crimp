@@ -19,10 +19,11 @@ if (!crimp_eq_dim (hue, sat) ||
     return TCL_ERROR;
 }
 
-result = crimp_new_hsv (hue->w, hue->h);
+result = crimp_new_hsv_at (crimp_x (hue), crimp_y (hue),
+			   crimp_w (hue), crimp_h (hue));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	/*
 	 * Assembling the pixels of each color channel from the associated

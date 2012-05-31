@@ -1,11 +1,6 @@
 def op_alpha_blend_hsv {
     label {Blend HSV}
-    active {
-	expr {
-	      ([bases] == 2) &&
-	      ([crimp dimensions [base 0]] eq [crimp dimensions [base 1]])
-	  }
-    }
+    active { expr { [bases] == 2 } }
     setup {
 	# We manage a cache of the blended images to make the
 	# scrolling of the scale smoother over time. An improvement

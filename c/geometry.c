@@ -31,45 +31,35 @@ crimp_geo_warp_init (crimp_image* input, crimp_image* forward, int* origx, int* 
 {
     /*
      * Run the four corners of the input through the forward transformation to
-     * get their locations, and use the results to determine dimensions of the
-     * output image and the location of its origin point.
+     * get their locations, and use the results to determine geometry of the
+     * output image, i.e. dimensions and location of its origin point.
      *
-     * NOTE: The input image may already come with origin point data. We have
-     * to and are taking this into account when computing the input corners.
+     * NOTE: We have to take the origin of the input image into account when
+     * computing the input corners.
      */
 
+    crimp_image* result;
     double xlu, xru, xld, xrd, left, right;
     double ylu, yru, yld, yrd, up, down;
     int ileft, iright, iup, idown, w, h, iorigx, iorigy, oc = 0;
-    Tcl_Obj* meta;
-    Tcl_Obj* key1 = Tcl_NewStringObj ("crimp", -1);
-    Tcl_Obj* key2 = Tcl_NewStringObj ("origin", -1);
-    Tcl_Obj* cmeta = NULL;
-    Tcl_Obj* corig = NULL;
-    Tcl_Obj* orig [2] = {NULL, NULL};
 
-    if (!input->meta ||	(Tcl_DictObjGet(NULL, input->meta, key1, &cmeta) != TCL_OK) ||
-	!cmeta       ||	(Tcl_DictObjGet(NULL, cmeta, key2, &corig)       != TCL_OK) ||
-	!corig       || (Tcl_ListObjGetElements(NULL, corig, &oc, &orig) != TCL_OK) ||
-	!orig[0]     || (Tcl_GetIntFromObj(NULL,orig[0], &iorigx)        != TCL_OK) ||
-	!orig[1]     || (Tcl_GetIntFromObj(NULL,orig[1], &iorigy)        != TCL_OK)) {
-	iorigx = iorigy = 0;
-    }
+    iorigx = crimp_x (input);
+    iorigy = crimp_y (input);
 
     xlu = - iorigx;
     ylu = - iorigy;
     crimp_geo_warp_point (forward, &xlu, &ylu);
 
-    xru = - iorigx + input->w - 1;
+    xru = - iorigx + crimp_w(input) - 1;
     yru = - iorigy;
     crimp_geo_warp_point (forward, &xru, &yru);
 
     xld = - iorigx;
-    yld = - iorigy + input->h - 1;
+    yld = - iorigy + crimp_h(input);
     crimp_geo_warp_point (forward, &xld, &yld);
 
-    xrd = - iorigx + input->w - 1;
-    yrd = - iorigy + input->h - 1;
+    xrd = - iorigx + crimp_w(input) - 1;
+    yrd = - iorigy + crimp_h(input) - 1;
     crimp_geo_warp_point (forward, &xrd, &yrd);
 
     left  = MIN (MIN (xlu,xld), MIN (xru,xrd));
@@ -88,14 +78,34 @@ crimp_geo_warp_init (crimp_image* input, crimp_image* forward, int* origx, int* 
     *origx = ileft;
     *origy = iup;
 
-    orig [0] = Tcl_NewIntObj (ileft);
-    orig [1] = Tcl_NewIntObj (iup);
+    result = crimp_new_at (input->itype, ileft, iup, w, h);
+    return result;
+}
 
-    corig = Tcl_NewListObj (2, orig);
-    cmeta = Tcl_NewDictObj (); Tcl_DictObjPut (NULL, cmeta, key2, corig);
-    meta  = Tcl_NewDictObj (); Tcl_DictObjPut (NULL, meta,  key1, cmeta);
+extern void
+crimp_rect_union (const crimp_geometry* a,
+		  const crimp_geometry* b,
+		  crimp_geometry* result)
+{
+    /*
+     * Compute the bounding box first, as min and max of the individual
+     * boundaries. The max values are one too high, which is canceled
+     * when computing the dimensions.
+     */
 
-    return crimp_newm (input->itype, w, h, meta);
+    int minx = MIN (a->x, b->x);
+    int miny = MIN (a->y, b->y);
+    int maxx = MAX (a->x + a->w, b->x + b->w);
+    int maxy = MAX (a->y + a->h, b->y + b->h);
+
+    /*
+     * And convert back into a plain geometry with location dimensions.
+     */
+
+    result->x = minx;
+    result->y = miny;
+    result->w = maxx - minx;
+    result->h = maxy - miny;
 }
 
 /*

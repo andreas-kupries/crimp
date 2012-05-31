@@ -20,10 +20,10 @@ if (!crimp_eq_dim (image, imageA)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_rgba (image->w, image->h);
+result = crimp_new_rgba_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	R (result, x, y) = R (image, x, y);
 	G (result, x, y) = G (image, x, y);
 	B (result, x, y) = B (image, x, y);

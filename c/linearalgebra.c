@@ -62,20 +62,23 @@ crimp_image*
 crimp_la_multiply_matrix (crimp_image* a, crimp_image* b)
 {
     crimp_image* result;
-    int x, y, w;
+    int x, y, w, n, m;
 
     CRIMP_ASSERT_IMGTYPE (a, float);
     CRIMP_ASSERT_IMGTYPE (b, float);
-    CRIMP_ASSERT (crimp_require_height(a, b->w),"Unable to multiply matrices, size mismatch");
-    CRIMP_ASSERT (crimp_require_height(b, a->w),"Unable to multiply matrices, size mismatch");
+    CRIMP_ASSERT (crimp_require_height(a, crimp_w(b)),"Unable to multiply matrices, size mismatch");
+    CRIMP_ASSERT (crimp_require_height(b, crimp_w(a)),"Unable to multiply matrices, size mismatch");
 
-    result = crimp_new_float (a->h, a->h);
+    n = crimp_h (a);
+    m = crimp_w (a);
 
-    for (y = 0; y < a->h; y++) {
-	for (x = 0; x < a->h; x++) {
+    result = crimp_new_float (n, n);
+
+    for (y = 0; y < n; y++) {
+	for (x = 0; x < n; x++) {
 
 	    FLOATP (result, x, y) = 0;
-	    for (w = 0; w < a->w; w++) {
+	    for (w = 0; w < m; w++) {
 		FLOATP (result, x, y) += FLOATP (a, w, y) * FLOATP (b, x, w);
 	    }
 	}

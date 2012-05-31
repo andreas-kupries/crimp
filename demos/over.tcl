@@ -1,11 +1,6 @@
 def op_alpha_over {
     label Over
-    active {
-	expr {
-	      ([bases] == 2) &&
-	      ([crimp dimensions [base 0]] eq [crimp dimensions [base 1]])
-	  }
-    }
+    active { expr { [bases] == 2 } }
     setup_image {
 	# We use the foreground image's luma as opacity (bright =
 	# opaque, dark = transparent) to merge it with the background

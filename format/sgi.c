@@ -207,8 +207,8 @@ sgi_read_header (Tcl_Interp*     interp,
 	    return 0;
 	}
 
-	info->ostart  = CRIMP_ALLOC_ARRAY (n, unsigned long);
-	info->olength = CRIMP_ALLOC_ARRAY (n, unsigned long);
+	info->ostart  = CRIMP_ALLOC_ARRAY (n, unsigned int);
+	info->olength = CRIMP_ALLOC_ARRAY (n, unsigned int);
 
 	TRACE (("SGI RLE Offsets @ %d\n", crimp_buf_tell (buf)));
 
@@ -388,8 +388,8 @@ decode_rgbpacked (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 	    }
 	}
     } else {
-	unsigned long* os = info->ostart;
-	unsigned long* ol = info->olength;
+	unsigned int* os = info->ostart;
+	unsigned int* ol = info->olength;
 	int i;
 
 	for (y = h-1, i = 0;
@@ -451,8 +451,8 @@ decode_grey8 (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 	    }
 	}
     } else {
-	unsigned long* os = info->ostart;
-	unsigned long* ol = info->olength;
+	unsigned int* os = info->ostart;
+	unsigned int* ol = info->olength;
 	int i;
 
 	for (y = h-1, i = 0;
@@ -494,8 +494,8 @@ decode_grey8_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 	    }
 	}
     } else {
-	unsigned long* os = info->ostart;
-	unsigned long* ol = info->olength;
+	unsigned int* os = info->ostart;
+	unsigned int* ol = info->olength;
 	int i;
 
 	for (y = h-1, i = 0;
@@ -542,8 +542,8 @@ decode_rgb (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 	    }
 	}
     } else {
-	unsigned long* os = info->ostart;
-	unsigned long* ol = info->olength;
+	unsigned int* os = info->ostart;
+	unsigned int* ol = info->olength;
 	int r, g, b;
 
 	for (y = h-1, r = 0, g = h, b = h+h;
@@ -603,8 +603,8 @@ decode_rgb_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 	    }
 	}
     } else {
-	unsigned long* os = info->ostart;
-	unsigned long* ol = info->olength;
+	unsigned int* os = info->ostart;
+	unsigned int* ol = info->olength;
 	int r, g, b;
 
 	for (y = h-1, r = 0, g = h, b = h+h;
@@ -665,8 +665,8 @@ decode_rgba (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 	    }
 	}
     } else {
-	unsigned long* os = info->ostart;
-	unsigned long* ol = info->olength;
+	unsigned int* os = info->ostart;
+	unsigned int* ol = info->olength;
 	int r, g, b, a;
 
 	for (y = h-1, r = 0, g = h, b = g+h, a = b+h;
@@ -731,8 +731,8 @@ decode_rgba_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 	    }
 	}
     } else {
-	unsigned long* os = info->ostart;
-	unsigned long* ol = info->olength;
+	unsigned int* os = info->ostart;
+	unsigned int* ol = info->olength;
 	int r, g, b, a;
 
 	for (y = h-1, r = 0, g = h, b = g+h, a = b+h;
@@ -901,7 +901,7 @@ decode_rle_short (crimp_buffer* buf,
 
 #ifdef SGI_TRACE
 static void
-dump_offsets (unsigned long* start, unsigned long* length, int h, int d)
+dump_offsets (unsigned int* start, unsigned int* length, int h, int d)
 {
     int i,j;
 

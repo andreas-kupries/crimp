@@ -23,10 +23,11 @@ if (!crimp_eq_dim (mmsb, lmsb) ||
     return TCL_ERROR;
 }
 
-result = crimp_new_grey32 (mmsb->w, mmsb->h);
+result = crimp_new_grey32_at (crimp_x (mmsb), crimp_y (mmsb),
+			      crimp_w (mmsb), crimp_h (mmsb));
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 
 	/*
 	 * Assembling the bytes of a pixel from the associated input images.

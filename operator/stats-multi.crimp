@@ -15,8 +15,8 @@ crimp_input_any (imageObj, image);
 CRIMP_ASSERT_NOTIMGTYPE(image,grey32);
 CRIMP_ASSERT_NOTIMGTYPE(image,float);
 
-w = image->w;
-h = image->h;
+w = crimp_w (image);
+h = crimp_h (image);
 n = crimp_image_area (image);
 
 /* 

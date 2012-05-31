@@ -16,7 +16,7 @@ crimp_input (imageObj, image, grey8);
  */
 
 rw = 360;
-rh = hypot (image->w, image->h)/2;
+rh = hypot (crimp_w (image), crimp_h (image))/2;
 
 /*
  * Allocate and initialize the buckets.
@@ -59,13 +59,13 @@ for (rho = 0; rho < rh; rho++) {
 	     * In these 4 octants iterate over y
 	     */
 
-	    for (y = 0; y < image->h; y++) {
-		xf = image->w/2 + (rho - (image->h/2 - y)*si)/co;
+	    for (y = 0; y < crimp_h (image); y++) {
+		xf = crimp_w (image)/2 + (rho - (crimp_h (image)/2 - y)*si)/co;
 
 		xi = xf;
 		if ((xf - xi) >= 0.5) xi++;
 
-		if ((xi < 0) || (xi >= image->w)) continue;
+		if ((xi < 0) || (xi >= crimp_w (image))) continue;
 
 		total++;
 		sum += GREY8 (image, xi, y);
@@ -76,13 +76,13 @@ for (rho = 0; rho < rh; rho++) {
 	     * In the remaining octants iterate over x.
 	     */
 
-	    for (x = 0; x < image->w; x++) {
-		yf = image->h/2 - (rho - (x - image->w/2)*co)/si;
+	    for (x = 0; x < crimp_w (image); x++) {
+		yf = crimp_h (image)/2 - (rho - (x - crimp_w (image)/2)*co)/si;
 
 		yi = yf;
 		if ((yf - yi) >= 0.5) yi++;
 
-		if ((yi < 0) || (yi >= image->h)) continue;
+		if ((yi < 0) || (yi >= crimp_h (image))) continue;
 
 		total++;
 		sum += GREY8 (image, x, yi);

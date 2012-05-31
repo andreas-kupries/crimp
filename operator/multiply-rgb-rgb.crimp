@@ -8,7 +8,7 @@ Tcl_Obj* imageBObj
  */
 
 #define BINOP(a,b) ((a)*(b)/255)
-#include "binop_rgb_rgb.c"
+#include "binop_rgb_rgb_rgb.c"
 #undef BINOP
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */

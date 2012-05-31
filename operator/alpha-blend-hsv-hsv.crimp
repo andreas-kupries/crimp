@@ -18,15 +18,11 @@ int alpha
 crimp_image*     result;
 crimp_image*     imageF;
 crimp_image*     imageB;
-int x, y, ralpha;
+int ralpha, px, py, oxf, oyf, oxb, oyb;
+crimp_geometry bb;
 
 crimp_input (imageForeObj, imageF, hsv);
 crimp_input (imageBackObj, imageB, hsv);
-
-if (!crimp_eq_dim (imageF, imageB)) {
-    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
-    return TCL_ERROR;
-}
 
 if (alpha == 255) {
     Tcl_SetObjResult(interp, imageForeObj);
@@ -41,20 +37,61 @@ if (alpha == 255) {
  */
 
 ralpha = 255 - alpha;
-result = crimp_new_like (imageF);
+
+crimp_rect_union (&imageF->geo, &imageB->geo, &bb);
+
+result = crimp_new_hsv_at (bb.x, bb.y, bb.w, bb.h);
+oxf = crimp_x (imageF);
+oyf = crimp_y (imageF);
+oxb = crimp_x (imageB);
+oyb = crimp_y (imageB);
+
+/*
+ * px, py are physical coordinates in the result, starting from 0.
+ * The associated logical coordinates in the 2D plane are
+ *  lx = px + x(result)
+ *  lx = py + y(result)
+ * And when we are inside an input its physical coordinates, from the logical are
+ *  px = lx - x(input)
+ *  py = ly - y(input)
+ */
 
 #define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
-	H (result, x, y) = MIX (H (imageF, x, y), H (imageB, x, y));
-	S (result, x, y) = MIX (S (imageF, x, y), S (imageB, x, y));
-	V (result, x, y) = MIX (V (imageF, x, y), V (imageB, x, y));
+for (py = 0; py < bb.h; py++) {
+    for (px = 0; px < bb.w; px++) {
+
+        int lx = px + bb.x;
+        int ly = py + bb.y;
+
+	int inf = crimp_inside (imageF, lx, ly);
+	int inb = crimp_inside (imageB, lx, ly);
+
+	/*
+	 * The result depends on where we are relative to both input.
+	 * Inside of each input we take the respective value of the
+	 * pixel. Outside of an input we take BLACK as the value
+	 * instead, and TRANSPARENT for the ALPHA.
+	 */
+
+	int foreh = inf ? H (imageF, lx - oxf, ly - oyf) : BLACK;
+	int fores = inf ? S (imageF, lx - oxf, ly - oyf) : BLACK;
+	int forev = inf ? V (imageF, lx - oxf, ly - oyf) : BLACK;
+
+	int backh = inb ? H (imageB, lx - oxb, ly - oyb) : BLACK;
+	int backs = inb ? S (imageB, lx - oxb, ly - oyb) : BLACK;
+	int backv = inb ? V (imageB, lx - oxb, ly - oyb) : BLACK;
+
+
+	H (result, px, py) = MIX (foreh, backh);
+	S (result, px, py) = MIX (fores, backs);
+	V (result, px, py) = MIX (forev, backv);
     }
 }
 
 Tcl_SetObjResult(interp, crimp_new_image_obj (result));
 return TCL_OK;
+#undef MIX
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

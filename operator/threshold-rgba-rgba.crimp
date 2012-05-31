@@ -1,30 +1,14 @@
 threshold_rgba_rgba
-Tcl_Obj* imageObj
-Tcl_Obj* thresholdObj
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
 
-crimp_image* image;
-crimp_image* threshold;
-crimp_image* result;
-int          x, y;
+/*
+ * Thresholding of all pixels in the first image by the spatially varying
+ * threshold specified through the second image.
+ */
 
-crimp_input (imageObj,     image,     rgba);
-crimp_input (thresholdObj, threshold, rgba);
-
-result = crimp_new_like (image);
-
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
-
-	R (result, x, y) = R (image, x, y) >= R (threshold, x, y) ? BLACK : WHITE;
-	G (result, x, y) = G (image, x, y) >= G (threshold, x, y) ? BLACK : WHITE;
-	B (result, x, y) = B (image, x, y) >= B (threshold, x, y) ? BLACK : WHITE;
-	A (result, x, y) = A (image, x, y) >= A (threshold, x, y) ? BLACK : WHITE;
-    }
-}
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
+#define BINOP(p,t) ((p) >= (t) ? BLACK : WHITE)
+#include "binop_rgba_rgba_rgba.c"
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

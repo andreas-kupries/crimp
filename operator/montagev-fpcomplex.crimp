@@ -1,0 +1,52 @@
+montagev_fpcomplex
+Tcl_Obj* imageTopObj
+Tcl_Obj* imageBottomObj
+
+/*
+ * Place the two images adjacent to each other in the result, from top to
+ * bottom. The images have to have the same width.
+ */
+
+crimp_image*     result;
+crimp_image*     imageTop;
+crimp_image*     imageBottom;
+int x, y;
+
+crimp_input (imageTopObj,    imageTop,    fpcomplex);
+crimp_input (imageBottomObj, imageBottom, fpcomplex);
+
+if (!crimp_eq_width (imageTop, imageBottom)) {
+    Tcl_SetResult(interp, "image widths do not match", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_fpcomplex_at (crimp_x (imageTop), crimp_y (imageTop),
+				 crimp_w (imageTop), crimp_h (imageTop) + crimp_h (imageBottom));
+
+for (y = 0; y < crimp_h (imageTop); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+
+	RE (result, x, y) = RE (imageTop, x, y);
+	IM (result, x, y) = IM (imageTop, x, y);
+    }
+}
+
+for (y = 0; y < crimp_h (imageBottom); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+
+	RE (result, x, crimp_h (imageTop) + y) = RE (imageBottom, x, y);
+	IM (result, x, crimp_h (imageTop) + y) = IM (imageBottom, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

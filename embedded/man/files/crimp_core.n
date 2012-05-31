@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-trunk/embedded/man/files/crimp_core.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-infinite-plane/embedded/man/files/crimp_core.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -239,20 +239,22 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_core" n 0.1 doc "C Raster Image Manipulation Package"
+.TH "crimp_core" n 0.2 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
 crimp_core \- CRIMP - Foundation
 .SH SYNOPSIS
 package require \fBTcl  8.5\fR
 .sp
-package require \fBcrimp::core  ?0.1?\fR
+package require \fBcrimp::core  ?0.2?\fR
 .sp
 \fB::crimp\fR \fI...\fR
 .sp
 \fB::crimp\fR \fBchannels\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBdimensions\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBgeometry\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBheight\fR \fIimage\fR
 .sp
@@ -309,6 +311,10 @@ package require \fBcrimp::core  ?0.1?\fR
 \fB::crimp\fR \fBwrite 2chan\fR \fIformat\fR \fIchan\fR \fIimage\fR
 .sp
 \fB::crimp\fR \fBwrite 2file\fR \fIformat\fR \fIpath\fR \fIimage\fR
+.sp
+\fB::crimp\fR \fBbbox\fR \fIimage\fR...
+.sp
+\fB::crimp\fR \fBbbox2\fR \fIbox1\fR \fIbox2\fR
 .sp
 .BE
 .SH DESCRIPTION
@@ -614,6 +620,14 @@ in this order.
 .sp
 The method supports all image types.
 .TP
+\fB::crimp\fR \fBgeometry\fR \fIimage\fR
+This method returns the \fIgeometry\fR of the \fIimage\fR (in
+pixels). The result is a 4-element list containing x-, y-location,
+width and height, in this order. This is also called the
+\fIbounding box\fR of the image.
+.sp
+The method supports all image types.
+.TP
 \fB::crimp\fR \fBheight\fR \fIimage\fR
 This method returns the height of the \fIimage\fR (in pixels).
 .sp
@@ -775,11 +789,22 @@ The commands must match the following signatures:
 \fBChan_...\fR \fIchannel\fR \fIimage\fR
 .RE
 .PP
+.SS SUPPORT
+.TP
+\fB::crimp\fR \fBbbox\fR \fIimage\fR...
+This method takes one or more images and computes the union of their
+geometries. The result is returned as a bounding box, a list of 4
+numbers (x, y, width, and height).
+.TP
+\fB::crimp\fR \fBbbox2\fR \fIbox1\fR \fIbox2\fR
+This method takes two bounding boxes (lists of 4 numbers (x, y, width,
+and height)) and returns their union bounding box.
+.PP
 .SH "C API"
 The C API of the core is of no interest to users of CRIMP, the audience
 towards which this manpage is geared to.
 .SH KEYWORDS
-channels, computer vision, dimensions, document processing, image, image accessors, image type, matrix, photo, vector
+bounding box, channels, computer vision, dimensions, document processing, geometry, image, image accessors, image type, matrix, photo, vector
 .SH COPYRIGHT
 .nf
 Copyright (c) 2011 Andreas Kupries

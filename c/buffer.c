@@ -96,7 +96,7 @@ crimp_buf_match (crimp_buffer* buf, int n, char* str)
 
     CRIMP_ASSERT_BOUNDS (n,(buf->sentinel - buf->here));
 
-    if (strncmp(buf->here, (unsigned char*) str, n) != 0) {
+    if (strncmp((char*) buf->here, str, n) != 0) {
 	return 0;
     }
 

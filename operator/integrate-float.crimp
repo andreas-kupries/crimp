@@ -17,7 +17,7 @@ int          x, y;
 
 crimp_input (imageObj, image, float);
 
-result = crimp_new_float (image->w, image->h);
+result = crimp_new_like (image);
 
 /* Initialize the accumulator */
 FLOATP (result, 0, 0) = FLOATP (image, 0, 0);
@@ -25,7 +25,7 @@ FLOATP (result, 0, 0) = FLOATP (image, 0, 0);
 /*
  * Initialize the first line of the result. Only looking back to results in the same line.
  */
-for (x = 1; x < result->w; x++) {
+for (x = 1; x < crimp_w (result); x++) {
     FLOATP (result, x, 0) = FLOATP (image, x, 0) + FLOATP (result, x-1, 0);
 }
 
@@ -34,13 +34,13 @@ for (x = 1; x < result->w; x++) {
  * previous line.
  */
 
-for (y = 1; y < result->h; y++) {
+for (y = 1; y < crimp_h (result); y++) {
     /* Initialize first column */
     FLOATP (result, 0, y) = 
 	FLOATP (image,  0, y) +
 	FLOATP (result, 0, y-1);
 
-    for (x = 1; x < result->w; x++) {
+    for (x = 1; x < crimp_w (result); x++) {
 	FLOATP (result, x, y) = 
 	    FLOATP (image,  x,   y) +
 	    FLOATP (result, x-1, y) +

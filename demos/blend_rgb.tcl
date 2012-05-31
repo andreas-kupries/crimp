@@ -1,11 +1,6 @@
 def op_alpha_blend_rgb {
     label {Blend RGB}
-    active {
-	expr {
-	      ([bases] == 2) &&
-	      ([crimp dimensions [base 0]] eq [crimp dimensions [base 1]])
-	  }
-    }
+    active { expr { [bases] == 2 } }
     setup {
 	# We manage a cache of the blended images to make the
 	# scrolling of the scale smoother over time. An improvement
@@ -15,6 +10,8 @@ def op_alpha_blend_rgb {
 	array set cache {}
 	set cache(255) [base 0]
 	set cache(0)   [base 1]
+	variable fore  $cache(255)
+	variable back  $cache(0)
 	variable alpha 255
 
 	scale .left.s -variable DEMO::alpha \
@@ -22,13 +19,15 @@ def op_alpha_blend_rgb {
 	    -orient vertical \
 	    -command [list ::apply {{thealpha} {
 		variable cache
+		variable fore
+		variable back
 
 		if {[info exists cache($thealpha)]} {
 		    show_image  $cache($thealpha)
 		    return
 		}
 
-		set theblend [crimp alpha blend [base 0] [base 1] $thealpha]
+		set theblend [crimp alpha blend $fore $back $thealpha]
 		set cache($thealpha) $theblend
 		show_image $theblend
 		return

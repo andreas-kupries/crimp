@@ -1,11 +1,6 @@
 def op_add {
     label Add
-    active {
-	expr {
-	      ([bases] == 2) &&
-	      ([crimp dimensions [base 0]] eq [crimp dimensions [base 1]])
-	  }
-    }
+    active { expr { [bases] == 2 } }
     setup_image {
 	show
     }

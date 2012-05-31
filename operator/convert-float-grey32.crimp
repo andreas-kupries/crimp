@@ -18,10 +18,10 @@ int          x, y;
 
 crimp_input (imageObj, image, float);
 
-result = crimp_new_grey32 (image->w, image->h);
+result = crimp_new_grey32_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 	double f =  FLOATP(image, x, y);
 	GREY32 (result, x, y) = CLAMPT (MINVAL, int, f, MAXVAL_GREY32);
     }

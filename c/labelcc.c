@@ -164,8 +164,10 @@ crimp_label_connected_components (
 				 * NULL means not to use a background value. */
     crimp_image* imagePtr	/* Input image to segment. */
 ) {
-    int height = imagePtr->h;	/* Height of the image */
-    int width = imagePtr->w;	/* Width of the image */
+    int height = crimp_h(imagePtr);	/* Height of the image */
+    int width = crimp_w(imagePtr);	/* Width of the image */
+    int locx = crimp_x(imagePtr);	/* Location of the image */
+    int locy = crimp_y(imagePtr);	/* Location of the image */
     int esize = SZ(imagePtr);	/* Size of a pixel value */
     int wm1 = width - 1;
     int wp1 = width + 1;
@@ -174,7 +176,7 @@ crimp_label_connected_components (
     size_t* parent = (size_t*) ckalloc(area * sizeof(size_t));
 				/* Parent link data structure for
 				 * UNION-FIND partition */
-    crimp_image* result = crimp_new_grey32(width, height);
+    crimp_image* result = crimp_new_grey32_at (locx, locy, width, height);
 				/* Result image containing subset ranks
 				 * during the UNION-FIND calculation and
 				 * component numbers during the component

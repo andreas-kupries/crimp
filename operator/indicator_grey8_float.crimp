@@ -26,13 +26,14 @@ int x, y;
 /* Process inputs */
 
 crimp_input(imageObj, image, grey8);
-width = image->w;
-height = image->h;
+width = crimp_w (image);
+height = crimp_h (image);
 trial = (unsigned char) testValue;
 
 /* Make the output image */
 
-result = crimp_new_float(width, height);
+result = crimp_new_float_at (crimp_x (image), crimp_y (image),
+			     width, height);
 for (y = 0; y < height; ++y) {
     for (x = 0; x < width; ++x) {
 	FLOATP(result, x, y) =

@@ -45,8 +45,8 @@ bmp_read_header (Tcl_Interp*     interp,
 		 crimp_buffer*   buf,
 		 bmp_info*       info)
 {
-    unsigned int   fsize, pixOffset, c, w, nMap;
-    unsigned int   nBits, compression, nPix, nColors;
+    unsigned int   fsize, pixOffset, c, w, compression;
+    unsigned int   nPix, nColors, nMap, nBits;
     int            h;
     int            topdown = 0; /* bottom-up storage, default */
     unsigned char* colorMap = 0;
@@ -349,8 +349,8 @@ bmp_read_pixels (bmp_info*      info,
     bmp_maskinfo mi [3];
 
     CRIMP_ASSERT_IMGTYPE (destination, rgb);
-    CRIMP_ASSERT ((info->w == destination->w) &&
-		  (info->h == destination->h), "Dimension mismatch");
+    CRIMP_ASSERT ((info->w == crimp_w (destination)) &&
+		  (info->h == crimp_h (destination)), "Dimension mismatch");
 
     /*
      * We assume that:

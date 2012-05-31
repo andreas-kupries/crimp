@@ -1,29 +1,14 @@
 threshold_grey16_grey16
-Tcl_Obj* imageObj
-Tcl_Obj* thresholdObj
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
 
-crimp_image* image;
-crimp_image* threshold;
-crimp_image* result;
-int          x, y;
+/*
+ * Thresholding of all pixels in the first image by the spatially varying
+ * threshold specified through the second image.
+ */
 
-crimp_input (imageObj,     image,     grey16);
-crimp_input (thresholdObj, threshold, grey16);
-
-result = crimp_new_like (image);
-
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
-
-	GREY16 (result, x, y) = GREY16 (image, x, y) >= GREY16 (threshold, x, y) 
-	    ? BLACK
-	    : WHITE;
-    }
-}
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
+#define BINOP(p,t) ((p) >= (t) ? BLACK : WHITE)
+#include "binop_grey16_grey16_grey16.c"
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

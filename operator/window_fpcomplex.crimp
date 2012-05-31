@@ -17,14 +17,14 @@ crimp_input (imageObj, image, fpcomplex);
 
 result = crimp_new_like (image);
 
-halfw = image->w / 2.0;
-halfh = image->h / 2.0;
+halfw = crimp_w (image) / 2.0;
+halfh = crimp_h (image) / 2.0;
 
-for (y = 0; y < image->h; y++) {
+for (y = 0; y < crimp_h (image); y++) {
     tmp     = (y - halfh - 0.5) / halfh;
     weighty =  1.0 - tmp * tmp;
 
-    for (x = 0; x < image->w; x++) {
+    for (x = 0; x < crimp_w (image); x++) {
 	tmp     = (x - halfw - 0.5) / halfw;
 	weightx = 1.0 - tmp * tmp;
 

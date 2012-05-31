@@ -31,6 +31,16 @@ proc ::crimp::P {fqn} {
 }
 
 # # ## ### ##### ######## ############# #####################
+
+proc ::crimp::bbox {head args} {
+    set bbox [geometry $head]
+    foreach image $args {
+	set bbox [bbox2 $bbox [geometry $image]]
+    }
+    return $bbox
+}
+
+# # ## ### ##### ######## ############# #####################
 ## Importing images into the CRIMP eco-system is handled by the 'read'
 ## ensemble command. It will have one method per format, handling image
 ## data in that format. Here we just define the ensemble, and a

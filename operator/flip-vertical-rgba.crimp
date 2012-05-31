@@ -9,13 +9,13 @@ crimp_input (imageObj, image, rgba);
 
 result = crimp_new_like (image);
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 
-	R (result, x, y) = R (image, x, image->h - y - 1);
-	G (result, x, y) = G (image, x, image->h - y - 1);
-	B (result, x, y) = B (image, x, image->h - y - 1);
-	A (result, x, y) = A (image, x, image->h - y - 1);
+	R (result, x, y) = R (image, x, crimp_h (image) - y - 1);
+	G (result, x, y) = G (image, x, crimp_h (image) - y - 1);
+	B (result, x, y) = B (image, x, crimp_h (image) - y - 1);
+	A (result, x, y) = A (image, x, crimp_h (image) - y - 1);
 
     }
 }

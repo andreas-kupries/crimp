@@ -1,0 +1,33 @@
+bbox2
+int ax
+int ay
+int aw
+int ah
+int bx
+int by
+int bw
+int bh
+
+crimp_geometry a;
+crimp_geometry b;
+crimp_geometry z;
+Tcl_Obj* list [4];
+
+/*
+ * Compute union area of the two geometries to process.
+ */
+
+a.x = ax; b.x = bx;
+a.y = ay; b.y = by;
+a.w = aw; b.w = bw;
+a.h = ah; b.h = bh;
+
+crimp_rect_union (&a, &b, &z);
+
+list [0] = Tcl_NewIntObj (z.x);
+list [1] = Tcl_NewIntObj (z.y);
+list [2] = Tcl_NewIntObj (z.w);
+list [3] = Tcl_NewIntObj (z.h);
+
+Tcl_SetObjResult (interp, Tcl_NewListObj (4, list));
+return TCL_OK;

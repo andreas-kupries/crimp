@@ -21,10 +21,11 @@ if (!crimp_eq_dim (imageM, imageA)) {
     return TCL_ERROR;
 }
 
-result = crimp_new_float (imageM->w - 2, imageM->h - 2);
+result = crimp_new_float_at (crimp_x (imageM) + 1, crimp_y (imageM) + 1,
+			     crimp_w (imageM) - 2, crimp_h (imageM) - 2);
 
-for (yo = 0, y = 1; yo < result->h; y++, yo++) {
-    for (xo = 0, x = 1; xo < result->w; x++, xo++) {
+for (yo = 0, y = 1; yo < crimp_h (result); y++, yo++) {
+    for (xo = 0, x = 1; xo < crimp_w (result); x++, xo++) {
 
 	double mag   = FLOATP(imageM, x, y);
 	double angle = FLOATP(imageA, x, y);

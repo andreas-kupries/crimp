@@ -1,0 +1,23 @@
+at
+Tcl_Obj* imageObj
+
+crimp_image* image;
+Tcl_Obj* list [2];
+
+crimp_input_any (imageObj, image);
+
+list [0] = Tcl_NewIntObj (crimp_x(image));
+list [1] = Tcl_NewIntObj (crimp_y(image));
+
+Tcl_SetObjResult (interp, Tcl_NewListObj (2, list));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

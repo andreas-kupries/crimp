@@ -30,8 +30,8 @@ float*       sines;             /* Sines of angles corresponding
 				 * to phi = 0 .. rwidth-1 */
 
 crimp_input (imageObj, image, rgba);
-w = image->w;
-h = image->h;
+w = crimp_w (image);
+h = crimp_h (image);
 
 result = crimp_new_rgba (rwidth, rheight);
 
@@ -45,8 +45,8 @@ result = crimp_new_rgba (rwidth, rheight);
  * not reach all pixels in the result.
  */
 
-for (j = 0; j < result->h; j++) {
-    for (i = 0; i < result->w; i++) {
+for (j = 0; j < crimp_h (result); j++) {
+    for (i = 0; i < crimp_w (result); i++) {
 	R (result, i, j) = BLACK;
 	G (result, i, j) = BLACK;
 	B (result, i, j) = BLACK;

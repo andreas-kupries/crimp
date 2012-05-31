@@ -15,14 +15,15 @@ int          x, y;
 
 crimp_input (imageObj, image, float);
 
-result = crimp_new_grey8 (image->w, image->h);
+result = crimp_new_grey8_at (crimp_x (image), crimp_y (image),
+			     crimp_w (image), crimp_h (image));
 
 /*
  * Fill with black
  */
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	GREY8(result, x, y) = BLACK;
     }
 }
@@ -32,8 +33,8 @@ for (y = 0; y < result->h; y++) {
  * suitability
  */
 
-for (y = 0; y < result->h; y++) {
-    for (x = 0; x < result->w; x++) {
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
 	if (!GREY8 (result, x, y)  && FLOATP(image, x,y) >= highT) {
 	    /*
 	     * Found a good candidate. We now follow neighbours until they are
@@ -46,9 +47,9 @@ for (y = 0; y < result->h; y++) {
 		GREY8(result, x1, y1) = WHITE;
 
 		x0 = (x1 == 0)             ? x1 : x1 - 1;
-		x2 = (x1 == (result->w-1)) ? x1 : x1 + 1;
+		x2 = (x1 == (crimp_w (result)-1)) ? x1 : x1 + 1;
 		y0 = (y1 == 0)             ? y1 : y1 - 1;
-		y2 = (y1 == (result->h-1)) ? y1 : y1 + 1;
+		y2 = (y1 == (crimp_h (result)-1)) ? y1 : y1 + 1;
 
 		for (yi = y0; yi <= y2; yi++) {
 		    for (xi = x0; xi <= x2; xi++) {

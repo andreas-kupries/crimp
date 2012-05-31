@@ -1,4 +1,4 @@
-meta_get
+C::meta_get
 Tcl_Obj* imageObj
 
 crimp_image* image;

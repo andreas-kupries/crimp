@@ -124,7 +124,7 @@ sun_read_header (Tcl_Interp*     interp,
      * Color Map/Header is followed by pixel data.
      */
 
-    unsigned long width, height, bpp, plength, cmlength, cmtypecode, rtypecode;
+    unsigned int width, height, bpp, plength, cmlength;
     unsigned char* colorMap = 0;
     sun_raster_type rtype;
     sun_colormap_type cmtype;
@@ -139,11 +139,9 @@ sun_read_header (Tcl_Interp*     interp,
     crimp_buf_read_uint32be (buf, &height);
     crimp_buf_read_uint32be (buf, &bpp);
     crimp_buf_read_uint32be (buf, &plength);
-    crimp_buf_read_uint32be (buf, &rtypecode);
-    crimp_buf_read_uint32be (buf, &cmtypecode);
+    crimp_buf_read_uint32be (buf, &rtype);
+    crimp_buf_read_uint32be (buf, &cmtype);
     crimp_buf_read_uint32be (buf, &cmlength);
-    rtype = rtypecode;
-    cmtype = cmtypecode;
 
     TRACE (("SUN (WxH):         %dx%d\n", width, height));
     TRACE (("SUN (bits/pix):    %d\n", bpp));

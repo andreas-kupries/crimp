@@ -45,8 +45,8 @@ bmp_read_header (Tcl_Interp*     interp,
 		 crimp_buffer*   buf,
 		 bmp_info*       info)
 {
-    unsigned long  fsize, pixOffset, c, w, compression, nPix, nColors;
-    unsigned int   nMap, nBits, wi;
+    unsigned int   fsize, pixOffset, c, w, compression;
+    unsigned int   nPix, nColors, nMap, nBits;
     int            h;
     int            topdown = 0; /* bottom-up storage, default */
     unsigned char* colorMap = 0;
@@ -119,11 +119,10 @@ bmp_read_header (Tcl_Interp*     interp,
 	 *          8 bytes + 4 byte size = 12
 	 */
 
-	crimp_buf_read_uint16le (buf, &wi);          /* width */
+	crimp_buf_read_uint16le (buf, &w);           /* width */
 	crimp_buf_read_int16le  (buf, &h);           /* height */
 	crimp_buf_skip          (buf, 2);            /* IGNORE planes */
 	crimp_buf_read_uint16le (buf, &nBits);       /* bit count */
-	w = wi;
 
 	compression = bc_rgb;
 	nColors     = 0;
@@ -1121,7 +1120,7 @@ decode_pack32 (bmp_info* info, bmp_maskinfo* mi, crimp_buffer* buf, crimp_image*
      */
 
     int x, y;
-    unsigned long v;
+    unsigned int v;
     int base = crimp_buf_tell (buf);
 
     CRIMP_ASSERT (info->numBits == 32, "Bad format");

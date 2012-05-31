@@ -238,8 +238,8 @@ critcl::api function void crimp_buf_read_uint16le {
 }
 
 critcl::api function void crimp_buf_read_uint32le {
-    crimp_buffer*    b
-    {unsigned long*} value
+    crimp_buffer*   b
+    {unsigned int*} value
 }
 
 critcl::api function void crimp_buf_read_uint16be {
@@ -248,8 +248,8 @@ critcl::api function void crimp_buf_read_uint16be {
 }
 
 critcl::api function void crimp_buf_read_uint32be {
-    crimp_buffer*    b
-    {unsigned long*} value
+    crimp_buffer*   b
+    {unsigned int*} value
 }
 
 critcl::api function void crimp_buf_read_int8 {

@@ -169,6 +169,27 @@ proc _math {} {
 
     return
 }
+proc Htest {} { return "\n\tRun the package testsuites." }
+proc _test {{config {}}} {
+    # Build and install in a transient location for the testing, if necessary.
+    set testpkg [file dirname $::me]/_test
+    if {![file exists $testpkg]} {
+	puts ""
+	puts "Generating binaries for testing, in transient directory"
+	puts "\t$testpkg"
+	puts ""
+
+	_install $testpkg/lib $config
+    }
+
+    # Then run the tests... Ensure that nothing on the cmdline is
+    # passed through and wrongly interpreted as configuration option.
+
+    set ::argv {}
+    cd [file dirname $::me]/test
+    uplevel \#0 {source all.tcl}
+    return
+}
 proc Hdrop {} { return "?destination?\n\tUninstall all packages.\n\tdestination = path of package directory, default \[info library\]." }
 proc _drop {{ldir {}}} {
     global packages

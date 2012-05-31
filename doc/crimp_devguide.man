@@ -524,7 +524,7 @@ the primitives with one of the smallest implementations:
 [5]
 [6]     crimp_input_any (imageObj, image);
 [7]
-[8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (image->w));
+[8]     Tcl_SetObjResult (interp, Tcl_NewIntObj (crimp_w (image)));
 [9]     return TCL_OK;
 }]
 

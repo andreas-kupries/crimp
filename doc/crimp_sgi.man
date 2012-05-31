@@ -1,0 +1,53 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin crimp_sgi n 0.2]
+[include include/module.inc]
+[titledesc {CRIMP - SGI RASTER handling}]
+[require Tcl 8.5]
+[require crimp::sgi [opt 0.2]]
+[keywords {Import SGI Raster image} {SGI Raster image import} {Import image, SGI Raster} SGI]
+[keywords {Export SGI Raster image} {SGI Raster image export} {Export image, SGI Raster}]
+[description]
+
+This package provides commands for the conversion of SGI raster images
+into CRIMP images. [emph Note] that this package does [emph not]
+provide the ability to write images in the SGI raster format.
+
+[para] For a basic introduction of the whole CRIMP eco-system please
+read the [term {CRIMP - Introduction to CRIMP}] (sic!).
+
+The basic concepts used here, like images, image types, etc. are
+described in the reference manpage for the [term {CRIMP - Foundation}].
+We will not repeat them here, but assume that the reader knows them
+already.
+
+[para] In the overall architecture this package resides in the middle
+layer of the system's architecture, between core and applications, as
+shown at
+
+[para][image arch_sgi][para]
+
+[para] The commands it provides all fall into the I/O category of the
+general design.
+
+[section {Tcl API}]
+
+[list_begin definitions]
+
+[call [cmd ::crimp] [method {read sgi}] [arg string]]
+
+This method extends the [cmd {::crimp read}] ensemble. It takes the
+(possibly binary) string holding an image in the SGI format and
+returns an image of type [const rgb] containing it.
+
+[list_end]
+
+
+[section References]
+[list_begin enumerated]
+
+[enum] [uri ftp://ftp.sgi.com/graphics/SGIIMAGESPEC]
+[enum] [uri http://en.wikipedia.org/wiki/Silicon_Graphics_Image]
+
+[list_end]
+[manpage_end]
+

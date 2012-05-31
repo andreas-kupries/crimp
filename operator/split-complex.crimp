@@ -1,0 +1,43 @@
+split_fpcomplex
+Tcl_Obj* imageObj
+
+Tcl_Obj*         list[2];
+crimp_image*     image;
+crimp_image*     real;
+crimp_image*     imaginary;
+int              x, y;
+
+crimp_input (imageObj, image, fpcomplex);
+
+real      = crimp_new_float_at (crimp_x (image), crimp_y (image),
+				crimp_w (image), crimp_h (image));
+imaginary = crimp_new_float_at (crimp_x (image), crimp_y (image),
+				crimp_w (image), crimp_h (image));
+
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
+
+	/*
+	 * Placing the pixels of each channel into their own image.
+	 */
+
+	FLOATP (real,      x, y) = RE (image, x, y);
+	FLOATP (imaginary, x, y) = IM (image, x, y);
+    }
+}
+
+list [0] = crimp_new_image_obj (real);
+list [1] = crimp_new_image_obj (imaginary);
+
+Tcl_SetObjResult(interp, Tcl_NewListObj (2, list));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

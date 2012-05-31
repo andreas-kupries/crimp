@@ -1,0 +1,101 @@
+non_max_suppression
+Tcl_Obj* imageMObj
+Tcl_Obj* imageAObj
+
+/*
+ * Non-maximum supression in gradients (polar representation, magnitude and
+ * angle). Inputs are expected to be float, result is the same, with the
+ * non-maxima set to 0.
+ */
+
+crimp_image* imageM;
+crimp_image* imageA;
+crimp_image* result;
+int          x, y, xo, yo;
+
+crimp_input (imageMObj, imageM, float);
+crimp_input (imageAObj, imageA, float);
+
+if (!crimp_eq_dim (imageM, imageA)) {
+    Tcl_SetResult(interp, "Unable to proceed, expected equally-sized gradient fields", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_new_float_at (crimp_x (imageM) + 1, crimp_y (imageM) + 1,
+			     crimp_w (imageM) - 2, crimp_h (imageM) - 2);
+
+for (yo = 0, y = 1; yo < crimp_h (result); y++, yo++) {
+    for (xo = 0, x = 1; xo < crimp_w (result); x++, xo++) {
+
+	double mag   = FLOATP(imageM, x, y);
+	double angle = FLOATP(imageA, x, y);
+	int    keep;
+
+	/* Octants:
+	 * [    0 -  22.5) : - horiz  e..w
+	 * [ 22.5 -  67.5) : / mdiag  ne..sw
+	 * [ 67.5 - 112.5) : | vert   n..s
+	 * [112.5 - 157.5) : \ sdiag  nw..se
+	 * [157.5 - 202.5) : -
+	 * [202.5 - 247.5) : /
+	 * [247.5 - 292.5) : |
+	 * [292.5 - 337.5) : \
+	 * [337.5 - 360.0) : -
+	 */
+
+	if (angle <  22.5) {
+	horiz: {
+		double w  = FLOATP(imageM, x-1, y);
+		double e  = FLOATP(imageM, x+1, y);
+		keep = (mag > w) && (mag > e);
+	    }
+	} else if (angle <  67.5) {
+	mdiag: {
+		double ne  = FLOATP(imageM, x+1, y-1);
+		double sw  = FLOATP(imageM, x-1, y+1);
+		keep = (mag > ne) && (mag > sw);
+	    }
+	} else if (angle < 112.5) {
+	vert: {
+		double n  = FLOATP(imageM, x, y-1);
+		double s  = FLOATP(imageM, x, y+1);
+		keep = (mag > n) && (mag > s);
+	    }
+	} else if (angle < 157.5) {
+	sdiag: {
+		double nw  = FLOATP(imageM, x-1, y-1);
+		double se  = FLOATP(imageM, x+1, y+1);
+		keep = (mag > nw) && (mag > se);
+	    }
+	} else if (angle < 202.5) {
+	    goto horiz;
+	} else if (angle < 247.5) {
+	    goto mdiag;
+	} else if (angle < 292.5) {
+	    goto vert;
+	} else if (angle < 337.5) {
+	    goto sdiag;
+	} else {
+	    goto horiz;
+	}
+
+	if (keep) {
+	    FLOATP(result, xo, yo) = mag;
+	} else {
+	    FLOATP(result, xo, yo) = 0.0;
+	}
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

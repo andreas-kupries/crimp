@@ -1,0 +1,21 @@
+min_rgba_grey8
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+
+/*
+ * Pixel- and channel-wise min-combination of two images. The images have to
+ * have equal dimensions.
+ */
+
+#define BINOP(a,b) (MIN((a),(b)))
+#include "binop_rgba_grey8_rgba.c"
+#undef BINOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

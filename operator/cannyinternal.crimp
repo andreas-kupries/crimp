@@ -1,0 +1,183 @@
+cannyinternal
+Tcl_Obj* imageMagObj
+Tcl_Obj* imageAngleObj
+double high
+double low
+
+
+crimp_image* imageMag;
+crimp_image* imageAngle;
+crimp_image* temp;
+crimp_image* result;
+int          x, y;
+double a, max, sum = 0.0f;
+
+crimp_input (imageMagObj,   imageMag,   float);
+crimp_input (imageAngleObj, imageAngle, float);
+
+if (!crimp_eq_geo (imageMag, imageAngle)) {
+    Tcl_SetResult(interp, "Unable to process, expected images of identical geometry", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+temp   = crimp_new_like (imageMag);
+result = crimp_new_like (imageMag);
+
+/*
+ * Initialization of the border pixels not written to by the later phases.
+ */
+
+for (y = 0; y < crimp_h (result); y++) {
+    FLOATP (temp,   0, y)           = BLACK;
+    FLOATP (result, 0, y)           = BLACK;
+    FLOATP (temp,   crimp_w (result)-1, y) = BLACK;
+    FLOATP (result, crimp_w (result)-1, y) = BLACK;
+}
+
+for (x = 0; x < crimp_w (result); x++) {
+    FLOATP (temp,   x, 0)           = BLACK;
+    FLOATP (result, x, 0)           = BLACK;
+    FLOATP (temp,   x, crimp_h (result)-1) = BLACK;
+    FLOATP (result, x, crimp_h (result)-1) = BLACK;
+}
+
+/*
+ * Non-maxima suppression, with a dash of thresholding.
+ */
+
+for (y = 1; y < crimp_h (result)-1; y++) {
+    for (x = 1; x < crimp_w (result)-1; x++) {
+
+	a = FLOATP (imageAngle, x, y);
+
+	if      (((a > 67.5f)  && (a <= 112.5f)) ||
+		 ((a > 247.5f) && (a <= 292.5f))) {
+
+	    /* The gradient runs mostly vertical, up or down. Take maximum
+	     * from the north/south neighbours.
+	     */
+
+	    max = FLOATP (imageMag, x, y+1) > FLOATP (imageMag, x, y-1)
+		? FLOATP (imageMag, x, y+1)
+		: FLOATP (imageMag, x, y-1);
+
+	} else if (((a > 112.5f) && (a <= 157.5f)) ||
+		   ((a > 292.5f) && (a <= 337.5f))) {
+
+	    /* The gradient runs mostly along the main diagonal (up-left /
+	     * down-right). Take maximum from the north-west/south-east
+	     * neighbours.
+	     */
+
+	    max = FLOATP (imageMag, x-1, y-1) > FLOATP (imageMag, x+1, y+1)
+		? FLOATP (imageMag, x-1, y-1)
+		: FLOATP (imageMag, x+1, y+1);
+
+	} else if (((a > 22.5f) && (a <= 67.5f)) ||
+		   ((a > 202.5f) && (a <= 247.5f))) {
+
+	    /* The gradient runs mostly along the secondary diagonal (up-right
+	     *  / down-left). Take maximum from the north-east/south-west
+	     *  neighbours.
+	     */
+
+	    max = FLOATP (imageMag, x+1, y-1) > FLOATP (imageMag, x-1, y+1)
+		? FLOATP (imageMag, x+1, y-1)
+		: FLOATP (imageMag, x-1, y+1);
+
+	    } else {
+	    /* The gradient runs mostly horizontal, left or right. Take
+	     * maximum from the east/west neighbours.
+	     */
+
+	    max = FLOATP (imageMag, x+1, y) > FLOATP (imageMag, x-1, y)
+		? FLOATP (imageMag, x+1, y)
+		: FLOATP (imageMag, x-1, y);
+	}
+
+	/*
+	 * Non-maxima supression along the gradient direction.
+	 */
+
+	if (max > FLOATP (imageMag, x, y)) {
+	    FLOATP (temp, x, y) = BLACK;
+	} else {
+	    FLOATP (temp, x, y) = FLOATP (imageMag, x, y);
+	}
+
+	/*
+	 * Preparation for hysteresis thresholding. Classify pixels into
+	 * definitely edge, definitely no edge, maybe an edge (WEAK pixel).
+	 */
+
+	if ((FLOATP (temp, x, y) > low) &&
+	    (FLOATP (temp, x, y) < high)) {
+
+	    FLOATP (result, x, y) = BLACK;
+	    FLOATP (temp,   x, y) = WHITE;
+
+	} else if (FLOATP (temp, x, y) <= low) {
+	    FLOATP (result, x, y) = BLACK;
+	    FLOATP (temp,   x, y) = BLACK;
+
+	} else {
+	    FLOATP (result, x, y) = WHITE;
+	    FLOATP (temp,   x, y) = BLACK;
+
+	}
+    }
+ }
+
+/*
+ * Hysteresis thresholding. Post-processing through connectivity analysis.
+ * Activates all WEAK pixels of temp if they can be connected to a STRONG
+ * pixel of the result. Two runs over the images, forward and backward
+ * analysis.
+ */
+
+for (y = 1; y < crimp_h (result) - 1; y++) {
+    for (x = 1; x < crimp_w (result) - 1; x++) {
+	if (FLOATP (temp, x, y) == WHITE) {
+	    if((FLOATP (result, x-1, y-1) == WHITE) ||
+	       (FLOATP (result, x-1, y  ) == WHITE) ||
+	       (FLOATP (result, x,   y-1) == WHITE) ||
+	       (FLOATP (result, x+1, y-1) == WHITE)) {
+
+		FLOATP (result, x, y) = WHITE;
+	    } else {
+		FLOATP (result, x, y) = BLACK;
+	    }
+	}
+    }
+}
+
+for (y = crimp_h (result) - 2; y > 0; y--) {
+    for (x = crimp_w (result) - 2; x > 0; x--) {
+	if (FLOATP (temp, x, y) == WHITE ) {
+	    if((FLOATP (result, x-1, y+1) == WHITE) ||
+	       (FLOATP (result, x,   y+1) == WHITE) ||
+	       (FLOATP (result, x+1, y  ) == WHITE) ||
+	       (FLOATP (result, x+1, y+1) == WHITE)) {
+
+		FLOATP (result, x, y) = WHITE;
+	    } else {
+		FLOATP (result, x, y) = BLACK;
+	    }
+	}
+    }
+}
+
+crimp_del (temp);
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

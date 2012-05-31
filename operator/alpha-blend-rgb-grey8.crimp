@@ -1,0 +1,101 @@
+alpha_blend_rgb_grey8
+Tcl_Obj* imageForeObj
+Tcl_Obj* imageBackObj
+int alpha
+
+/*
+ * Alpha-based blending of two images, foreground, and background, controlled
+ * by a scalar (and extern) alpha factor. The result's alpha is the alpha
+ * factor attenuated by the background's alpha.
+ *
+ * alpha is Opacity
+ * 255 <=> Fully opaque      <=> imageF
+ * 0   <=> Fully transparent <=> imageB
+ *
+ * => OUT = F*alpha + B*(1-alpha)
+ */
+
+crimp_image*     result;
+crimp_image*     imageF;
+crimp_image*     imageB;
+int ralpha, px, py, oxf, oyf, oxb, oyb;
+crimp_geometry bb;
+
+crimp_input (imageForeObj, imageF, rgb);
+crimp_input (imageBackObj, imageB, grey8);
+
+if (alpha == 255) {
+    Tcl_SetObjResult(interp, imageForeObj);
+    return TCL_OK;
+}
+/* alpha == 0: Should return background, but have to return RGB, not GREY8.
+ * Easiest handled by falling through into the actual mixer. Better would be
+ * to have a loop specialized to the operation (clone the GREY8).
+ */
+
+/*
+ * True alpha mixture.
+ */
+
+ralpha = 255 - alpha;
+
+crimp_rect_union (&imageF->geo, &imageB->geo, &bb);
+
+result = crimp_new_rgb_at (bb.x, bb.y, bb.w, bb.h);
+oxf = crimp_x (imageF);
+oyf = crimp_y (imageF);
+oxb = crimp_x (imageB);
+oyb = crimp_y (imageB);
+
+/*
+ * px, py are physical coordinates in the result, starting from 0.
+ * The associated logical coordinates in the 2D plane are
+ *  lx = px + x(result)
+ *  lx = py + y(result)
+ * And when we are inside an input its physical coordinates, from the logical are
+ *  px = lx - x(input)
+ *  py = ly - y(input)
+ */
+
+#define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
+
+for (py = 0; py < bb.h; py++) {
+    for (px = 0; px < bb.w; px++) {
+
+        int lx = px + bb.x;
+        int ly = py + bb.y;
+
+	int inf = crimp_inside (imageF, lx, ly);
+	int inb = crimp_inside (imageB, lx, ly);
+
+	/*
+	 * The result depends on where we are relative to both input.
+	 * Inside of each input we take the respective value of the
+	 * pixel. Outside of an input we take BLACK as the value
+	 * instead, and TRANSPARENT for the ALPHA.
+	 */
+
+	int forer = inf ? R (imageF, lx - oxf, ly - oyf) : BLACK;
+	int foreg = inf ? G (imageF, lx - oxf, ly - oyf) : BLACK;
+	int foreb = inf ? B (imageF, lx - oxf, ly - oyf) : BLACK;
+
+	int backv = inb ? GREY8 (imageB, lx - oxb, ly - oyb) : BLACK;
+
+	R (result, px, py) = MIX (forer, backv);
+	G (result, px, py) = MIX (foreg, backv);
+	B (result, px, py) = MIX (foreb, backv);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+#undef MIX
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

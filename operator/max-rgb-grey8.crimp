@@ -1,0 +1,16 @@
+max_rgb_grey8
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+
+#define BINOP(a,b) (MAX((a),(b)))
+#include "binop_rgb_grey8_rgb.c"
+#undef BINOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

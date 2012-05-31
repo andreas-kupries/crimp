@@ -1,0 +1,39 @@
+invert_rgba
+Tcl_Obj* imageObj
+
+crimp_image* image;
+crimp_image* result;
+int          x, y;
+
+crimp_input (imageObj, image, rgba);
+
+result = crimp_new_like (image);
+
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
+
+	/*
+	 * We are inverting (only) the color channels.
+	 * The alpha channel is copied as is.
+	 */
+
+	R (result, x, y) = WHITE - R (image, x, y);
+	G (result, x, y) = WHITE - G (image, x, y);
+	B (result, x, y) = WHITE - B (image, x, y);
+
+	A (result, x, y) = A (image, x, y);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

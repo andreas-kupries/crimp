@@ -1,0 +1,52 @@
+downsampley_grey32
+Tcl_Obj* imageObj
+int      factor
+
+/*
+ * The input image is downsampled in the y direction by storing only every
+ * 'factor' pixel into the result. Note that this method of shrinking an image
+ * causes image frequencies above the nyquist threshold of the result to be
+ * aliased into the range.
+ *
+ * The input image has to be convolved with a low-pass filter first, to avoid
+ * such artefacts. The integrated combination of such a filter with
+ * downsampling is called 'decimation'. This is but one step in the generation
+ * of image pyramids.
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          x, yo, yi;
+
+crimp_input (imageObj, image, grey32);
+if (factor < 1) {
+    Tcl_SetResult(interp, "bad sampling factor, expected integer > 0", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+if (factor == 1) {
+    Tcl_SetObjResult(interp, imageObj);
+    return TCL_OK;
+}
+
+result = crimp_new_at (image->itype, crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image)/factor);
+
+for (yo = 0, yi = 0; yo < crimp_h (result); yo++, yi += factor) {
+    for (x = 0; x < crimp_w (result); x++) {
+
+	GREY32 (result, x, yo) = GREY32 (image, x, yi);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

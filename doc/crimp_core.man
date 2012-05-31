@@ -1,9 +1,9 @@
 [comment {-*- tcl -*- doctools manpage}]
-[manpage_begin crimp_core n 0.1]
+[manpage_begin crimp_core n 0.2]
 [include include/module.inc]
 [titledesc {CRIMP - Foundation}]
 [require Tcl 8.5]
-[require crimp::core [opt 0.1]]
+[require crimp::core [opt 0.2]]
 [keywords {image type}]
 [keywords {image accessors}]
 [description]
@@ -260,6 +260,17 @@ in this order.
 [para] The method supports all image types.
 
 
+[call [cmd ::crimp] [method geometry] [arg image]]
+[keywords geometry {bounding box}]
+
+This method returns the [term geometry] of the [arg image] (in
+pixels). The result is a 4-element list containing x-, y-location,
+width and height, in this order. This is also called the
+[term {bounding box}] of the image.
+
+[para] The method supports all image types.
+
+
 [call [cmd ::crimp] [method height] [arg image]]
 
 This method returns the height of the [arg image] (in pixels).
@@ -310,7 +321,6 @@ This method returns the raw pixels of the [arg image] as a Tcl ByteArray.
 This method returns the type of the [arg image].
 
 [para] The method supports all image types.
-
 
 [call [cmd ::crimp] [method width] [arg image]]
 
@@ -426,6 +436,24 @@ writing it to channel or file.
 [list_end]
 
 [list_end]
+
+
+[subsection Support]
+
+[list_begin definitions]
+[call [cmd ::crimp] [method bbox] [arg image]...]
+
+This method takes one or more images and computes the union of their
+geometries. The result is returned as a bounding box, a list of 4
+numbers (x, y, width, and height).
+
+[call [cmd ::crimp] [method bbox2] [arg box1] [arg box2]]
+
+This method takes two bounding boxes (lists of 4 numbers (x, y, width,
+and height)) and returns their union bounding box.
+
+[list_end]
+
 
 [section {C API}]
 

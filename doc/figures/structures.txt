@@ -2,12 +2,12 @@
 -------       ------------------
 Tcl_Obj <----* Tcl_Obj*    meta
 -------        image_type* itype *---> image_type
-               int         w           -----------------
-               int         h            char*  name  *------> "...\0"
-               char[...]   pixel        int    size
-              -------------------       int    channels       -------------------
-                                        char** cname *------>  cname[0]
-                                       -----------------       cname[1] *------> "...\0"
+               int         x           -----------------
+               int         y            char*  name  *------> "...\0"
+               int         w            int    size
+               int         h            int    channels       -------------------
+               char[...]   pixel        char** cname *------>  cname[0]
+              -------------------      -----------------       cname[1] *------> "...\0"
                                                                 ...
                                                                cname[channels-1]
                                                               -------------------

@@ -22,19 +22,19 @@ int              xo, yo, xi, yi, xk, yk, dx, dy, kw, kh;
 crimp_input (imageObj,         image,    grey32);
 crimp_input (kernelImageObj,   kernel,   float);
 
-if (((kernel->w % 2) == 0) ||
-    ((kernel->h % 2) == 0)) {
+if (((crimp_w (kernel) % 2) == 0) ||
+    ((crimp_h (kernel) % 2) == 0)) {
     Tcl_SetResult(interp, "bad kernel dimensions, expected odd size", TCL_STATIC);
     return TCL_ERROR;
 }
 
-kw = kernel->w/2;
-kh = kernel->h/2;
+kw = crimp_w (kernel)/2;
+kh = crimp_h (kernel)/2;
 
-result = crimp_new (image->itype, image->w - 2*kw, image->h - 2*kh);
+result = crimp_new_at (image->itype, crimp_x (image) + kw, crimp_y (image) + kh, crimp_w (image) - 2*kw, crimp_h (image) - 2*kh);
 
-for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
-    for (xo = 0, xi = kw; xo < result->w; xo++, xi++) {
+for (yo = 0, yi = kh; yo < crimp_h (result); yo++, yi++) {
+    for (xo = 0, xi = kw; xo < crimp_w (result); xo++, xi++) {
 
 	/*
 	 * We convolve all channels with the same kernel, but otherwise
@@ -43,8 +43,8 @@ for (yo = 0, yi = kh; yo < result->h; yo++, yi++) {
 
 	double sum = 0;
 
-	for (yk = 0, dy = -kh; yk < kernel->h; yk++, dy++) {
-	    for (xk = 0, dx = -kw; xk < kernel->w; xk++, dx++) {
+	for (yk = 0, dy = -kh; yk < crimp_h (kernel); yk++, dy++) {
+	    for (xk = 0, dx = -kw; xk < crimp_w (kernel); xk++, dx++) {
 
 		sum += FLOATP (kernel, xk, yk) * GREY32 (image, xi-dx, yi-dy);
 	    }

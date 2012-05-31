@@ -1,0 +1,53 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin crimp_pcx n 0.2]
+[include include/module.inc]
+[titledesc {CRIMP - PCX handling}]
+[require Tcl 8.5]
+[require crimp::pcx [opt 0.2]]
+[keywords {Import PCX image} {PCX image import} {Import image, PCX} PCX]
+[keywords {Export PCX image} {PCX image export} {Export image, PCX}]
+[description]
+
+This package provides commands for the conversion of ZSoft Personal
+Computer eXChange (PCX) images into CRIMP images. [emph Note] that
+this package does [emph not] provide the ability to write images
+in the PCX format.
+
+[para] For a basic introduction of the whole CRIMP eco-system please
+read the [term {CRIMP - Introduction to CRIMP}] (sic!).
+
+The basic concepts used here, like images, image types, etc. are
+described in the reference manpage for the [term {CRIMP - Foundation}].
+We will not repeat them here, but assume that the reader knows them
+already.
+
+[para] In the overall architecture this package resides in the middle
+layer of the system's architecture, between core and applications, as
+shown at
+
+[para][image arch_pcx][para]
+
+[para] The commands it provides all fall into the I/O category of the
+general design.
+
+[section {Tcl API}]
+
+[list_begin definitions]
+
+[call [cmd ::crimp] [method {read pcx}] [arg string]]
+
+This method extends the [cmd {::crimp read}] ensemble. It takes the
+(possibly binary) string holding an image in the PCX format and
+returns an image of type [const rgb] containing it.
+
+[list_end]
+
+
+[section References]
+[list_begin enumerated]
+
+[enum] [uri http://en.wikipedia.org/wiki/PCX]
+
+[list_end]
+[manpage_end]
+

@@ -1,11 +1,11 @@
 [comment {-*- tcl -*- doctools manpage}]
-[manpage_begin crimp n 0.1]
+[manpage_begin crimp n 0.2]
 [include include/module.inc]
 [titledesc {CRIMP - Manipulation and Processing}]
 [require Tcl 8.5]
 [require Tk 8.5]
-[require crimp [opt 0.1]]
-[require crimp::core [opt 0.1]]
+[require crimp [opt 0.2]]
+[require crimp::core [opt 0.2]]
 [description]
 
 This package, built on top of the [package crimp::core] package
@@ -1042,6 +1042,15 @@ This method takes two images, forces them to be of the same size by
 expanding the smaller dimensions with black pixels, and then returns a
 list of the expanded images. The images in the result are in the same
 order as as arguments.
+
+[call [cmd ::crimp] [method matchgeo] [arg image] [arg bbox]]
+
+This method takes an image and a bounding box (list of x, y, w, and h), 
+and expands the image with black pixels to match the box. The result of
+the expansion is returned.
+
+[para] An error is thrown if the image is not fully contained within
+the bounding box.
 
 [call [cmd ::crimp] [method scale] [arg image] [arg scale]]
 

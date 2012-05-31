@@ -313,6 +313,12 @@ BMP image import
 \fBfiles/crimp_bmp.n\fR
 crimp_bmp
 .RE
+bounding box
+.RS
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
+.RE
 canny
 .RS
 .TP
@@ -684,6 +690,9 @@ geometry
 .TP
 \fBfiles/crimp.n\fR
 crimp
+.TP
+\fBfiles/crimp_core.n\fR
+crimp_core
 .RE
 gradient
 .RS

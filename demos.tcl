@@ -508,52 +508,13 @@ proc mag_pull {i x y r} {
     incr y -$r
 
     # Now the block is explicity specified as rectangle with top-left
-    # corner at x,y and width, height.
+    # corner at x,y and width,height; and x,y is relative to the
+    # top-left corner of the input image. We can call cut directly,
+    # without thinking about image borders. This is all handled inside
+    # of the operation, filling BLACK into the parts which lay outside
+    # of the input image.
 
-    # This may be outside of the image borders. We now shrink the
-    # rectangle to fit the borders, and record this as expansion to be
-    # done after extraction.
-
-    set l 0 ; set r 0 ; set t 0 ; set b 0
-
-    set iw [crimp width  $i]
-    set ih [crimp height $i]
-
-    # Completely outside.
-    if {($x >= $iw) ||
-	($y >= $ih) ||
-	(($x+$w) < 0) ||
-	(($y+$h) < 0)} {
-	return [crimp blank [crimp::TypeOf $i] $w $h 0]
-    }
-
-    # At least partially inside. We cut the rectangle down to be
-    # completely inside and remember how much was cut at each edge.
-    if {$x < 0} {
-	set  l [expr {- $x}]
-	incr w $x
-	set  x 0
-    }
-    if {$y < 0} {
-	set  t [expr {- $y}]
-	incr h $y
-	set  y 0
-    }
-
-    if {($x+$w) >= $iw} {
-	set  r [expr {($x+$w) - $iw}]
-	incr w -$r
-    }
-    if {($y+$h) >= $ih} {
-	set  b [expr {($y+$h) - $ih}]
-	incr h -$b
-    }
-
-    # Cut (possibly shrunken) region, then expand the region back to
-    # the full size, using black outside of the input.
-    return [crimp expand const \
-		[crimp cut $i $x $y $w $h] \
-		$l $t $r $b 0]
+    return [crimp cut $i $x $y $w $h]
 }
 
 proc gui {} {
@@ -895,7 +856,7 @@ proc show_image {image} {
     #display [crimp degamma $image 2.2]
     display $image
     log TYPE=[crimp type       $image]
-    log DIM_=[crimp dimensions $image]
+    log "DIM_=[crimp dimensions $image] @ [crimp at $image]"
     log META=[crimp::meta_get  $image]
     return
 }

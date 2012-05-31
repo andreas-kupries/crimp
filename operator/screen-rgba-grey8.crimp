@@ -1,0 +1,23 @@
+screen_rgba_grey8
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+
+/*
+ * Pixel- and channel-wise 1-(1-A)*(1-B) combination of two images. The images
+ * have to have equal dimensions. This could be done at Tcl level using a
+ * combination of 'multiply' and 'invert'. Doing it in C on the other hand
+ * avoids the three temporary images of that implementation.
+ */
+
+#define BINOP(a,b) (255 - (((255-(a))*(255-(b)))/255))
+#include "binop_rgba_grey8_rgba.c"
+#undef BINOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

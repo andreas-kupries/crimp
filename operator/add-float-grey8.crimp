@@ -1,0 +1,23 @@
+add_float_grey8
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+int scale
+int offset
+
+/*
+ * Pixel- and channel-wise scaled and biased addition of two images. The
+ * images have to have equal dimensions.
+ */
+
+#define BINOP(a,b) ((((a) + (b)) / scale) + offset)
+#include "binop_float_grey8_float.c"
+#undef BINOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

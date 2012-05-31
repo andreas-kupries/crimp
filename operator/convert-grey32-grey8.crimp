@@ -7,10 +7,11 @@ int          x, y;
 
 crimp_input (imageObj, image, grey32);
 
-result = crimp_new_grey8 (image->w, image->h);
+result = crimp_new_grey8_at (crimp_x (image), crimp_y (image),
+			     crimp_w (image), crimp_h (image));
 
-for (y = 0; y < image->h; y++) {
-    for (x = 0; x < image->w; x++) {
+for (y = 0; y < crimp_h (image); y++) {
+    for (x = 0; x < crimp_w (image); x++) {
 	/* Conversion 32 down to 8 keeps the MSB */
 	GREY8 (result, x, y) = GREY32 (image, x, y) >> 24;
     }

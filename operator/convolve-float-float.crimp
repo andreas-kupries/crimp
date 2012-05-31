@@ -1,0 +1,68 @@
+convolve_float_float
+Tcl_Obj* imageObj
+Tcl_Obj* kernelImageObj
+int scale
+int offset
+
+/*
+ * Generic convolution operator. The kernel to convole with is specified as a
+ * floating-point image together with a scaling factor. This way we do not
+ * need a separate matrix Tcl_ObjType.
+ *
+ * This convolver should be used only for small kernels, as it uses direct
+ * convolution. For larger kernels it is planned to provide an FFT based
+ * convolver.
+ */
+
+crimp_image*     result;
+crimp_image*     image;
+crimp_image*     kernel;
+int              xo, yo, xi, yi, xk, yk, dx, dy, kw, kh;
+
+crimp_input (imageObj,         image,    float);
+crimp_input (kernelImageObj,   kernel,   float);
+
+if (((crimp_w (kernel) % 2) == 0) ||
+    ((crimp_h (kernel) % 2) == 0)) {
+    Tcl_SetResult(interp, "bad kernel dimensions, expected odd size", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+kw = crimp_w (kernel)/2;
+kh = crimp_h (kernel)/2;
+
+result = crimp_new_at (image->itype, crimp_x (image) + kw, crimp_y (image) + kh, crimp_w (image) - 2*kw, crimp_h (image) - 2*kh);
+
+for (yo = 0, yi = kh; yo < crimp_h (result); yo++, yi++) {
+    for (xo = 0, xi = kw; xo < crimp_w (result); xo++, xi++) {
+
+	/*
+	 * We convolve all channels with the same kernel, but otherwise
+	 * identically
+	 */
+
+	double sum = 0;
+
+	for (yk = 0, dy = -kh; yk < crimp_h (kernel); yk++, dy++) {
+	    for (xk = 0, dx = -kw; xk < crimp_w (kernel); xk++, dx++) {
+
+		sum += FLOATP (kernel, xk, yk) * FLOATP (image, xi-dx, yi-dy);
+	    }
+	}
+
+	sum /= scale; sum += offset; FLOATP (result, xo, yo) = sum;
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

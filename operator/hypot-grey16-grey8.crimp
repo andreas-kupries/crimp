@@ -1,0 +1,20 @@
+hypot_grey16_grey8
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+
+/*
+ * hypot() of all pixels of the two input images.
+ */
+
+#define BINOP(x,y) (hypot((x),(y)))
+#include "binop_grey16_grey8_float.c"
+#undef BINOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

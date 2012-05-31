@@ -287,7 +287,7 @@ GaussianDeleteFilter(
     default: 
 	break;
     }
-    ckfree(filterPtr);
+    ckfree((char*)filterPtr);
 }
 
 /*
@@ -391,7 +391,7 @@ GaussianBlur2D(
 				 * float's, row-major order */
 ) {
     int area = height * width;
-    float* tempImage = ckalloc(area * sizeof(float));
+    float* tempImage = (float*) ckalloc(area * sizeof(float));
 
     /* 
      * Filter first the rows and then the columns.
@@ -400,7 +400,7 @@ GaussianBlur2D(
     GaussianFilter01(filterPtr, 0, height, width, inputImage, tempImage);
     GaussianFilter10(filterPtr, 0, height, width, tempImage, outputImage);
 
-    ckfree(tempImage);
+    ckfree((char*)tempImage);
 }
 
 /*
@@ -433,7 +433,7 @@ GaussianGradientX2D(
 				 * float's, row-major order */
 ) {
     int area = height * width;
-    float* tempImage = ckalloc(area * sizeof(float));
+    float* tempImage = (float*) ckalloc(area * sizeof(float));
     int i;
 
     /* 
@@ -448,7 +448,7 @@ GaussianGradientX2D(
 
     GaussianFilter10(filterPtr, 0, height, width, tempImage, outputImage);
 
-    ckfree(tempImage);
+    ckfree((char*)tempImage);
 }
 
 /*
@@ -481,7 +481,7 @@ GaussianGradientY2D(
 				 * float's, row-major order */
 ) {
     int area = height * width;
-    float* tempImage = ckalloc(area * sizeof(float));
+    float* tempImage = (float*) ckalloc(area * sizeof(float));
     int i;
 
     /* 
@@ -496,7 +496,7 @@ GaussianGradientY2D(
 
     GaussianFilter10(filterPtr, 1, height, width, tempImage, outputImage);
 
-    ckfree(tempImage);
+    ckfree((char*)tempImage);
 }
 
 /*
@@ -530,14 +530,14 @@ GaussianGradientMagnitude2D(
 ) {
     int i;
     int area = height * width;
-    float* tempImageX = ckalloc(area * sizeof(float));
+    float* tempImageX = (float*) ckalloc(area * sizeof(float));
 
     GaussianGradientX2D(filterPtr, height, width, inputImage, tempImageX);
     GaussianGradientY2D(filterPtr, height, width, inputImage, outputImage);
     for (i = 0; i < area; ++i) {
 	outputImage[i] = hypotf(tempImageX[i], outputImage[i]);
     }
-    ckfree(tempImageX);
+    ckfree((char*)tempImageX);
 }
 
 /*
@@ -569,8 +569,8 @@ GaussianLaplacian2D(
 				 * float's, row-major order */
 ) {
     int area = height * width;
-    float* tempImage1 = ckalloc(area * sizeof(float));
-    float* tempImage2 = ckalloc(area * sizeof(float));
+    float* tempImage1 = (float*) ckalloc(area * sizeof(float));
+    float* tempImage2 = (float*) ckalloc(area * sizeof(float));
     int i;
 
     /* Gaussian filter by rows */
@@ -596,8 +596,8 @@ GaussianLaplacian2D(
 	outputImage[i] += tempImage2[i];
     }
 
-    ckfree(tempImage1);
-    ckfree(tempImage2);
+    ckfree((char*)tempImage1);
+    ckfree((char*)tempImage2);
 }
 
 /*
@@ -985,10 +985,10 @@ DericheScaleN(
 	filterPtr->coefs[i].n3 /= s[i];
     }
 
-    ckfree(y2);
-    ckfree(y1);
-    ckfree(y0);
-    ckfree(x);
+    ckfree((char*)y2);
+    ckfree((char*)y1);
+    ckfree((char*)y0);
+    ckfree((char*)x);
 }
 
 /*

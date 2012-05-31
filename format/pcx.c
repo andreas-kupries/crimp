@@ -320,12 +320,12 @@ pcx_read_pixels (pcx_info*      info,
 	if (info->paletteType == 1) {
 	    TRACE (("PCX (8/1 RGB, 256 colors VGA palette)\n"));
 
-	    dst    = crimp_new_rgb (info->w, info->h);
+	    dst    = crimp_new_rgb_at (info->x, info->y, info->w, info->h);
 	    result = decode_rgb_vga (info, buf, dst);
 	} else {
 	    TRACE (("PCX (8/1 GREY8)\n"));
 
-	    dst    = crimp_new_grey8 (info->w, info->h);
+	    dst    = crimp_new_grey8_at (info->x, info->y, info->w, info->h);
 	    result = decode_grey8 (info, buf, dst);
 	}
 	break;
@@ -333,49 +333,49 @@ pcx_read_pixels (pcx_info*      info,
     case CODE(8,3):
 	TRACE (("PCX (8/3 RGB direct, no palette)\n"));
 
-	dst    = crimp_new_rgb (info->w, info->h);
+	dst    = crimp_new_rgb_at (info->x, info->y, info->w, info->h);
 	result = decode_rgb_raw (info, buf, dst);
 	break;
 
     case CODE(4,1):
 	TRACE (("PCX (4/1 16 color, EGA palette)\n"));
 
-	dst    = crimp_new_rgb (info->w, info->h);
+	dst    = crimp_new_rgb_at (info->x, info->y, info->w, info->h);
 	result = decode_16c (info, buf, dst);
 	break;
 
     case CODE(2,1):
 	TRACE (("PCX (2/1 4 color, EGA palette)\n"));
 
-	dst    = crimp_new_rgb (info->w, info->h);
+	dst    = crimp_new_rgb_at (info->x, info->y, info->w, info->h);
 	result = decode_4c (info, buf, dst);
 	break;
 
     case CODE(1,1):
 	TRACE (("PCX (1/1 BW direct, no palette)\n"));
 
-	dst    = crimp_new_grey8 (info->w, info->h);
+	dst    = crimp_new_grey8_at (info->x, info->y, info->w, info->h);
 	result = decode_2c (info, buf, dst);
 	break;
 
     case CODE(1,4):
 	TRACE (("PCX (1/4 16 color striped, EGA palette)\n"));
 
-	dst    = crimp_new_rgb (info->w, info->h);
+	dst    = crimp_new_rgb_at (info->x, info->y, info->w, info->h);
 	result = decode_striped16c (info, buf, dst);
 	break;
 
     case CODE(1,3):
 	TRACE (("PCX (1/3 8 color striped, EGA palette)\n"));
 
-	dst    = crimp_new_rgb (info->w, info->h);
+	dst    = crimp_new_rgb_at (info->x, info->y, info->w, info->h);
 	result = decode_striped8c (info, buf, dst);
 	break;
 
     case CODE(1,2):
 	TRACE (("PCX (1/2 4 color striped, EGA palette)\n"));
 
-	dst    = crimp_new_rgb (info->w, info->h);
+	dst    = crimp_new_rgb_at (info->x, info->y, info->w, info->h);
 	result = decode_striped4c (info, buf, dst);
 	break;
 

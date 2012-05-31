@@ -130,7 +130,7 @@ critcl::tsources policy.tcl
 # # ## ### ##### ######## #############
 ## C-level API (i.e. types and stubs)
 
-critcl::api import crimp::core 0.1
+critcl::api import crimp::core 0.2
 
 # # ## ### ##### ######## #############
 ## Main C section.
@@ -203,7 +203,7 @@ if {![critcl::load]} {
 
 # # ## ### ##### ######## #############
 
-package provide crimp 0.1.1
+package provide crimp 0.2
 return
 
 # vim: set sts=4 sw=4 tw=80 et ft=tcl:

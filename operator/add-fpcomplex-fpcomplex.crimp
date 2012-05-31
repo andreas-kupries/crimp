@@ -1,0 +1,24 @@
+add_fpcomplex_fpcomplex
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+float scale
+float offset
+
+/*
+ * Pixel- and channel-wise scaled and biased addition of two images. The
+ * images have to have equal dimensions. Values out of range are wrapped into
+ * it (modulo).
+ */
+
+#define BINOP(a,b) ((((a) + (b)) / scale) + offset)
+#include "binop_fpcomplex_fpcomplex_fpcomplex.c"
+#undef BINOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

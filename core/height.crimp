@@ -1,0 +1,19 @@
+height
+Tcl_Obj* imageObj
+
+crimp_image* image;
+
+crimp_input_any (imageObj, image);
+
+Tcl_SetObjResult (interp, Tcl_NewIntObj (crimp_h (image)));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

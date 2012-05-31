@@ -121,6 +121,54 @@ proc _recipes {} {
     puts [lsort -dict $r]
     return
 }
+proc Hdoc {} { return "\n\t(Re)Generate the embedded documentation." }
+proc _doc {} {
+    cd [file dirname $::me]/doc
+
+    puts "Removing old documentation..."
+    file delete -force ../embedded/man
+    file delete -force ../embedded/www
+
+    file mkdir ../embedded/man
+    file mkdir ../embedded/www
+
+    puts "Generating man pages..."
+    exec 2>@ stderr >@ stdout dtplite -ext n -o ../embedded/man nroff .
+    puts "Generating html 1..."
+    exec 2>@ stderr >@ stdout dtplite -merge -o ../embedded/www html .
+    puts "Generating html 2 (Complete cross-referencing)..."
+    exec 2>@ stderr >@ stdout dtplite -merge -o ../embedded/www html .
+
+    return
+}
+proc Hfigures {} { return "\n\t(Re)Generate the figures and diagrams for the documentation." }
+proc _figures {} {
+    cd [file dirname $::me]/doc/figures
+
+    puts "Generating (tklib) diagrams..."
+    eval [linsert [glob *.dia] 0 exec 2>@ stderr >@ stdout dia convert -t -o . png]
+
+    return
+}
+proc Hmath {} { return "\n\t(Re)Generate the math formula images for the documentation." }
+proc _math {} {
+    cd [file dirname $::me]/doc/figures/math
+
+    puts "Generating math figures..."
+    foreach figure [glob *.txt] {
+	puts \t$figure
+
+	set gif [file rootname $figure].gif
+	set png [file rootname $figure].png
+
+	exec 2>@ stderr >@ stdout mimetex -f $figure -e $gif
+	file delete $png
+	exec 2>@ stderr >@ stdout convert $gif $png
+	file delete $gif
+    }
+
+    return
+}
 proc Hdrop {} { return "?destination?\n\tUninstall all packages.\n\tdestination = path of package directory, default \[info library\]." }
 proc _drop {{ldir {}}} {
     global packages

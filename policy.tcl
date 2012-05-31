@@ -176,41 +176,6 @@ proc ::crimp::GCD {p q} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::meta {cmd image args} {
-    # The meta data as exposed through here is a dictionary. Thus we
-    # expose all dictionary operations as submethods, with the
-    # dictionary value/variable implied by the image.
-
-    switch -exact -- $cmd {
-	append - incr - lappend - set - unset {
-	    set meta [meta_get $image]
-	    dict $cmd meta {*}$args
-	    return [meta_set [K $image [unset image]] $meta]
-	}
-	create {
-	    return [meta_set [K $image [unset image]] [dict $cmd {*}$args]]
-	}
-	merge - remove - replace {
-	    return [meta_set [K $image [unset image]] [dict $cmd [meta_get $image] {*}$args]]
-	}
-	exists - get - info - keys - size - values {
-	    return [dict $cmd [meta_get $image] {*}$args]
-	}
-	for {
-	    return [uplevel 1 [list dict $cmd {*}[linsert $args 1 [meta_get $image]]]]
-	}
-	filter {
-	    return [uplevel 1 [list dict $cmd [meta_get $image] {*}$args]]
-	}
-	default {
-	    set x {append create exists filter for get incr info keys lappend merge remove replace set size unset values}
-	    return -code error "Unknown method \"$cmd\", expected one of [linsert [::join $x {, }] end-1 or]"
-	}
-    }
-}
-
-# # ## ### ##### ######## #############
-
 namespace eval ::crimp::convert {
     namespace export *
     namespace ensemble create
@@ -3927,7 +3892,7 @@ namespace eval ::crimp {
     namespace export downsample upsample decimate interpolate logpolar
     namespace export kernel expand threshold gradient effect register
     namespace export statistics rotate montage morph integrate divide
-    namespace export fft square meta resize warp transform contrast noise
+    namespace export fft square resize warp transform contrast noise
     #
     namespace ensemble create
 }

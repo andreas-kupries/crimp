@@ -1,4 +1,4 @@
-meta_set
+C::meta_set
 Tcl_Obj* imageObj
 Tcl_Obj* metaObj
 

@@ -41,6 +41,41 @@ proc ::crimp::bbox {head args} {
 }
 
 # # ## ### ##### ######## ############# #####################
+
+proc ::crimp::meta {cmd image args} {
+    # The meta data as exposed through here is a dictionary. Thus we
+    # expose all dictionary operations as submethods, with the
+    # dictionary value/variable implied by the image.
+
+    switch -exact -- $cmd {
+	append - incr - lappend - set - unset {
+	    set meta [C::meta_get $image]
+	    dict $cmd meta {*}$args
+	    return [C::meta_set [K $image [unset image]] $meta]
+	}
+	create {
+	    return [C::meta_set [K $image [unset image]] [dict $cmd {*}$args]]
+	}
+	merge - remove - replace {
+	    return [C::meta_set [K $image [unset image]] [dict $cmd [C::meta_get $image] {*}$args]]
+	}
+	exists - get - info - keys - size - values {
+	    return [dict $cmd [meta_get $image] {*}$args]
+	}
+	for {
+	    return [uplevel 1 [list dict $cmd {*}[linsert $args 1 [C::meta_get $image]]]]
+	}
+	filter {
+	    return [uplevel 1 [list dict $cmd [C::meta_get $image] {*}$args]]
+	}
+	default {
+	    set x {append create exists filter for get incr info keys lappend merge remove replace set size unset values}
+	    return -code error "Unknown method \"$cmd\", expected one of [linsert [::join $x {, }] end-1 or]"
+	}
+    }
+}
+
+# # ## ### ##### ######## ############# #####################
 ## Importing images into the CRIMP eco-system is handled by the 'read'
 ## ensemble command. It will have one method per format, handling image
 ## data in that format. Here we just define the ensemble, and a

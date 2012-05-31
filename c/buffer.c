@@ -126,7 +126,7 @@ crimp_buf_read_uint16le (crimp_buffer* buf, unsigned int* res)
 }
 
 void
-crimp_buf_read_uint32le (crimp_buffer* buf, unsigned long* res)
+crimp_buf_read_uint32le (crimp_buffer* buf, unsigned int* res)
 {
     CRIMP_ASSERT_BOUNDS (3,(buf->sentinel - buf->here));
 
@@ -150,7 +150,7 @@ crimp_buf_read_uint16be (crimp_buffer* buf, unsigned int* res)
 }
 
 void
-crimp_buf_read_uint32be (crimp_buffer* buf, unsigned long* res)
+crimp_buf_read_uint32be (crimp_buffer* buf, unsigned int* res)
 {
     CRIMP_ASSERT_BOUNDS (3,(buf->sentinel - buf->here));
 

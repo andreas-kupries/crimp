@@ -2,7 +2,21 @@
 #define CRIMP_COMMON_H
 /*
  * CRIMP :: Common Declarations :: PUBLIC
- * (C) 2011.
+ * (C) 2011-2012.
+ */
+
+/*
+ * Support compile time assertions. While mostly intended for type size
+ * checks, all C expressions are allowed.
+ */
+ 
+#define CRIMP_BUILD_ASSERT(expr)       typedef char CRIMP_BA_UNIQUE_NAME [(expr)?1:-1]
+#define CRIMP_BA_UNIQUE_NAME           CRIMP_BA_MAKE_NAME(__LINE__)
+#define CRIMP_BA_MAKE_NAME(line)       CRIMP_BA_MAKE_NAME2(line)
+#define CRIMP_BA_MAKE_NAME2(line)      __crimp_build_assert_ ## line
+
+/*
+ * Checking of 0-based ranges.
  */
 
 #define CRIMP_RANGEOK(i,n) ((0 <= (i)) && (i < (n)))

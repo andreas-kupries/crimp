@@ -115,10 +115,19 @@ typedef struct sgi_info {
     unsigned int      max;           /* s.a. */
     sgi_storage_type  storage;       /* Type of raster storage */
     sgi_colormap_type mapType;       /* Colormap information */
-    unsigned long*    ostart;        /* Pointer to scan line offsets (RLE only) */
-    unsigned long*    olength;       /* Pointer to scan line lengths (ditto) */
+    unsigned int*     ostart;        /* Pointer to scan line offsets (RLE only) */
+    unsigned int*     olength;       /* Pointer to scan line lengths (ditto) */
     crimp_buffer*     input;         /* buffer holding the image */
 } sgi_info;
+
+/*
+ * BUILD ASSERTION: The structure above assumes that a variable of type 'int'
+ * can hold (at least) 4 bytes (ostart, olength). Failure in the line below
+ * tells us that this is not true for the chosen combination of OS, compiler,
+ * and compiler flags.
+ */
+
+CRIMP_BUILD_ASSERT (sizeof(int) >= 4);
 
 /*
  * Main functions.

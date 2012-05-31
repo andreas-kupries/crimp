@@ -60,6 +60,7 @@ critcl::csources c/image.c
 critcl::csources c/volume.c
 critcl::csources c/image_type.c
 critcl::csources c/buffer.c
+critcl::csources c/rect.c
 
 # # ## ### ##### ######## #############
 ## Declare the Tcl layer of the package.
@@ -74,6 +75,7 @@ critcl::api header c/image_type.h
 critcl::api header c/image.h
 critcl::api header c/volume.h
 critcl::api header c/buffer.h
+critcl::api header c/rect.h
 
 # - -- --- ----- -------- -------------
 ## image_type.h
@@ -275,6 +277,16 @@ critcl::api function void crimp_buf_read_int16be {
 critcl::api function void crimp_buf_read_int32be {
     crimp_buffer*   b
     int*            value
+}
+
+# - -- --- ----- -------- -------------
+## rect.h
+
+# API :: Core. Basic geometry/bbox/rectangle operation
+critcl::api function void crimp_rect_union {
+    {const crimp_geometry*} a
+    {const crimp_geometry*} b
+    {crimp_geometry*}       result
 }
 
 # # ## ### ##### ######## #############

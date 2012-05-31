@@ -7,23 +7,16 @@
 
 #include "common.h"
 #include "image_type.h"
+#include "rect.h"
 
 /*
  * Structures describing images.
  *
  * - A convenient name for a memory block of pixel data
- * - The geometry (bounding box) of an image.
  * - The image itself.
  */
 
 typedef unsigned char* crimp_pixel_array;
-
-typedef struct crimp_geometry {
-    int x; /* Location of the image in the infinite 2D plane */
-    int y; /* s.a. */
-    int w; /* Image dimension, width  */
-    int h; /* Image dimension, height */
-} crimp_geometry;
 
 typedef struct crimp_image {
     Tcl_Obj*               meta;     /* Tcl level client data */

@@ -17,10 +17,6 @@ extern crimp_image* crimp_geo_warp_init  (crimp_image* input,
 					  crimp_image* forward,
 					  int* origx, int* origy);
 
-extern void crimp_rect_union (const crimp_geometry* a,
-			      const crimp_geometry* b,
-			      crimp_geometry* result);
-
 
 /*
  * Local Variables:

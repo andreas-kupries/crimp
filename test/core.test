@@ -410,6 +410,166 @@ test crimp-meta-11.9 {Accessor: meta incr command} -returnCodes error -body {
     unset image
 } -result {expected integer but got "dummy"}
 
+
+test crimp-meta-12.1 {Accessor: meta lappend command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta lappend $image a]
+} -cleanup {
+    unset image
+} -result {a a}
+
+test crimp-meta-12.2 {Accessor: meta lappend command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta lappend $image a b]
+} -cleanup {
+    unset image
+} -result {a {a b}}
+
+test crimp-meta-12.3 {Accessor: meta lappend command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta lappend $image a b c]
+} -cleanup {
+    unset image
+} -result {a {a b c}}
+
+
+test crimp-meta-13.1 {Accessor: meta append command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta append $image a]
+} -cleanup {
+    unset image
+} -result {a a}
+
+test crimp-meta-13.2 {Accessor: meta append command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta append $image a b]
+} -cleanup {
+    unset image
+} -result {a ab}
+
+test crimp-meta-13.3 {Accessor: meta append command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta append $image a b c]
+} -cleanup {
+    unset image
+} -result {a abc}
+
+
+test crimp-meta-14.1 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty]
+} -result {wrong # args: should be "dict for {keyVar valueVar} dictionary script"}
+
+test crimp-meta-14.2 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty] x
+} -result {wrong # args: should be "dict for {keyVar valueVar} dictionary script"}
+
+test crimp-meta-14.3 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty] x x x
+} -result {wrong # args: should be "dict for {keyVar valueVar} dictionary script"}
+
+test crimp-meta-14.4 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty] x x
+} -result {must have exactly two variable names}
+
+test crimp-meta-14.5 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty] {x x x} x
+} -result {must have exactly two variable names}
+
+test crimp-meta-14.6 {Accessor: meta for command} -body {
+    # This test confirms that [dict keys], [dict values] and [dict for]
+    # all traverse a dictionary in the same order.
+    set image [emeta {a A b B c C}]
+    set keys {}
+    set values {}
+    crimp meta for $image {k v} {
+	lappend keys $k
+	lappend values $v
+    }
+    set result [expr {
+	$keys eq [crimp meta keys $image] && $values eq [crimp meta values $image]
+    }]
+    expr {$result ? "YES" : [list "NO" $image $keys $values]}
+} -cleanup {
+    unset result keys values k v image
+} -result YES
+
+
+test crimp-meta-15.1 {Accessor: meta set command} -body {
+    crimp meta get [crimp meta set [empty] a x]
+} -result {a x}
+
+test crimp-meta-15.2 {Accessor: meta set command} -body {
+    crimp meta get [crimp meta set [emeta {a {}}] a b x]
+} -result {a {b x}}
+
+test crimp-meta-15.3 {Accessor: meta set command} -body {
+    crimp meta get [crimp meta set [emeta {a {b {}}}] a b c x]
+} -result {a {b {c x}}}
+
+test crimp-meta-15.4 {Accessor: meta set command: syntax} -returnCodes error -body {
+    crimp meta set [empty]
+} -result {wrong # args: should be "dict set varName key ?key ...? value"}
+
+test crimp-meta-15.5 {Accessor: meta set command: syntax} -returnCodes error -body {
+    crimp meta set [empty] a
+} -result {wrong # args: should be "dict set varName key ?key ...? value"}
+
+
+test crimp-meta-16.1 {Accessor: meta unset command} -body {
+    crimp meta get [crimp meta unset [emeta {a b c d}] a]
+} -result {c d}
+
+test crimp-meta-16.2 {Accessor: meta unset command} -body {
+    crimp meta get [crimp meta unset [emeta {a b c d}] c]
+} -result {a b}
+
+test crimp-meta-16.3 {Accessor: meta unset command} -body {
+    crimp meta get [crimp meta unset [emeta {a b}] c]
+} -result {a b}
+
+test crimp-meta-16.4 {Accessor: meta unset command} -returnCodes error -body {
+    crimp meta unset [empty]
+} -result {wrong # args: should be "dict unset varName key ?key ...?"}
+
+
+test crimp-meta-17.1 {Accessor: meta filter command: key} -body {
+    crimp meta filter [emeta {a1 a a2 b b1 c b2 d foo bar bar foo}] key a2
+} -result {a2 b}
+
+test crimp-meta-17.2 {Accessor: meta filter command: key} -body {
+    dict size [crimp meta filter [emeta {a1 a a2 b b1 c b2 d foo bar bar foo}] key *]
+} -result 6
+
+test crimp-meta-17.3 {Accessor: meta filter command: key} -body {
+    crimp meta filter [emeta {a1 a a2 b b1 c b2 d foo bar bar foo}] key ???
+} -result {foo bar bar foo}
+
+
+
+test crimp-meta-20.1 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [empty]]
+} {}
+
+test crimp-meta-20.2 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [emeta {a b c d e f}]]
+} {a b c d e f}
+
+test crimp-meta-20.3 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [emeta {a b c d}] {e f g h}]
+} {a b c d e f g h}
+
+test crimp-meta-20.4 {Accessor: meta merge command} -body {
+    crimp meta get [crimp meta merge [emeta {a b c d}] {e f g h i}]
+} -result {missing value to go with key} -returnCodes error
+
+test crimp-meta-20.5 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [emeta {a b c d e f}] {e x g h}]
+} {a b c d e x g h}
+
+test crimp-meta-20.6 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [emeta {a b c d e f}] {a x 1 2 3 4} {a - 1 -}]
+} {a - c d e f 1 - 3 4}
+
 # -------------------------------------------------------------------------
 ## Testing the core accessors: Placement.
 

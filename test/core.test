@@ -266,6 +266,149 @@ test crimp-meta-5.6 {Accessor: meta remove command} {
 } {a b}
 
 
+test crimp-meta-6.1 {Accessor: meta keys command} {
+    crimp meta keys [emeta {a b}]
+} a
+
+test crimp-meta-6.2 {Accessor: meta keys command} {
+    crimp meta keys [emeta {c d}]
+} c
+
+test crimp-meta-6.3 {Accessor: meta keys command} {
+    lsort [crimp meta keys [emeta {a b c d}]]
+} {a c}
+
+test crimp-meta-6.4 {Accessor: meta keys command} {
+    crimp meta keys [emeta {a b c d}] a
+} a
+
+test crimp-meta-6.5 {Accessor: meta keys command} {
+    crimp meta keys [emeta {a b c d}] c
+} c
+
+test crimp-meta-6.6 {Accessor: meta keys command} {
+    crimp meta keys [emeta {a b c d}] e
+} {}
+
+test crimp-meta-6.7 {Accessor: meta keys command} {
+    lsort [crimp meta keys [emeta {a b c d ca da}] c*]
+} {c ca}
+
+test crimp-meta-6.8 {Accessor: meta keys command} -returnCodes error -body {
+    crimp meta keys [empty] a b
+} -result {wrong # args: should be "dict keys dictionary ?pattern?"}
+
+
+test crimp-meta-7.1 {Accessor: meta values command} {
+    crimp meta values [emeta {a b}]
+} b
+
+test crimp-meta-7.2 {Accessor: meta values command} {
+    crimp meta values [emeta {c d}]
+} d
+
+test crimp-meta-7.3 {Accessor: meta values command} {
+    lsort [crimp meta values [emeta {a b c d}]]
+} {b d}
+
+test crimp-meta-7.4 {Accessor: meta values command} {
+    crimp meta values [emeta {a b c d}] b
+} b
+
+test crimp-meta-7.5 {Accessor: meta values command} {
+    crimp meta values [emeta {a b c d}] d
+} d
+
+test crimp-meta-7.6 {Accessor: meta values command} {
+    crimp meta values [emeta {a b c d}] e
+} {}
+
+test crimp-meta-7.7 {Accessor: meta values command} {
+    lsort [crimp meta values [emeta {a b c d ca da}] d*]
+} {d da}
+
+test crimp-meta-7.8 {Accessor: meta values command} -returnCodes error -body {
+    crimp meta values [empty] a b
+} -result {wrong # args: should be "dict values dictionary ?pattern?"}
+
+
+test crimp-meta-8.1 {Accessor: meta size command} {
+    crimp meta size [empty]
+} 0
+
+test crimp-meta-8.2 {Accessor: meta size command} {
+    crimp meta size [emeta {a b}]
+} 1
+
+test crimp-meta-8.3 {Accessor: meta size command} {
+    crimp meta size [emeta {a b c d}]
+} 2
+
+test crimp-meta-8.4 {Accessor: meta size command} -returnCodes error -body {
+    crimp meta size [empty] x
+} -result {wrong # args: should be "dict size dictionary"}
+
+
+test crimp-meta-9.1 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a b}] a
+} 1
+
+test crimp-meta-9.2 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a b}] b
+} 0
+
+test crimp-meta-9.3 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a {b c}}] a b
+} 1
+
+test crimp-meta-9.4 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a {b c}}] a c
+} 0
+
+test crimp-meta-9.5 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a {b c}}] b c
+} 0
+
+test crimp-meta-9.6 {Accessor: meta exists command} -returnCodes error -body {
+    crimp meta exists [empty]
+} -result {wrong # args: should be "dict exists dictionary key ?key ...?"}
+
+
+test crimp-meta-10.1 {Accessor: meta info command} -body {
+    # Actual string returned by this command is undefined; it is
+    # intended for human consumption and not for use by scripts.
+    crimp meta info [empty]
+} -match glob -result *
+
+test crimp-meta-10.2 {Accessor: meta info command} -returnCodes error -body {
+    dict info
+} -result {wrong # args: should be "dict info dictionary"}
+
+test crimp-meta-10.3 {Accessor: meta info command} -returnCodes error -body {
+    crimp meta info [empty] x
+} -result {wrong # args: should be "dict info dictionary"}
+
+
+test crimp-meta-11.7 {Accessor: meta incr command: unknown values} -body {
+    set image [crimp meta create [empty] a 0 b [expr {1+2}] c [expr {wide(0x80000000)+1}]]
+    crimp meta get [crimp meta incr $image d]
+} -cleanup {
+    unset image
+} -result {a 0 b 3 c 2147483649 d 1}
+
+test crimp-meta-11.8 {Accessor: meta incr command} -body {
+    set image [emeta {a 1}]
+    crimp meta get [crimp meta incr $image a 2]
+} -cleanup {
+    unset image
+} -result {a 3}
+
+test crimp-meta-11.9 {Accessor: meta incr command} -returnCodes error -body {
+    set image [emeta {a dummy}]
+    crimp meta get [crimp meta incr $image a]
+} -cleanup {
+    unset image
+} -result {expected integer but got "dummy"}
 
 # -------------------------------------------------------------------------
 ## Testing the core accessors: Placement.

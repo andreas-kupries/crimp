@@ -60,7 +60,7 @@ proc ::crimp::meta {cmd image args} {
 	    return [C::meta_set [K $image [unset image]] [dict $cmd [C::meta_get $image] {*}$args]]
 	}
 	exists - get - info - keys - size - values {
-	    return [dict $cmd [meta_get $image] {*}$args]
+	    return [dict $cmd [C::meta_get $image] {*}$args]
 	}
 	for {
 	    return [uplevel 1 [list dict $cmd {*}[linsert $args 1 [C::meta_get $image]]]]

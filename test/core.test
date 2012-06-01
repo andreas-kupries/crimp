@@ -13,6 +13,9 @@ testing {
     useC [mainPath _test/lib]/crimp_core* crimp::core no
 }
 
+proc empty {}     { crimp read tcl grey8 {} }
+proc emeta {dict} { crimp meta create [empty] {*}$dict }
+
 # -------------------------------------------------------------------------
 ## Core manipulation: Conversion between images and Tcl data structures.
 ## Note: If these do not work all other tests won't either, as they
@@ -138,7 +141,7 @@ test crimp-core-meta-1.1 {Accessor, meta_get, wrong\#args, too many} -body {
 } -returnCodes error -result {wrong # args: should be "crimp::C::meta_get imageObj"}
 
 test crimp-core-meta-1.2 {Accessor, meta_get, default} -setup {
-    set image [crimp read tcl grey8 {}]
+    set image [empty]
 } -body {
     crimp::C::meta_get $image
 } -cleanup {
@@ -158,7 +161,7 @@ test crimp-core-meta-2.2 {Accessor, meta_set, wrong\#args, too many} -body {
 } -returnCodes error -result {wrong # args: should be "crimp::C::meta_set imageObj metaObj"}
 
 test crimp-core-meta-2.3 {Accessor, meta_set + meta_get} -setup {
-    set image [crimp read tcl grey8 {}]
+    set image [empty]
 } -body {
     crimp::C::meta_get [crimp::C::meta_set $image META]
 } -cleanup {
@@ -170,6 +173,99 @@ test crimp-core-meta-2.3 {Accessor, meta_set + meta_get} -setup {
 ## Dictionary methods -- See to snarfing the tests from the Tcl core.
 
 ## TODO
+
+test crimp-meta-1.0 {Accessor: meta command basic syntax} -returnCodes error -body {
+    crimp meta
+} -result {wrong # args: should be "crimp meta cmd image ..."}
+
+test crimp-meta-1.1 {Accessor: meta command basic syntax} -returnCodes error -body {
+    crimp meta CMD
+} -result {wrong # args: should be "crimp meta cmd image ..."}
+
+test crimp-meta-1.2 {Accessor: meta command basic syntax} -returnCodes error -body {
+    crimp meta ? IMAGE
+} -match glob -result {Unknown method "?", expected one of append, create, exists, filter, for, get, incr, info, keys, lappend, merge, remove, replace, set, size, unset, or values}
+
+
+test crimp-meta-2.0 {Accessor: meta create command, wrong#args} -returnCodes error -body {
+    crimp meta create [empty] a
+} -result {wrong # args: should be "dict create ?key value ...?"}
+
+test crimp-meta-2.1 {Accessor: meta create command, wrong#args} -returnCodes error -body {
+    crimp meta create [empty] a b c
+} -result {wrong # args: should be "dict create ?key value ...?"}
+
+test crimp-meta-2.2 {Accessor: meta create command} -body {
+    crimp meta create [empty]
+} -result {crimp::image::grey8 0 0 {} {}}
+
+test crimp-meta-2.3 {Accessor: meta create command} -body {
+    crimp meta create [empty] a b
+} -result {crimp::image::grey8 0 0 {a b} {}}
+
+test crimp-meta-3.1 {Accessor: meta get command} {
+    crimp meta get [emeta {a b}] a
+} b
+
+test crimp-meta-3.2 {Accessor: meta get command} {
+    crimp meta get [emeta {a b c d}] a
+} b
+
+test crimp-meta-3.3 {Accessor: meta get command} {
+    crimp meta get [emeta {a b c d}] c
+} d
+
+test crimp-meta-3.4 {Accessor: meta get command} -returnCodes error -body {
+    crimp meta get [emeta {a b c d}] b
+} -result {key "b" not known in dictionary}
+
+test crimp-meta-3.5 {Accessor: meta get command} {
+    crimp meta get [emeta {a b}]
+} {a b}
+
+
+test crimp-meta-4.1 {Accessor: meta replace command} {
+    crimp meta get [crimp meta replace [emeta {a b c d}]]
+} {a b c d}
+
+test crimp-meta-4.2 {Accessor: meta replace command} {
+    crimp meta get [crimp meta replace [emeta {a b c d}] e f]
+} {a b c d e f}
+
+test crimp-meta-4.3 {Accessor: meta replace command} {
+    crimp meta get [crimp meta replace [emeta {a b c d}] c f]
+} {a b c f}
+
+test crimp-meta-4.4 {Accessor: meta replace command} {
+    crimp meta get [crimp meta replace [emeta {a b c d}] c x a y]
+} {a y c x}
+
+
+test crimp-meta-5.1 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}] a]
+} {c d}
+
+test crimp-meta-5.2 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}] c]
+} {a b}
+
+test crimp-meta-5.3 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}] a c]
+} {}
+
+test crimp-meta-5.4 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}] c a]
+} {}
+
+test crimp-meta-5.5 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}]]
+} {a b c d}
+
+test crimp-meta-5.6 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b}] c]
+} {a b}
+
+
 
 # -------------------------------------------------------------------------
 ## Testing the core accessors: Placement.
@@ -348,6 +444,8 @@ foreach {n cando itype data result} {
 
 # -------------------------------------------------------------------------
 
+rename emeta {}
+rename empty {}
 unset bboxexamples
 testsuiteCleanup
 

@@ -35,7 +35,7 @@ proc ::crimp::P {fqn} {
 proc ::crimp::bbox {head args} {
     set bbox [geometry $head]
     foreach image $args {
-	set bbox [bbox2 $bbox [geometry $image]]
+	set bbox [bbox2 {*}$bbox {*}[geometry $image]]
     }
     return $bbox
 }

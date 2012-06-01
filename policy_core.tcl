@@ -57,7 +57,8 @@ proc ::crimp::meta {cmd image args} {
 	    return [C::meta_set [K $image [unset image]] [dict $cmd {*}$args]]
 	}
 	merge - remove - replace {
-	    return [C::meta_set [K $image [unset image]] [dict $cmd [C::meta_get $image] {*}$args]]
+	    set meta [C::meta_get $image]
+	    return [C::meta_set [K $image [unset image]] [dict $cmd $meta {*}$args]]
 	}
 	exists - get - info - keys - size - values {
 	    return [dict $cmd [C::meta_get $image] {*}$args]

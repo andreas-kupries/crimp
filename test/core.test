@@ -199,11 +199,6 @@ test crimp-core-place-1.4 "Accessors: place" -setup {
 } -result {-2 5}
 
 # -------------------------------------------------------------------------
-##
-## TODO :: write 2file, 2chan (plus types -> tcl: rgb, rgba, hsv, fpcomplex)
-## TODO :: writing to tcl: grey16, grey32 - NYI, untestable
-##
-# -------------------------------------------------------------------------
 
 test crimp-core-bbox2-1.0 {bbox2, wrong#args, not enough} -body {
     crimp bbox2
@@ -303,6 +298,56 @@ foreach {n a b r} $bboxexamples {
 }
 
 # -------------------------------------------------------------------------
+## Writing of various image types to tcl format, all possible types of
+## destinations.
+
+## TODO :: write types -> tcl: rgb, rgba, hsv, fpcomplex
+
+foreach {n cando itype data result} {
+    0 {}     grey8     {{1 2} {3 4}} {{1 2} {3 4}}
+    1 {}     grey16    {{1 2} {3 4}} {{1 2} {3 4}}
+    2 {}     grey32    {{1 2} {3 4}} {{1 2} {3 4}}
+    3 {}     float     {{1 2} {3 4}} {{1.0 2.0} {3.0 4.0}}
+    4   NYI  fpcomplex {} {}
+    5   NYI  rgb       {} {}
+    6   NYI  rgba      {} {}
+    7   NYI  hsv       {} {}
+} {
+    test crimp-core-write-${itype}-1.0 "write tcl, $itype 2string" -setup {
+        set image [crimp read tcl $itype $data]
+    } -body {
+        crimp write 2string tcl $image
+    } -cleanup {
+        unset image
+    } -result $result -constraints $cando
+
+    test crimp-core-write-${itype}-1.1 "write tcl, $itype 2chan" -setup {
+        set temp [tempPath CHAN]
+        set image [crimp read tcl $itype $data]
+    } -body {
+        set c [open $temp w]
+        crimp write 2chan tcl $c $image
+        close $c
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+        unset image
+    } -result $result -constraints $cando
+
+    test crimp-core-write-${itype}-1.2 "write tcl, $itype 2file" -setup {
+        set temp [tempPath CHAN]
+        set image [crimp read tcl $itype $data]
+    } -body {
+        crimp write 2file tcl $temp $image
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+        unset image
+    } -result $result -constraints $cando
+}
+
+# -------------------------------------------------------------------------
+
 unset bboxexamples
 testsuiteCleanup
 

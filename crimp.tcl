@@ -145,7 +145,6 @@ critcl::ccode {
     #include <linearalgebra.h>
     #include <geometry.h>
     #include <color.h>
-    #include <util.h>
     #include <gauss.h>
     #include <labelcc.h>
     #include <linearmaps.h>

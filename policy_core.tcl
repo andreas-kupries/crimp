@@ -126,6 +126,12 @@ namespace eval ::crimp::write {
     namespace ensemble create
 }
 
+::apply {{} {
+    set le [string equal $::tcl_platform(byteOrder) littleEndian]
+    variable ushort [expr {$le ? "s":"S"}]u
+    variable ulong  [expr {$le ? "i":"I"}]u
+} ::crimp::write}
+
 proc ::crimp::write::2file {format path image} {
     set chan [open $path w]
     fconfigure $chan -encoding binary
@@ -167,6 +173,48 @@ proc ::crimp::write::Str_tcl_grey8 {image} {
     set n $w
     foreach c [::split [::crimp::pixel $image] {}] {
 	binary scan $c cu g
+	lappend line $g
+	incr n -1
+	if {$n > 0} continue
+	lappend res $line
+	set line {}
+	set n $w
+    }
+    return $res
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::write::Str_tcl_grey16 {image} {
+    variable ushort
+    # assert TypeOf (image) == grey16
+    set w [::crimp::width $image]
+    set res {}
+    set line {}
+    set n $w
+    foreach {a b} [::split [::crimp::pixel $image] {}] {
+	binary scan $a$b $ushort g
+	lappend line $g
+	incr n -1
+	if {$n > 0} continue
+	lappend res $line
+	set line {}
+	set n $w
+    }
+    return $res
+}
+
+# # ## ### ##### ######## #############
+
+proc ::crimp::write::Str_tcl_grey32 {image} {
+    variable ulong
+    # assert TypeOf (image) == grey32
+    set w [::crimp::width $image]
+    set res {}
+    set line {}
+    set n $w
+    foreach {a b c d} [::split [::crimp::pixel $image] {}] {
+	binary scan $a$b$c$d $ulong g
 	lappend line $g
 	incr n -1
 	if {$n > 0} continue

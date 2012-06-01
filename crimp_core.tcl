@@ -298,6 +298,10 @@ critcl::cinit {
     extern void crimp_imagetype_init (void); /* c/image_type.c */
 }
 
+critcl::ccode {
+    #include <cutil.h>
+}
+
 # # ## ### ##### ######## #############
 ## Pull in the implementations of the basic accessor commands.
 

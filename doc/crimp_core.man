@@ -411,10 +411,11 @@ The input [arg image] is returned as either a binary string in the
 specified [arg format], or written to the open channel [arg chan], or
 the named file at [arg path].
 
-[para] By default the only supported format is [const tcl], a representation
-of an image as a nested Tcl list. This format supports, i.e. accepts, images
-with the types [const grey8], [const rga], [const rgba], and [const hsv] for
-export.
+[para] By default the only supported format is [const tcl], a
+representation of an image as a nested Tcl list. This format supports,
+i.e. accepts, images with the types [const grey8], [const grey16],
+[const grey32], [const rga], [const rgba], [const hsv], [const float],
+and [const fpcomplex] for export.
 
 [para] This family of commands is an [term {extension point}]. Other packages
 can extend it to support additional formats by providing commands of the

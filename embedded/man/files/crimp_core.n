@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/net/nas/data/andreask/Dev/Crimp/dev-infinite-plane/embedded/man/files/crimp_core.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev-infinite-plane/embedded/man/files/crimp_core.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -765,10 +765,11 @@ The input \fIimage\fR is returned as either a binary string in the
 specified \fIformat\fR, or written to the open channel \fIchan\fR, or
 the named file at \fIpath\fR.
 .sp
-By default the only supported format is \fBtcl\fR, a representation
-of an image as a nested Tcl list. This format supports, i.e. accepts, images
-with the types \fBgrey8\fR, \fBrga\fR, \fBrgba\fR, and \fBhsv\fR for
-export.
+By default the only supported format is \fBtcl\fR, a
+representation of an image as a nested Tcl list. This format supports,
+i.e. accepts, images with the types \fBgrey8\fR, \fBgrey16\fR,
+\fBgrey32\fR, \fBrga\fR, \fBrgba\fR, \fBhsv\fR, \fBfloat\fR,
+and \fBfpcomplex\fR for export.
 .sp
 This family of commands is an \fIextension point\fR. Other packages
 can extend it to support additional formats by providing commands of the

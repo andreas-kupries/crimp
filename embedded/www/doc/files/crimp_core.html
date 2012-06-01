@@ -402,10 +402,10 @@ pixels).  The result is a 2-element list containing width and height,
 in this order.</p>
 <p>The method supports all image types.</p></dd>
 <dt><a name="4"><b class="cmd">::crimp</b> <b class="method">geometry</b> <i class="arg">image</i></a></dt>
-<dd><p>This method returns the <i class="term"><a href="../../index.html#key115">geometry</a></i> of the <i class="arg">image</i> (in
+<dd><p>This method returns the <i class="term"><a href="../../index.html#key53">geometry</a></i> of the <i class="arg">image</i> (in
 pixels). The result is a 4-element list containing x-, y-location,
 width and height, in this order. This is also called the
-<i class="term"><a href="../../index.html#key163">bounding box</a></i> of the image.</p>
+<i class="term"><a href="../../index.html#key57">bounding box</a></i> of the image.</p>
 <p>The method supports all image types.</p></dd>
 <dt><a name="5"><b class="cmd">::crimp</b> <b class="method">height</b> <i class="arg">image</i></a></dt>
 <dd><p>This method returns the height of the <i class="arg">image</i> (in pixels).</p>
@@ -525,10 +525,11 @@ an image as argument.</p></dd>
 The input <i class="arg">image</i> is returned as either a binary string in the
 specified <i class="arg">format</i>, or written to the open channel <i class="arg">chan</i>, or
 the named file at <i class="arg">path</i>.</p>
-<p>By default the only supported format is <b class="const">tcl</b>, a representation
-of an image as a nested Tcl list. This format supports, i.e. accepts, images
-with the types <b class="const">grey8</b>, <b class="const">rga</b>, <b class="const">rgba</b>, and <b class="const">hsv</b> for
-export.</p>
+<p>By default the only supported format is <b class="const">tcl</b>, a
+representation of an image as a nested Tcl list. This format supports,
+i.e. accepts, images with the types <b class="const">grey8</b>, <b class="const">grey16</b>,
+<b class="const">grey32</b>, <b class="const">rga</b>, <b class="const">rgba</b>, <b class="const">hsv</b>, <b class="const">float</b>,
+and <b class="const">fpcomplex</b> for export.</p>
 <p>This family of commands is an <i class="term">extension point</i>. Other packages
 can extend it to support additional formats by providing commands of the
 form <b class="cmd">::crimp::write::Str_<b class="variable">FOO</b>_<b class="variable">TYPE</b></b>
@@ -564,7 +565,7 @@ and height)) and returns their union bounding box.</p></dd>
 towards which this manpage is geared to.</p>
 </div>
 <div id="keywords" class="section"><h2><a name="keywords">Keywords</a></h2>
-<p><a href="../../index.html#key163">bounding box</a>, <a href="../../index.html#key161">channels</a>, <a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key160">dimensions</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key115">geometry</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key159">image accessors</a>, <a href="../../index.html#key162">image type</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key4">vector</a></p>
+<p><a href="../../index.html#key57">bounding box</a>, <a href="../../index.html#key55">channels</a>, <a href="../../index.html#key3">computer vision</a>, <a href="../../index.html#key54">dimensions</a>, <a href="../../index.html#key0">document processing</a>, <a href="../../index.html#key53">geometry</a>, <a href="../../index.html#key5">image</a>, <a href="../../index.html#key52">image accessors</a>, <a href="../../index.html#key56">image type</a>, <a href="../../index.html#key1">matrix</a>, <a href="../../index.html#key2">photo</a>, <a href="../../index.html#key4">vector</a></p>
 </div>
 <div id="copyright" class="section"><h2><a name="copyright">Copyright</a></h2>
 <p>Copyright &copy; 2011 Andreas Kupries<br>

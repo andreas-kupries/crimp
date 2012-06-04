@@ -102,6 +102,8 @@ test crimp-core-pixel-1.2 "Accessors: pixel" -setup {
 # -------------------------------------------------------------------------
 ## Core image types, i.e. types the core can create ...
 
+## TODO : Tests for the error conditions (legal range of input values, non-lists).
+
 foreach {n itype channels} {
     0 grey8     {luma}
     1 grey16    {luma}

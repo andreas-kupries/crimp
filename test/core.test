@@ -102,15 +102,15 @@ test crimp-core-pixel-1.2 "Accessors: pixel" -setup {
 # -------------------------------------------------------------------------
 ## Core image types, i.e. types the core can create ...
 
-foreach {n cando itype channels} {
-    0 {}     grey8     {luma}
-    1   NYI  grey16    {luma}
-    2   NYI  grey32    {luma}
-    3 {}     float     {value}
-    4   NYI  fpcomplex {real imaginary}
-    5   NYI  rgb       {red green blue}
-    6   NYI  rgba      {red green blue alpha}
-    7   NYI  hsv       {hue saturation value}
+foreach {n itype channels} {
+    0 grey8     {luma}
+    1 grey16    {luma}
+    2 grey32    {luma}
+    3 float     {value}
+    4 fpcomplex {real imaginary}
+    5 rgb       {red green blue}
+    6 rgba      {red green blue alpha}
+    7 hsv       {hue saturation value}
 } {
     test crimp-core-type-2.$n {Accessors: type} -setup {
         set image [crimp read tcl $itype {{1 2} {3 4}}]
@@ -118,7 +118,7 @@ foreach {n cando itype channels} {
         crimp type $image
     } -cleanup {
         unset image
-    } -result crimp::image::$itype -constraints $cando
+    } -result crimp::image::$itype
 
     test crimp-core-channels-2.$n {Accessors: channel names} -setup {
         set image [crimp read tcl $itype {{1 2} {3 4}}]
@@ -126,7 +126,7 @@ foreach {n cando itype channels} {
         crimp channels $image
     } -cleanup {
         unset image
-    } -result $channels -constraints $cando
+    } -result $channels
 }
 
 # -------------------------------------------------------------------------
@@ -170,9 +170,7 @@ test crimp-core-meta-2.3 {Accessor, meta_set + meta_get} -setup {
 
 # -------------------------------------------------------------------------
 ## Testing the core accessors: High level access to the image meta data.
-## Dictionary methods -- See to snarfing the tests from the Tcl core.
-
-## TODO
+## Dictionary methods -- Sub set of the tests from the Tcl core, snarfed.
 
 test crimp-meta-1.0 {Accessor: meta command basic syntax} -returnCodes error -body {
     crimp meta
@@ -700,17 +698,15 @@ foreach {n a b r} $bboxexamples {
 ## Writing of various image types to tcl format, all possible types of
 ## destinations.
 
-## TODO :: write types -> tcl: rgb, rgba, hsv, fpcomplex
-
-foreach {n cando itype data result} {
-    0 {}     grey8     {{1 2} {3 4}} {{1 2} {3 4}}
-    1 {}     grey16    {{1 2} {3 4}} {{1 2} {3 4}}
-    2 {}     grey32    {{1 2} {3 4}} {{1 2} {3 4}}
-    3 {}     float     {{1 2} {3 4}} {{1.0 2.0} {3.0 4.0}}
-    4   NYI  fpcomplex {} {}
-    5   NYI  rgb       {} {}
-    6   NYI  rgba      {} {}
-    7   NYI  hsv       {} {}
+foreach {n itype data result} {
+    0 grey8     {{1 2} {3 4}} {{1 2} {3 4}}
+    1 grey16    {{1 2} {3 4}} {{1 2} {3 4}}
+    2 grey32    {{1 2} {3 4}} {{1 2} {3 4}}
+    3 float     {{1 2} {3 4}} {{1.0 2.0} {3.0 4.0}}
+    4 fpcomplex {{1 2} {3 4}} {{{1.0 0.0} {2.0 0.0}} {{3.0 0.0} {4.0 0.0}}}
+    5 rgb       {{{1 2 3} {4 5 6}} {{7 8} {10 11 12}}} {{{1 2 3} {4 5 6}} {{7 8 0} {10 11 12}}}
+    6 rgba      {{{1 2 3} {4 5 6 7 8}} {{7 8}}} {{{1 2 3 0} {4 5 6 7}} {{7 8 0 0} {0 0 0 0}}}
+    7 hsv       {{{1 2 3} {4 5 6}} {{7 8} {10 11 12}}} {{{1 2 3} {4 5 6}} {{7 8 0} {10 11 12}}}
 } {
     test crimp-core-write-${itype}-1.0 "write tcl, $itype 2string" -setup {
         set image [crimp read tcl $itype $data]
@@ -718,7 +714,7 @@ foreach {n cando itype data result} {
         crimp write 2string tcl $image
     } -cleanup {
         unset image
-    } -result $result -constraints $cando
+    } -result $result
 
     test crimp-core-write-${itype}-1.1 "write tcl, $itype 2chan" -setup {
         set temp [tempPath CHAN]
@@ -731,7 +727,7 @@ foreach {n cando itype data result} {
     } -cleanup {
         file delete $temp
         unset image
-    } -result $result -constraints $cando
+    } -result $result
 
     test crimp-core-write-${itype}-1.2 "write tcl, $itype 2file" -setup {
         set temp [tempPath CHAN]
@@ -742,7 +738,7 @@ foreach {n cando itype data result} {
     } -cleanup {
         file delete $temp
         unset image
-    } -result $result -constraints $cando
+    } -result $result
 }
 
 # -------------------------------------------------------------------------

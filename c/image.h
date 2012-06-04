@@ -102,11 +102,13 @@ typedef struct crimp_image {
  * Pixel Access Macros. FPCOMPLEX.
  */
 
-#define REAL(iptr,x,y)      (0             + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
-#define IMAGINARY(iptr,x,y) (sizeof(float) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
+#define REAL(iptr,x,y)             (0              + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
+#define IMAGINARY(iptr,x,y)        (sizeof(float)  + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
+#define CHANF(iptr,c,x,y)   (((c) * sizeof(float)) + SZ(iptr) * ((x) + (y)*((size_t) (iptr)->geo.w)))
 
-#define RE(iptr,x,y) *((float*) &((iptr)->pixel [REAL      (iptr,x,y)]))
-#define IM(iptr,x,y) *((float*) &((iptr)->pixel [IMAGINARY (iptr,x,y)]))
+#define RE(iptr,x,y)    *((float*) &((iptr)->pixel [REAL      (iptr,x,y)]))
+#define IM(iptr,x,y)    *((float*) &((iptr)->pixel [IMAGINARY (iptr,x,y)]))
+#define CHF(iptr,c,x,y) *((float*) &((iptr)->pixel [CHANF   (iptr,c,x,y)]))
 
 /*
  * Other constants

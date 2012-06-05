@@ -8,7 +8,7 @@ source [file join \
 testsNeedTcl     8.5
 testsNeedTcltest 2
 
-#support { useLocal synth.tcl }
+support { useLocalFile synth.tcl }
 support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
 testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 

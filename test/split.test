@@ -1,0 +1,97 @@
+# -*- tcl -*-
+# -------------------------------------------------------------------------
+
+source [file join \
+            [file dirname [file join [pwd] [info script]]] \
+            testutilities.tcl]
+
+testsNeedTcl     8.5
+testsNeedTcltest 2
+
+support { useLocalFile synth.tcl }
+support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
+testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+
+# -------------------------------------------------------------------------
+## (pseudo-)Channel manipulation, splitting
+# -------------------------------------------------------------------------
+
+test crimp-split-1.0 {image splitting, wrong\#args, not enough} -body {
+    crimp split
+} -cleanup {
+} -returnCodes error -result {wrong # args: should be "crimp split image"}
+
+test crimp-split-1.1 {image splitting, wrong\#args, too many} -body {
+    crimp split IMAGE toomuch
+} -cleanup {
+} -returnCodes error -result {wrong # args: should be "crimp split image"}
+
+# -------------------------------------------------------------------------
+
+test crimp-split-2.0 {image splitting, grey16} -body {
+    lmap {crimp write 2string tcl} [crimp split [grey16]]
+} -result [list \
+	       {{0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0}} \
+	       {{0 1 2 3 4} {5 6 7 8 9} {10 11 12 13 14} {15 16 17 18 19} {20 21 22 23 24}}]
+
+test crimp-split-2.1 {image splitting, grey32} -body {
+    lmap {crimp write 2string tcl} [crimp split [grey32]]
+} -result [list \
+	       {{0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0}} \
+	       {{0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0}} \
+	       {{0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0} {0 0 0 0 0}} \
+	       {{0 1 2 3 4} {5 6 7 8 9} {10 11 12 13 14} {15 16 17 18 19} {20 21 22 23 24}}]
+
+test crimp-split-2.2 {image splitting, rgb} -body {
+    lmap {crimp write 2string tcl} [crimp split [rgb]]
+} -result [list \
+	       {{0 15 30 57 60} {3 16 41 56 68} {6 17 40 51 73} {9 18 39 50 71} {12 19 38 45 64}} \
+	       {{1 20 31 58 69} {4 21 42 55 61} {7 22 43 52 67} {10 23 44 49 63} {13 24 37 46 65}} \
+	       {{2 25 32 59 74} {5 26 33 54 70} {8 27 34 53 62} {11 28 35 48 66} {14 29 36 47 72}}]
+
+test crimp-split-2.3 {image splitting, rgba} -body {
+    lmap {crimp write 2string tcl} [crimp split [rgba]]
+} -result [list \
+	       {{0 15 30 57 60} {3 16 41 56 68} {6 17 40 51 73} {9 18 39 50 71} {12 19 38 45 64}} \
+	       {{1 20 31 58 69} {4 21 42 55 61} {7 22 43 52 67} {10 23 44 49 63} {13 24 37 46 65}} \
+	       {{2 25 32 59 74} {5 26 33 54 70} {8 27 34 53 62} {11 28 35 48 66} {14 29 36 47 72}} \
+	       {{75 84 85 86 87} {76 83 90 89 88} {77 82 91 98 97} {78 81 92 99 96} {79 80 93 94 95}}]
+
+test crimp-split-2.4 {image splitting, hsv} -body {
+    lmap {crimp write 2string tcl} [crimp split [hsv]]
+} -result [list \
+	       {{0 15 30 57 60} {3 16 41 56 68} {6 17 40 51 73} {9 18 39 50 71} {12 19 38 45 64}} \
+	       {{1 20 31 58 69} {4 21 42 55 61} {7 22 43 52 67} {10 23 44 49 63} {13 24 37 46 65}} \
+	       {{2 25 32 59 74} {5 26 33 54 70} {8 27 34 53 62} {11 28 35 48 66} {14 29 36 47 72}}]
+
+test crimp-split-2.5 {image splitting, fpcomplex} -body {
+    lmap {F %.0f} [lmap {crimp write 2string tcl} [crimp split [fpcomplex]]]
+} -result [list \
+	       {{0 15 30 57 60} {3 16 41 56 68} {6 17 40 51 73} {9 18 39 50 71} {12 19 38 45 64}} \
+	       {{1 20 31 58 69} {4 21 42 55 61} {7 22 43 52 67} {10 23 44 49 63} {13 24 37 46 65}}]
+
+# -------------------------------------------------------------------------
+## Handling of input location: Pass through to results.
+
+foreach {n itype nc} {
+    0 grey16    2
+    1 grey32    4
+    2 rgb       3
+    3 rgba      4
+    4 hsv       3
+    5 fpcomplex 2
+} {
+    test crimp-split-5.$n "image splitting, $itype, location handling" -body {
+	list $nc [::apply {image {
+	    lmap {crimp at} $image
+	}} [crimp split [crimp place [$itype] 23 45]]]
+    } -result [list $nc [lrepeat $nc {23 45}]]
+}
+
+# -------------------------------------------------------------------------
+testsuiteCleanup
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

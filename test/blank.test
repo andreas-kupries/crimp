@@ -276,6 +276,70 @@ test crimp-blank-5.11 {Blank images, float, empty} -body {
 test crimp-blank-5.12 {Blank images, float, empty} -body {
     crimp write 2string tcl [crimp blank float 0 4 0]
 } -result {}
+# -------------------------------------------------------------------------
+
+test crimp-blank-6.0 {Blank images, rgb, wrong\#args, not enough} -body {
+    crimp blank rgb W H
+} -cleanup {
+} -returnCodes error -result {wrong # args: should be "blank_rgb w h r g b"}
+
+test crimp-blank-6.1 {Blank images, rgb, wrong\#args, too many} -body {
+    crimp blank rgb W H R G B toomuch
+} -cleanup {
+} -returnCodes error -result {wrong # args: should be "blank_rgb w h r g b"}
+
+test crimp-blank-6.2 {Blank images, rgb, bogus dimensions} -body {
+    crimp blank rgb W H R G B
+} -cleanup {
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-blank-6.3 {Blank images, rgb, bogus dimensions} -body {
+    crimp blank rgb 3 H R G B
+} -cleanup {
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-6.4 {Blank images, rgb, bogus dimensions} -body {
+    crimp blank rgb 3 4 R G B
+} -cleanup {
+} -returnCodes error -result {expected integer but got "R"}
+
+test crimp-blank-6.5 {Blank images, rgb, bogus dimensions} -body {
+    crimp blank rgb 3 4 5 G B
+} -cleanup {
+} -returnCodes error -result {expected integer but got "G"}
+
+test crimp-blank-6.6 {Blank images, rgb, bogus dimensions} -body {
+    crimp blank rgb 3 4 5 6 B
+} -cleanup {
+} -returnCodes error -result {expected integer but got "B"}
+
+test crimp-blank-6.7 {Blank images, rgb} -body {
+    crimp write 2string tcl [crimp blank rgb 3 4 0 1 2]
+} -result {{{0 1 2} {0 1 2} {0 1 2}} {{0 1 2} {0 1 2} {0 1 2}} {{0 1 2} {0 1 2} {0 1 2}} {{0 1 2} {0 1 2} {0 1 2}}}
+
+test crimp-blank-6.8 {Blank images, rgb, auto-fill} -body {
+    crimp write 2string tcl [crimp blank rgb 3 4 255]
+} -result {{{255 0 0} {255 0 0} {255 0 0}} {{255 0 0} {255 0 0} {255 0 0}} {{255 0 0} {255 0 0} {255 0 0}} {{255 0 0} {255 0 0} {255 0 0}}}
+
+test crimp-blank-6.9 {Blank images, rgb, wrap around} -body {
+    crimp write 2string tcl [crimp blank rgb 3 4 256 257 258]
+} -result {{{0 1 2} {0 1 2} {0 1 2}} {{0 1 2} {0 1 2} {0 1 2}} {{0 1 2} {0 1 2} {0 1 2}} {{0 1 2} {0 1 2} {0 1 2}}}
+
+test crimp-blank-6.10 {Blank images, rgb, wrap around} -body {
+    crimp write 2string tcl [crimp blank rgb 3 4 -1 -2 -3]
+} -result {{{255 254 253} {255 254 253} {255 254 253}} {{255 254 253} {255 254 253} {255 254 253}} {{255 254 253} {255 254 253} {255 254 253}} {{255 254 253} {255 254 253} {255 254 253}}}
+
+test crimp-blank-6.11 {Blank images, rgb, empty} -body {
+    crimp write 2string tcl [crimp blank rgb 0 0 0]
+} -result {}
+
+test crimp-blank-6.12 {Blank images, rgb, empty} -body {
+    crimp write 2string tcl [crimp blank rgb 3 0 0]
+} -result {}
+
+test crimp-blank-6.13 {Blank images, rgb, empty} -body {
+    crimp write 2string tcl [crimp blank rgb 0 4 0]
+} -result {}
 
 # -------------------------------------------------------------------------
 testsuiteCleanup

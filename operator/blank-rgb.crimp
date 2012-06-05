@@ -1,0 +1,36 @@
+blank_rgb
+int w
+int h
+int r int g int b
+
+/*
+ * Create a blank rgb image (all pixels have the specified color (rgb value)).
+ */
+
+crimp_image*     result;
+int              x, y;
+
+result = crimp_new_rgb (w, h);
+
+if (w && h) {
+    for (y = 0; y < h; y++) {
+	for (x = 0; x < w; x++) {
+	    R (result, x, y) = r;
+	    G (result, x, y) = g;
+	    B (result, x, y) = b;
+	}
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

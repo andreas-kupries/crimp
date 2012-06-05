@@ -162,13 +162,19 @@
 <li><a href="#25"><b class="cmd">::crimp</b> <b class="method">width</b> <i class="arg">image</i></a></li>
 <li><a href="#26"><b class="cmd">::crimp</b> <b class="method">read</b> <i class="arg">...</i></a></li>
 <li><a href="#27"><b class="cmd">::crimp</b> <b class="method">read tcl grey8</b> <i class="arg">pixelmatrix</i></a></li>
-<li><a href="#28"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></li>
-<li><a href="#29"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></li>
-<li><a href="#30"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></li>
-<li><a href="#31"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></li>
-<li><a href="#32"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></li>
-<li><a href="#33"><b class="cmd">::crimp</b> <b class="method">bbox</b> <i class="arg">image</i>...</a></li>
-<li><a href="#34"><b class="cmd">::crimp</b> <b class="method">bbox2</b> <i class="arg">box1</i> <i class="arg">box2</i></a></li>
+<li><a href="#28"><b class="cmd">::crimp</b> <b class="method">read tcl grey16</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#29"><b class="cmd">::crimp</b> <b class="method">read tcl grey32</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#30"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#31"><b class="cmd">::crimp</b> <b class="method">read tcl fpcomplex</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#32"><b class="cmd">::crimp</b> <b class="method">read tcl rgb</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#33"><b class="cmd">::crimp</b> <b class="method">read tcl rgba</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#34"><b class="cmd">::crimp</b> <b class="method">read tcl hsv</b> <i class="arg">pixelmatrix</i></a></li>
+<li><a href="#35"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></li>
+<li><a href="#36"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></li>
+<li><a href="#37"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></li>
+<li><a href="#38"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></li>
+<li><a href="#39"><b class="cmd">::crimp</b> <b class="method">bbox</b> <i class="arg">image</i>...</a></li>
+<li><a href="#40"><b class="cmd">::crimp</b> <b class="method">bbox2</b> <i class="arg">box1</i> <i class="arg">box2</i></a></li>
 </ul>
 </div>
 </div>
@@ -492,14 +498,41 @@ the length of the outer list, and whose width is the maximum length
 found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
 <b class="const">0</b>.</p></dd>
-<dt><a name="28"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></dt>
+<dt><a name="28"><b class="cmd">::crimp</b> <b class="method">read tcl grey16</b> <i class="arg">pixelmatrix</i></a></dt>
+<dd></dd>
+<dt><a name="29"><b class="cmd">::crimp</b> <b class="method">read tcl grey32</b> <i class="arg">pixelmatrix</i></a></dt>
+<dd><p>These methods are like <b class="cmd">::crimp</b> <b class="method">read tcl grey8</b>, except
+that the resulting image is of the named type, and the range of input
+values is suitably extended, to [0..65535], and [0..4294967295]
+respectively.</p></dd>
+<dt><a name="30"><b class="cmd">::crimp</b> <b class="method">read tcl float</b> <i class="arg">pixelmatrix</i></a></dt>
 <dd><p>This method takes the <i class="arg">pixelmatrix</i>, a list of rows, with each row
 a list of floating point values for pixel values and returns an image
 of type <b class="const">float</b> whose height is the number of rows, i.e.  the
 length of the outer list, and whose width is the maximum length found
 among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with a pixel value of <b class="const">0</b>.</p></dd>
-<dt><a name="29"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></dt>
+<dt><a name="31"><b class="cmd">::crimp</b> <b class="method">read tcl fpcomplex</b> <i class="arg">pixelmatrix</i></a></dt>
+<dd><p>This methods is like <b class="cmd">::crimp</b> <b class="method">read tclfloat</b>, except
+that the resulting image is of the named type and each pixel of the
+<i class="arg">pixelmatrix</i> is a 2-tuple of floating point numbers for the real
+and imaginary parts, respectively.</p>
+<p><em>Note</em> that tuples with less than 2 values are extended to
+proper size by adding zeros, and that for tuples larger than 2 elements
+the excess elements are ignored.</p></dd>
+<dt><a name="32"><b class="cmd">::crimp</b> <b class="method">read tcl rgb</b> <i class="arg">pixelmatrix</i></a></dt>
+<dd></dd>
+<dt><a name="33"><b class="cmd">::crimp</b> <b class="method">read tcl rgba</b> <i class="arg">pixelmatrix</i></a></dt>
+<dd></dd>
+<dt><a name="34"><b class="cmd">::crimp</b> <b class="method">read tcl hsv</b> <i class="arg">pixelmatrix</i></a></dt>
+<dd><p>These methods are like <b class="cmd">::crimp</b> <b class="method">read tcl grey8</b>, except
+that the resulting image is of the named type,  and each pixel of the
+<i class="arg">pixelmatrix</i> is a 3-tuple (4-tuple for rgba) of integers in the
+domain [0..255]</p>
+<p><em>Note</em> that tuples with less than 3 (4) values are extended to
+proper size by adding zeros, and that for tuples larger than 3 (4) elements
+the excess elements are ignored.</p></dd>
+<dt><a name="35"><b class="cmd">::crimp</b> <b class="method">write</b> <i class="arg">...</i></a></dt>
 <dd><p>This ensemble command is the umbrella underneath which any and all
 functionality for writing images to external formats must be placed.</p>
 <p>This command is an <i class="term">extension point</i>. I.e., other packages
@@ -516,11 +549,11 @@ in question, to reduce the probability of naming conflicts.</p>
 <p>The commands used to extend the ensemble are not restricted in
 their argument signature, although they are expected to take at least
 an image as argument.</p></dd>
-<dt><a name="30"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></dt>
+<dt><a name="36"><b class="cmd">::crimp</b> <b class="method">write 2string</b> <i class="arg">format</i> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="31"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></dt>
+<dt><a name="37"><b class="cmd">::crimp</b> <b class="method">write 2chan</b> <i class="arg">format</i> <i class="arg">chan</i> <i class="arg">image</i></a></dt>
 <dd></dd>
-<dt><a name="32"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></dt>
+<dt><a name="38"><b class="cmd">::crimp</b> <b class="method">write 2file</b> <i class="arg">format</i> <i class="arg">path</i> <i class="arg">image</i></a></dt>
 <dd><p>This family of methods extends the basic <b class="cmd">::crimp write</b> ensemble.
 The input <i class="arg">image</i> is returned as either a binary string in the
 specified <i class="arg">format</i>, or written to the open channel <i class="arg">chan</i>, or
@@ -550,11 +583,11 @@ writing it to channel or file.</p>
 </div>
 <div id="subsection3" class="subsection"><h3><a name="subsection3">Support</a></h3>
 <dl class="definitions">
-<dt><a name="33"><b class="cmd">::crimp</b> <b class="method">bbox</b> <i class="arg">image</i>...</a></dt>
+<dt><a name="39"><b class="cmd">::crimp</b> <b class="method">bbox</b> <i class="arg">image</i>...</a></dt>
 <dd><p>This method takes one or more images and computes the union of their
 geometries. The result is returned as a bounding box, a list of 4
 numbers (x, y, width, and height).</p></dd>
-<dt><a name="34"><b class="cmd">::crimp</b> <b class="method">bbox2</b> <i class="arg">box1</i> <i class="arg">box2</i></a></dt>
+<dt><a name="40"><b class="cmd">::crimp</b> <b class="method">bbox2</b> <i class="arg">box1</i> <i class="arg">box2</i></a></dt>
 <dd><p>This method takes two bounding boxes (lists of 4 numbers (x, y, width,
 and height)) and returns their union bounding box.</p></dd>
 </dl>

@@ -1,7 +1,8 @@
 # -*- tcl -*-
 # # ## ### ##### ######## ############# #####################
 ##
-# A number of synthetic 'images' of various types, for use in tests.
+# A number of synthetic images of various types and other helper
+# functions specific to crimp.
 
 proc ramp {} {
     for {set i 0} {$i < 256} {incr i} {
@@ -90,3 +91,36 @@ proc fpcomplex {} {
 	{{12 13} {19 24} {38 37} {45 46} {64 65}}
     }
 }
+
+# # ## ### ##### ######## ############# #####################
+
+proc lmap {f list} {
+    set res {}
+    foreach x $list {
+	lappend res [{*}$f $x]
+    }
+    return $res
+}
+
+proc F {fmt pixels} {
+    set newpixels {}
+    foreach row $pixels {
+	set newrow {}
+	foreach cell $row {
+	    if {[llength $cell] > 1} {
+		set newcell {}
+		foreach c $cell {
+		    lappend newcell [format $fmt $c]
+		}
+	    } else {
+		set newcell [format $fmt $cell]
+	    }
+	    lappend newrow $newcell
+	}
+	lappend newpixels $newrow
+    }
+    return $newpixels
+}
+
+# # ## ### ##### ######## ############# #####################
+return

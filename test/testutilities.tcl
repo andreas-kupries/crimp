@@ -519,6 +519,8 @@ proc testing {script} {
 
 	return -code return
     }
+    set ::testutils::tag "%"
+    ShowBinaries
     return
 }
 
@@ -549,13 +551,18 @@ proc useC {glob name {outsideallowed yes}} {
 	}
     }
 
+    package forget $name
     uplevel #0 [list source $index]
     unset ::dir
-
     package require $name
 
     puts "$::testutils::tag $name [package present $name]"
     #puts "$::testutils::tag $name = [package ifneeded $name [package present $name]]"
+    return
+}
+
+proc ShowBinaries {} {
+    puts "$::testutils::tag = [join [info loaded] "\n$::testutils::tag = "]"
     return
 }
 

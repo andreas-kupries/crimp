@@ -3,7 +3,15 @@
 ##
 # A number of synthetic 'images' of various types, for use in tests.
 
-proc g8 {} {
+proc ramp {} {
+    for {set i 0} {$i < 256} {incr i} {
+	lappend ramp $i
+    }
+
+    crimp read tcl grey8 [list $ramp]
+}
+
+proc grey8 {} {
     crimp read tcl grey8 {
 	{ 0  1  2  3  4}
 	{ 5  6  7  8  9}
@@ -13,7 +21,7 @@ proc g8 {} {
     }
 }
 
-proc g16 {} {
+proc grey16 {} {
     crimp read tcl grey16 {
 	{ 0  1  2  3  4}
 	{ 5  6  7  8  9}
@@ -23,7 +31,7 @@ proc g16 {} {
     }
 }
 
-proc g32 {} {
+proc grey32 {} {
     crimp read tcl grey32 {
 	{ 0  1  2  3  4}
 	{ 5  6  7  8  9}
@@ -33,7 +41,7 @@ proc g32 {} {
     }
 }
 
-proc fp {} {
+proc float {} {
     crimp read tcl float {
 	{ 0  1  2  3  4}
 	{ 5  6  7  8  9}
@@ -73,7 +81,7 @@ proc hsv {} {
     }
 }
 
-proc complex {} {
+proc fpcomplex {} {
     crimp read tcl fpcomplex {
 	{{ 0  1} {15 20} {30 31} {57 58} {60 69}}
 	{{ 3  4} {16 21} {41 42} {56 55} {68 61}}

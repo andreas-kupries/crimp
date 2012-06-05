@@ -1,4 +1,4 @@
-# add.test -*- tcl -*-
+# -*- tcl -*-
 # -------------------------------------------------------------------------
 
 source [file join \
@@ -109,6 +109,10 @@ test crimp-blank-2.15 {Blank images, grey8, bad dimensions} -body {
     crimp blank grey8 -1 -1 0
 } -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
 
+test crimp-blank-2.16 {Blank images, grey8, coordinates} -body {
+    crimp at [crimp blank grey8 3 0 0]
+} -result {0 0}
+
 # -------------------------------------------------------------------------
 
 test crimp-blank-3.0 {Blank images, grey16, wrong\#args, not enough} -body {
@@ -179,6 +183,10 @@ test crimp-blank-3.14 {Blank images, grey16, bad dimensions} -body {
 test crimp-blank-3.15 {Blank images, grey16, bad dimensions} -body {
     crimp blank grey16 -1 -1 0
 } -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-3.16 {Blank images, grey16, coordinates} -body {
+    crimp at [crimp blank grey16 3 0 0]
+} -result {0 0}
 
 # -------------------------------------------------------------------------
 
@@ -252,6 +260,10 @@ test crimp-blank-4.15 {Blank images, grey32, bad dimensions} -body {
     crimp blank grey32 -1 -1 0
 } -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
 
+test crimp-blank-4.16 {Blank images, grey32, coordinates} -body {
+    crimp at [crimp blank grey32 3 0 0]
+} -result {0 0}
+
 # -------------------------------------------------------------------------
 
 test crimp-blank-5.0 {Blank images, float, wrong\#args, not enough} -body {
@@ -322,6 +334,10 @@ test crimp-blank-5.14 {Blank images, float, bad dimensions} -body {
 test crimp-blank-5.15 {Blank images, float, bad dimensions} -body {
     crimp blank float -1 -1 0
 } -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-5.16 {Blank images, float, coordinates} -body {
+    crimp at [crimp blank float 3 0 0]
+} -result {0 0}
 
 # -------------------------------------------------------------------------
 
@@ -399,6 +415,10 @@ test crimp-blank-6.15 {Blank images, rgb, bad dimensions} -body {
 test crimp-blank-6.16 {Blank images, rgb, bad dimensions} -body {
     crimp blank rgb -1 -1 0
 } -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-6.17 {Blank images, rgb, coordinates} -body {
+    crimp at [crimp blank rgb 3 0 0]
+} -result {0 0}
 
 # -------------------------------------------------------------------------
 
@@ -482,6 +502,10 @@ test crimp-blank-7.16 {Blank images, rgba, bad dimensions} -body {
     crimp blank rgba -1 -1 0
 } -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
 
+test crimp-blank-7.17 {Blank images, rgba, coordinates} -body {
+    crimp at [crimp blank rgba 3 0 0]
+} -result {0 0}
+
 # -------------------------------------------------------------------------
 
 test crimp-blank-8.0 {Blank images, hsv, wrong\#args, not enough} -body {
@@ -559,6 +583,10 @@ test crimp-blank-8.16 {Blank images, hsv, bad dimensions} -body {
     crimp blank hsv -1 -1 0
 } -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
 
+test crimp-blank-8.17 {Blank images, hsv, coordinates} -body {
+    crimp at [crimp blank hsv 3 0 0]
+} -result {0 0}
+
 # -------------------------------------------------------------------------
 
 test crimp-blank-9.0 {Blank images, fpcomplex, wrong\#args, not enough} -body {
@@ -634,6 +662,10 @@ test crimp-blank-9.15 {Blank images, fpcomplex, bad dimensions} -body {
 test crimp-blank-9.16 {Blank images, fpcomplex, bad dimensions} -body {
     crimp blank fpcomplex -1 -1 0
 } -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-9.17 {Blank images, fpcomplex, coordinates} -body {
+    crimp at [crimp blank fpcomplex 3 0 0]
+} -result {0 0}
 
 # -------------------------------------------------------------------------
 testsuiteCleanup

@@ -10,16 +10,16 @@ crimp_input (imageObj, image, float);
 
 res = Tcl_NewListObj (0, NULL);
 
-for (y = 0; y < crimp_h(image); y++) {
+if (crimp_h(image) && crimp_w(image)) {
+    for (y = 0; y < crimp_h(image); y++) {
+	line = Tcl_NewListObj (0, NULL);
 
-    line = Tcl_NewListObj (0, NULL);
-
-    for (x = 0; x < crimp_w(image); x++) {
-	Tcl_ListObjAppendElement (interp, line,
-				  Tcl_NewDoubleObj (FLOATP (image, x, y)));
-
+	for (x = 0; x < crimp_w(image); x++) {
+	    Tcl_ListObjAppendElement (interp, line,
+				      Tcl_NewDoubleObj (FLOATP (image, x, y)));
+	}
+	Tcl_ListObjAppendElement (interp, res, line);
     }
-    Tcl_ListObjAppendElement (interp, res, line);
 }
 
 Tcl_SetObjResult(interp, res);

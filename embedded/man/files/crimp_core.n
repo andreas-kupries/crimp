@@ -302,7 +302,19 @@ package require \fBcrimp::core  ?0.2?\fR
 .sp
 \fB::crimp\fR \fBread tcl grey8\fR \fIpixelmatrix\fR
 .sp
+\fB::crimp\fR \fBread tcl grey16\fR \fIpixelmatrix\fR
+.sp
+\fB::crimp\fR \fBread tcl grey32\fR \fIpixelmatrix\fR
+.sp
 \fB::crimp\fR \fBread tcl float\fR \fIpixelmatrix\fR
+.sp
+\fB::crimp\fR \fBread tcl fpcomplex\fR \fIpixelmatrix\fR
+.sp
+\fB::crimp\fR \fBread tcl rgb\fR \fIpixelmatrix\fR
+.sp
+\fB::crimp\fR \fBread tcl rgba\fR \fIpixelmatrix\fR
+.sp
+\fB::crimp\fR \fBread tcl hsv\fR \fIpixelmatrix\fR
 .sp
 \fB::crimp\fR \fBwrite\fR \fI...\fR
 .sp
@@ -727,6 +739,14 @@ found among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with black pixels, i.e. a pixel value of
 \fB0\fR.
 .TP
+\fB::crimp\fR \fBread tcl grey16\fR \fIpixelmatrix\fR
+.TP
+\fB::crimp\fR \fBread tcl grey32\fR \fIpixelmatrix\fR
+These methods are like \fB::crimp\fR \fBread tcl grey8\fR, except
+that the resulting image is of the named type, and the range of input
+values is suitably extended, to [0..65535], and [0..4294967295]
+respectively.
+.TP
 \fB::crimp\fR \fBread tcl float\fR \fIpixelmatrix\fR
 This method takes the \fIpixelmatrix\fR, a list of rows, with each row
 a list of floating point values for pixel values and returns an image
@@ -734,6 +754,30 @@ of type \fBfloat\fR whose height is the number of rows, i.e.  the
 length of the outer list, and whose width is the maximum length found
 among the inner lists. Rows whose inner list is shorter than the
 maximum length are padded with a pixel value of \fB0\fR.
+.TP
+\fB::crimp\fR \fBread tcl fpcomplex\fR \fIpixelmatrix\fR
+This methods is like \fB::crimp\fR \fBread tclfloat\fR, except
+that the resulting image is of the named type and each pixel of the
+\fIpixelmatrix\fR is a 2-tuple of floating point numbers for the real
+and imaginary parts, respectively.
+.sp
+\fINote\fR that tuples with less than 2 values are extended to
+proper size by adding zeros, and that for tuples larger than 2 elements
+the excess elements are ignored.
+.TP
+\fB::crimp\fR \fBread tcl rgb\fR \fIpixelmatrix\fR
+.TP
+\fB::crimp\fR \fBread tcl rgba\fR \fIpixelmatrix\fR
+.TP
+\fB::crimp\fR \fBread tcl hsv\fR \fIpixelmatrix\fR
+These methods are like \fB::crimp\fR \fBread tcl grey8\fR, except
+that the resulting image is of the named type,  and each pixel of the
+\fIpixelmatrix\fR is a 3-tuple (4-tuple for rgba) of integers in the
+domain [0..255]
+.sp
+\fINote\fR that tuples with less than 3 (4) values are extended to
+proper size by adding zeros, and that for tuples larger than 3 (4) elements
+the excess elements are ignored.
 .TP
 \fB::crimp\fR \fBwrite\fR \fI...\fR
 This ensemble command is the umbrella underneath which any and all

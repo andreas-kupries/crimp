@@ -1324,6 +1324,12 @@ proc ::crimp::blank {type w h args} {
     if {![Has blank_$type]} {
 	return -code error "Unable to create blank images of type \"$type\""
     }
+    if {$w < 0} {
+	return -code error "Illegal width, expected positive integer, got \"$w\""
+    }
+    if {$h < 0} {
+	return -code error "Illegal height, expected positive integer, got \"$h\""
+    }
 
     # Extend the set of channel values if not enough were specified,
     # by setting to them to BLACK or TRANSPARENT, respectively.

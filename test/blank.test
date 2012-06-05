@@ -38,8 +38,8 @@ test crimp-blank-1.3 {Blank images, bogus image type} -body {
 } -cleanup {
 } -returnCodes error -result {Unable to create blank images of type "BOGUS"}
 
+# -------------------------------------------------------------------------
 # TODO: rgb, rgba, hsv, fpcomplex.
-# TODO: Test cases for negative dimensions.
 # -------------------------------------------------------------------------
 
 test crimp-blank-2.0 {Blank images, grey8, wrong\#args, not enough} -body {
@@ -99,6 +99,18 @@ test crimp-blank-2.12 {Blank images, grey8, empty} -body {
     crimp write 2string tcl [crimp blank grey8 0 4 0]
 } -result {}
 
+test crimp-blank-2.13 {Blank images, grey8, bad dimensions} -body {
+    crimp blank grey8 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-2.14 {Blank images, grey8, bad dimensions} -body {
+    crimp blank grey8 -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-2.15 {Blank images, grey8, bad dimensions} -body {
+    crimp blank grey8 -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
 # -------------------------------------------------------------------------
 
 test crimp-blank-3.0 {Blank images, grey16, wrong\#args, not enough} -body {
@@ -157,6 +169,18 @@ test crimp-blank-3.11 {Blank images, grey16, empty} -body {
 test crimp-blank-3.12 {Blank images, grey16, empty} -body {
     crimp write 2string tcl [crimp blank grey16 0 4 0]
 } -result {}
+
+test crimp-blank-3.13 {Blank images, grey16, bad dimensions} -body {
+    crimp blank grey16 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-3.14 {Blank images, grey16, bad dimensions} -body {
+    crimp blank grey16 -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-3.15 {Blank images, grey16, bad dimensions} -body {
+    crimp blank grey16 -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
 
 # -------------------------------------------------------------------------
 
@@ -218,6 +242,18 @@ test crimp-blank-4.12 {Blank images, grey32, empty} -body {
     crimp write 2string tcl [crimp blank grey32 0 4 0]
 } -result {}
 
+test crimp-blank-4.13 {Blank images, grey32, bad dimensions} -body {
+    crimp blank grey32 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-4.14 {Blank images, grey32, bad dimensions} -body {
+    crimp blank grey32 -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-4.15 {Blank images, grey32, bad dimensions} -body {
+    crimp blank grey32 -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
 # -------------------------------------------------------------------------
 
 test crimp-blank-5.0 {Blank images, float, wrong\#args, not enough} -body {
@@ -276,6 +312,19 @@ test crimp-blank-5.11 {Blank images, float, empty} -body {
 test crimp-blank-5.12 {Blank images, float, empty} -body {
     crimp write 2string tcl [crimp blank float 0 4 0]
 } -result {}
+
+test crimp-blank-5.13 {Blank images, float, bad dimensions} -body {
+    crimp blank float 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-5.14 {Blank images, float, bad dimensions} -body {
+    crimp blank float -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-5.15 {Blank images, float, bad dimensions} -body {
+    crimp blank float -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
 # -------------------------------------------------------------------------
 
 test crimp-blank-6.0 {Blank images, rgb, wrong\#args, not enough} -body {
@@ -340,6 +389,18 @@ test crimp-blank-6.12 {Blank images, rgb, empty} -body {
 test crimp-blank-6.13 {Blank images, rgb, empty} -body {
     crimp write 2string tcl [crimp blank rgb 0 4 0]
 } -result {}
+
+test crimp-blank-6.14 {Blank images, rgb, bad dimensions} -body {
+    crimp blank rgb 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-6.15 {Blank images, rgb, bad dimensions} -body {
+    crimp blank rgb -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-6.16 {Blank images, rgb, bad dimensions} -body {
+    crimp blank rgb -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
 
 # -------------------------------------------------------------------------
 testsuiteCleanup

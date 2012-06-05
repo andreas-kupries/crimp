@@ -175,6 +175,20 @@ StringOfImage (Tcl_Obj* imgObjPtr)
     /* image type */
     Tcl_DStringAppendElement (&ds, ci->itype->name);
 
+    /* image x */
+    {
+	char xstring [20];
+	sprintf (xstring, "%d", ci->geo.x);
+	Tcl_DStringAppendElement (&ds, xstring);
+    }
+
+    /* image y */
+    {
+	char ystring [20];
+	sprintf (ystring, "%d", ci->geo.y);
+	Tcl_DStringAppendElement (&ds, ystring);
+    }
+
     /* image width */
     {
 	char wstring [20];
@@ -274,7 +288,7 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
 {
     int       objc;
     Tcl_Obj **objv;
-    int w, h, length;
+    int x, y, w, h, length;
     crimp_pixel_array pixel;
     crimp_image* ci;
     crimp_imagetype* ct;
@@ -284,27 +298,29 @@ ImageFromAny (Tcl_Interp* interp, Tcl_Obj* imgObjPtr)
 	return TCL_ERROR;
     }
 
-    if (objc != 5) {
+    if (objc != 7) {
     invalid:
 	Tcl_SetResult(interp, "invalid image format", TCL_STATIC);
 	return TCL_ERROR;
     }
 
     if ((crimp_get_imagetype_from_obj (interp, objv[0], &ct) != TCL_OK) ||
-        (Tcl_GetIntFromObj            (interp, objv[1], &w) != TCL_OK) ||
-	(Tcl_GetIntFromObj            (interp, objv[2], &h) != TCL_OK) ||
+        (Tcl_GetIntFromObj            (interp, objv[1], &x) != TCL_OK) ||
+	(Tcl_GetIntFromObj            (interp, objv[2], &y) != TCL_OK) ||
+        (Tcl_GetIntFromObj            (interp, objv[3], &w) != TCL_OK) ||
+	(Tcl_GetIntFromObj            (interp, objv[4], &h) != TCL_OK) ||
 	(w < 0) || (h < 0)) {
 	goto invalid;
     }
 
-    pixel = Tcl_GetByteArrayFromObj (objv[4], &length);
+    pixel = Tcl_GetByteArrayFromObj (objv[6], &length);
     if (length != (ct->size * CRIMP_RECT_AREA (w, h))) {
 	goto invalid;
     }
 
-    meta = objv[3];
+    meta = objv[5];
 
-    ci = crimp_newm (ct, w, h, meta);
+    ci = crimp_newm_at (ct, x, y, w, h, meta);
     memcpy(ci->pixel, pixel, length);
 
     /*

@@ -235,8 +235,12 @@ This method returns a blank image of the given image type and
 dimensions.  The [arg value]s after the dimensions are the pixel
 values to fill the pixels in the image's channels with, per its type.
 
-[para] This method currently support only the types [const rgb],
-[const rgba],[const fpcomplex], and [const grey8].
+[para] The method supports the image types [const rgb], [const rgba],
+[const hsv], [const float], [const fpcomplex], [const grey8],
+[const grey16], and [const grey32].
+
+[para] For the multi-channel types the method automatically extends the
+pixel values with [const 0] if not enough values were provided.
 
 
 [call [cmd ::crimp] [method crop] [arg image] [arg ww] [arg hn] [arg we] [arg hs]]

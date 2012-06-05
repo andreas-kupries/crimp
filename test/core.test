@@ -102,6 +102,8 @@ test crimp-core-pixel-1.2 "Accessors: pixel" -setup {
 # -------------------------------------------------------------------------
 ## Core image types, i.e. types the core can create ...
 
+## TODO : Create image values bogus in various ways,
+##        check their rejection by the intrep conversion.
 ## TODO : Tests for the error conditions (legal range of input values, non-lists).
 
 foreach {n itype channels} {
@@ -197,11 +199,11 @@ test crimp-meta-2.1 {Accessor: meta create command, wrong#args} -returnCodes err
 
 test crimp-meta-2.2 {Accessor: meta create command} -body {
     crimp meta create [empty]
-} -result {crimp::image::grey8 0 0 {} {}}
+} -result {crimp::image::grey8 0 0 0 0 {} {}}
 
 test crimp-meta-2.3 {Accessor: meta create command} -body {
     crimp meta create [empty] a b
-} -result {crimp::image::grey8 0 0 {a b} {}}
+} -result {crimp::image::grey8 0 0 0 0 {a b} {}}
 
 test crimp-meta-3.1 {Accessor: meta get command} {
     crimp meta get [emeta {a b}] a
@@ -709,6 +711,15 @@ foreach {n itype data result} {
     5 rgb       {{{1 2 3} {4 5 6}} {{7 8} {10 11 12}}} {{{1 2 3} {4 5 6}} {{7 8 0} {10 11 12}}}
     6 rgba      {{{1 2 3} {4 5 6 7 8}} {{7 8}}} {{{1 2 3 0} {4 5 6 7}} {{7 8 0 0} {0 0 0 0}}}
     7 hsv       {{{1 2 3} {4 5 6}} {{7 8} {10 11 12}}} {{{1 2 3} {4 5 6}} {{7 8 0} {10 11 12}}}
+
+    10 grey8     {} {}
+    11 grey16    {} {}
+    12 grey32    {} {}
+    13 float     {} {}
+    14 fpcomplex {} {}
+    15 rgb       {} {}
+    16 rgba      {} {}
+    17 hsv       {} {}
 } {
     test crimp-core-write-${itype}-1.0 "write tcl, $itype 2string" -setup {
         set image [crimp read tcl $itype $data]
@@ -741,6 +752,91 @@ foreach {n itype data result} {
         file delete $temp
         unset image
     } -result $result
+}
+
+# Generate various types of empty images, infinitely thin vertically,
+# or horizontally.
+foreach {n itype} {
+    grey8
+    grey16
+    grey32
+    float
+    fpcomplex
+    rgb
+    rgba
+    hsv
+} {
+    test crimp-core-write-${itype}-2.0 "write tcl, $itype 2string, empty" -body {
+        crimp write 2string tcl [list crimp::image::$itype 0 0 0 0 {} {}]
+    } -result {}
+
+    test crimp-core-write-${itype}-3.0 "write tcl, $itype 2string, no rows" -body {
+        crimp write 2string tcl [list crimp::image::$itype 0 0 3 0 {} {}]
+    } -result {}
+
+    test crimp-core-write-${itype}-4.0 "write tcl, $itype 2string, no columns" -body {
+        crimp write 2string tcl [list crimp::image::$itype 0 0 0 3 {} {}]
+    } -result {}
+
+    test crimp-core-write-${itype}-2.1 "write tcl, $itype 2chan, empty" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        set c [open $temp w]
+        crimp write 2chan tcl $c [list crimp::image::$itype 0 0 0 0 {} {}]
+        close $c
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-3.1 "write tcl, $itype 2chan, no rows" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        set c [open $temp w]
+        crimp write 2chan tcl $c [list crimp::image::$itype 0 0 3 0 {} {}]
+        close $c
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-4.1 "write tcl, $itype 2chan, no columns" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        set c [open $temp w]
+        crimp write 2chan tcl $c [list crimp::image::$itype 0 0 0 3 {} {}]
+        close $c
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-2.2 "write tcl, $itype 2file, empty" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        crimp write 2file tcl $temp [list crimp::image::$itype 0 0 0 0 {} {}]
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-3.2 "write tcl, $itype 2file, no rows" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        crimp write 2file tcl $temp [list crimp::image::$itype 0 0 3 0 {} {}]
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-4.2 "write tcl, $itype 2file, no columns" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        crimp write 2file tcl $temp [list crimp::image::$itype 0 0 0 3 {} {}]
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
 }
 
 # -------------------------------------------------------------------------

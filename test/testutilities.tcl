@@ -10,6 +10,26 @@ namespace eval ::testutils {
     variable theEnv  ; # Saved environment.
 }
 
+proc F {fmt pixels} {
+    set newpixels {}
+    foreach row $pixels {
+	set newrow {}
+	foreach cell $row {
+	    if {[llength $cell] > 1} {
+		set newcell {}
+		foreach c $cell {
+		    lappend newcell [format $fmt $c]
+		}
+	    } else {
+		set newcell [format $fmt $cell]
+	    }
+	    lappend newrow $newcell
+	}
+	lappend newpixels $newrow
+    }
+    return $newpixels
+}
+
 # ### ### ### ######### ######### #########
 ## Commands for common functions and boilerplate actions required by
 ## many testsuites of modules and packages in a central place for

@@ -1342,6 +1342,13 @@ proc ::crimp::blank {type w h args} {
 		}
 	    }
 	}
+	fpcomplex {
+	    if {[llength $args]} {
+		while {[llength $args] < 2} {
+		    lappend args 0
+		}
+	    }
+	}
 	rgba {
 	    # black and transparent have the same raw value, 0. This
 	    # obviates the need to handle the alpha channel

@@ -526,7 +526,12 @@ proc testing {script} {
 proc useC {glob name {outsideallowed yes}} {
     global dir
 
-    set dir   [lindex [glob $glob] 0]
+    # The sorting usually puts the best match (with version
+    # immediately after the fioxed part), at the front. If not, we
+    # will have to extend this command withe the ability to specify
+    # exclusion patterns.
+
+    set dir   [lindex [lsort -dict [glob $glob]] 0]
     set index $dir/pkgIndex.tcl
 
     if {![file exists $index]} {
@@ -536,7 +541,7 @@ proc useC {glob name {outsideallowed yes}} {
 		package require $name
 	    }]} {
 		puts "$::testutils::tag $name [package present $name]"
-		puts "$::testutils::tag $name = [package ifneeded $name [package present $name]]"
+		#puts "$::testutils::tag $name = [package ifneeded $name [package present $name]]"
 		return
 	    }
 	} else {
@@ -550,7 +555,7 @@ proc useC {glob name {outsideallowed yes}} {
     package require $name
 
     puts "$::testutils::tag $name [package present $name]"
-    puts "$::testutils::tag $name = [package ifneeded $name [package present $name]]"
+    #puts "$::testutils::tag $name = [package ifneeded $name [package present $name]]"
     return
 }
 

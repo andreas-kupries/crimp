@@ -12,11 +12,13 @@ int              x, y;
 
 result = crimp_new_rgb (w, h);
 
-for (y = 0; y < h; y++) {
-    for (x = 0; x < w; x++) {
-	R (result, x, y) = r;
-	G (result, x, y) = g;
-	B (result, x, y) = b;
+if (w && h) {
+    for (y = 0; y < h; y++) {
+	for (x = 0; x < w; x++) {
+	    R (result, x, y) = r;
+	    G (result, x, y) = g;
+	    B (result, x, y) = b;
+	}
     }
 }
 

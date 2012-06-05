@@ -12,9 +12,11 @@ int              x, y;
 
 result = crimp_new_grey8 (w, h);
 
-for (y = 0; y < h; y++) {
-    for (x = 0; x < w; x++) {
-	GREY8 (result, x, y) = value;
+if (w && h) {
+    for (y = 0; y < h; y++) {
+	for (x = 0; x < w; x++) {
+	    GREY8 (result, x, y) = value;
+	}
     }
 }
 

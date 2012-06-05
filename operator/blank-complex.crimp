@@ -13,10 +13,12 @@ int              x, y;
 
 result = crimp_new_fpcomplex (w, h);
 
-for (y = 0; y < h; y++) {
-    for (x = 0; x < w; x++) {
-	RE (result, x, y) = re;
-	IM (result, x, y) = im;
+if (w && h) {
+    for (y = 0; y < h; y++) {
+	for (x = 0; x < w; x++) {
+	    RE (result, x, y) = re;
+	    IM (result, x, y) = im;
+	}
     }
 }
 

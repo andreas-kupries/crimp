@@ -94,6 +94,14 @@ proc fpcomplex {} {
 
 # # ## ### ##### ######## ############# #####################
 
+proc trim {str} {
+    join [lmap {string trimleft} [split [string trimleft $str] \n]] \n
+}
+
+proc bw {tclimage} {
+    string map {{ } {}} [join [string map {1.0 * 0.0 . 255 * 0 .} $tclimage] \n]
+}
+
 proc cstat {stat key chan} {
     dict get $stat channel $chan $key
 }

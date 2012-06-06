@@ -94,6 +94,10 @@ proc fpcomplex {} {
 
 # # ## ### ##### ######## ############# #####################
 
+proc cstat {stat key chan} {
+    dict get $stat channel $chan $key
+}
+
 proc lmap {f list} {
     set res {}
     foreach x $list {

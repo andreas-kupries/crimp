@@ -18,12 +18,10 @@ testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 
 test crimp-invert-1.0 {image inversion, wrong\#args, not enough} -body {
     crimp invert
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "crimp invert image"}
 
 test crimp-invert-1.1 {image inversion, wrong\#args, too many} -body {
     crimp invert IMAGE toomuch
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "crimp invert image"}
 
 # -------------------------------------------------------------------------

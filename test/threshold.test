@@ -32,21 +32,23 @@ test crimp-threshold-1.2 {image thresholding, invalid method} -body {
 
 # -------------------------------------------------------------------------
 ## Types: grey8, float, hsv, rgb, rgba
-## global: below, above, inside, outside, otsu, middle, mean, median
+## global: otsu, mean, median
 ## local
 #
 ## TODO (implementation): grey16, grey32
 # -------------------------------------------------------------------------
-# below    P <= T ? 1 : 0 (highlight pixels below or equal to threshold T)
-# above    P >  T ? 1 : 0 (!below (P, T))
-# inside   MIN <= P <= MAX ? 1 : 0
+# below    P <= T          ? WHITE : BLACK (highlight/object pixels below or equal to threshold T)
+# above    P >  T          ? WHITE : BLACK (!below (P, T))
+# inside   MIN <= P <= MAX ? WHITE : BLACK
 # outside  (!inside (MIN, P, MAX))
 # otsu     above (P, otsu)
 # middle   above (P, middle), middle = 1/2(Pmin+Pmax)
 # mean     above (P, mean),   mean = arithmetic average over all pixels
 # median   above (P, median), median over all pixels (half are below, others above)
 #
-# Note: 1 <=> max-grey-value for the greyN based image types.
+# Note:
+# WHITE, BLACK = max-grey-val, 0 for the greyN based types
+#              =            1, 0 for the float based types.
 # -------------------------------------------------------------------------
 
 test crimp-threshold-2.0 {image thresholding, global, below, wrong\#args, not enough} -body {
@@ -583,6 +585,253 @@ test crimp-threshold-4.3 {image thresholding, global, inside, wrong\#args, too m
     crimp threshold global inside IMAGE MIN MAX toomuch
 } -returnCodes error -result {wrong # args: should be "crimp threshold global inside image min max"}
 
+# Note: For a first set the 'inside' tests use pixel ranges which emulate 'below'.
+
+test crimp-threshold-4.4.0 {image thresholding, global, inside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global inside [grey8] 0 0]
+} -result [list \
+	       {255 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} ]
+
+test crimp-threshold-4.4.1 {image thresholding, global, inside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global inside [grey8] 0 1]
+} -result [list \
+	       {255 255 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0}]
+
+test crimp-threshold-4.4.2 {image thresholding, global, inside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global inside [grey8] 0 20]
+} -result [list \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 0 0 0 0}]
+
+test crimp-threshold-4.4.3 {image thresholding, global, inside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global inside [grey8] 0 255]
+} -result [list \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255}]
+
+test crimp-threshold-4.4.4 {image thresholding, global, inside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global inside [grey8] 0 256]
+} -result [list \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255}]
+
+test crimp-threshold-4.5.0 {image thresholding, global, inside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgb] 0 0]
+} -result [list \
+	       {{255 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-4.5.1 {image thresholding, global, inside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgb] 0 1]
+} -result [list \
+	       {{255 255 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-4.5.2 {image thresholding, global, inside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgb] 0 20]
+} -result [list \
+	       {{255 255 255} {255 255 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{255 255 255} {255 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{255 255 255} {255 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{255 255 255} {255 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{255 255 255} {255 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-4.5.3 {image thresholding, global, inside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgb] 0 255]
+} -result [list \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-4.5.4 {image thresholding, global, inside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgb] 0 256]
+} -result [list \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-4.6.0 {image thresholding, global, inside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgba] 0 0]
+    # alpha channel is not thresholded
+} -result [list \
+	       {{255 0 0 75} {0 0 0 84} {0 0 0 85} {0 0 0 86} {0 0 0 87}} \
+	       {{0 0 0 76} {0 0 0 83} {0 0 0 90} {0 0 0 89} {0 0 0 88}} \
+	       {{0 0 0 77} {0 0 0 82} {0 0 0 91} {0 0 0 98} {0 0 0 97}} \
+	       {{0 0 0 78} {0 0 0 81} {0 0 0 92} {0 0 0 99} {0 0 0 96}} \
+	       {{0 0 0 79} {0 0 0 80} {0 0 0 93} {0 0 0 94} {0 0 0 95}}]
+
+test crimp-threshold-4.6.1 {image thresholding, global, inside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgba] 0 1]
+    # alpha channel is not thresholded
+} -result [list \
+	       {{255 255 0 75} {0 0 0 84} {0 0 0 85} {0 0 0 86} {0 0 0 87}} \
+	       {{0 0 0 76} {0 0 0 83} {0 0 0 90} {0 0 0 89} {0 0 0 88}} \
+	       {{0 0 0 77} {0 0 0 82} {0 0 0 91} {0 0 0 98} {0 0 0 97}} \
+	       {{0 0 0 78} {0 0 0 81} {0 0 0 92} {0 0 0 99} {0 0 0 96}} \
+	       {{0 0 0 79} {0 0 0 80} {0 0 0 93} {0 0 0 94} {0 0 0 95}}]
+
+test crimp-threshold-4.6.2 {image thresholding, global, inside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgba] 0 20]
+} -result [list \
+	       {{255 255 255 75} {255 255 0 84} {0 0 0 85} {0 0 0 86} {0 0 0 87}} \
+	       {{255 255 255 76} {255 0 0 83} {0 0 0 90} {0 0 0 89} {0 0 0 88}} \
+	       {{255 255 255 77} {255 0 0 82} {0 0 0 91} {0 0 0 98} {0 0 0 97}} \
+	       {{255 255 255 78} {255 0 0 81} {0 0 0 92} {0 0 0 99} {0 0 0 96}} \
+	       {{255 255 255 79} {255 0 0 80} {0 0 0 93} {0 0 0 94} {0 0 0 95}}]
+
+test crimp-threshold-4.6.3 {image thresholding, global, inside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgba] 0 255]
+} -result [list \
+	       {{255 255 255 75} {255 255 255 84} {255 255 255 85} {255 255 255 86} {255 255 255 87}} \
+	       {{255 255 255 76} {255 255 255 83} {255 255 255 90} {255 255 255 89} {255 255 255 88}} \
+	       {{255 255 255 77} {255 255 255 82} {255 255 255 91} {255 255 255 98} {255 255 255 97}} \
+	       {{255 255 255 78} {255 255 255 81} {255 255 255 92} {255 255 255 99} {255 255 255 96}} \
+	       {{255 255 255 79} {255 255 255 80} {255 255 255 93} {255 255 255 94} {255 255 255 95}}]
+
+test crimp-threshold-4.6.4 {image thresholding, global, inside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global inside [rgba] 0 256]
+} -result [list \
+	       {{255 255 255 75} {255 255 255 84} {255 255 255 85} {255 255 255 86} {255 255 255 87}} \
+	       {{255 255 255 76} {255 255 255 83} {255 255 255 90} {255 255 255 89} {255 255 255 88}} \
+	       {{255 255 255 77} {255 255 255 82} {255 255 255 91} {255 255 255 98} {255 255 255 97}} \
+	       {{255 255 255 78} {255 255 255 81} {255 255 255 92} {255 255 255 99} {255 255 255 96}} \
+	       {{255 255 255 79} {255 255 255 80} {255 255 255 93} {255 255 255 94} {255 255 255 95}}]
+
+test crimp-threshold-4.7.0 {image thresholding, global, inside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global inside [hsv] 0 0]
+} -result [list \
+	       {{255 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-4.7.1 {image thresholding, global, inside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global inside [hsv] 0 1]
+} -result [list \
+	       {{255 255 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-4.7.2 {image thresholding, global, inside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global inside [hsv] 0 20]
+} -result [list \
+	       {{255 255 255} {255 255 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{255 255 255} {255 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{255 255 255} {255 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{255 255 255} {255 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{255 255 255} {255 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-4.7.3 {image thresholding, global, inside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global inside [hsv] 0 255]
+} -result [list \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-4.7.4 {image thresholding, global, inside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global inside [hsv] 0 256]
+} -result [list \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-4.8.0 {image thresholding, global, inside, float} -body {
+    crimp write 2string tcl [crimp threshold global inside [float] 0 0]
+} -result [list \
+	       {1.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0}]
+
+test crimp-threshold-4.8.1 {image thresholding, global, inside, float} -body {
+    crimp write 2string tcl [crimp threshold global inside [float] 0 -1]
+} -result [list \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0}]
+
+test crimp-threshold-4.8.2 {image thresholding, global, inside, float} -body {
+    crimp write 2string tcl [crimp threshold global inside [float] 0 1]
+} -result [list \
+	       {1.0 1.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0}]
+
+test crimp-threshold-4.8.3 {image thresholding, global, inside, float} -body {
+    crimp write 2string tcl [crimp threshold global inside [float] 0 15.5]
+} -result [list \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0}]
+
+test crimp-threshold-4.8.4 {image thresholding, global, inside, float} -body {
+    crimp write 2string tcl [crimp threshold global inside [float] 0 20]
+} -result [list \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 0.0 0.0 0.0 0.0}]
+
+test crimp-threshold-4.8.5 {image thresholding, global, inside, float} -body {
+    crimp write 2string tcl [crimp threshold global inside [float] 0 255]
+} -result [list \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0}]
+
+test crimp-threshold-4.8.6 {image thresholding, global, inside, float} -body {
+    crimp write 2string tcl [crimp threshold global inside [float] 0 256]
+} -result [list \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0}]
+
 # -------------------------------------------------------------------------
 
 test crimp-threshold-5.0 {image thresholding, global, outside, wrong\#args, not enough} -body {
@@ -600,6 +849,253 @@ test crimp-threshold-5.2 {image thresholding, global, outside, wrong\#args, not 
 test crimp-threshold-5.3 {image thresholding, global, outside, wrong\#args, too many} -body {
     crimp threshold global outside IMAGE MIN MAX toomuch
 } -returnCodes error -result {wrong # args: should be "crimp threshold global outside image min max"}
+
+# Note: For a first set the 'outside' tests use pixel ranges which emulate 'above'.
+
+test crimp-threshold-5.4.0 {image thresholding, global, outside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global outside [grey8] 0 0]
+} -result [list \
+	       {0 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} ]
+
+test crimp-threshold-5.4.1 {image thresholding, global, outside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global outside [grey8] 0 1]
+} -result [list \
+	       {0 0 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255}]
+
+test crimp-threshold-5.4.2 {image thresholding, global, outside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global outside [grey8] 0 20]
+} -result [list \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 255 255 255 255}]
+
+test crimp-threshold-5.4.3 {image thresholding, global, outside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global outside [grey8] 0 255]
+} -result [list \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0}]
+
+test crimp-threshold-5.4.4 {image thresholding, global, outside, grey8} -body {
+    crimp write 2string tcl [crimp threshold global outside [grey8] 0 256]
+} -result [list \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0}]
+
+test crimp-threshold-5.5.0 {image thresholding, global, outside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgb] 0 0]
+} -result [list \
+	       {{0 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-5.5.1 {image thresholding, global, outside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgb] 0 1]
+} -result [list \
+	       {{0 0 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-5.5.2 {image thresholding, global, outside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgb] 0 20]
+} -result [list \
+	       {{0 0 0} {0 0 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{0 0 0} {0 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{0 0 0} {0 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{0 0 0} {0 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{0 0 0} {0 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-5.5.3 {image thresholding, global, outside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgb] 0 255]
+} -result [list \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-5.5.4 {image thresholding, global, outside, rgb} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgb] 0 256]
+} -result [list \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-5.6.0 {image thresholding, global, outside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgba] 0 0]
+    # alpha channel is not thresholded
+} -result [list \
+	       {{0 255 255 75} {255 255 255 84} {255 255 255 85} {255 255 255 86} {255 255 255 87}} \
+	       {{255 255 255 76} {255 255 255 83} {255 255 255 90} {255 255 255 89} {255 255 255 88}} \
+	       {{255 255 255 77} {255 255 255 82} {255 255 255 91} {255 255 255 98} {255 255 255 97}} \
+	       {{255 255 255 78} {255 255 255 81} {255 255 255 92} {255 255 255 99} {255 255 255 96}} \
+	       {{255 255 255 79} {255 255 255 80} {255 255 255 93} {255 255 255 94} {255 255 255 95}}]
+
+test crimp-threshold-5.6.1 {image thresholding, global, outside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgba] 0 1]
+    # alpha channel is not thresholded
+} -result [list \
+	       {{0 0 255 75} {255 255 255 84} {255 255 255 85} {255 255 255 86} {255 255 255 87}} \
+	       {{255 255 255 76} {255 255 255 83} {255 255 255 90} {255 255 255 89} {255 255 255 88}} \
+	       {{255 255 255 77} {255 255 255 82} {255 255 255 91} {255 255 255 98} {255 255 255 97}} \
+	       {{255 255 255 78} {255 255 255 81} {255 255 255 92} {255 255 255 99} {255 255 255 96}} \
+	       {{255 255 255 79} {255 255 255 80} {255 255 255 93} {255 255 255 94} {255 255 255 95}}]
+
+test crimp-threshold-5.6.2 {image thresholding, global, outside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgba] 0 20]
+} -result [list \
+	       {{0 0 0 75} {0 0 255 84} {255 255 255 85} {255 255 255 86} {255 255 255 87}} \
+	       {{0 0 0 76} {0 255 255 83} {255 255 255 90} {255 255 255 89} {255 255 255 88}} \
+	       {{0 0 0 77} {0 255 255 82} {255 255 255 91} {255 255 255 98} {255 255 255 97}} \
+	       {{0 0 0 78} {0 255 255 81} {255 255 255 92} {255 255 255 99} {255 255 255 96}} \
+	       {{0 0 0 79} {0 255 255 80} {255 255 255 93} {255 255 255 94} {255 255 255 95}}]
+
+test crimp-threshold-5.6.3 {image thresholding, global, outside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgba] 0 255]
+} -result [list \
+	       {{0 0 0 75} {0 0 0 84} {0 0 0 85} {0 0 0 86} {0 0 0 87}} \
+	       {{0 0 0 76} {0 0 0 83} {0 0 0 90} {0 0 0 89} {0 0 0 88}} \
+	       {{0 0 0 77} {0 0 0 82} {0 0 0 91} {0 0 0 98} {0 0 0 97}} \
+	       {{0 0 0 78} {0 0 0 81} {0 0 0 92} {0 0 0 99} {0 0 0 96}} \
+	       {{0 0 0 79} {0 0 0 80} {0 0 0 93} {0 0 0 94} {0 0 0 95}}]
+
+test crimp-threshold-5.6.4 {image thresholding, global, outside, rgba} -body {
+    crimp write 2string tcl [crimp threshold global outside [rgba] 0 256]
+} -result [list \
+	       {{0 0 0 75} {0 0 0 84} {0 0 0 85} {0 0 0 86} {0 0 0 87}} \
+	       {{0 0 0 76} {0 0 0 83} {0 0 0 90} {0 0 0 89} {0 0 0 88}} \
+	       {{0 0 0 77} {0 0 0 82} {0 0 0 91} {0 0 0 98} {0 0 0 97}} \
+	       {{0 0 0 78} {0 0 0 81} {0 0 0 92} {0 0 0 99} {0 0 0 96}} \
+	       {{0 0 0 79} {0 0 0 80} {0 0 0 93} {0 0 0 94} {0 0 0 95}}]
+
+test crimp-threshold-5.7.0 {image thresholding, global, outside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global outside [hsv] 0 0]
+} -result [list \
+	       {{0 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-5.7.1 {image thresholding, global, outside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global outside [hsv] 0 1]
+} -result [list \
+	       {{0 0 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{255 255 255} {255 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-5.7.2 {image thresholding, global, outside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global outside [hsv] 0 20]
+} -result [list \
+	       {{0 0 0} {0 0 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{0 0 0} {0 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{0 0 0} {0 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{0 0 0} {0 255 255} {255 255 255} {255 255 255} {255 255 255}} \
+	       {{0 0 0} {0 255 255} {255 255 255} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-5.7.3 {image thresholding, global, outside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global outside [hsv] 0 255]
+} -result [list \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-5.7.4 {image thresholding, global, outside, hsv} -body {
+    crimp write 2string tcl [crimp threshold global outside [hsv] 0 256]
+} -result [list \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}} \
+	       {{0 0 0} {0 0 0} {0 0 0} {0 0 0} {0 0 0}}]
+
+test crimp-threshold-5.8.0 {image thresholding, global, outside, float} -body {
+    crimp write 2string tcl [crimp threshold global outside [float] 0 0]
+} -result [list \
+	       {0.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0}]
+
+test crimp-threshold-5.8.1 {image thresholding, global, outside, float} -body {
+    crimp write 2string tcl [crimp threshold global outside [float] 0 -1]
+} -result [list \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0}]
+
+test crimp-threshold-5.8.2 {image thresholding, global, outside, float} -body {
+    crimp write 2string tcl [crimp threshold global outside [float] 0 1]
+} -result [list \
+	       {0.0 0.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0}]
+
+test crimp-threshold-5.8.3 {image thresholding, global, outside, float} -body {
+    crimp write 2string tcl [crimp threshold global outside [float] 0 15.5]
+} -result [list \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0}]
+
+test crimp-threshold-5.8.4 {image thresholding, global, outside, float} -body {
+    crimp write 2string tcl [crimp threshold global outside [float] 0 20]
+} -result [list \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 1.0 1.0 1.0 1.0}]
+
+test crimp-threshold-5.8.5 {image thresholding, global, outside, float} -body {
+    crimp write 2string tcl [crimp threshold global outside [float] 0 255]
+} -result [list \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0}]
+
+test crimp-threshold-5.8.6 {image thresholding, global, outside, float} -body {
+    crimp write 2string tcl [crimp threshold global outside [float] 0 256]
+} -result [list \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0}]
 
 # -------------------------------------------------------------------------
 
@@ -620,6 +1116,64 @@ test crimp-threshold-7.0 {image thresholding, global, middle, wrong\#args, not e
 test crimp-threshold-7.1 {image thresholding, global, middle, wrong\#args, too many} -body {
     crimp threshold global middle IMAGE toomuch
 } -returnCodes error -result {wrong # args: should be "crimp threshold global middle image"}
+
+test crimp-threshold-7.3 {image thresholding, global, middle, grey8} -body {
+    crimp write 2string tcl [crimp threshold global middle [grey8]]
+    # middle = (min+max)/2 = (0+24)/2 = 12
+} -result [list \
+	       {0 0 0 0 0} \
+	       {0 0 0 0 0} \
+	       {0 0 0 255 255} \
+	       {255 255 255 255 255} \
+	       {255 255 255 255 255}]
+
+test crimp-threshold-7.4 {image thresholding, global, middle, rgb} -body {
+    crimp write 2string tcl [crimp threshold global middle [rgb]]
+    # middle/R = (min/R+max/R)/2 = (0+73)/2 = 36
+    # middle/G = (min/G+max/G)/2 = (1+67)/2 = 34
+    # middle/B = (min/B+max/B)/2 = (2+74)/2 = 38
+} -result [list \
+               {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-7.5 {image thresholding, global, middle, rgba} -body {
+    crimp write 2string tcl [crimp threshold global middle [rgba]]
+    # middle/R = (min/R+max/R)/2 = ( 0+73)/2 = 36
+    # middle/G = (min/G+max/G)/2 = ( 1+69)/2 = 35
+    # middle/B = (min/B+max/B)/2 = ( 2+74)/2 = 38
+    # middle/A = (min/A+max/A)/2 = (75+99)/2 = 87
+
+} -result [list \
+               {{0 0 0 0} {0 0 0 0} {0 0 0 0} {255 255 255 0} {255 255 255 0}} \
+               {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+               {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+               {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+               {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}}]
+
+test crimp-threshold-7.6 {image thresholding, global, middle, hsv} -body {
+    crimp write 2string tcl [crimp threshold global middle [hsv]]
+    # middle/H = (min/H+max/H)/2 = (0+73)/2 = 36
+    # middle/S = (min/S+max/S)/2 = (1+69)/2 = 35
+    # middle/V = (min/V+max/V)/2 = (2+74)/2 = 38
+} -result [list \
+               {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}}]
+
+test crimp-threshold-7.7 {image thresholding, global, middle, float} -body {
+    crimp write 2string tcl [crimp threshold global middle [float]]
+    # middle = (min+max)/2 = (0+24)/2 =12
+} -result [list \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 0.0 0.0} \
+	       {0.0 0.0 0.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0} \
+	       {1.0 1.0 1.0 1.0 1.0}]
 
 # -------------------------------------------------------------------------
 

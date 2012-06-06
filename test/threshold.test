@@ -31,10 +31,7 @@ test crimp-threshold-1.2 {image thresholding, invalid method} -body {
 } -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be above, below, inside, mean, median, middle, otsu, or outside}
 
 # -------------------------------------------------------------------------
-## Types: grey8, float, hsv, rgb, rgba
-## global: otsu, mean, median
-## local
-#
+## TODO: local
 ## TODO (implementation): grey16, grey32
 # -------------------------------------------------------------------------
 # below    P <= T          ? WHITE : BLACK (highlight/object pixels below or equal to threshold T)
@@ -1107,6 +1104,86 @@ test crimp-threshold-6.1 {image thresholding, global, otsu, wrong\#args, too man
     crimp threshold global otsu IMAGE toomuch
 } -returnCodes error -result {wrong # args: should be "crimp threshold global otsu image"}
 
+
+
+test crimp-threshold-6.2 {image thresholding, global, otsu, grey8} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics otsu [crimp statistics basic $image]] otsu] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global otsu $image]]
+    }} [grey8]
+    # otsu = 11
+} -result [list 11 \
+               [list \
+                    {0 0 0 0 0} \
+                    {0 0 0 0 0} \
+                    {0 0 255 255 255} \
+                    {255 255 255 255 255} \
+                    {255 255 255 255 255}]]
+
+test crimp-threshold-6.3 {image thresholding, global, otsu, rgb} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics otsu [crimp statistics basic $image]] otsu] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global otsu $image]]
+    }} [rgb]
+    # otsu/R = 30
+    # otsu/G = 31
+    # otsu/B = 36
+} -result [list {30 31 36} \
+               [list \
+                    {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}}]]
+
+test crimp-threshold-6.4 {image thresholding, global, otsu, rgba} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics otsu [crimp statistics basic $image]] otsu] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global otsu $image]]
+    }} [rgba]
+    # otsu/R = 30
+    # otsu/G = 31
+    # otsu/B = 36
+    # otsu/A = 86
+
+} -result [list {30 31 36 86} \
+               [list \
+                    {{0 0 0 0} {0 0 0 0} {0 0 0 0} {255 255 255 0} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}}]]
+
+test crimp-threshold-6.5 {image thresholding, global, otsu, hsv} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics otsu [crimp statistics basic $image]] otsu] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global otsu $image]]
+    }} [hsv]
+    # otsu/H = 30
+    # otsu/S = 31
+    # otsu/V = 36
+} -result [list {30 31 36} \
+               [list \
+                    {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}}]]
+
+test crimp-threshold-6.6 {image thresholding, global, otsu, float} -body {
+    # We don't have otsu statistics for floating point numbers/images.
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics otsu [crimp statistics basic $image]] otsu] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global otsu $image]]
+    }} [float]
+    # otsu = 
+} -result N/A -constraints NotSupported
+
 # -------------------------------------------------------------------------
 
 test crimp-threshold-7.0 {image thresholding, global, middle, wrong\#args, not enough} -body {
@@ -1117,63 +1194,88 @@ test crimp-threshold-7.1 {image thresholding, global, middle, wrong\#args, too m
     crimp threshold global middle IMAGE toomuch
 } -returnCodes error -result {wrong # args: should be "crimp threshold global middle image"}
 
-test crimp-threshold-7.3 {image thresholding, global, middle, grey8} -body {
-    crimp write 2string tcl [crimp threshold global middle [grey8]]
+test crimp-threshold-7.2 {image thresholding, global, middle, grey8} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] middle] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global middle $image]]
+    }} [grey8]
     # middle = (min+max)/2 = (0+24)/2 = 12
-} -result [list \
-	       {0 0 0 0 0} \
-	       {0 0 0 0 0} \
-	       {0 0 0 255 255} \
-	       {255 255 255 255 255} \
-	       {255 255 255 255 255}]
+} -result [list 12.0 \
+               [list \
+                    {0 0 0 0 0} \
+                    {0 0 0 0 0} \
+                    {0 0 0 255 255} \
+                    {255 255 255 255 255} \
+                    {255 255 255 255 255}]]
 
-test crimp-threshold-7.4 {image thresholding, global, middle, rgb} -body {
-    crimp write 2string tcl [crimp threshold global middle [rgb]]
-    # middle/R = (min/R+max/R)/2 = (0+73)/2 = 36
-    # middle/G = (min/G+max/G)/2 = (1+67)/2 = 34
+test crimp-threshold-7.3 {image thresholding, global, middle, rgb} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] middle] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global middle $image]]
+    }} [rgb]
+    # middle/R = (min/R+max/R)/2 = (0+73)/2 = 36.5
+    # middle/G = (min/G+max/G)/2 = (1+69)/2 = 35
     # middle/B = (min/B+max/B)/2 = (2+74)/2 = 38
-} -result [list \
-               {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
-               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
-               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
-               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
-               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}}]
+} -result [list {36.5 35.0 38.0} \
+               [list \
+                    {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}}]]
 
-test crimp-threshold-7.5 {image thresholding, global, middle, rgba} -body {
-    crimp write 2string tcl [crimp threshold global middle [rgba]]
-    # middle/R = (min/R+max/R)/2 = ( 0+73)/2 = 36
+test crimp-threshold-7.4 {image thresholding, global, middle, rgba} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] middle] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global middle $image]]
+    }} [rgba]
+    # middle/R = (min/R+max/R)/2 = ( 0+73)/2 = 36.5
     # middle/G = (min/G+max/G)/2 = ( 1+69)/2 = 35
     # middle/B = (min/B+max/B)/2 = ( 2+74)/2 = 38
     # middle/A = (min/A+max/A)/2 = (75+99)/2 = 87
 
-} -result [list \
-               {{0 0 0 0} {0 0 0 0} {0 0 0 0} {255 255 255 0} {255 255 255 0}} \
-               {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
-               {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
-               {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
-               {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}}]
+} -result [list {36.5 35.0 38.0 87.0} \
+               [list \
+                    {{0 0 0 0} {0 0 0 0} {0 0 0 0} {255 255 255 0} {255 255 255 0}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}}]]
 
-test crimp-threshold-7.6 {image thresholding, global, middle, hsv} -body {
-    crimp write 2string tcl [crimp threshold global middle [hsv]]
-    # middle/H = (min/H+max/H)/2 = (0+73)/2 = 36
+test crimp-threshold-7.5 {image thresholding, global, middle, hsv} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] middle] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global middle $image]]
+    }} [hsv]
+    # middle/H = (min/H+max/H)/2 = (0+73)/2 = 36.5
     # middle/S = (min/S+max/S)/2 = (1+69)/2 = 35
     # middle/V = (min/V+max/V)/2 = (2+74)/2 = 38
-} -result [list \
-               {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
-               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
-               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
-               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
-               {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}}]
+} -result [list {36.5 35.0 38.0} \
+               [list \
+                    {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}}]]
 
-test crimp-threshold-7.7 {image thresholding, global, middle, float} -body {
-    crimp write 2string tcl [crimp threshold global middle [float]]
-    # middle = (min+max)/2 = (0+24)/2 =12
-} -result [list \
-	       {0.0 0.0 0.0 0.0 0.0} \
-	       {0.0 0.0 0.0 0.0 0.0} \
-	       {0.0 0.0 0.0 1.0 1.0} \
-	       {1.0 1.0 1.0 1.0 1.0} \
-	       {1.0 1.0 1.0 1.0 1.0}]
+test crimp-threshold-7.6 {image thresholding, global, middle, float} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] middle] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global middle $image]]
+    }} [float]
+    # middle = (min+max)/2 = (0+24)/2 = 12
+} -result [list 12.0 \
+               [list \
+                    {0.0 0.0 0.0 0.0 0.0} \
+                    {0.0 0.0 0.0 0.0 0.0} \
+                    {0.0 0.0 0.0 1.0 1.0} \
+                    {1.0 1.0 1.0 1.0 1.0} \
+                    {1.0 1.0 1.0 1.0 1.0}]]
 
 # -------------------------------------------------------------------------
 
@@ -1185,6 +1287,90 @@ test crimp-threshold-8.1 {image thresholding, global, mean, wrong\#args, too man
     crimp threshold global mean IMAGE toomuch
 } -returnCodes error -result {wrong # args: should be "crimp threshold global mean image"}
 
+test crimp-threshold-8.2 {image thresholding, global, mean, grey8} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] mean] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global mean $image]]
+    }} [grey8]
+    # mean = 12.0
+} -result [list 12.0 \
+               [list \
+                    {0 0 0 0 0} \
+                    {0 0 0 0 0} \
+                    {0 0 0 255 255} \
+                    {255 255 255 255 255} \
+                    {255 255 255 255 255}]]
+
+test crimp-threshold-8.3 {image thresholding, global, mean, rgb} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] mean] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global mean $image]]
+    }} [rgb]
+    # mean/R = 35.92
+    # mean/G = 37.08
+    # mean/B = 38.0
+} -result [list {35.92 37.08 38.0} \
+               [list \
+                    {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 0 0} {255 255 255} {255 255 255}}]]
+
+test crimp-threshold-8.4 {image thresholding, global, mean, rgba} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] mean] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global mean $image]]
+    }} [rgba]
+    # mean/R = 35.92
+    # mean/G = 37.08
+    # mean/B = 38.0
+    # mean/A = 87.0
+
+} -result [list {35.92 37.08 38.0 87.0} \
+               [list \
+                    {{0 0 0 0} {0 0 0 0} {0 0 0 0} {255 255 255 0} {255 255 255 0}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 0 0 255} {255 255 255 255} {255 255 255 255}}]]
+
+test crimp-threshold-8.5 {image thresholding, global, mean, hsv} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] mean] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global mean $image]]
+    }} [hsv]
+    # mean/H = 35.92
+    # mean/S = 37.08
+    # mean/V = 38.0
+} -result [list {35.92 37.08 38.0} \
+               [list \
+                    {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 0 0} {255 255 255} {255 255 255}}]]
+
+test crimp-threshold-8.6 {image thresholding, global, mean, float} -body {
+    # We don't have mean statistics for floating point numbers/images.
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] mean] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global mean $image]]
+    }} [float]
+    # mean = 12.0
+} -result [list 12.0 \
+               [list \
+                    {0.0 0.0 0.0 0.0 0.0} \
+                    {0.0 0.0 0.0 0.0 0.0} \
+                    {0.0 0.0 0.0 1.0 1.0} \
+                    {1.0 1.0 1.0 1.0 1.0} \
+                    {1.0 1.0 1.0 1.0 1.0}]]
+
 # -------------------------------------------------------------------------
 
 test crimp-threshold-9.0 {image thresholding, global, median, wrong\#args, not enough} -body {
@@ -1194,6 +1380,90 @@ test crimp-threshold-9.0 {image thresholding, global, median, wrong\#args, not e
 test crimp-threshold-9.1 {image thresholding, global, median, wrong\#args, too many} -body {
     crimp threshold global median IMAGE toomuch
 } -returnCodes error -result {wrong # args: should be "crimp threshold global median image"}
+
+test crimp-threshold-9.2 {image thresholding, global, median, grey8} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] median] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global median $image]]
+    }} [grey8]
+    # median = 12
+} -result [list 12 \
+               [list \
+                    {0 0 0 0 0} \
+                    {0 0 0 0 0} \
+                    {0 0 0 255 255} \
+                    {255 255 255 255 255} \
+                    {255 255 255 255 255}]]
+
+test crimp-threshold-9.3 {image thresholding, global, median, rgb} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] median] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global median $image]]
+    }} [rgb]
+    # median/R = 39
+    # median/G = 42
+    # median/B = 34
+} -result [list {39 42 34} \
+               [list \
+                    {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {0 255 255} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {0 0 255} {255 255 255} {255 255 255}}]]
+
+test crimp-threshold-9.4 {image thresholding, global, median, rgba} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] median] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global median $image]]
+    }} [rgba]
+    # median/R = 39
+    # median/G = 42
+    # median/B = 34
+    # median/A = 87
+
+} -result [list {39 42 34 87} \
+               [list \
+                    {{0 0 0 0} {0 0 0 0} {0 0 0 0} {255 255 255 0} {255 255 255 0}} \
+                    {{0 0 0 0} {0 0 0 0} {255 0 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {255 255 0 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {0 255 255 255} {255 255 255 255} {255 255 255 255}} \
+                    {{0 0 0 0} {0 0 0 0} {0 0 255 255} {255 255 255 255} {255 255 255 255}}]]
+
+test crimp-threshold-9.5 {image thresholding, global, median, hsv} -body {
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] median] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global median $image]]
+    }} [hsv]
+    # median/H = 39
+    # median/S = 42
+    # median/V = 34
+} -result [list {39 42 34} \
+               [list \
+                    {{0 0 0} {0 0 0} {0 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 0 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {255 255 0} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {0 255 255} {255 255 255} {255 255 255}} \
+                    {{0 0 0} {0 0 0} {0 0 255} {255 255 255} {255 255 255}}]]
+
+test crimp-threshold-9.6 {image thresholding, global, median, float} -body {
+    # We don't have median statistics for floating point numbers/images.
+    apply {{image} {
+        list \
+            [lmap [list cstat [crimp statistics basic $image] median] [crimp channels $image]] \
+            [crimp write 2string tcl [crimp threshold global median $image]]
+    }} [float]
+    # median = 
+} -result [list 12.0 \
+               [list \
+                    {0.0 0.0 0.0 0.0 0.0} \
+                    {0.0 0.0 0.0 0.0 0.0} \
+                    {0.0 0.0 0.0 1.0 1.0} \
+                    {1.0 1.0 1.0 1.0 1.0} \
+                    {1.0 1.0 1.0 1.0 1.0}]] -constraints NotSupported
 
 # -------------------------------------------------------------------------
 ## Handling of input location: Pass through.

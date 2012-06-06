@@ -14,6 +14,8 @@ testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 
 # -------------------------------------------------------------------------
 ## (pseudo-)Channel manipulation, splitting
+## (grey16 and grey32 are single channel, but can be split by treating
+## their 2/4 bytes of the channel as such, thus "pseudo-channel")
 # -------------------------------------------------------------------------
 
 test crimp-split-1.0 {image splitting, wrong\#args, not enough} -body {

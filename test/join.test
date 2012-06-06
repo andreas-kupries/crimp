@@ -305,24 +305,6 @@ test crimp-join-7.7 {image joining, fpcomplex, location handling, pass first, ig
 } -result {1 2}
 
 # -------------------------------------------------------------------------
-## Handling of input location: Pass through of first image to result, ignore the other locations.
-if 0 {
-foreach {n itype nc} {
-    0 grey16    2
-    1 grey32    4
-    2 rgb       3
-    3 rgba      4
-    4 hsv       3
-    5 fpcomplex 2
-} {
-    test crimp-join-5.$n "image joining, $itype, location handling" -body {
-	list $nc [::apply {image {
-	    lmap {crimp at} $image
-	}} [crimp join 2[crimp place [$itype] 23 45]]]
-    } -result [list $nc [lrepeat $nc {23 45}]]
-}
-}
-# -------------------------------------------------------------------------
 testsuiteCleanup
 
 # Local variables:

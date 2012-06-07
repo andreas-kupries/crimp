@@ -3718,7 +3718,7 @@ proc ::crimp::table::fgauss::sampled {sigma {r {}}} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::table::quantize {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 
     variable  pmap
@@ -3733,13 +3733,17 @@ proc ::crimp::table::quantize::histogram {n p h} {
     # standard range 0...255 before using it to compute a
     # quantization.
 
-    return [::crimp::table::QuantizeCore $n $p \
+    if {$n < 2} {
+	return -code error "Unable to calculate 1-color quantization"
+    }
+
+    return [::crimp::table::quantize::Core $n $p \
 		[::crimp::FIT \
 		     [::crimp::CUMULATE [dict values $h]] \
 		     255]]
 }
 
-proc ::crimp::table::QuantizeCore {n p cdf} {
+proc ::crimp::table::quantize::Core {n p cdf} {
     variable pmap
 
     if {$n < 2} {

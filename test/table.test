@@ -1,0 +1,309 @@
+# -*- tcl -*-
+# -------------------------------------------------------------------------
+
+source [file join \
+            [file dirname [file join [pwd] [info script]]] \
+            testutilities.tcl]
+
+testsNeedTcl     8.5
+testsNeedTcltest 2
+
+support { useLocalFile synth.tcl }
+support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
+testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+
+# -------------------------------------------------------------------------
+## Supporting commands, mapping tables and images.
+# -------------------------------------------------------------------------
+
+test crimp-table-1.0 {image tables, wrong\#args, not enough} -body {
+    crimp table
+} -returnCodes error -result {wrong # args: should be "crimp table subcommand ?argument ...?"}
+
+test crimp-table-1.1 {image tables, invalid method} -body {
+    crimp table BOGUS
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be compose, degamma, eval, fgauss, gamma, gauss, identity, invers, linear, log, quantize, solarize, sqrt, stretch, or threshold}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-2.0 {image tables, wrong\#args, not enough} -body {
+    crimp table eval
+} -returnCodes error -result {wrong # args: should be "crimp table eval subcommand ?argument ...?"}
+
+test crimp-table-2.1 {image tables, invalid method} -body {
+    crimp table eval BOGUS
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be clamp, or wrap}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-3.0 {image tables, wrong\#args, not enough} -body {
+    crimp table eval wrap
+} -returnCodes error -result {wrong # args: should be "crimp table eval wrap cmdprefix"}
+
+test crimp-table-3.1 {image tables, wrong\#args, too many} -body {
+    crimp table eval wrap CMD bogus
+} -returnCodes error -result {wrong # args: should be "crimp table eval wrap cmdprefix"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-4.0 {image tables, wrong\#args, not enough} -body {
+    crimp table eval clamp
+} -returnCodes error -result {wrong # args: should be "crimp table eval clamp cmdprefix"}
+
+test crimp-table-4.1 {image tables, wrong\#args, too many} -body {
+    crimp table eval clamp CMD bogus
+} -returnCodes error -result {wrong # args: should be "crimp table eval clamp cmdprefix"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-5.0 {image tables, wrong\#args, not enough} -body {
+    crimp table compose
+} -returnCodes error -result {wrong # args: should be "crimp table compose f g"}
+
+test crimp-table-5.1 {image tables, wrong\#args, not enough} -body {
+    crimp table compose F
+} -returnCodes error -result {wrong # args: should be "crimp table compose f g"}
+
+test crimp-table-5.2 {image tables, wrong\#args, too many} -body {
+    crimp table compose F G bogus
+} -returnCodes error -result {wrong # args: should be "crimp table compose f g"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-6.0 {image tables, wrong\#args, too many} -body {
+    crimp table identity BOGUS
+} -returnCodes error -result {wrong # args: should be "crimp table identity"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-7.0 {image tables, wrong\#args, too many} -body {
+    crimp table invers BOGUS
+} -returnCodes error -result {wrong # args: should be "crimp table invers"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-8.0 {image tables, wrong\#args, not enough} -body {
+    crimp table solarize
+} -returnCodes error -result {wrong # args: should be "crimp table solarize n"}
+
+test crimp-table-8.1 {image tables, wrong\#args, too many} -body {
+    crimp table solarize N bogus
+} -returnCodes error -result {wrong # args: should be "crimp table solarize n"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-9.0 {image tables, wrong\#args, not enough} -body {
+    crimp table gamma
+} -returnCodes error -result {wrong # args: should be "crimp table gamma y"}
+
+test crimp-table-9.1 {image tables, wrong\#args, too many} -body {
+    crimp table gamma Y bogus
+} -returnCodes error -result {wrong # args: should be "crimp table gamma y"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-10.0 {image tables, wrong\#args, too many} -body {
+    crimp table degamma
+} -returnCodes error -result {wrong # args: should be "crimp table degamma y"}
+
+test crimp-table-10.1 {image tables, wrong\#args, too many} -body {
+    crimp table degamma Y bogus
+} -returnCodes error -result {wrong # args: should be "crimp table degamma y"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-11.0 {image tables, wrong\#args, too many} -body {
+    crimp table sqrt MAX bogus
+} -returnCodes error -result {wrong # args: should be "crimp table sqrt ?max?"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-12.0 {image tables, wrong\#args, too many} -body {
+    crimp table log MAX bogus
+} -returnCodes error -result {wrong # args: should be "crimp table log ?max?"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-13.0 {image tables, wrong\#args, not enough} -body {
+    crimp table linear
+} -returnCodes error -result {wrong # args: should be "crimp table linear subcommand ?argument ...?"}
+
+test crimp-table-13.1 {image tables, invalid method} -body {
+    crimp table linear BOGUS
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be clamp, or wrap}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-14.0 {image tables, wrong\#args, not enough} -body {
+    crimp table linear wrap
+} -returnCodes error -result {wrong # args: should be "crimp table linear wrap gain offset"}
+
+test crimp-table-14.1 {image tables, wrong\#args, not enough} -body {
+    crimp table linear wrap GAIN
+} -returnCodes error -result {wrong # args: should be "crimp table linear wrap gain offset"}
+
+test crimp-table-14.2 {image tables, wrong\#args, too many} -body {
+    crimp table linear wrap GAIN OFFSET bogus
+} -returnCodes error -result {wrong # args: should be "crimp table linear wrap gain offset"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-15.0 {image tables, wrong\#args, not enough} -body {
+    crimp table linear clamp
+} -returnCodes error -result {wrong # args: should be "crimp table linear clamp gain offset"}
+
+test crimp-table-15.1 {image tables, wrong\#args, not enough} -body {
+    crimp table linear clamp GAIN
+} -returnCodes error -result {wrong # args: should be "crimp table linear clamp gain offset"}
+
+test crimp-table-15.2 {image tables, wrong\#args, too many} -body {
+    crimp table linear clamp GAIN OFFSET bogus
+} -returnCodes error -result {wrong # args: should be "crimp table linear clamp gain offset"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-16.0 {image tables, wrong\#args, not enough} -body {
+    crimp table stretch
+} -returnCodes error -result {wrong # args: should be "crimp table stretch min max"}
+
+test crimp-table-16.1 {image tables, wrong\#args, not enough} -body {
+    crimp table stretch MIN
+} -returnCodes error -result {wrong # args: should be "crimp table stretch min max"}
+
+test crimp-table-16.2 {image tables, wrong\#args, too many} -body {
+    crimp table stretch MIN MAX bogus
+} -returnCodes error -result {wrong # args: should be "crimp table stretch min max"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-17.0 {image tables, wrong\#args, too many} -body {
+    crimp table threshold
+} -returnCodes error -result {wrong # args: should be "crimp table threshold subcommand ?argument ...?"}
+
+test crimp-table-17.1 {image tables, invalid method} -body {
+    crimp table threshold BOGUS
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be above, below, inside, or outside}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-18.0 {image tables, wrong\#args, not enough} -body {
+    crimp table threshold above
+} -returnCodes error -result {wrong # args: should be "crimp table threshold above threshold"}
+
+test crimp-table-18.1 {image tables, wrong\#args, too many} -body {
+    crimp table threshold above T bogus
+} -returnCodes error -result {wrong # args: should be "crimp table threshold above threshold"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-19.0 {image tables, wrong\#args, not enough} -body {
+    crimp table threshold below
+} -returnCodes error -result {wrong # args: should be "crimp table threshold below threshold"}
+
+test crimp-table-19.1 {image tables, wrong\#args, too many} -body {
+    crimp table threshold below T bogus
+} -returnCodes error -result {wrong # args: should be "crimp table threshold below threshold"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-20.0 {image tables, wrong\#args, not enough} -body {
+    crimp table threshold inside
+} -returnCodes error -result {wrong # args: should be "crimp table threshold inside min max"}
+
+test crimp-table-20.1 {image tables, wrong\#args, not enough} -body {
+    crimp table threshold inside MIN
+} -returnCodes error -result {wrong # args: should be "crimp table threshold inside min max"}
+
+test crimp-table-20.2 {image tables, wrong\#args, too many} -body {
+    crimp table threshold inside MIN MAX bogus
+} -returnCodes error -result {wrong # args: should be "crimp table threshold inside min max"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-21.0 {image tables, wrong\#args, not enough} -body {
+    crimp table threshold outside
+} -returnCodes error -result {wrong # args: should be "crimp table threshold outside min max"}
+
+test crimp-table-21.1 {image tables, wrong\#args, not enough} -body {
+    crimp table threshold outside MIN
+} -returnCodes error -result {wrong # args: should be "crimp table threshold outside min max"}
+
+test crimp-table-21.2 {image tables, wrong\#args, too many} -body {
+    crimp table threshold outside MIN MAX bogus
+} -returnCodes error -result {wrong # args: should be "crimp table threshold outside min max"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-22.0 {image tables, wrong\#args, not enough} -body {
+    crimp table gauss
+} -returnCodes error -result {wrong # args: should be "crimp table gauss sigma"}
+
+test crimp-table-22.1 {image tables, wrong\#args, too many} -body {
+    crimp table gauss SIGMA bogus
+} -returnCodes error -result {wrong # args: should be "crimp table gauss sigma"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-23.0 {image tables, wrong\#args, not enough} -body {
+    crimp table fgauss
+} -returnCodes error -result {wrong # args: should be "crimp table fgauss subcommand ?argument ...?"}
+
+test crimp-table-23.1 {image tables, invalid method} -body {
+    crimp table fgauss BOGUS
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be discrete, or sampled}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-24.0 {image tables, wrong\#args, not enough} -body {
+    crimp table fgauss discrete
+} -returnCodes error -result {wrong # args: should be "crimp table fgauss discrete sigma ?r?"}
+
+test crimp-table-24.1 {image tables, wrong\#args, too many} -body {
+    crimp table fgauss discrete SIGMA R bogus
+} -returnCodes error -result {wrong # args: should be "crimp table fgauss discrete sigma ?r?"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-25.0 {image tables, wrong\#args, not enough} -body {
+    crimp table fgauss sampled
+} -returnCodes error -result {wrong # args: should be "crimp table fgauss sampled sigma ?r?"}
+
+test crimp-table-25.1 {image tables, wrong\#args, too many} -body {
+    crimp table fgauss sampled SIGMA R bogus
+} -returnCodes error -result {wrong # args: should be "crimp table fgauss sampled sigma ?r?"}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-26.0 {image tables, wrong\#args, not enough} -body {
+    crimp table quantize
+} -returnCodes error -result {wrong # args: should be "crimp table quantize subcommand ?argument ...?"}
+
+test crimp-table-26.1 {image tables, invalid method} -body {
+    crimp table quantize BOGUS
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be histogram}
+
+# -------------------------------------------------------------------------
+
+test crimp-table-27.0 {image tables, wrong\#args, not enough} -body {
+    crimp table quantize histogram
+} -returnCodes error -result {wrong # args: should be "crimp table quantize histogram n p h"}
+
+test crimp-table-27.1 {image tables, wrong\#args, not enough} -body {
+    crimp table quantize histogram N
+} -returnCodes error -result {wrong # args: should be "crimp table quantize histogram n p h"}
+
+test crimp-table-27.2 {image tables, wrong\#args, not enough} -body {
+    crimp table quantize histogram N P
+} -returnCodes error -result {wrong # args: should be "crimp table quantize histogram n p h"}
+
+test crimp-table-27.3 {image tables, wrong\#args, too many} -body {
+    crimp table quantize histogram N P H bogus
+} -returnCodes error -result {wrong # args: should be "crimp table quantize histogram n p h"}
+
+# -------------------------------------------------------------------------
+testsuiteCleanup
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

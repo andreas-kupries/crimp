@@ -106,6 +106,20 @@ proc cstat {stat key chan} {
     dict get $stat channel $chan $key
 }
 
+proc normstat {s} {
+    dict for {k v} $s {
+	if {$k ne "channel"} continue
+	dict for {c cv} $v {
+	    foreach key {mean middle variance stddev} {
+		dict set cv $key [F %.2f [dict get $cv $key]]
+	    }
+	    dict set v $c $cv
+	}
+	dict set s $k $v
+    }
+    return $s
+}
+
 proc lmap {f list} {
     set res {}
     foreach x $list {

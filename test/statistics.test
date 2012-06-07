@@ -22,7 +22,7 @@ test crimp-statistics-1.0 {image statistics, wrong\#args, not enough} -body {
     crimp statistics
 } -returnCodes error -result {wrong # args: should be "crimp statistics subcommand ?argument ...?"}
 
-test crimp-statistics-1.1 {image statistics, wrong\#args, not enough} -body {
+test crimp-statistics-1.1 {image statistics, invalid method} -body {
     crimp statistics BOGUS
 } -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be basic, or otsu}
 

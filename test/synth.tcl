@@ -148,5 +148,13 @@ proc F {fmt pixels} {
     return $newpixels
 }
 
+proc iota {n} {
+    set res {}
+    for {set i 0} {$i < $n} {incr i} {
+	lappend res $i
+    }
+    return $res
+}
+
 # # ## ### ##### ######## ############# #####################
 return

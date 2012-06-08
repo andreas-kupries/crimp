@@ -257,18 +257,24 @@ representation.
 [para][image border][para]
 
 
-[call [cmd ::crimp] [method cut] [arg image] [arg x] [arg y] [arg w] [arg h]]
+[call [cmd ::crimp] [method cut] [arg image] [arg dx] [arg dy] [arg w] [arg h]]
 [keywords {cut region} {region cut} {rectangle cut} {rectangle extraction}]
 [keywords {extract rectangle} {extract region}]
 
-This method cuts the rectangular region specified throught its [arg x]/[arg y]
+This method takes the rectangular region specified through its [arg x]/[arg y]
 position relative to the upper-left corner of the input [arg image] and its
 dimensions, and returns it as its own image.
 
-[para] Locations and dimensions reaching outside of the input image
-are restricted to the interior of the input image. This means that
-both location and dimensions of the result may differ from what was
-specified by the arguments.
+[para] Note that while both [arg w] and [arg h] are allowed to be [const 0],
+resulting in the return of an empty image, they are not allowed to be negative.
+
+[para] Further note that it is allowed to specify regions which address pixels
+outside of the input image. In the result these pixels will be set to [const 0]
+(meaning black, opaque, etc. as per the semantics of the image type).
+
+[para] The location of the result is the location of the input, suuitably
+modified by [arg dx] and [arg dy].
+
 
 [call [cmd ::crimp] [method {decimate xy}] [arg image] [arg factor] [arg kernel]]
 [call [cmd ::crimp] [method {decimate x}] [arg image] [arg factor] [arg kernel]]

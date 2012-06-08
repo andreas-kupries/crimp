@@ -1,0 +1,303 @@
+# -*- tcl -*-
+# -------------------------------------------------------------------------
+
+source [file join \
+            [file dirname [file join [pwd] [info script]]] \
+            testutilities.tcl]
+
+testsNeedTcl     8.5
+testsNeedTcltest 2
+
+support { useLocalFile synth.tcl }
+support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
+testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+
+# -------------------------------------------------------------------------
+## Geomtry manipulation. Cut rectangular region out of the image.
+# -------------------------------------------------------------------------
+
+test crimp-cut-1.0 {image cut, wrong\#args, not enough} -body {
+    crimp cut
+} -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
+
+test crimp-cut-1.0 {image cut, wrong\#args, not enough} -body {
+    crimp cut IMAGE
+} -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
+
+test crimp-cut-1.1 {image cut, wrong\#args, not enough} -body {
+    crimp cut IMAGE DX
+} -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
+
+test crimp-cut-1.2 {image cut, wrong\#args, not enough} -body {
+    crimp cut IMAGE DX DY
+} -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
+
+test crimp-cut-1.3 {image cut, wrong\#args, not enough} -body {
+    crimp cut IMAGE DX DY W
+} -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
+
+test crimp-cut-1.4 {image cut, wrong\#args, too many} -body {
+    crimp cut IMAGE DX DY W H toomuch
+} -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
+
+test crimp-cut-1.5 {image cut, invalid args} -body {
+    crimp cut IMAGE DX DY W H
+} -returnCodes error -result {invalid image format}
+
+test crimp-cut-1.6 {image cut, invalid args} -body {
+    crimp cut [grey8] DX DY W H
+} -returnCodes error -result {expected integer but got "DX"}
+
+test crimp-cut-1.7 {image cut, invalid args} -body {
+    crimp cut [grey8] 2 DY W H
+} -returnCodes error -result {expected integer but got "DY"}
+
+test crimp-cut-1.8 {image cut, invalid args} -body {
+    crimp cut [grey8] 2 4 W H
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-cut-1.9 {image cut, invalid args} -body {
+    crimp cut [grey8] 2 4 7 H
+} -returnCodes error -result {expected integer but got "H"}
+
+# Negative dimensions
+test crimp-cut-1.10 {image cut, invalid args} -body {
+    crimp cut [grey8] 2 4 -7 H
+} -returnCodes error -result {Illegal width, expected positive integer, got "-7"}
+
+test crimp-cut-1.11 {image cut, invalid args} -body {
+    crimp cut [grey8] 2 4 7 -5
+} -returnCodes error -result {Illegal height, expected positive integer, got "-5"}
+
+# -------------------------------------------------------------------------
+# Test images are (0,0,5,5)
+# Cases:
+# - identical (1)
+# - border aligned inside (8x)
+# - fully inside (1)
+# - fully outside (all octants, 8x)
+# - border straddle (8x, edges and corners, 4 each)
+# - empty cuts (3x)
+# Total: 1+8+1+8+8+3 = 29
+# Above per imagetype (8), total 232
+#
+# TODO: rgb, rgba, float, fpcomplex
+# -------------------------------------------------------------------------
+
+foreach {k itype} {
+    2 grey8
+    3 grey16
+    4 grey32
+} {
+    # identity
+    test crimp-cut-$k.0 "[origin] image cut, identity, $itype" -body {
+        astcl [crimp cut [$itype] 0 0 5 5]
+    } -result [list crimp::image::$itype 0 0 5 5 {} [trim {
+         0  1  2  3  4
+         5  6  7  8  9
+        10 11 12 13 14
+        15 16 17 18 19
+        20 21 22 23 24
+    }]]
+
+    #border aligned inside
+    test crimp-cut-$k.1 "[origin] image cut, nw, $itype" -body {
+        astcl [crimp cut [$itype] 0 0 2 2]
+    } -result [list crimp::image::$itype 0 0 2 2 {} [trim {
+        0  1
+        5  6
+    }]]
+
+    test crimp-cut-$k.2 "[origin] image cut, ne, $itype" -body {
+        astcl [crimp cut [$itype] 3 0 2 2]
+    } -result [list crimp::image::$itype 3 0 2 2 {} [trim {
+        3  4
+        8  9
+    }]]
+
+    test crimp-cut-$k.3 "[origin] image cut, se, $itype" -body {
+        astcl [crimp cut [$itype] 3 3 2 2]
+    } -result [list crimp::image::$itype 3 3 2 2 {} [trim {
+        18 19
+        23 24
+    }]]
+
+    test crimp-cut-$k.4 "[origin] image cut, sw, $itype" -body {
+        astcl [crimp cut [$itype] 0 3 2 2]
+    } -result [list crimp::image::$itype 0 3 2 2 {} [trim {
+        15 16
+        20 21
+    }]]
+
+
+    test crimp-cut-$k.5 "[origin] image cut, north, $itype" -body {
+        astcl [crimp cut [$itype] 1 0 3 3]
+    } -result [list crimp::image::$itype 1 0 3 3 {} [trim {
+         1  2  3
+         6  7  8
+        11 12 13
+    }]]
+
+    test crimp-cut-$k.6 "[origin] image cut, east, $itype" -body {
+        astcl [crimp cut [$itype] 2 1 3 3]
+    } -result [list crimp::image::$itype 2 1 3 3 {} [trim {
+         7  8  9
+        12 13 14
+        17 18 19
+    }]]
+
+    test crimp-cut-$k.7 "[origin] image cut, south, $itype" -body {
+        astcl [crimp cut [$itype] 1 2 3 3]
+    } -result [list crimp::image::$itype 1 2 3 3 {} [trim {
+        11 12 13
+        16 17 18
+        21 22 23
+    }]]
+
+    test crimp-cut-$k.8 "[origin] image cut, west, $itype" -body {
+        astcl [crimp cut [$itype] 0 1 3 3]
+    } -result [list crimp::image::$itype 0 1 3 3 {} [trim {
+         5  6  7
+        10 11 12
+        15 16 17
+    }]]
+
+    # fully inside
+    test crimp-cut-$k.9 "[origin] image cut, inside, $itype" -body {
+        astcl [crimp cut [$itype] 1 1 3 3]
+    } -result [list crimp::image::$itype 1 1 3 3 {} [trim {
+         6  7  8
+        11 12 13
+        16 17 18
+    }]]
+
+    # fully outside
+    foreach {n dx dy label} {
+        10 -3 -3 nw
+        11 -3  7 ne
+        12  7 -3 sw
+        13  7  7 se
+        14  1 -3 north
+        15  7  1 east
+        16  1  7 south
+        17 -3  1 west
+    } {
+        test crimp-cut-$k.$n "[origin] image cut, $label outside, $itype" -body {
+            astcl [crimp cut [$itype] $dx $dy 2 2]
+        } -result [list crimp::image::$itype $dx $dy 2 2 {} [trim {
+            0 0
+            0 0
+        }]]
+    }
+
+    # border straddle
+    test crimp-cut-$k.18 "[origin] image cut, nw straddle, $itype" -body {
+        astcl [crimp cut [$itype] -2 -2 3 3]
+    } -result [list crimp::image::$itype -2 -2 3 3 {} [trim {
+        0 0 0
+        0 0 0
+        0 0 0
+    }]]
+
+    test crimp-cut-$k.19 "[origin] image cut, north straddle, $itype" -body {
+        astcl [crimp cut [$itype] 1 -2 3 3]
+    } -result [list crimp::image::$itype 1 -2 3 3 {} [trim {
+        0 0 0
+        0 0 0
+        1 2 3
+    }]]
+
+    test crimp-cut-$k.20 "[origin] image cut, ne straddle, $itype" -body {
+        astcl [crimp cut [$itype] 4 -2 3 3]
+    } -result [list crimp::image::$itype 4 -2 3 3 {} [trim {
+        0 0 0
+        0 0 0
+        4 0 0
+    }]]
+
+    test crimp-cut-$k.21 "[origin] image cut, east straddle, $itype" -body {
+        astcl [crimp cut [$itype] 4 1 3 3]
+    } -result [list crimp::image::$itype 4 1 3 3 {} [trim {
+         9 0 0
+        14 0 0
+        19 0 0
+    }]]
+
+    test crimp-cut-$k.22 "[origin] image cut, se straddle, $itype" -body {
+        astcl [crimp cut [$itype] 4 4 3 3]
+    } -result [list crimp::image::$itype 4 4 3 3 {} [trim {
+        24 0 0
+         0 0 0
+         0 0 0
+    }]]
+
+    test crimp-cut-$k.23 "[origin] image cut, south straddle, $itype" -body {
+        astcl [crimp cut [$itype] 1 4 3 3]
+    } -result [list crimp::image::$itype 1 4 3 3 {} [trim {
+        21 22 23
+         0  0  0
+         0  0  0
+    }]]
+
+    test crimp-cut-$k.24 "[origin] image cut, sw straddle, $itype" -body {
+        astcl [crimp cut [$itype] -2 4 3 3]
+    } -result [list crimp::image::$itype -2 4 3 3 {} [trim {
+        0 0 20
+        0 0  0
+        0 0  0
+    }]]
+
+    test crimp-cut-$k.25 "[origin] image cut, west straddle, $itype" -body {
+        astcl [crimp cut [$itype] -2 1 3 3]
+    } -result [list crimp::image::$itype -2 1 3 3 {} [trim {
+        0 0  5
+        0 0 10
+        0 0 15
+    }]]
+
+    # empty cuts
+
+    test crimp-cut-$k.26 "[origin] image cut, empty horizontal, $itype" -body {
+        astcl [crimp cut [$itype] -4 2 0 5]
+    } -result [list crimp::image::$itype -4 2 0 5 {} {}]
+
+    test crimp-cut-$k.27 "[origin] image cut, empty vertical, $itype" -body {
+        astcl [crimp cut [$itype] 2 -3 5 0]
+    } -result [list crimp::image::$itype 2 -3 5 0 {} {}]
+
+    test crimp-cut-$k.28 "[origin] image cut, empty all, $itype" -body {
+        astcl [crimp cut [$itype] 2 2 0 0]
+    } -result [list crimp::image::$itype 2 2 0 0 {} {}]
+}
+
+# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+## Handling of input location: Modified pass through to result.
+
+foreach {n itype} {
+    0 grey8
+    1 grey16
+    2 grey32
+    3 rgb
+    4 rgba
+    5 hsv
+    6 float
+    7 fpcomplex
+} {
+    test crimp-cut-10.$n "[origin] image cut, $itype, location handling" -body {
+	crimp at [crimp cut [crimp place [$itype] 23 45] 4 5 2 2]
+    } -result {27 50}
+
+    test crimp-cut-11.$n "[origin] image cut, $itype, location handling" -body {
+	crimp at [crimp cut [crimp place [$itype] 23 45] -4 -5 2 2]
+    } -result {19 40}
+}
+
+# -------------------------------------------------------------------------
+testsuiteCleanup
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

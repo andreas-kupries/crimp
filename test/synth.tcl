@@ -132,7 +132,7 @@ proc fliptv {p} { fliph [fliptp [fliph $p]] }
 
 proc trim {str} {
     join [lmap {apply {{s} {
-	set s [string trimleft $s]
+	set s [string trim $s]
 	regsub -all {\s+} $s { } s
 	regsub -all {\{\s} $s "\{" s
 	return $s
@@ -159,6 +159,11 @@ proc normstat {s} {
 	dict set s $k $v
     }
     return $s
+}
+
+proc astcl {i} {
+    # Treat as list, and replace the binary pixel data with the nested-list tcl representation.
+    lreplace $i end end [join [crimp write 2string tcl $i] \n]
 }
 
 proc lmap {f list} {

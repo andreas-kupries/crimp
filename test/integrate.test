@@ -1,0 +1,83 @@
+# -*- tcl -*-
+# -------------------------------------------------------------------------
+
+source [file join \
+            [file dirname [file join [pwd] [info script]]] \
+            testutilities.tcl]
+
+testsNeedTcl     8.5
+testsNeedTcltest 2
+
+support { useLocalFile synth.tcl }
+support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
+testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+
+# -------------------------------------------------------------------------
+## Summed Area Tables (Image Integration)
+# -------------------------------------------------------------------------
+
+test crimp-integrate-1.0 {image integrate, wrong\#args, not enough} -body {
+    crimp integrate
+} -returnCodes error -result {wrong # args: should be "crimp integrate image"}
+
+test crimp-integrate-1.1 {image integrate, wrong\#args, too many} -body {
+    crimp integrate I toomuch
+} -returnCodes error -result {wrong # args: should be "crimp integrate image"}
+
+# -------------------------------------------------------------------------
+# INTEGRATE (arity 1, commutative)
+# Supported:     grey8 grey16 grey32 float
+# Not supported: rgb rgba hsv fpcomplex
+# Supportable: rgb fpcomplex (addition is component-wise)
+# TODO: (implementation): rgb, fpcomplex
+
+test crimp-integrate-2.0 {image integrate, grey8} -body {
+    join [crimp write 2string tcl [crimp integrate [grey8]]] \n
+} -result [trim {
+     0.0   1.0   3.0   6.0  10.0
+     5.0  12.0  21.0  32.0  45.0
+    15.0  33.0  54.0  78.0 105.0
+    30.0  64.0 102.0 144.0 190.0
+    50.0 105.0 165.0 230.0 300.0
+}]
+
+test crimp-integrate-2.1 {image integrate, grey16} -body {
+    join [crimp write 2string tcl [crimp integrate [grey16]]] \n
+} -result [trim {
+     0.0   1.0   3.0   6.0  10.0
+     5.0  12.0  21.0  32.0  45.0
+    15.0  33.0  54.0  78.0 105.0
+    30.0  64.0 102.0 144.0 190.0
+    50.0 105.0 165.0 230.0 300.0
+}]
+
+test crimp-integrate-2.2 {image integrate, grey32} -body {
+    join [crimp write 2string tcl [crimp integrate [grey32]]] \n
+} -result [trim {
+     0.0   1.0   3.0   6.0  10.0
+     5.0  12.0  21.0  32.0  45.0
+    15.0  33.0  54.0  78.0 105.0
+    30.0  64.0 102.0 144.0 190.0
+    50.0 105.0 165.0 230.0 300.0
+}]
+
+test crimp-integrate-2.3 {image integrate, float} -body {
+    join [crimp write 2string tcl [crimp integrate [float]]] \n
+} -result [trim {
+     0.0   1.0   3.0   6.0  10.0
+     5.0  12.0  21.0  32.0  45.0
+    15.0  33.0  54.0  78.0 105.0
+    30.0  64.0 102.0 144.0 190.0
+    50.0 105.0 165.0 230.0 300.0
+}]
+
+# -------------------------------------------------------------------------
+## Handling of input location and geometry: Union of inputs.
+
+# -------------------------------------------------------------------------
+testsuiteCleanup
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

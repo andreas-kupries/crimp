@@ -95,7 +95,11 @@ proc fpcomplex {} {
 # # ## ### ##### ######## ############# #####################
 
 proc trim {str} {
-    join [lmap {string trimleft} [split [string trimleft $str] \n]] \n
+    join [lmap {apply {{s} {
+	set s [string trimleft $s]
+	regsub -all {\s+} $s { } s
+	return $s
+    }}} [split [string trim $str] \n]] \n
 }
 
 proc bw {tclimage} {

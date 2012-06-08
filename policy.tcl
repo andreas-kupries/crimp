@@ -1394,6 +1394,13 @@ proc ::crimp::cut {image dx dy w h} {
     if {![::crimp::Has $f]} {
 	return -code error "Cutting is not supported for images of type \"$type\""
     }
+    if {$w < 0} {
+	return -code error "Illegal width, expected positive integer, got \"$w\""
+    }
+    if {$h < 0} {
+	return -code error "Illegal height, expected positive integer, got \"$h\""
+    }
+
     lassign [::crimp::at $image] ox oy
     incr ox $dx
     incr oy $dy

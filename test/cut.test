@@ -13,59 +13,59 @@ support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
 testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 
 # -------------------------------------------------------------------------
-## Geomtry manipulation. Cut rectangular region out of the image.
+## Geometry manipulation. Cut rectangular region out of the image.
 # -------------------------------------------------------------------------
 
 test crimp-cut-1.0 {image cut, wrong\#args, not enough} -body {
     crimp cut
 } -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
 
-test crimp-cut-1.0 {image cut, wrong\#args, not enough} -body {
+test crimp-cut-1.1 {image cut, wrong\#args, not enough} -body {
     crimp cut IMAGE
 } -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
 
-test crimp-cut-1.1 {image cut, wrong\#args, not enough} -body {
+test crimp-cut-1.2 {image cut, wrong\#args, not enough} -body {
     crimp cut IMAGE DX
 } -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
 
-test crimp-cut-1.2 {image cut, wrong\#args, not enough} -body {
+test crimp-cut-1.3 {image cut, wrong\#args, not enough} -body {
     crimp cut IMAGE DX DY
 } -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
 
-test crimp-cut-1.3 {image cut, wrong\#args, not enough} -body {
+test crimp-cut-1.4 {image cut, wrong\#args, not enough} -body {
     crimp cut IMAGE DX DY W
 } -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
 
-test crimp-cut-1.4 {image cut, wrong\#args, too many} -body {
+test crimp-cut-1.5 {image cut, wrong\#args, too many} -body {
     crimp cut IMAGE DX DY W H toomuch
 } -returnCodes error -result {wrong # args: should be "crimp cut image dx dy w h"}
 
-test crimp-cut-1.5 {image cut, invalid args} -body {
+test crimp-cut-1.6 {image cut, invalid args} -body {
     crimp cut IMAGE DX DY W H
 } -returnCodes error -result {invalid image format}
 
-test crimp-cut-1.6 {image cut, invalid args} -body {
+test crimp-cut-1.7 {image cut, invalid args} -body {
     crimp cut [grey8] DX DY W H
 } -returnCodes error -result {expected integer but got "DX"}
 
-test crimp-cut-1.7 {image cut, invalid args} -body {
+test crimp-cut-1.8 {image cut, invalid args} -body {
     crimp cut [grey8] 2 DY W H
 } -returnCodes error -result {expected integer but got "DY"}
 
-test crimp-cut-1.8 {image cut, invalid args} -body {
+test crimp-cut-1.9 {image cut, invalid args} -body {
     crimp cut [grey8] 2 4 W H
 } -returnCodes error -result {expected integer but got "W"}
 
-test crimp-cut-1.9 {image cut, invalid args} -body {
+test crimp-cut-1.10 {image cut, invalid args} -body {
     crimp cut [grey8] 2 4 7 H
 } -returnCodes error -result {expected integer but got "H"}
 
 # Negative dimensions
-test crimp-cut-1.10 {image cut, invalid args} -body {
+test crimp-cut-1.11 {image cut, invalid args} -body {
     crimp cut [grey8] 2 4 -7 H
 } -returnCodes error -result {Illegal width, expected positive integer, got "-7"}
 
-test crimp-cut-1.11 {image cut, invalid args} -body {
+test crimp-cut-1.12 {image cut, invalid args} -body {
     crimp cut [grey8] 2 4 7 -5
 } -returnCodes error -result {Illegal height, expected positive integer, got "-5"}
 

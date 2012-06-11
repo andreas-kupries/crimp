@@ -17,7 +17,7 @@ crimp_input (imageObj, image, grey8);
  * This is the simple definition. Might be better to generate macros
  * specialized to each quadrant. Except, even they have to perform modulo
  * arithmetic, as the border may be larger than image's width or height,
- * causing muliple wrapping.
+ * causing multiple wrapping.
  */
 
 #define FILL(xo,yo) {						   \

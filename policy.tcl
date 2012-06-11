@@ -91,7 +91,13 @@ proc ::crimp::BORDER {imagetype spec} {
 
     if {![llength [List expand_*_$bordertype]]} {
 	# TODO :: Compute/memoize available border types.
-	return -code error "Unknown border type \"$bordertype\", expected one of ..."
+	set chop [string length ::crimp::expand_${imagetype}_]
+	set btypes {}
+	foreach x [lsort -dict [List expand_${imagetype}_*]] {
+	    lappend btypes [string range $x $chop end]
+	}
+	set btypes [linsert [::join $btypes {, }] end-1 or]
+	return -code error "Unknown border type \"$bordertype\", expected one of $btypes"
     }
 
     set f expand_${imagetype}_$bordertype

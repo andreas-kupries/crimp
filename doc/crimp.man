@@ -244,7 +244,7 @@ pixel values with [const 0] if not enough values were provided.
 
 
 [call [cmd ::crimp] [method crop] [arg image] [arg ww] [arg hn] [arg we] [arg hs]]
-[keywords cropping shrinking resize {edge shrinking}]
+[keywords cropping shrinking resize {edge shrinking} {region of interest}]
 
 This method is the counterpart to the [method expand] family of
 methods, shrinking an [arg image] by removing a border.
@@ -259,7 +259,7 @@ representation.
 
 [call [cmd ::crimp] [method cut] [arg image] [arg dx] [arg dy] [arg w] [arg h]]
 [keywords {cut region} {region cut} {rectangle cut} {rectangle extraction}]
-[keywords {extract rectangle} {extract region}]
+[keywords {extract rectangle} {extract region} {region of interest}]
 
 This method takes the rectangular region specified through its [arg x]/[arg y]
 position relative to the upper-left corner of the input [arg image] and its

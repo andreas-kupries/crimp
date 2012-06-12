@@ -13,8 +13,7 @@ support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
 testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 
 # -------------------------------------------------------------------------
-## Geometry manipulation. Expand image in vacccccrious ways.
-## TODO (implementation): fpcomplex.
+## Geometry manipulation. Expand image in various ways.
 # -------------------------------------------------------------------------
 
 test crimp-expand-1.0 {image expand, wrong\#args, not enough} -body {
@@ -50,17 +49,12 @@ set n 0
 foreach itype [types] {
     test crimp-expand-1.7.$n "[origin] image expand, $itype, invalid border" -body {
         crimp expand BORDERTYPE [$itype] WW HN WE HS
-    } -returnCodes error -result {Unknown border type "BORDERTYPE", expected one of const, extend, mirror, replicate, or wrap} \
-        -constraints [expr {$itype eq "fpcomplex"
-                            ? "NotYetImplemented"
-                            : "" }]
+    } -returnCodes error -result {Unknown border type "BORDERTYPE", expected one of const, extend, mirror, replicate, or wrap}
     incr n
 }
 
 set n 0
 foreach itype [types] {
-    if {$itype eq "fpcomplex"} continue
-
     foreach border {extend mirror replicate wrap} {
         test crimp-expand-1.8.$n "[origin] image expand $border, $itype, wrong\#args, too many" -body {
             crimp expand $border [$itype] W N E S toomuch
@@ -335,7 +329,6 @@ test crimp-expand-2.20 "[origin] image expand, extend, grey8" -body {
     0   0  0  0  0
 }]]
 
-
 # -------------------------------------------------------------------------
 
 test crimp-expand-3.0 "[origin] image expand, const, grey16" -body {
@@ -474,6 +467,94 @@ test crimp-expand-3.12 "[origin] image expand, replicate, grey16" -body {
     20 21 22 23 24
     20 21 22 23 24
     20 21 22 23 24
+}]]
+
+test crimp-expand-3.13 "[origin] image expand, mirror, grey16" -body {
+    astcl [crimp expand mirror [grey16] 2 0 0 0]
+} -result [list crimp::image::grey16 -2 0 7 5 {} [trim {
+      2  1  0  1  2  3  4
+      7  6  5  6  7  8  9
+    12 11 10 11 12 13 14
+    17 16 15 16 17 18 19
+    22 21 20 21 22 23 24
+}]]
+
+test crimp-expand-3.14 "[origin] image expand, mirror, grey16" -body {
+    astcl [crimp expand mirror [grey16] 0 2 0 0]
+} -result [list crimp::image::grey16 0 -2 5 7 {} [trim {
+    10 11 12 13 14
+     5  6  7  8  9
+     0  1  2  3  4
+     5  6  7  8  9
+    10 11 12 13 14
+    15 16 17 18 19
+    20 21 22 23 24
+}]]
+
+test crimp-expand-3.15 "[origin] image expand, mirror, grey16" -body {
+    astcl [crimp expand mirror [grey16] 0 0 2 0]
+} -result [list crimp::image::grey16 0 0 7 5 {} [trim {
+     0  1  2  3  4  3  2
+     5  6  7  8  9  8  7
+    10 11 12 13 14 13 12
+    15 16 17 18 19 18 17
+    20 21 22 23 24 23 22
+}]]
+
+test crimp-expand-3.16 "[origin] image expand, mirror, grey16" -body {
+    astcl [crimp expand mirror [grey16] 0 0 0 2]
+} -result [list crimp::image::grey16 0 0 5 7 {} [trim {
+     0  1  2  3  4
+     5  6  7  8  9
+    10 11 12 13 14
+    15 16 17 18 19
+    20 21 22 23 24
+    15 16 17 18 19
+    10 11 12 13 14
+}]]
+
+test crimp-expand-3.17 "[origin] image expand, extend, grey16" -body {
+    astcl [crimp expand extend [grey16] 2 0 0 0]
+} -result [list crimp::image::grey16 -2 0 7 5 {} [trim {
+     2 1  0  1  2  3  4
+     2 1  5  6  7  8  9
+     2 1 10 11 12 13 14
+     2 1 15 16 17 18 19
+     2 1 20 21 22 23 24
+}]]
+
+test crimp-expand-3.18 "[origin] image expand, extend, grey16" -body {
+    astcl [crimp expand extend [grey16] 0 2 0 0]
+} -result [list crimp::image::grey16 0 -2 5 7 {} [trim {
+    10 10 10 10 10
+     5  5  5  5  5
+     0  1  2  3  4
+     5  6  7  8  9
+    10 11 12 13 14
+    15 16 17 18 19
+    20 21 22 23 24
+}]]
+
+test crimp-expand-3.19 "[origin] image expand, extend, grey16" -body {
+    astcl [crimp expand extend [grey16] 0 0 2 0]
+} -result [list crimp::image::grey16 0 0 7 5 {} [trim {
+     0  1  2  3  4 0 0
+     5  6  7  8  9 0 0
+    10 11 12 13 14 0 0
+    15 16 17 18 19 0 0
+    20 21 22 23 24 0 0
+}]]
+
+test crimp-expand-3.20 "[origin] image expand, extend, grey16" -body {
+    astcl [crimp expand extend [grey16] 0 0 0 2]
+} -result [list crimp::image::grey16 0 0 5 7 {} [trim {
+     0  1  2  3  4
+     5  6  7  8  9
+    10 11 12 13 14
+    15 16 17 18 19
+    20 21 22 23 24
+    0   0  0  0  0
+    0   0  0  0  0
 }]]
 
 # -------------------------------------------------------------------------
@@ -616,6 +697,94 @@ test crimp-expand-4.12 "[origin] image expand, replicate, grey32" -body {
     20 21 22 23 24
 }]]
 
+test crimp-expand-4.13 "[origin] image expand, mirror, grey32" -body {
+    astcl [crimp expand mirror [grey32] 2 0 0 0]
+} -result [list crimp::image::grey32 -2 0 7 5 {} [trim {
+      2  1  0  1  2  3  4
+      7  6  5  6  7  8  9
+    12 11 10 11 12 13 14
+    17 16 15 16 17 18 19
+    22 21 20 21 22 23 24
+}]]
+
+test crimp-expand-4.14 "[origin] image expand, mirror, grey32" -body {
+    astcl [crimp expand mirror [grey32] 0 2 0 0]
+} -result [list crimp::image::grey32 0 -2 5 7 {} [trim {
+    10 11 12 13 14
+     5  6  7  8  9
+     0  1  2  3  4
+     5  6  7  8  9
+    10 11 12 13 14
+    15 16 17 18 19
+    20 21 22 23 24
+}]]
+
+test crimp-expand-4.15 "[origin] image expand, mirror, grey32" -body {
+    astcl [crimp expand mirror [grey32] 0 0 2 0]
+} -result [list crimp::image::grey32 0 0 7 5 {} [trim {
+     0  1  2  3  4  3  2
+     5  6  7  8  9  8  7
+    10 11 12 13 14 13 12
+    15 16 17 18 19 18 17
+    20 21 22 23 24 23 22
+}]]
+
+test crimp-expand-4.16 "[origin] image expand, mirror, grey32" -body {
+    astcl [crimp expand mirror [grey32] 0 0 0 2]
+} -result [list crimp::image::grey32 0 0 5 7 {} [trim {
+     0  1  2  3  4
+     5  6  7  8  9
+    10 11 12 13 14
+    15 16 17 18 19
+    20 21 22 23 24
+    15 16 17 18 19
+    10 11 12 13 14
+}]]
+
+test crimp-expand-4.17 "[origin] image expand, extend, grey32" -body {
+    astcl [crimp expand extend [grey32] 2 0 0 0]
+} -result [list crimp::image::grey32 -2 0 7 5 {} [trim {
+     2 1  0  1  2  3  4
+     2 1  5  6  7  8  9
+     2 1 10 11 12 13 14
+     2 1 15 16 17 18 19
+     2 1 20 21 22 23 24
+}]]
+
+test crimp-expand-4.18 "[origin] image expand, extend, grey32" -body {
+    astcl [crimp expand extend [grey32] 0 2 0 0]
+} -result [list crimp::image::grey32 0 -2 5 7 {} [trim {
+    10 10 10 10 10
+     5  5  5  5  5
+     0  1  2  3  4
+     5  6  7  8  9
+    10 11 12 13 14
+    15 16 17 18 19
+    20 21 22 23 24
+}]]
+
+test crimp-expand-4.19 "[origin] image expand, extend, grey32" -body {
+    astcl [crimp expand extend [grey32] 0 0 2 0]
+} -result [list crimp::image::grey32 0 0 7 5 {} [trim {
+     0  1  2  3  4 0 0
+     5  6  7  8  9 0 0
+    10 11 12 13 14 0 0
+    15 16 17 18 19 0 0
+    20 21 22 23 24 0 0
+}]]
+
+test crimp-expand-4.20 "[origin] image expand, extend, grey32" -body {
+    astcl [crimp expand extend [grey32] 0 0 0 2]
+} -result [list crimp::image::grey32 0 0 5 7 {} [trim {
+     0  1  2  3  4
+     5  6  7  8  9
+    10 11 12 13 14
+    15 16 17 18 19
+    20 21 22 23 24
+    0   0  0  0  0
+    0   0  0  0  0
+}]]
+
 # -------------------------------------------------------------------------
 
 test crimp-expand-5.0 "[origin] image expand, const, rgb" -body {
@@ -710,6 +879,138 @@ test crimp-expand-5.8 "[origin] image expand, wrap, rgb" -body {
     { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
     {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
     { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+}]]
+
+test crimp-expand-5.9 "[origin] image expand, replicate, rgb" -body {
+    astcl [crimp expand replicate [rgb] 2 0 0 0]
+} -result [list crimp::image::rgb -2 0 7 5 {} [trim {
+    { 0  1  2} { 0  1  2} { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} { 3  4  5} { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} { 6  7  8} { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} { 9 10 11} { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {12 13 14} {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-5.10 "[origin] image expand, replicate, rgb" -body {
+    astcl [crimp expand replicate [rgb] 0 2 0 0]
+} -result [list crimp::image::rgb 0 -2 5 7 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-5.11 "[origin] image expand, replicate, rgb" -body {
+    astcl [crimp expand replicate [rgb] 0 0 2 0]
+} -result [list crimp::image::rgb 0 0 7 5 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74} {60 69 74} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70} {68 61 70} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62} {73 67 62} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66} {71 63 66} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72} {64 65 72} {64 65 72}
+}]]
+
+test crimp-expand-5.12 "[origin] image expand, replicate, rgb" -body {
+    astcl [crimp expand replicate [rgb] 0 0 0 2]
+} -result [list crimp::image::rgb 0 0 5 7 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-5.13 "[origin] image expand, mirror, rgb" -body {
+    astcl [crimp expand mirror [rgb] 2 0 0 0]
+} -result [list crimp::image::rgb -2 0 7 5 {} [trim {
+    {30 31 32} {15 20 25} { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    {41 42 33} {16 21 26} { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    {40 43 34} {17 22 27} { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    {39 44 35} {18 23 28} { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {38 37 36} {19 24 29} {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-5.14 "[origin] image expand, mirror, rgb" -body {
+    astcl [crimp expand mirror [rgb] 0 2 0 0]
+} -result [list crimp::image::rgb 0 -2 5 7 {} [trim {
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-5.15 "[origin] image expand, mirror, rgb" -body {
+    astcl [crimp expand mirror [rgb] 0 0 2 0]
+} -result [list crimp::image::rgb 0 0 7 5 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74} {57 58 59} {30 31 32}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70} {56 55 54} {41 42 33}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62} {51 52 53} {40 43 34}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66} {50 49 48} {39 44 35}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72} {45 46 47} {38 37 36}
+}]]
+
+test crimp-expand-5.16 "[origin] image expand, mirror, rgb" -body {
+    astcl [crimp expand mirror [rgb] 0 0 0 2]
+} -result [list crimp::image::rgb 0 0 5 7 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+}]]
+
+test crimp-expand-5.17 "[origin] image expand, extend, rgb" -body {
+    astcl [crimp expand extend [rgb] 2 0 0 0]
+} -result [list crimp::image::rgb -2 0 7 5 {} [trim {
+    {30 30 30} {15 19 23} { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    {38 38 28} {13 17 21} { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    {34 36 26} {11 15 19} { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    {30 34 24} { 9 13 17} { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {26 24 22} { 7 11 15} {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-5.18 "[origin] image expand, extend, rgb" -body {
+    astcl [crimp expand extend [rgb] 0 2 0 0]
+} -result [list crimp::image::rgb 0 -2 5 7 {} [trim {
+    { 6  6  6} { 2  2  2} {10 12  2} { 0  0  0} {13  0  0}
+    { 3  3  3} { 1  1  1} {11 11  1} { 0  0  0} { 8  0  0}
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-5.19 "[origin] image expand, extend, rgb" -body {
+    astcl [crimp expand extend [rgb] 0 0 2 0]
+} -result [list crimp::image::rgb 0 0 7 5 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74} {0 0 0} {0 0 0}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70} {0 0 0} {0 0 0}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62} {0 0 0} {0 0 0}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66} {0 0 0} {0 0 0}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72} {0 0 0} {0 0 0}
+}]]
+
+test crimp-expand-5.20 "[origin] image expand, extend, rgb" -body {
+    astcl [crimp expand extend [rgb] 0 0 0 2]
+} -result [list crimp::image::rgb 0 0 5 7 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+    { 0  0  0} { 0  0  0} { 1  7  0} { 5  3  1} { 7  0  0}
+    { 0  0  0} { 0  0  0} { 2  6  0} { 6  6  6} { 9  2  0}
 }]]
 
 # -------------------------------------------------------------------------
@@ -808,6 +1109,138 @@ test crimp-expand-6.8 "[origin] image expand, wrap, rgba" -body {
     { 0  1  2  75} {15 20 25  84} {30 31 32  85} {57 58 59  86} {60 69 74  87}
 }]]
 
+test crimp-expand-6.9 "[origin] image expand, replicate, rgba" -body {
+    astcl [crimp expand replicate [rgba] 2 0 0 0]
+} -result [list crimp::image::rgba -2 0 7 5 {} [trim {
+    { 0  1  2 75} { 0  1  2 75} { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87}
+    { 3  4  5 76} { 3  4  5 76} { 3  4  5 76} {16 21 26 83} {41 42 33 90} {56 55 54 89} {68 61 70 88}
+    { 6  7  8 77} { 6  7  8 77} { 6  7  8 77} {17 22 27 82} {40 43 34 91} {51 52 53 98} {73 67 62 97}
+    { 9 10 11 78} { 9 10 11 78} { 9 10 11 78} {18 23 28 81} {39 44 35 92} {50 49 48 99} {71 63 66 96}
+    {12 13 14 79} {12 13 14 79} {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95}
+}]]
+
+test crimp-expand-6.10 "[origin] image expand, replicate, rgba" -body {
+    astcl [crimp expand replicate [rgba] 0 2 0 0]
+} -result [list crimp::image::rgba 0 -2 5 7 {} [trim {
+    { 0  1  2  75} {15 20 25  84} {30 31 32  85} {57 58 59  86} {60 69 74  87}
+    { 0  1  2  75} {15 20 25  84} {30 31 32  85} {57 58 59  86} {60 69 74  87}
+    { 0  1  2  75} {15 20 25  84} {30 31 32  85} {57 58 59  86} {60 69 74  87}
+    { 3  4  5  76} {16 21 26  83} {41 42 33  90} {56 55 54  89} {68 61 70  88}
+    { 6  7  8  77} {17 22 27  82} {40 43 34  91} {51 52 53  98} {73 67 62  97}
+    { 9 10 11  78} {18 23 28  81} {39 44 35  92} {50 49 48  99} {71 63 66  96}
+    {12 13 14  79} {19 24 29  80} {38 37 36  93} {45 46 47  94} {64 65 72  95}
+}]]
+
+test crimp-expand-6.11 "[origin] image expand, replicate, rgba" -body {
+    astcl [crimp expand replicate [rgba] 0 0 2 0]
+} -result [list crimp::image::rgba 0 0 7 5 {} [trim {
+    { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87} {60 69 74 87} {60 69 74 87}
+    { 3  4  5 76} {16 21 26 83} {41 42 33 90} {56 55 54 89} {68 61 70 88} {68 61 70 88} {68 61 70 88}
+    { 6  7  8 77} {17 22 27 82} {40 43 34 91} {51 52 53 98} {73 67 62 97} {73 67 62 97} {73 67 62 97}
+    { 9 10 11 78} {18 23 28 81} {39 44 35 92} {50 49 48 99} {71 63 66 96} {71 63 66 96} {71 63 66 96}
+    {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95} {64 65 72 95} {64 65 72 95}
+}]]
+
+test crimp-expand-6.12 "[origin] image expand, replicate, rgba" -body {
+    astcl [crimp expand replicate [rgba] 0 0 0 2]
+} -result [list crimp::image::rgba 0 0 5 7 {} [trim {
+    { 0  1  2  75} {15 20 25  84} {30 31 32  85} {57 58 59  86} {60 69 74  87}
+    { 3  4  5  76} {16 21 26  83} {41 42 33  90} {56 55 54  89} {68 61 70  88}
+    { 6  7  8  77} {17 22 27  82} {40 43 34  91} {51 52 53  98} {73 67 62  97}
+    { 9 10 11  78} {18 23 28  81} {39 44 35  92} {50 49 48  99} {71 63 66  96}
+    {12 13 14  79} {19 24 29  80} {38 37 36  93} {45 46 47  94} {64 65 72  95}
+    {12 13 14  79} {19 24 29  80} {38 37 36  93} {45 46 47  94} {64 65 72  95}
+    {12 13 14  79} {19 24 29  80} {38 37 36  93} {45 46 47  94} {64 65 72  95}
+}]]
+
+test crimp-expand-6.13 "[origin] image expand, mirror, rgba" -body {
+    astcl [crimp expand mirror [rgba] 2 0 0 0]
+} -result [list crimp::image::rgba -2 0 7 5 {} [trim {
+    {30 31 32 85} {15 20 25 84} { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87}
+    {41 42 33 90} {16 21 26 83} { 3  4  5 76} {16 21 26 83} {41 42 33 90} {56 55 54 89} {68 61 70 88}
+    {40 43 34 91} {17 22 27 82} { 6  7  8 77} {17 22 27 82} {40 43 34 91} {51 52 53 98} {73 67 62 97}
+    {39 44 35 92} {18 23 28 81} { 9 10 11 78} {18 23 28 81} {39 44 35 92} {50 49 48 99} {71 63 66 96}
+    {38 37 36 93} {19 24 29 80} {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95}
+}]]
+
+test crimp-expand-6.14 "[origin] image expand, mirror, rgba" -body {
+    astcl [crimp expand mirror [rgba] 0 2 0 0]
+} -result [list crimp::image::rgba 0 -2 5 7 {} [trim {
+    { 6  7  8  77} {17 22 27  82} {40 43 34  91} {51 52 53  98} {73 67 62  97}
+    { 3  4  5  76} {16 21 26  83} {41 42 33  90} {56 55 54  89} {68 61 70  88}
+    { 0  1  2  75} {15 20 25  84} {30 31 32  85} {57 58 59  86} {60 69 74  87}
+    { 3  4  5  76} {16 21 26  83} {41 42 33  90} {56 55 54  89} {68 61 70  88}
+    { 6  7  8  77} {17 22 27  82} {40 43 34  91} {51 52 53  98} {73 67 62  97}
+    { 9 10 11  78} {18 23 28  81} {39 44 35  92} {50 49 48  99} {71 63 66  96}
+    {12 13 14  79} {19 24 29  80} {38 37 36  93} {45 46 47  94} {64 65 72  95}
+}]]
+
+test crimp-expand-6.15 "[origin] image expand, mirror, rgba" -body {
+    astcl [crimp expand mirror [rgba] 0 0 2 0]
+} -result [list crimp::image::rgba 0 0 7 5 {} [trim {
+    { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87} {57 58 59 86} {30 31 32 85}
+    { 3  4  5 76} {16 21 26 83} {41 42 33 90} {56 55 54 89} {68 61 70 88} {56 55 54 89} {41 42 33 90}
+    { 6  7  8 77} {17 22 27 82} {40 43 34 91} {51 52 53 98} {73 67 62 97} {51 52 53 98} {40 43 34 91}
+    { 9 10 11 78} {18 23 28 81} {39 44 35 92} {50 49 48 99} {71 63 66 96} {50 49 48 99} {39 44 35 92}
+    {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95} {45 46 47 94} {38 37 36 93}
+}]]
+
+test crimp-expand-6.16 "[origin] image expand, mirror, rgba" -body {
+    astcl [crimp expand mirror [rgba] 0 0 0 2]
+} -result [list crimp::image::rgba 0 0 5 7 {} [trim {
+    { 0  1  2  75} {15 20 25  84} {30 31 32  85} {57 58 59  86} {60 69 74  87}
+    { 3  4  5  76} {16 21 26  83} {41 42 33  90} {56 55 54  89} {68 61 70  88}
+    { 6  7  8  77} {17 22 27  82} {40 43 34  91} {51 52 53  98} {73 67 62  97}
+    { 9 10 11  78} {18 23 28  81} {39 44 35  92} {50 49 48  99} {71 63 66  96}
+    {12 13 14  79} {19 24 29  80} {38 37 36  93} {45 46 47  94} {64 65 72  95}
+    { 9 10 11  78} {18 23 28  81} {39 44 35  92} {50 49 48  99} {71 63 66  96}
+    { 6  7  8  77} {17 22 27  82} {40 43 34  91} {51 52 53  98} {73 67 62  97}
+}]]
+
+test crimp-expand-6.17 "[origin] image expand, extend, rgba" -body {
+    astcl [crimp expand extend [rgba] 2 0 0 0]
+} -result [list crimp::image::rgba -2 0 7 5 {} [trim {
+    {30 30 30 10} {15 19 23 9} { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87}
+    {38 38 28 14} {13 17 21 7} { 3  4  5 76} {16 21 26 83} {41 42 33 90} {56 55 54 89} {68 61 70 88}
+    {34 36 26 14} {11 15 19 5} { 6  7  8 77} {17 22 27 82} {40 43 34 91} {51 52 53 98} {73 67 62 97}
+    {30 34 24 14} { 9 13 17 3} { 9 10 11 78} {18 23 28 81} {39 44 35 92} {50 49 48 99} {71 63 66 96}
+    {26 24 22 14} { 7 11 15 1} {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95}
+}]]
+
+test crimp-expand-6.18 "[origin] image expand, extend, rgba" -body {
+    astcl [crimp expand extend [rgba] 0 2 0 0]
+} -result [list crimp::image::rgba 0 -2 5 7 {} [trim {
+    { 6  6  6  2} { 2  2  2  0} {10 12  2  6} { 0  0  0 12} {13  0  0 10}
+    { 3  3  3  1} { 1  1  1  0} {11 11  1  5} { 0  0  0  3} { 8  0  0  1}
+    { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87}
+    { 3  4  5 76} {16 21 26 83} {41 42 33 90} {56 55 54 89} {68 61 70 88}
+    { 6  7  8 77} {17 22 27 82} {40 43 34 91} {51 52 53 98} {73 67 62 97}
+    { 9 10 11 78} {18 23 28 81} {39 44 35 92} {50 49 48 99} {71 63 66 96}
+    {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95}
+}]]
+
+test crimp-expand-6.19 "[origin] image expand, extend, rgba" -body {
+    astcl [crimp expand extend [rgba] 0 0 2 0]
+} -result [list crimp::image::rgba 0 0 7 5 {} [trim {
+    { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87} {0 0 0 0} {0 0 0 0}
+    { 3  4  5 76} {16 21 26 83} {41 42 33 90} {56 55 54 89} {68 61 70 88} {0 0 0 1} {0 0 0 2}
+    { 6  7  8 77} {17 22 27 82} {40 43 34 91} {51 52 53 98} {73 67 62 97} {0 0 0 1} {0 0 0 0}
+    { 9 10 11 78} {18 23 28 81} {39 44 35 92} {50 49 48 99} {71 63 66 96} {0 0 0 3} {0 0 0 0}
+    {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95} {0 0 0 0} {0 0 0 0}
+}]]
+
+test crimp-expand-6.20 "[origin] image expand, extend, rgba" -body {
+    astcl [crimp expand extend [rgba] 0 0 0 2]
+} -result [list crimp::image::rgba 0 0 5 7 {} [trim {
+    { 0  1  2  75} {15 20 25  84} {30 31 32  85} {57 58 59  86} {60 69 74  87}
+    { 3  4  5  76} {16 21 26  83} {41 42 33  90} {56 55 54  89} {68 61 70  88}
+    { 6  7  8  77} {17 22 27  82} {40 43 34  91} {51 52 53  98} {73 67 62  97}
+    { 9 10 11  78} {18 23 28  81} {39 44 35  92} {50 49 48  99} {71 63 66  96}
+    {12 13 14  79} {19 24 29  80} {38 37 36  93} {45 46 47  94} {64 65 72  95}
+    { 0  0  0   0} { 0  0  0   1} { 1  7  0   0} { 5  3  1   5} { 7  0  0   1}
+    { 0  0  0   0} { 0  0  0   2} { 2  6  0   0} { 6  6  6   4} { 9  2  0   2}
+}]]
+
 # -------------------------------------------------------------------------
 
 test crimp-expand-7.0 "[origin] image expand, const, hsv" -body {
@@ -902,6 +1335,138 @@ test crimp-expand-7.8 "[origin] image expand, wrap, hsv" -body {
     { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
     {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
     { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+}]]
+
+test crimp-expand-7.9 "[origin] image expand, replicate, hsv" -body {
+    astcl [crimp expand replicate [hsv] 2 0 0 0]
+} -result [list crimp::image::hsv -2 0 7 5 {} [trim {
+    { 0  1  2} { 0  1  2} { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} { 3  4  5} { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} { 6  7  8} { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} { 9 10 11} { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {12 13 14} {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-7.10 "[origin] image expand, replicate, hsv" -body {
+    astcl [crimp expand replicate [hsv] 0 2 0 0]
+} -result [list crimp::image::hsv 0 -2 5 7 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-7.11 "[origin] image expand, replicate, hsv" -body {
+    astcl [crimp expand replicate [hsv] 0 0 2 0]
+} -result [list crimp::image::hsv 0 0 7 5 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74} {60 69 74} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70} {68 61 70} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62} {73 67 62} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66} {71 63 66} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72} {64 65 72} {64 65 72}
+}]]
+
+test crimp-expand-7.12 "[origin] image expand, replicate, hsv" -body {
+    astcl [crimp expand replicate [hsv] 0 0 0 2]
+} -result [list crimp::image::hsv 0 0 5 7 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-7.13 "[origin] image expand, mirror, hsv" -body {
+    astcl [crimp expand mirror [hsv] 2 0 0 0]
+} -result [list crimp::image::hsv -2 0 7 5 {} [trim {
+    {30 31 32} {15 20 25} { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    {41 42 33} {16 21 26} { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    {40 43 34} {17 22 27} { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    {39 44 35} {18 23 28} { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {38 37 36} {19 24 29} {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-7.14 "[origin] image expand, mirror, hsv" -body {
+    astcl [crimp expand mirror [hsv] 0 2 0 0]
+} -result [list crimp::image::hsv 0 -2 5 7 {} [trim {
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-7.15 "[origin] image expand, mirror, hsv" -body {
+    astcl [crimp expand mirror [hsv] 0 0 2 0]
+} -result [list crimp::image::hsv 0 0 7 5 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74} {57 58 59} {30 31 32}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70} {56 55 54} {41 42 33}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62} {51 52 53} {40 43 34}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66} {50 49 48} {39 44 35}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72} {45 46 47} {38 37 36}
+}]]
+
+test crimp-expand-7.16 "[origin] image expand, mirror, hsv" -body {
+    astcl [crimp expand mirror [hsv] 0 0 0 2]
+} -result [list crimp::image::hsv 0 0 5 7 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+}]]
+
+test crimp-expand-7.17 "[origin] image expand, extend, hsv" -body {
+    astcl [crimp expand extend [hsv] 2 0 0 0]
+} -result [list crimp::image::hsv -2 0 7 5 {} [trim {
+    {30 30 30} {15 19 23} { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    {38 38 28} {13 17 21} { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    {34 36 26} {11 15 19} { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    {30 34 24} { 9 13 17} { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {26 24 22} { 7 11 15} {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-7.18 "[origin] image expand, extend, hsv" -body {
+    astcl [crimp expand extend [hsv] 0 2 0 0]
+} -result [list crimp::image::hsv 0 -2 5 7 {} [trim {
+    { 6  6  6} { 2  2  2} {10 12  2} { 0  0  0} {13  0  0}
+    { 3  3  3} { 1  1  1} {11 11  1} { 0  0  0} { 8  0  0}
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+}]]
+
+test crimp-expand-7.19 "[origin] image expand, extend, hsv" -body {
+    astcl [crimp expand extend [hsv] 0 0 2 0]
+} -result [list crimp::image::hsv 0 0 7 5 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74} {0 0 0} {0 0 0}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70} {0 0 0} {0 0 0}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62} {0 0 0} {0 0 0}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66} {0 0 0} {0 0 0}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72} {0 0 0} {0 0 0}
+}]]
+
+test crimp-expand-7.20 "[origin] image expand, extend, hsv" -body {
+    astcl [crimp expand extend [hsv] 0 0 0 2]
+} -result [list crimp::image::hsv 0 0 5 7 {} [trim {
+    { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
+    { 3  4  5} {16 21 26} {41 42 33} {56 55 54} {68 61 70}
+    { 6  7  8} {17 22 27} {40 43 34} {51 52 53} {73 67 62}
+    { 9 10 11} {18 23 28} {39 44 35} {50 49 48} {71 63 66}
+    {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
+    { 0  0  0} { 0  0  0} { 1  7  0} { 5  3  1} { 7  0  0}
+    { 0  0  0} { 0  0  0} { 2  6  0} { 6  6  6} { 9  2  0}
 }]]
 
 # -------------------------------------------------------------------------
@@ -1000,13 +1565,371 @@ test crimp-expand-8.8 "[origin] image expand, wrap, float" -body {
      0.0  1.0  2.0  3.0  4.0
 }]]
 
+test crimp-expand-8.9 "[origin] image expand, replicate, float" -body {
+    astcl [crimp expand replicate [float] 2 0 0 0]
+} -result [list crimp::image::float -2 0 7 5 {} [trim {
+     0.0  0.0  0.0  1.0  2.0  3.0  4.0
+     5.0  5.0  5.0  6.0  7.0  8.0  9.0
+    10.0 10.0 10.0 11.0 12.0 13.0 14.0
+    15.0 15.0 15.0 16.0 17.0 18.0 19.0
+    20.0 20.0 20.0 21.0 22.0 23.0 24.0
+}]]
+
+test crimp-expand-8.10 "[origin] image expand, replicate, float" -body {
+    astcl [crimp expand replicate [float] 0 2 0 0]
+} -result [list crimp::image::float 0 -2 5 7 {} [trim {
+     0.0  1.0  2.0  3.0  4.0
+     0.0  1.0  2.0  3.0  4.0
+     0.0  1.0  2.0  3.0  4.0
+     5.0  6.0  7.0  8.0  9.0
+    10.0 11.0 12.0 13.0 14.0
+    15.0 16.0 17.0 18.0 19.0
+    20.0 21.0 22.0 23.0 24.0
+}]]
+
+test crimp-expand-8.11 "[origin] image expand, replicate, float" -body {
+    astcl [crimp expand replicate [float] 0 0 2 0]
+} -result [list crimp::image::float 0 0 7 5 {} [trim {
+     0.0  1.0  2.0  3.0  4.0  4.0  4.0
+     5.0  6.0  7.0  8.0  9.0  9.0  9.0
+    10.0 11.0 12.0 13.0 14.0 14.0 14.0
+    15.0 16.0 17.0 18.0 19.0 19.0 19.0
+    20.0 21.0 22.0 23.0 24.0 24.0 24.0
+}]]
+
+test crimp-expand-8.12 "[origin] image expand, replicate, float" -body {
+    astcl [crimp expand replicate [float] 0 0 0 2]
+} -result [list crimp::image::float 0 0 5 7 {} [trim {
+     0.0  1.0  2.0  3.0  4.0
+     5.0  6.0  7.0  8.0  9.0
+    10.0 11.0 12.0 13.0 14.0
+    15.0 16.0 17.0 18.0 19.0
+    20.0 21.0 22.0 23.0 24.0
+    20.0 21.0 22.0 23.0 24.0
+    20.0 21.0 22.0 23.0 24.0
+}]]
+
+test crimp-expand-8.13 "[origin] image expand, mirror, float" -body {
+    astcl [crimp expand mirror [float] 2 0 0 0]
+} -result [list crimp::image::float -2 0 7 5 {} [trim {
+     2.0  1.0  0.0  1.0  2.0  3.0  4.0
+     7.0  6.0  5.0  6.0  7.0  8.0  9.0
+    12.0 11.0 10.0 11.0 12.0 13.0 14.0
+    17.0 16.0 15.0 16.0 17.0 18.0 19.0
+    22.0 21.0 20.0 21.0 22.0 23.0 24.0
+}]]
+
+test crimp-expand-8.14 "[origin] image expand, mirror, float" -body {
+    astcl [crimp expand mirror [float] 0 2 0 0]
+} -result [list crimp::image::float 0 -2 5 7 {} [trim {
+    10.0 11.0 12.0 13.0 14.0
+     5.0  6.0  7.0  8.0  9.0
+     0.0  1.0  2.0  3.0  4.0
+     5.0  6.0  7.0  8.0  9.0
+    10.0 11.0 12.0 13.0 14.0
+    15.0 16.0 17.0 18.0 19.0
+    20.0 21.0 22.0 23.0 24.0
+}]]
+
+test crimp-expand-8.15 "[origin] image expand, mirror, float" -body {
+    astcl [crimp expand mirror [float] 0 0 2 0]
+} -result [list crimp::image::float 0 0 7 5 {} [trim {
+     0.0  1.0  2.0  3.0  4.0  3.0  2.0
+     5.0  6.0  7.0  8.0  9.0  8.0  7.0
+    10.0 11.0 12.0 13.0 14.0 13.0 12.0
+    15.0 16.0 17.0 18.0 19.0 18.0 17.0
+    20.0 21.0 22.0 23.0 24.0 23.0 22.0
+}]]
+
+test crimp-expand-8.16 "[origin] image expand, mirror, float" -body {
+    astcl [crimp expand mirror [float] 0 0 0 2]
+} -result [list crimp::image::float 0 0 5 7 {} [trim {
+     0.0  1.0  2.0  3.0  4.0
+     5.0  6.0  7.0  8.0  9.0
+    10.0 11.0 12.0 13.0 14.0
+    15.0 16.0 17.0 18.0 19.0
+    20.0 21.0 22.0 23.0 24.0
+    15.0 16.0 17.0 18.0 19.0
+    10.0 11.0 12.0 13.0 14.0
+}]]
+
+test crimp-expand-8.17 "[origin] image expand, extend, float" -body {
+    astcl [crimp expand extend [float] 2 0 0 0]
+} -result [list crimp::image::float -2 0 7 5 {} [trim {
+     2.0 1.0  0.0  1.0  2.0  3.0  4.0
+     2.0 1.0  5.0  6.0  7.0  8.0  9.0
+     2.0 1.0 10.0 11.0 12.0 13.0 14.0
+     2.0 1.0 15.0 16.0 17.0 18.0 19.0
+     2.0 1.0 20.0 21.0 22.0 23.0 24.0
+}]]
+
+test crimp-expand-8.18 "[origin] image expand, extend, float" -body {
+    astcl [crimp expand extend [float] 0 2 0 0]
+} -result [list crimp::image::float 0 -2 5 7 {} [trim {
+    10.0 10.0 10.0 10.0 10.0
+     5.0  5.0  5.0  5.0  5.0
+     0.0  1.0  2.0  3.0  4.0
+     5.0  6.0  7.0  8.0  9.0
+    10.0 11.0 12.0 13.0 14.0
+    15.0 16.0 17.0 18.0 19.0
+    20.0 21.0 22.0 23.0 24.0
+}]]
+
+test crimp-expand-8.19 "[origin] image expand, extend, float" -body {
+    astcl [crimp expand extend [float] 0 0 2 0]
+} -result [list crimp::image::float 0 0 7 5 {} [trim {
+     0.0  1.0  2.0  3.0  4.0 -1.0 -2.0
+     5.0  6.0  7.0  8.0  9.0 -1.0 -2.0
+    10.0 11.0 12.0 13.0 14.0 -1.0 -2.0
+    15.0 16.0 17.0 18.0 19.0 -1.0 -2.0
+    20.0 21.0 22.0 23.0 24.0 -1.0 -2.0
+}]]
+
+test crimp-expand-8.20 "[origin] image expand, extend, float" -body {
+    astcl [crimp expand extend [float] 0 0 0 2]
+} -result [list crimp::image::float 0 0 5 7 {} [trim {
+      0.0   1.0   2.0   3.0   4.0
+      5.0   6.0   7.0   8.0   9.0
+     10.0  11.0  12.0  13.0  14.0
+     15.0  16.0  17.0  18.0  19.0
+     20.0  21.0  22.0  23.0  24.0
+     -5.0  -5.0  -5.0  -5.0  -5.0
+    -10.0 -10.0 -10.0 -10.0 -10.0
+}]]
+
+# -------------------------------------------------------------------------
+
+test crimp-expand-9.0 "[origin] image expand, const, fpcomplex" -body {
+    astcl [crimp expand const [fpcomplex] 0 0 0 0]
+} -result [list crimp::image::fpcomplex 0 0 5 5 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.1 "[origin] image expand, const, fpcomplex" -body {
+    astcl [crimp expand const [fpcomplex] 1 0 0 0]
+} -result [list crimp::image::fpcomplex -1 0 6 5 {} [trim {
+    {0.0 0.0} { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    {0.0 0.0} { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    {0.0 0.0} { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    {0.0 0.0} { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {0.0 0.0} {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.2 "[origin] image expand, const, fpcomplex" -body {
+    astcl [crimp expand const [fpcomplex] 0 1 0 0]
+} -result [list crimp::image::fpcomplex 0 -1 5 6 {} [trim {
+    { 0.0  0.0} { 0.0  0.0} { 0.0  0.0} { 0.0  0.0} { 0.0  0.0}
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.3 "[origin] image expand, const, fpcomplex" -body {
+    astcl [crimp expand const [fpcomplex] 0 0 1 0]
+} -result [list crimp::image::fpcomplex 0 0 6 5 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0} {0.0 0.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0} {0.0 0.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0} {0.0 0.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0} {0.0 0.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0} {0.0 0.0}
+}]]
+
+test crimp-expand-9.4 "[origin] image expand, const, fpcomplex" -body {
+    astcl [crimp expand const [fpcomplex] 0 0 0 1]
+} -result [list crimp::image::fpcomplex 0 0 5 6 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+    { 0.0  0.0} { 0.0  0.0} { 0.0  0.0} { 0.0  0.0} { 0.0  0.0}
+}]]
+
+test crimp-expand-9.5 "[origin] image expand, wrap, fpcomplex" -body {
+    astcl [crimp expand wrap [fpcomplex] 1 0 0 0]
+} -result [list crimp::image::fpcomplex -1 0 6 5 {} [trim {
+    {60.0 69.0} { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    {68.0 61.0} { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    {73.0 67.0} { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    {71.0 63.0} { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {64.0 65.0} {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.6 "[origin] image expand, wrap, fpcomplex" -body {
+    astcl [crimp expand wrap [fpcomplex] 0 1 0 0]
+} -result [list crimp::image::fpcomplex 0 -1 5 6 {} [trim {
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.7 "[origin] image expand, wrap, fpcomplex" -body {
+    astcl [crimp expand wrap [fpcomplex] 0 0 1 0]
+} -result [list crimp::image::fpcomplex 0 0 6 5 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0} { 0.0  1.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0} { 3.0  4.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0} { 6.0  7.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0} { 9.0 10.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0} {12.0 13.0}
+}]]
+
+test crimp-expand-9.8 "[origin] image expand, wrap, fpcomplex" -body {
+    astcl [crimp expand wrap [fpcomplex] 0 0 0 1]
+} -result [list crimp::image::fpcomplex 0 0 5 6 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+}]]
+
+test crimp-expand-9.9 "[origin] image expand, replicate, fpcomplex" -body {
+    astcl [crimp expand replicate [fpcomplex] 2 0 0 0]
+} -result [list crimp::image::fpcomplex -2 0 7 5 {} [trim {
+    { 0.0  1.0} { 0.0  1.0} { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} { 3.0  4.0} { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} { 6.0  7.0} { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} { 9.0 10.0} { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {12.0 13.0} {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.10 "[origin] image expand, replicate, fpcomplex" -body {
+    astcl [crimp expand replicate [fpcomplex] 0 2 0 0]
+} -result [list crimp::image::fpcomplex 0 -2 5 7 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.11 "[origin] image expand, replicate, fpcomplex" -body {
+    astcl [crimp expand replicate [fpcomplex] 0 0 2 0]
+} -result [list crimp::image::fpcomplex 0 0 7 5 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0} {60.0 69.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0} {68.0 61.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0} {73.0 67.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0} {71.0 63.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0} {64.0 65.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.12 "[origin] image expand, replicate, fpcomplex" -body {
+    astcl [crimp expand replicate [fpcomplex] 0 0 0 2]
+} -result [list crimp::image::fpcomplex 0 0 5 7 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.13 "[origin] image expand, mirror, fpcomplex" -body {
+    astcl [crimp expand mirror [fpcomplex] 2 0 0 0]
+} -result [list crimp::image::fpcomplex -2 0 7 5 {} [trim {
+    {30.0 31.0} {15.0 20.0} { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    {41.0 42.0} {16.0 21.0} { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    {40.0 43.0} {17.0 22.0} { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    {39.0 44.0} {18.0 23.0} { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {38.0 37.0} {19.0 24.0} {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.14 "[origin] image expand, mirror, fpcomplex" -body {
+    astcl [crimp expand mirror [fpcomplex] 0 2 0 0]
+} -result [list crimp::image::fpcomplex 0 -2 5 7 {} [trim {
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.15 "[origin] image expand, mirror, fpcomplex" -body {
+    astcl [crimp expand mirror [fpcomplex] 0 0 2 0]
+} -result [list crimp::image::fpcomplex 0 0 7 5 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0} {57.0 58.0} {30.0 31.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0} {56.0 55.0} {41.0 42.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0} {51.0 52.0} {40.0 43.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0} {50.0 49.0} {39.0 44.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0} {45.0 46.0} {38.0 37.0}
+}]]
+
+test crimp-expand-9.16 "[origin] image expand, mirror, fpcomplex" -body {
+    astcl [crimp expand mirror [fpcomplex] 0 0 0 2]
+} -result [list crimp::image::fpcomplex 0 0 5 7 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+}]]
+
+test crimp-expand-9.17 "[origin] image expand, extend, fpcomplex" -body {
+    astcl [crimp expand extend [fpcomplex] 2 0 0 0]
+} -result [list crimp::image::fpcomplex -2 0 7 5 {} [trim {
+    {30.0 30.0} {15.0 19.0} { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    {38.0 38.0} {13.0 17.0} { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    {34.0 36.0} {11.0 15.0} { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    {30.0 34.0} { 9.0 13.0} { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {26.0 24.0} { 7.0 11.0} {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.18 "[origin] image expand, extend, fpcomplex" -body {
+    astcl [crimp expand extend [fpcomplex] 0 2 0 0]
+} -result [list crimp::image::fpcomplex 0 -2 5 7 {} [trim {
+    { 6.0  6.0} { 2.0  2.0} {10.0 12.0} {-6.0 -6.0} {13.0 -2.0}
+    { 3.0  3.0} { 1.0  1.0} {11.0 11.0} {-1.0 -3.0} { 8.0 -8.0}
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+}]]
+
+test crimp-expand-9.19 "[origin] image expand, extend, fpcomplex" -body {
+    astcl [crimp expand extend [fpcomplex] 0 0 2 0]
+} -result [list crimp::image::fpcomplex 0 0 7 5 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0} { -3.0 -11.0} {-30.0 -38.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0} {-12.0  -6.0} {-27.0 -19.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0} {-22.0 -15.0} {-33.0 -24.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0} {-21.0 -14.0} {-32.0 -19.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0} {-19.0 -19.0} {-26.0 -28.0}
+}]]
+
+test crimp-expand-9.20 "[origin] image expand, extend, fpcomplex" -body {
+    astcl [crimp expand extend [fpcomplex] 0 0 0 2]
+} -result [list crimp::image::fpcomplex 0 0 5 7 {} [trim {
+    { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
+    { 3.0  4.0} {16.0 21.0} {41.0 42.0} {56.0 55.0} {68.0 61.0}
+    { 6.0  7.0} {17.0 22.0} {40.0 43.0} {51.0 52.0} {73.0 67.0}
+    { 9.0 10.0} {18.0 23.0} {39.0 44.0} {50.0 49.0} {71.0 63.0}
+    {12.0 13.0} {19.0 24.0} {38.0 37.0} {45.0 46.0} {64.0 65.0}
+    {-3.0 -3.0} {-1.0 -1.0} { 1.0  7.0} { 5.0  3.0} { 7.0 -2.0}
+    {-6.0 -6.0} {-2.0 -2.0} { 2.0  6.0} { 6.0  6.0} { 9.0  2.0}
+}]]
+
 # -------------------------------------------------------------------------
 ## Handling of input location: Modified pass through to result.
 
 set n 0
 foreach itype [types] {
-    if {$itype eq "fpcomplex"} continue
-
     foreach border {const extend mirror replicate wrap} {
         test crimp-expand-X.$n "[origin] image expand, $border, $itype, location handling" -body {
             crimp at [crimp expand $border [crimp place [$itype] 23 45] 4 5 2 2]

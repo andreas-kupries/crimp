@@ -27,7 +27,7 @@ crimp_input (imageObj, image, float);
 	int yb = yo - hn;					   \
 	int xi = xb;						   \
 	int yi = yb;						   \
-	int tg;							   \
+	float tg;							   \
 								   \
 	if      (xb < 0)         { xb = 0;            }		   \
 	else if (xb >= crimp_w (image)) { xb = (crimp_w (image)-1); }		   \
@@ -49,7 +49,7 @@ crimp_input (imageObj, image, float);
 								   \
 	tg = FLOATP (image, xi, yi) - FLOATP (image, xb, yb);	   \
 								   \
-	FLOATP (result, xo, yo) = CLAMP (0, tg, 255);		   \
+	FLOATP (result, xo, yo) = tg;		   \
     }
 
 #define COPY(xo,yo,xi,yi) {				\

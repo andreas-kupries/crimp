@@ -20,49 +20,40 @@ testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 
 test crimp-blank-1.0 {Blank images, wrong\#args, not enough} -body {
     crimp blank
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "crimp blank type w h ..."}
 
 test crimp-blank-1.1 {Blank images, wrong\#args, not enough} -body {
     crimp blank TYPE
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "crimp blank type w h ..."}
 
 test crimp-blank-1.2 {Blank images, wrong\#args, not enough} -body {
     crimp blank TYPE W
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "crimp blank type w h ..."}
 
 test crimp-blank-1.3 {Blank images, bogus image type} -body {
     crimp blank BOGUS W H
-} -cleanup {
 } -returnCodes error -result {Unable to create blank images of type "BOGUS"}
 
 # -------------------------------------------------------------------------
 
 test crimp-blank-2.0 {Blank images, grey8, wrong\#args, not enough} -body {
     crimp blank grey8 W H
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_grey8 w h value"}
 
 test crimp-blank-2.1 {Blank images, grey8, wrong\#args, too many} -body {
     crimp blank grey8 W H VALUE toomuch
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_grey8 w h value"}
 
 test crimp-blank-2.2 {Blank images, grey8, bogus dimensions} -body {
     crimp blank grey8 W H VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "W"}
 
 test crimp-blank-2.3 {Blank images, grey8, bogus dimensions} -body {
     crimp blank grey8 3 H VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "H"}
 
 test crimp-blank-2.4 {Blank images, grey8, bogus pixel value} -body {
     crimp blank grey8 3 4 VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "VALUE"}
 
 test crimp-blank-2.5 {Blank images, grey8} -body {
@@ -117,27 +108,22 @@ test crimp-blank-2.16 {Blank images, grey8, coordinates} -body {
 
 test crimp-blank-3.0 {Blank images, grey16, wrong\#args, not enough} -body {
     crimp blank grey16 W H
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_grey16 w h value"}
 
 test crimp-blank-3.1 {Blank images, grey16, wrong\#args, too many} -body {
     crimp blank grey16 W H VALUE toomuch
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_grey16 w h value"}
 
 test crimp-blank-3.2 {Blank images, grey16, bogus dimensions} -body {
     crimp blank grey16 W H VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "W"}
 
 test crimp-blank-3.3 {Blank images, grey16, bogus dimensions} -body {
     crimp blank grey16 3 H VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "H"}
 
 test crimp-blank-3.4 {Blank images, grey16, bogus pixel value} -body {
     crimp blank grey16 3 4 VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "VALUE"}
 
 test crimp-blank-3.5 {Blank images, grey16} -body {
@@ -192,27 +178,22 @@ test crimp-blank-3.16 {Blank images, grey16, coordinates} -body {
 
 test crimp-blank-4.0 {Blank images, grey32, wrong\#args, not enough} -body {
     crimp blank grey32 W H
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_grey32 w h value"}
 
 test crimp-blank-4.1 {Blank images, grey32, wrong\#args, too many} -body {
     crimp blank grey32 W H VALUE toomuch
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_grey32 w h value"}
 
 test crimp-blank-4.2 {Blank images, grey32, bogus dimensions} -body {
     crimp blank grey32 W H VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "W"}
 
 test crimp-blank-4.3 {Blank images, grey32, bogus dimensions} -body {
     crimp blank grey32 3 H VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "H"}
 
 test crimp-blank-4.4 {Blank images, grey32, bogus pixel value} -body {
     crimp blank grey32 3 4 VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "VALUE"}
 
 test crimp-blank-4.5 {Blank images, grey32} -body {
@@ -268,27 +249,22 @@ test crimp-blank-4.16 {Blank images, grey32, coordinates} -body {
 
 test crimp-blank-5.0 {Blank images, float, wrong\#args, not enough} -body {
     crimp blank float W H
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_float w h value"}
 
 test crimp-blank-5.1 {Blank images, float, wrong\#args, too many} -body {
     crimp blank float W H VALUE toomuch
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_float w h value"}
 
 test crimp-blank-5.2 {Blank images, float, bogus dimensions} -body {
     crimp blank float W H VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "W"}
 
 test crimp-blank-5.3 {Blank images, float, bogus dimensions} -body {
     crimp blank float 3 H VALUE
-} -cleanup {
 } -returnCodes error -result {expected integer but got "H"}
 
 test crimp-blank-5.4 {Blank images, float, bogus pixel value} -body {
     crimp blank float 3 4 VALUE
-} -cleanup {
 } -returnCodes error -result {expected floating-point number but got "VALUE"}
 
 test crimp-blank-5.5 {Blank images, float} -body {
@@ -343,37 +319,30 @@ test crimp-blank-5.16 {Blank images, float, coordinates} -body {
 
 test crimp-blank-6.0 {Blank images, rgb, wrong\#args, not enough} -body {
     crimp blank rgb W H
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_rgb w h r g b"}
 
 test crimp-blank-6.1 {Blank images, rgb, wrong\#args, too many} -body {
     crimp blank rgb W H R G B toomuch
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_rgb w h r g b"}
 
 test crimp-blank-6.2 {Blank images, rgb, bogus dimensions} -body {
     crimp blank rgb W H R G B
-} -cleanup {
 } -returnCodes error -result {expected integer but got "W"}
 
 test crimp-blank-6.3 {Blank images, rgb, bogus dimensions} -body {
     crimp blank rgb 3 H R G B
-} -cleanup {
 } -returnCodes error -result {expected integer but got "H"}
 
 test crimp-blank-6.4 {Blank images, rgb, bogus dimensions} -body {
     crimp blank rgb 3 4 R G B
-} -cleanup {
 } -returnCodes error -result {expected integer but got "R"}
 
 test crimp-blank-6.5 {Blank images, rgb, bogus pixel values} -body {
     crimp blank rgb 3 4 5 G B
-} -cleanup {
 } -returnCodes error -result {expected integer but got "G"}
 
 test crimp-blank-6.6 {Blank images, rgb, bogus pixel values} -body {
     crimp blank rgb 3 4 5 6 B
-} -cleanup {
 } -returnCodes error -result {expected integer but got "B"}
 
 test crimp-blank-6.7 {Blank images, rgb} -body {
@@ -424,42 +393,34 @@ test crimp-blank-6.17 {Blank images, rgb, coordinates} -body {
 
 test crimp-blank-7.0 {Blank images, rgba, wrong\#args, not enough} -body {
     crimp blank rgba W H
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_rgba w h r g b a"}
 
 test crimp-blank-7.1 {Blank images, rgba, wrong\#args, too many} -body {
     crimp blank rgba W H R G B A toomuch
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_rgba w h r g b a"}
 
 test crimp-blank-7.2 {Blank images, rgba, bogus dimensions} -body {
     crimp blank rgba W H R G B A
-} -cleanup {
 } -returnCodes error -result {expected integer but got "W"}
 
 test crimp-blank-7.3 {Blank images, rgba, bogus dimensions} -body {
     crimp blank rgba 3 H R G B A
-} -cleanup {
 } -returnCodes error -result {expected integer but got "H"}
 
 test crimp-blank-7.4 {Blank images, rgba, bogus pixel values} -body {
     crimp blank rgba 3 4 R G B A
-} -cleanup {
 } -returnCodes error -result {expected integer but got "R"}
 
 test crimp-blank-7.5 {Blank images, rgba, bogus pixel values} -body {
     crimp blank rgba 3 4 5 G B A
-} -cleanup {
 } -returnCodes error -result {expected integer but got "G"}
 
 test crimp-blank-7.6 {Blank images, rgba, bogus pixel values} -body {
     crimp blank rgba 3 4 5 6 B A
-} -cleanup {
 } -returnCodes error -result {expected integer but got "B"}
 
 test crimp-blank-7.7 {Blank images, rgba, bogus pixel values} -body {
     crimp blank rgba 3 4 5 6 7 A
-} -cleanup {
 } -returnCodes error -result {expected integer but got "A"}
 
 test crimp-blank-7.8 {Blank images, rgba} -body {
@@ -510,37 +471,30 @@ test crimp-blank-7.17 {Blank images, rgba, coordinates} -body {
 
 test crimp-blank-8.0 {Blank images, hsv, wrong\#args, not enough} -body {
     crimp blank hsv W H
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_hsv w h hue sat val"}
 
 test crimp-blank-8.1 {Blank images, hsv, wrong\#args, too many} -body {
     crimp blank hsv W H H S V toomuch
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_hsv w h hue sat val"}
 
 test crimp-blank-8.2 {Blank images, hsv, bogus dimensions} -body {
     crimp blank hsv W H H S V
-} -cleanup {
 } -returnCodes error -result {expected integer but got "W"}
 
 test crimp-blank-8.3 {Blank images, hsv, bogus dimensions} -body {
     crimp blank hsv 3 H H S V
-} -cleanup {
 } -returnCodes error -result {expected integer but got "H"}
 
 test crimp-blank-8.4 {Blank images, hsv, bogus pixel values} -body {
     crimp blank hsv 3 4 H S V
-} -cleanup {
 } -returnCodes error -result {expected integer but got "H"}
 
 test crimp-blank-8.5 {Blank images, hsv, bogus pixel values} -body {
     crimp blank hsv 3 4 5 S V
-} -cleanup {
 } -returnCodes error -result {expected integer but got "S"}
 
 test crimp-blank-8.6 {Blank images, hsv, bogus pixel values} -body {
     crimp blank hsv 3 4 5 6 V
-} -cleanup {
 } -returnCodes error -result {expected integer but got "V"}
 
 test crimp-blank-8.7 {Blank images, hsv} -body {
@@ -591,32 +545,26 @@ test crimp-blank-8.17 {Blank images, hsv, coordinates} -body {
 
 test crimp-blank-9.0 {Blank images, fpcomplex, wrong\#args, not enough} -body {
     crimp blank fpcomplex W H
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_fpcomplex w h re im"}
 
 test crimp-blank-9.1 {Blank images, fpcomplex, wrong\#args, too many} -body {
     crimp blank fpcomplex W H RE IM toomuch
-} -cleanup {
 } -returnCodes error -result {wrong # args: should be "blank_fpcomplex w h re im"}
 
 test crimp-blank-9.2 {Blank images, fpcomplex, bogus dimensions} -body {
     crimp blank fpcomplex W H RE IM
-} -cleanup {
 } -returnCodes error -result {expected integer but got "W"}
 
 test crimp-blank-9.3 {Blank images, fpcomplex, bogus dimensions} -body {
     crimp blank fpcomplex 3 H RE IM
-} -cleanup {
 } -returnCodes error -result {expected integer but got "H"}
 
 test crimp-blank-9.4 {Blank images, fpcomplex, bogus pixel value} -body {
     crimp blank fpcomplex 3 4 RE IM
-} -cleanup {
 } -returnCodes error -result {expected floating-point number but got "RE"}
 
 test crimp-blank-9.5 {Blank images, fpcomplex, bogus pixel value} -body {
     crimp blank fpcomplex 3 4 1 IM
-} -cleanup {
 } -returnCodes error -result {expected floating-point number but got "IM"}
 
 test crimp-blank-9.6 {Blank images, fpcomplex} -body {

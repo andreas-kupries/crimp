@@ -151,6 +151,17 @@ proc ::crimp::BORDER {imagetype spec} {
 			set values [lrange $values 0 0]
 		    }
 		}
+		fpcomplex {
+		    if {![llength $values]} {
+			set values {0 0}
+		    }
+		    while {[llength $values] < 2} {
+			lappend values [lindex $values end]
+		    }
+		    if {[llength $values] > 2} {
+			set values [lrange $values 0 1]
+		    }
+		}
 	    }
 	}
 	default {

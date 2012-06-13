@@ -107,84 +107,84 @@ foreach {k itype} {
     # identity
     test crimp-crop-$k.0 "[origin] image crop, identity, $itype" -body {
         astcl [crimp crop [$itype] 0 0 0 0]
-    } -result [list crimp::image::$itype 0 0 5 5 {} [trim {
+    } -result [iconst $itype 0 0 5 5 {
          0  1  2  3  4
          5  6  7  8  9
         10 11 12 13 14
         15 16 17 18 19
         20 21 22 23 24
-    }]]
+    }]
 
     #border aligned inside
     test crimp-crop-$k.1 "[origin] image crop, nw, $itype" -body {
         astcl [crimp crop [$itype] 0 0 3 3]
-    } -result [list crimp::image::$itype 0 0 2 2 {} [trim {
+    } -result [iconst $itype 0 0 2 2 {
         0  1
         5  6
-    }]]
+    }]
 
     test crimp-crop-$k.2 "[origin] image crop, ne, $itype" -body {
         astcl [crimp crop [$itype] 3 0 0 3]
-    } -result [list crimp::image::$itype 3 0 2 2 {} [trim {
+    } -result [iconst $itype 3 0 2 2 {
         3  4
         8  9
-    }]]
+    }]
 
     test crimp-crop-$k.3 "[origin] image crop, se, $itype" -body {
         astcl [crimp crop [$itype] 3 3 0 0]
-    } -result [list crimp::image::$itype 3 3 2 2 {} [trim {
+    } -result [iconst $itype 3 3 2 2 {
         18 19
         23 24
-    }]]
+    }]
 
     test crimp-crop-$k.4 "[origin] image crop, sw, $itype" -body {
         astcl [crimp crop [$itype] 0 3 3 0]
-    } -result [list crimp::image::$itype 0 3 2 2 {} [trim {
+    } -result [iconst $itype 0 3 2 2 {
         15 16
         20 21
-    }]]
+    }]
 
 
     test crimp-crop-$k.5 "[origin] image crop, north, $itype" -body {
         astcl [crimp crop [$itype] 1 0 1 2]
-    } -result [list crimp::image::$itype 1 0 3 3 {} [trim {
+    } -result [iconst $itype 1 0 3 3 {
          1  2  3
          6  7  8
         11 12 13
-    }]]
+    }]
 
     test crimp-crop-$k.6 "[origin] image crop, east, $itype" -body {
         astcl [crimp crop [$itype] 2 1 0 1]
-    } -result [list crimp::image::$itype 2 1 3 3 {} [trim {
+    } -result [iconst $itype 2 1 3 3 {
          7  8  9
         12 13 14
         17 18 19
-    }]]
+    }]
 
     test crimp-crop-$k.7 "[origin] image crop, south, $itype" -body {
         astcl [crimp crop [$itype] 1 2 1 0]
-    } -result [list crimp::image::$itype 1 2 3 3 {} [trim {
+    } -result [iconst $itype 1 2 3 3 {
         11 12 13
         16 17 18
         21 22 23
-    }]]
+    }]
 
     test crimp-crop-$k.8 "[origin] image crop, west, $itype" -body {
         astcl [crimp crop [$itype] 0 1 2 1]
-    } -result [list crimp::image::$itype 0 1 3 3 {} [trim {
+    } -result [iconst $itype 0 1 3 3 {
          5  6  7
         10 11 12
         15 16 17
-    }]]
+    }]
 
     # fully inside
     test crimp-crop-$k.9 "[origin] image crop, inside, $itype" -body {
         astcl [crimp crop [$itype] 1 1 1 1]
-    } -result [list crimp::image::$itype 1 1 3 3 {} [trim {
+    } -result [iconst $itype 1 1 3 3 {
          6  7  8
         11 12 13
         16 17 18
-    }]]
+    }]
 
     # empty crops
 

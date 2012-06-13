@@ -166,6 +166,15 @@ proc astcl {i} {
     lreplace $i end end [join [crimp write 2string tcl $i] \n]
 }
 
+proc astclf {digits i} {
+    # Treat as list, and replace the binary pixel data with the nested-list tcl representation.
+    lreplace $i end end [join [F %.${digits}f [crimp write 2string tcl $i]] \n]
+}
+
+proc iconst {t x y w h p} {
+    list crimp::image::$t $x $y $w $h {} [trim $p]
+}
+
 proc lmap {f list} {
     set res {}
     foreach x $list {

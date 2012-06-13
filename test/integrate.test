@@ -26,14 +26,12 @@ test crimp-integrate-1.1 {image integrate, wrong\#args, too many} -body {
 
 # -------------------------------------------------------------------------
 # INTEGRATE (arity 1, commutative)
-# Supported:     grey8 grey16 grey32 float
-# Not supported: rgb rgba hsv fpcomplex
-# Supportable: rgb fpcomplex (addition is component-wise)
-# TODO: (implementation): rgb, fpcomplex
+# Supported:     grey8 grey16 grey32 float fpcomplex
+# Not supported: rgb rgba hsv
 
 test crimp-integrate-2.0 {image integrate, grey8} -body {
-    join [crimp write 2string tcl [crimp integrate [grey8]]] \n
-} -result [trim {
+    astcl [crimp integrate [grey8]]
+} -result [iconst float 0 0 5 5 {
      0.0   1.0   3.0   6.0  10.0
      5.0  12.0  21.0  32.0  45.0
     15.0  33.0  54.0  78.0 105.0
@@ -42,8 +40,8 @@ test crimp-integrate-2.0 {image integrate, grey8} -body {
 }]
 
 test crimp-integrate-2.1 {image integrate, grey16} -body {
-    join [crimp write 2string tcl [crimp integrate [grey16]]] \n
-} -result [trim {
+     astcl [crimp integrate [grey16]]
+} -result [iconst float 0 0 5 5 {
      0.0   1.0   3.0   6.0  10.0
      5.0  12.0  21.0  32.0  45.0
     15.0  33.0  54.0  78.0 105.0
@@ -52,8 +50,8 @@ test crimp-integrate-2.1 {image integrate, grey16} -body {
 }]
 
 test crimp-integrate-2.2 {image integrate, grey32} -body {
-    join [crimp write 2string tcl [crimp integrate [grey32]]] \n
-} -result [trim {
+     astcl [crimp integrate [grey32]]
+} -result [iconst float 0 0 5 5 {
      0.0   1.0   3.0   6.0  10.0
      5.0  12.0  21.0  32.0  45.0
     15.0  33.0  54.0  78.0 105.0
@@ -62,8 +60,8 @@ test crimp-integrate-2.2 {image integrate, grey32} -body {
 }]
 
 test crimp-integrate-2.3 {image integrate, float} -body {
-    join [crimp write 2string tcl [crimp integrate [float]]] \n
-} -result [trim {
+    astclf 1 [crimp integrate [float]]
+} -result [iconst float 0 0 5 5 {
      0.0   1.0   3.0   6.0  10.0
      5.0  12.0  21.0  32.0  45.0
     15.0  33.0  54.0  78.0 105.0
@@ -71,8 +69,18 @@ test crimp-integrate-2.3 {image integrate, float} -body {
     50.0 105.0 165.0 230.0 300.0
 }]
 
+test crimp-integrate-2.4 {image integrate, fpcomplex} -body {
+    astclf 1 [crimp integrate [fpcomplex]]
+} -result [iconst fpcomplex 0 0 5 5 {
+    { 0.0  1.0} { 15.0  21.0} { 45.0  52.0} {102.0 110.0} {162.0 179.0}
+    { 3.0  5.0} { 34.0  46.0} {105.0 119.0} {218.0 232.0} {346.0 362.0}
+    { 9.0 12.0} { 57.0  75.0} {168.0 191.0} {332.0 356.0} {533.0 553.0}
+    {18.0 22.0} { 84.0 108.0} {234.0 268.0} {448.0 482.0} {720.0 742.0}
+    {30.0 35.0} {115.0 145.0} {303.0 342.0} {562.0 602.0} {898.0 927.0}
+}]
+
 # -------------------------------------------------------------------------
-## Handling of input location and geometry: Union of inputs.
+## Handling of input location and geometry: Pass through. See above.
 
 # -------------------------------------------------------------------------
 testsuiteCleanup

@@ -1,0 +1,71 @@
+integrate_fpcomplex
+Tcl_Obj* imageObj
+
+/*
+ * The input image is converted into an integral image, aka summed area table,
+ * where each pixel contains the sum of all pixels to the left and above of
+ * it, including the pixel itself.
+ *
+ * To avoid problems with overflow the result is always of type float.
+ * In this case, the output is fpcomplex, same as input.
+ *
+ * Ref: http://en.wikipedia.org/wiki/Summed_area_table
+ */
+
+crimp_image* image;
+crimp_image* result;
+int          x, y;
+
+crimp_input (imageObj, image, fpcomplex);
+
+result = crimp_new_like (image);
+
+/* Initialize the accumulator */
+RE (result, 0, 0) = RE (image, 0, 0);
+IM (result, 0, 0) = IM (image, 0, 0);
+
+/*
+ * Initialize the first line of the result. Only looking back to results in the same line.
+ */
+for (x = 1; x < crimp_w (result); x++) {
+    RE (result, x, 0) = RE (image, x, 0) + RE (result, x-1, 0);
+    IM (result, x, 0) = IM (image, x, 0) + IM (result, x-1, 0);
+}
+
+/*
+ * Remainder of the image, looking back to results on the same line and the
+ * previous line.
+ */
+
+for (y = 1; y < crimp_h (result); y++) {
+    /* Initialize first column */
+    RE (result, 0, y) = RE (image, 0, y) + RE (result, 0, y-1);
+    IM (result, 0, y) = IM (image, 0, y) + IM (result, 0, y-1);
+
+    for (x = 1; x < crimp_w (result); x++) {
+	RE (result, x, y) =
+	    RE (image,  x,   y) +
+	    RE (result, x-1, y) +
+	    RE (result, x,   y-1) -
+	    RE (result, x-1, y-1);
+
+	IM (result, x, y) =
+	    IM (image,  x,   y) +
+	    IM (result, x-1, y) +
+	    IM (result, x,   y-1) -
+	    IM (result, x-1, y-1);
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

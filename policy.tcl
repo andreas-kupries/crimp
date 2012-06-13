@@ -3292,109 +3292,108 @@ namespace eval ::crimp::gradient {
 # TODO :: Force/check proper input ranges for pixel values.
 
 proc ::crimp::gradient::grey8 {s e size} {
-    if {$size < 2} {
-	return -code error "Minimum size is 2"
-    }
+    # TODO: check s/e ranges, type
+    return [::crimp::read::tcl grey8 [RAMP $s $e $size]]
+}
 
-    set steps [expr {$size - 1}]
+proc ::crimp::gradient::grey16 {s e size} {
+    # TODO: check s/e ranges, type
+    return [::crimp::read::tcl grey16 [RAMP $s $e $size]]
+}
 
-    set d [expr {($e - $s)/double($steps)}]
-
-    for {set t 0} {$steps >= 0} {
-	incr steps -1
-	incr t
-    } {
-	lappend pixels [expr {round($s + $t * $d)}]
-    }
-
-    return [::crimp::read::tcl grey8 [list $pixels]]
+proc ::crimp::gradient::grey32 {s e size} {
+    # TODO: check s/e ranges, type
+    return [::crimp::read::tcl grey32 [RAMP $s $e $size]]
 }
 
 proc ::crimp::gradient::rgb {s e size} {
-    if {$size < 2} {
-	return -code error "Minimum size is 2"
-    }
-
-    set steps [expr {$size - 1}]
+    # TODO: check list sizes, elements.
     lassign $s sr sg sb
     lassign $e er eg eb
 
-    set dr [expr {($er - $sr)/double($steps)}]
-    set dg [expr {($eg - $sg)/double($steps)}]
-    set db [expr {($eb - $sb)/double($steps)}]
-
-    for {set t 0} {$steps >= 0} {
-	incr steps -1
-	incr t
-    } {
-	lappend r [expr {round($sr + $t * $dr)}]
-	lappend g [expr {round($sg + $t * $dg)}]
-	lappend b [expr {round($sb + $t * $db)}]
-    }
-
     return [::crimp::join::2rgb \
-		[::crimp::read::tcl grey8 [list $r]] \
-		[::crimp::read::tcl grey8 [list $g]] \
-		[::crimp::read::tcl grey8 [list $b]]]
+		[::crimp::read::tcl grey8 [RAMP $sr $er $size]] \
+		[::crimp::read::tcl grey8 [RAMP $sg $eg $size]] \
+		[::crimp::read::tcl grey8 [RAMP $sb $eb $size]]]
 }
 
 proc ::crimp::gradient::rgba {s e size} {
-    if {$size < 2} {
-	return -code error "Minimum size is 2"
-    }
-
-    set steps [expr {$size - 1}]
+    # TODO: check list sizes, elements.
     lassign $s sr sg sb sa
     lassign $e er eg eb ea
 
-    set dr [expr {($er - $sr)/double($steps)}]
-    set dg [expr {($eg - $sg)/double($steps)}]
-    set db [expr {($eb - $sb)/double($steps)}]
-    set da [expr {($ea - $sa)/double($steps)}]
-
-    for {set t 0} {$steps >= 0} {
-	incr steps -1
-	incr t
-    } {
-	lappend r [expr {round($sr + $t * $dr)}]
-	lappend g [expr {round($sg + $t * $dg)}]
-	lappend b [expr {round($sb + $t * $db)}]
-	lappend a [expr {round($sa + $t * $da)}]
-    }
-
     return [::crimp::join::2rgba \
-		[::crimp::read::tcl grey8 [list $r]] \
-		[::crimp::read::tcl grey8 [list $g]] \
-		[::crimp::read::tcl grey8 [list $b]] \
-		[::crimp::read::tcl grey8 [list $a]]]
+		[::crimp::read::tcl grey8 [RAMP $sr $er $size]] \
+		[::crimp::read::tcl grey8 [RAMP $sg $eg $size]] \
+		[::crimp::read::tcl grey8 [RAMP $sb $eb $size]] \
+		[::crimp::read::tcl grey8 [RAMP $sa $ea $size]]]
 }
 
-proc ::crimp::gradient::hsv {s e steps} {
-    if {$size < 2} {
-	return -code error "Minimum size is 2"
-    }
-
-    set steps [expr {$size - 1}]
+proc ::crimp::gradient::hsv {s e size} {
+    # TODO: check list sizes, elements.
     lassign $s sh ss sv
     lassign $e eh es ev
 
-    set dh [expr {($eh - $sh)/double($steps)}]
-    set ds [expr {($es - $ss)/double($steps)}]
-    set dv [expr {($ev - $sv)/double($steps)}]
+    return [::crimp::join::2hsv \
+		[::crimp::read::tcl grey8 [RAMP $sh $eh $size]] \
+		[::crimp::read::tcl grey8 [RAMP $ss $es $size]] \
+		[::crimp::read::tcl grey8 [RAMP $sv $ev $size]]]
+}
+
+proc ::crimp::gradient::float {s e size} {
+    return [::crimp::read::tcl float [RAMPF $s $e $size]]
+}
+
+proc ::crimp::gradient::fpcomplex {s e size} {
+    # TODO: check list sizes, elements.
+    lassign $s sre sim
+    lassign $e ere eim
+
+    return [::crimp::join::2complex \
+		[::crimp::read::tcl float [RAMPF $sre $ere $size]] \
+		[::crimp::read::tcl float [RAMPF $sim $eim $size]]]
+}
+
+proc ::crimp::gradient::RAMP {start end size} {
+    if {![string is int -strict $size]} {
+	return -code error "expected integer, got \"$size\""
+    }
+    if {$size < 2} {
+	return -code error "expected size >= 2, got \"$size\""
+    }
+
+    set steps [expr {$size - 1}]
+    set delta [expr {($end - $start)/double($steps)}]
 
     for {set t 0} {$steps >= 0} {
 	incr steps -1
 	incr t
     } {
-	lappend h [expr {round($sh + $t * $dh)}]
-	lappend s [expr {round($ss + $t * $ds)}]
-	lappend v [expr {round($sv + $t * $dv)}]
+	lappend pixels [expr {round($start + $t * $delta)}]
     }
 
-    return [::crimp::join::2hsv \
-		[::crimp::read::tcl grey8 [list $h]] \
-		[::crimp::read::tcl grey8 [list $s]] \
-		[::crimp::read::tcl grey8 [list $v]]]
+    return [list $pixels]
+}
+
+proc ::crimp::gradient::RAMPF {start end size} {
+    if {![string is int -strict $size]} {
+	return -code error "expected integer, got \"$size\""
+    }
+    if {$size < 2} {
+	return -code error "expected size >= 2, got \"$size\""
+    }
+
+    set steps [expr {$size - 1}]
+    set delta [expr {($end - $start)/double($steps)}]
+
+    for {set t 0} {$steps >= 0} {
+	incr steps -1
+	incr t
+    } {
+	lappend pixels [expr {$start + $t * $delta}]
+    }
+
+    return [list $pixels]
 }
 
 # # ## ### ##### ######## #############

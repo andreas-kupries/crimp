@@ -73,23 +73,23 @@ test crimp-regionsum-2.0 {region_sum images, float, location handling} -body {
 
 test crimp-regionsum-3.0 {region_sum images, float} -body {
     astcl [crimp region_sum [float] 1]
-} -result [list crimp::image::float 2 2 1 1 {} [trim {
+} -result [iconst float 2 2 1 1 {
     0.0
-}]]
+}]
 
 # TODO : check
 test crimp-regionsum-3.1 {region_sum images, integrated float} -body {
     astcl [crimp region_sum [crimp integrate [float]] 1]
-} -result [list crimp::image::float 2 2 1 1 {} [trim {
+} -result [iconst float 2 2 1 1 {
     108.0
-}]]
+}]
 
 # TODO: fix. radius too large, shrinks to empty, no protection in the C code against that. may crash.
 test crimp-regionsum-3.2 {region_sum images, float, large radius} -constraints KnownBug -body {
     astcl [crimp region_sum [float] 3]
-} -result [list crimp::image::float 2 2 1 1 {} [trim {
+} -result [iconst float 2 2 1 1 {
     0.0
-}]]
+}]
 
 # -------------------------------------------------------------------------
 testsuiteCleanup

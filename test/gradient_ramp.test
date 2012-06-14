@@ -15,11 +15,15 @@ testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 # -------------------------------------------------------------------------
 ## Image generation: Gradients.
 ## - all types
-## TODO: actual gradients/ramps
 # -------------------------------------------------------------------------
+# TODO: testing invalid args (start, end):
+# -> incorrect number of elements
+# -> elements out of range for pixel values of the image type.
 
 set n 0
-foreach itype [types] {
+foreach itype [types] x {
+    5 5 5 {5 5 5} {5 5 5 5} {5 5 5} 0 {0 0}
+} {
     test crimp-gradient-ramp-1.0.$n "[origin] image gradient ramp generation, $itype, wrong\#args, not enough" -body {
         crimp gradient $itype
     } -returnCodes error -result "wrong # args: should be \"crimp gradient $itype s e size\""
@@ -37,41 +41,212 @@ foreach itype [types] {
     } -returnCodes error -result "wrong # args: should be \"crimp gradient $itype s e size\""
 
     test crimp-gradient-ramp-1.4.$n "[origin] image gradient ramp generation, $itype, invalid arguments" -body {
-        crimp gradient $itype S E 1
+        crimp gradient $itype $x $x 1
     } -returnCodes error -result {expected size >= 2, got "1"}
 
-    continue
-    # Known bugs
-
     test crimp-gradient-ramp-1.5.$n "[origin] image gradient ramp generation, $itype, invalid arguments" -body {
-        crimp gradient $itype S E STEPS
-    } -returnCodes error -result {}
-
-    test crimp-gradient-ramp-1.6.$n "[origin] image gradient ramp generation, $itype, invalid arguments" -body {
-        crimp gradient $itype S E 2
-    } -returnCodes error -result {}
+        crimp gradient $itype $x $x STEPS
+    } -returnCodes error -result {expected integer, got "STEPS"}
 
     incr n
 }
 
 # -------------------------------------------------------------------------
 
+test crimp-gradient-ramp-1.6.0 "[origin] image gradient ramp generation, grey8, invalid arguments" -body {
+    crimp gradient grey8 S E 2
+} -returnCodes error -result {expected integer between 0 and 255 but got "S"}
+
+test crimp-gradient-ramp-1.7.0 "[origin] image gradient ramp generation, grey8, invalid arguments" -body {
+    crimp gradient grey8 280 E 2
+} -returnCodes error -result {expected integer between 0 and 255 but got "280"}
+
+test crimp-gradient-ramp-1.8.0 "[origin] image gradient ramp generation, grey8, invalid arguments" -body {
+    crimp gradient grey8 -1 E 2
+} -returnCodes error -result {expected integer between 0 and 255 but got "-1"}
+
+test crimp-gradient-ramp-1.9.0 "[origin] image gradient ramp generation, grey8, invalid arguments" -body {
+    crimp gradient grey8 50 E 2
+} -returnCodes error -result {expected integer between 0 and 255 but got "E"}
+
+test crimp-gradient-ramp-1.10.0 "[origin] image gradient ramp generation, grey8, invalid arguments" -body {
+    crimp gradient grey8 50 280 2
+} -returnCodes error -result {expected integer between 0 and 255 but got "280"}
+
+test crimp-gradient-ramp-1.11.0 "[origin] image gradient ramp generation, grey8, invalid arguments" -body {
+    crimp gradient grey8 50 -1 2
+} -returnCodes error -result {expected integer between 0 and 255 but got "-1"}
+
+# -------------------------------------------------------------------------
+
+test crimp-gradient-ramp-1.6.1 "[origin] image gradient ramp generation, grey16, invalid arguments" -body {
+    crimp gradient grey16 S E 2
+} -returnCodes error -result {expected integer between 0 and 65535 but got "S"}
+
+test crimp-gradient-ramp-1.7.1 "[origin] image gradient ramp generation, grey16, invalid arguments" -body {
+    crimp gradient grey16 100000 E 2
+} -returnCodes error -result {expected integer between 0 and 65535 but got "100000"}
+
+test crimp-gradient-ramp-1.8.1 "[origin] image gradient ramp generation, grey16, invalid arguments" -body {
+    crimp gradient grey16 -1 E 2
+} -returnCodes error -result {expected integer between 0 and 65535 but got "-1"}
+
+test crimp-gradient-ramp-1.9.1 "[origin] image gradient ramp generation, grey16, invalid arguments" -body {
+    crimp gradient grey16 50 E 2
+} -returnCodes error -result {expected integer between 0 and 65535 but got "E"}
+
+test crimp-gradient-ramp-1.10.1 "[origin] image gradient ramp generation, grey16, invalid arguments" -body {
+    crimp gradient grey16 50 100000 2
+} -returnCodes error -result {expected integer between 0 and 65535 but got "100000"}
+
+test crimp-gradient-ramp-1.11.1 "[origin] image gradient ramp generation, grey16, invalid arguments" -body {
+    crimp gradient grey16 50 -1 2
+} -returnCodes error -result {expected integer between 0 and 65535 but got "-1"}
+
+# -------------------------------------------------------------------------
+
+test crimp-gradient-ramp-1.6.2 "[origin] image gradient ramp generation, grey32, invalid arguments" -body {
+    crimp gradient grey32 S E 2
+} -returnCodes error -result {expected integer between 0 and 4294967295 but got "S"}
+
+test crimp-gradient-ramp-1.7.2 "[origin] image gradient ramp generation, grey32, invalid arguments" -body {
+    crimp gradient grey32 5000000000 E 2
+} -returnCodes error -result {expected integer between 0 and 4294967295 but got "5000000000"}
+
+test crimp-gradient-ramp-1.8.2 "[origin] image gradient ramp generation, grey32, invalid arguments" -body {
+    crimp gradient grey32 -1 E 2
+} -returnCodes error -result {expected integer between 0 and 4294967295 but got "-1"}
+
+test crimp-gradient-ramp-1.9.2 "[origin] image gradient ramp generation, grey32, invalid arguments" -body {
+    crimp gradient grey32 50 E 2
+} -returnCodes error -result {expected integer between 0 and 4294967295 but got "E"}
+
+test crimp-gradient-ramp-1.10.2 "[origin] image gradient ramp generation, grey32, invalid arguments" -body {
+    crimp gradient grey32 50 5000000000 2
+} -returnCodes error -result {expected integer between 0 and 4294967295 but got "5000000000"}
+
+test crimp-gradient-ramp-1.11.2 "[origin] image gradient ramp generation, grey32, invalid arguments" -body {
+    crimp gradient grey32 50 -1 2
+} -returnCodes error -result {expected integer between 0 and 4294967295 but got "-1"}
+
+# -------------------------------------------------------------------------
+
+test crimp-gradient-ramp-1.6.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
+    crimp gradient rgb S E 2
+} -returnCodes error -result {expected RGB triple but got "S"}
+
+test crimp-gradient-ramp-1.7.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
+    crimp gradient rgb {4 5 6 7} E 2
+} -returnCodes error -result {expected RGB triple but got "4 5 6 7"}
+
+test crimp-gradient-ramp-1.7.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
+    crimp gradient rgb {0 0 0} E 2
+} -returnCodes error -result {expected RGB triple but got "E"}
+
+test crimp-gradient-ramp-1.8.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
+    crimp gradient rgb {0 0 0} {4 5 6 7} 2
+} -returnCodes error -result {expected RGB triple but got "4 5 6 7"}
+
+
+
+
+test crimp-gradient-ramp-1.9.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
+    crimp gradient rgb {X 0 0} {0 0 0} 2
+} -returnCodes error -result {expected integer between 0 and 255 but got "X"}
+
+test crimp-gradient-ramp-1.10.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
+    crimp gradient rgb {280 0 0} {0 0 0} 2
+} -returnCodes error -result {expected integer between 0 and 255 but got "280"}
+
+test crimp-gradient-ramp-1.11.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
+    crimp gradient rgb {-1 0 0} {0 0 0} 2
+} -returnCodes error -result {expected integer between 0 and 255 but got "-1"}
+
+# continue, test all positions.
+
+
+
+
+
+
+
+# -------------------------------------------------------------------------
+
+set n 2
+foreach itype {grey8 grey16 grey32} {
+    test crimp-gradient-ramp-$n.0 "[origin] image gradient ramp generation, $itype" -body {
+        astcl [crimp gradient $itype 1 10 10]
+    } -result [iconst $itype 0 0 10 1 {
+        1 2 3 4 5 6 7 8 9 10
+    }]
+
+    test crimp-gradient-ramp-$n.1 "[origin] image gradient ramp generation, $itype" -body {
+        astcl [crimp gradient $itype 1 5 9]
+    } -result [iconst $itype 0 0 9 1 {
+        1 2 2 3 3 4 4 5 5
+    }]
+
+    incr n
+}
+
+test crimp-gradient-ramp-5.0 "[origin] image gradient ramp generation, rgb" -body {
+    astcl [crimp gradient rgb {0 2 4} {9 20 31} 10]
+} -result [iconst rgb 0 0 10 1 {
+    {0 2 4} {1 4 7} {2 6 10} {3 8 13} {4 10 16} {5 12 19} {6 14 22} {7 16 25} {8 18 28} {9 20 31}
+}]
+
+test crimp-gradient-ramp-6.0 "[origin] image gradient ramp generation, rgba" -body {
+    astcl [crimp gradient rgba {0 2 4 6} {9 20 31 42} 10]
+} -result [iconst rgba 0 0 10 1 {
+    {0 2 4 6} {1 4 7 10} {2 6 10 14} {3 8 13 18} {4 10 16 22} {5 12 19 26} {6 14 22 30} {7 16 25 34} {8 18 28 38} {9 20 31 42}
+}]
+
+test crimp-gradient-ramp-7.0 "[origin] image gradient ramp generation, hsv" -body {
+    astcl [crimp gradient hsv {0 2 4} {9 20 31} 10]
+} -result [iconst hsv 0 0 10 1 {
+    {0 2 4} {1 4 7} {2 6 10} {3 8 13} {4 10 16} {5 12 19} {6 14 22} {7 16 25} {8 18 28} {9 20 31}
+}]
+
+test crimp-gradient-ramp-8.0 "[origin] image gradient ramp generation, float" -body {
+    astclf 1 [crimp gradient float 1 10 10]
+} -result [iconst float 0 0 10 1 {
+    1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0
+}]
+
+test crimp-gradient-ramp-8.1 "[origin] image gradient ramp generation, float" -body {
+    astclf 2 [crimp gradient float 1 5 9]
+} -result [iconst float 0 0 9 1 {
+    1.00 1.50 2.00 2.50 3.00 3.50 4.00 4.50 5.00
+}]
+
+test crimp-gradient-ramp-9.0 "[origin] image gradient ramp generation, fpcomplex" -body {
+    astclf 2 [crimp gradient fpcomplex {1 2} {10 -5} 10]
+} -result [iconst fpcomplex 0 0 10 1 {
+    {1.00 2.00} {2.00 1.22} {3.00 0.44} {4.00 -0.33} {5.00 -1.11} {6.00 -1.89} {7.00 -2.67} {8.00 -3.44} {9.00 -4.22} {10.00 -5.00}
+}]
+
+test crimp-gradient-ramp-9.1 "[origin] image gradient ramp generation, fpcomplex" -body {
+    astclf 2 [crimp gradient fpcomplex {1 -1} {-3 5} 9]
+} -result [iconst fpcomplex 0 0 9 1 {
+    {1.00 -1.00} {0.50 -0.25} {0.00 0.50} {-0.50 1.25} {-1.00 2.00} {-1.50 2.75} {-2.00 3.50} {-2.50 4.25} {-3.00 5.00}
+}]
+
 # -------------------------------------------------------------------------
 ## Handling of location: generated images always at coordinate null/zero.
 
-foreach {n itype x cando} {
-    0 grey8     0 {}
-    1 grey16    0 {}
-    2 grey32    0 {}
-    3 rgb       {0 0 0}   {}
-    4 rgba      {0 0 0 0} {}
-    5 hsv       {0 0 0}   {}
-    6 float     0 {}
-    7 fpcomplex {0 0} {}
+foreach {n itype x} {
+    0 grey8     0
+    1 grey16    0
+    2 grey32    0
+    3 rgb       {0 0 0}
+    4 rgba      {0 0 0 0}
+    5 hsv       {0 0 0}
+    6 float     0
+    7 fpcomplex {0 0}
 } {
     test crimp-gradient-ramp-5.$n "image gradient ramp generation, $itype, location handling" -body {
 	crimp at [crimp gradient $itype $x $x 2]
-    } -result {0 0} -constraints $cando
+    } -result {0 0}
 }
 
 # -------------------------------------------------------------------------

@@ -7,6 +7,17 @@ namespace eval ::crimp {}
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::TUPLE {x n label} {
+    if {[llength $x] == $n} return
+    return -code error "expected $label but got \"$x\""
+}
+
+proc ::crimp::RANGE0 {x max} {
+    if {![string is int -strict $x] || ($x < 0) || ($x > $max)} {
+	return -code error "expected integer between 0 and $max but got \"$x\""
+    }
+}
+
 proc ::crimp::ALIGN {image size where fe values} {
     # Do nothing if the image is at the requested size.
 
@@ -3289,27 +3300,40 @@ namespace eval ::crimp::gradient {
     namespace ensemble create
 }
 
-# TODO :: Force/check proper input ranges for pixel values.
-
 proc ::crimp::gradient::grey8 {s e size} {
-    # TODO: check s/e ranges, type
+    ::crimp::RANGE0 $s 255
+    ::crimp::RANGE0 $e 255
+
     return [::crimp::read::tcl grey8 [RAMP $s $e $size]]
 }
 
 proc ::crimp::gradient::grey16 {s e size} {
-    # TODO: check s/e ranges, type
+    ::crimp::RANGE0 $s 65535
+    ::crimp::RANGE0 $e 65535
+
     return [::crimp::read::tcl grey16 [RAMP $s $e $size]]
 }
 
 proc ::crimp::gradient::grey32 {s e size} {
-    # TODO: check s/e ranges, type
+    ::crimp::RANGE0 $s 4294967295
+    ::crimp::RANGE0 $e 4294967295
+
     return [::crimp::read::tcl grey32 [RAMP $s $e $size]]
 }
 
 proc ::crimp::gradient::rgb {s e size} {
-    # TODO: check list sizes, elements.
+    ::crimp::TUPLE $s 3 {RGB triple}
+    ::crimp::TUPLE $e 3 {RGB triple}
+
     lassign $s sr sg sb
     lassign $e er eg eb
+
+    ::crimp::RANGE0 $sr 255
+    ::crimp::RANGE0 $er 255
+    ::crimp::RANGE0 $sg 255
+    ::crimp::RANGE0 $eg 255
+    ::crimp::RANGE0 $sb 255
+    ::crimp::RANGE0 $eb 255
 
     return [::crimp::join::2rgb \
 		[::crimp::read::tcl grey8 [RAMP $sr $er $size]] \
@@ -3318,9 +3342,20 @@ proc ::crimp::gradient::rgb {s e size} {
 }
 
 proc ::crimp::gradient::rgba {s e size} {
-    # TODO: check list sizes, elements.
+    ::crimp::TUPLE $s 4 {RGBA quadruple}
+    ::crimp::TUPLE $e 4 {RGBA quadruple}
+
     lassign $s sr sg sb sa
     lassign $e er eg eb ea
+
+    ::crimp::RANGE0 $sr 255
+    ::crimp::RANGE0 $er 255
+    ::crimp::RANGE0 $sg 255
+    ::crimp::RANGE0 $eg 255
+    ::crimp::RANGE0 $sb 255
+    ::crimp::RANGE0 $eb 255
+    ::crimp::RANGE0 $sa 255
+    ::crimp::RANGE0 $ea 255
 
     return [::crimp::join::2rgba \
 		[::crimp::read::tcl grey8 [RAMP $sr $er $size]] \
@@ -3330,9 +3365,18 @@ proc ::crimp::gradient::rgba {s e size} {
 }
 
 proc ::crimp::gradient::hsv {s e size} {
-    # TODO: check list sizes, elements.
+    ::crimp::TUPLE $s 3 {HSV triple}
+    ::crimp::TUPLE $e 3 {HSV triple}
+
     lassign $s sh ss sv
     lassign $e eh es ev
+
+    ::crimp::RANGE0 $sh 255
+    ::crimp::RANGE0 $eh 255
+    ::crimp::RANGE0 $ss 255
+    ::crimp::RANGE0 $es 255
+    ::crimp::RANGE0 $sv 255
+    ::crimp::RANGE0 $ev 255
 
     return [::crimp::join::2hsv \
 		[::crimp::read::tcl grey8 [RAMP $sh $eh $size]] \

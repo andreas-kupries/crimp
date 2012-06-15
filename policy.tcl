@@ -7,20 +7,21 @@ namespace eval ::crimp {}
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::TUPLE {x n label} {
-    if {[llength $x] == $n} return
+proc ::crimp::CheckListN {x n label} {
+    if {![catch {llength $x} len] &&
+	($len == $n)} return
     return -code error "expected $label but got \"$x\""
 }
 
-proc ::crimp::RANGE0 {x max} {
+proc ::crimp::CheckMaxPInt {x max} {
     if {![string is int -strict $x] || ($x < 0) || ($x > $max)} {
 	return -code error "expected integer between 0 and $max but got \"$x\""
     }
 }
 
-proc ::crimp::REQNUM {x} {
+proc ::crimp::CheckDouble {x} {
     if {[string is double -strict $x]} return
-    return -code error "expected number but got \"$x\""
+    return -code error "expected floating-point number but got \"$x\""
 }
 
 proc ::crimp::ALIGN {image size where fe values} {
@@ -2731,6 +2732,9 @@ namespace eval ::crimp::transform::reflect {
 }
 
 proc ::crimp::transform::reflect::line {lx ly} {
+    ::crimp::CheckDouble $lx
+    ::crimp::CheckDouble $ly
+
     # Reflect along the line (lx, ly) through the origin.
     # This can be handled as a chain of
     # (a) rotation through the origin to map the line to either x- or y-axis
@@ -2764,6 +2768,9 @@ proc ::crimp::transform::reflect::y {} {
 }
 
 proc ::crimp::transform::rotate {theta {p {0 0}}} {
+    ::crimp::CheckDouble $theta
+    CheckPoint $p
+
     # Rotate around around a point, by default (0,0), i.e. the upper
     # left corner. Rotation around any other point is done by
     # translation that point to (0,0), rotating, and then translating
@@ -2794,6 +2801,8 @@ proc ::crimp::transform::quadrilateral {src dst} {
     # destination quad. This can be captured as perspective, i.e.
     # projective transform.
 
+    CheckQuad $src
+    CheckQuad $dst
     return [chain [Q2UNIT $dst] [invert [Q2UNIT $src]]]
     #              ~~~~~~~~~~~   ~~~~~~~~~~~~~~~~
     #         unit rect -> dst   src -> unit rect
@@ -2801,6 +2810,8 @@ proc ::crimp::transform::quadrilateral {src dst} {
 
 proc ::crimp::transform::chain {t args} {
     if {[llength $args] == 0} {
+	# Always check the input, even if we are only passing it back.
+	CHECK $t
 	return $t
     }
     set args [linsert $args 0 $t]
@@ -2815,6 +2826,24 @@ proc ::crimp::transform::chain {t args} {
 
 proc ::crimp::transform::invert {a} {
     return [MAKE [::crimp::matinv3x3_float [CHECK $a]]]
+}
+
+proc ::crimp::transform::CheckQuad {quad} {
+    ::crimp::CheckListN $quad 4 {4-element quadrilateral}
+    lassign $quad a b c d
+    ::crimp::CheckDouble $a
+    ::crimp::CheckDouble $b
+    ::crimp::CheckDouble $c
+    ::crimp::CheckDouble $d
+    return
+}
+
+proc ::crimp::transform::CheckPoint {quad} {
+    ::crimp::CheckListN $quad 4 {2d point}
+    lassign $quad a b
+    ::crimp::CheckDouble $a
+    ::crimp::CheckDouble $b
+    return
 }
 
 proc ::crimp::transform::Q2UNIT {quad} {
@@ -2870,7 +2899,7 @@ proc ::crimp::transform::CHECK {transform {prefix {}}} {
 	($t ne "float") ||
 	([::crimp::dimensions $m] ne {3 3})
     } {
-	return -code error "${prefix}expected projective transform, this is not it."
+	return -code error "${prefix}expected projective transform but got \"$transform\""
     }
     return $m
 }
@@ -3314,39 +3343,39 @@ namespace eval ::crimp::gradient {
 }
 
 proc ::crimp::gradient::grey8 {s e size} {
-    ::crimp::RANGE0 $s 255
-    ::crimp::RANGE0 $e 255
+    ::crimp::CheckMaxPInt $s 255
+    ::crimp::CheckMaxPInt $e 255
 
     return [::crimp::read::tcl grey8 [RAMP $s $e $size]]
 }
 
 proc ::crimp::gradient::grey16 {s e size} {
-    ::crimp::RANGE0 $s 65535
-    ::crimp::RANGE0 $e 65535
+    ::crimp::CheckMaxPInt $s 65535
+    ::crimp::CheckMaxPInt $e 65535
 
     return [::crimp::read::tcl grey16 [RAMP $s $e $size]]
 }
 
 proc ::crimp::gradient::grey32 {s e size} {
-    ::crimp::RANGE0 $s 4294967295
-    ::crimp::RANGE0 $e 4294967295
+    ::crimp::CheckMaxPInt $s 4294967295
+    ::crimp::CheckMaxPInt $e 4294967295
 
     return [::crimp::read::tcl grey32 [RAMP $s $e $size]]
 }
 
 proc ::crimp::gradient::rgb {s e size} {
-    ::crimp::TUPLE $s 3 {RGB triple}
-    ::crimp::TUPLE $e 3 {RGB triple}
+    ::crimp::CheckListN $s 3 {RGB triple}
+    ::crimp::CheckListN $e 3 {RGB triple}
 
     lassign $s sr sg sb
     lassign $e er eg eb
 
-    ::crimp::RANGE0 $sr 255
-    ::crimp::RANGE0 $er 255
-    ::crimp::RANGE0 $sg 255
-    ::crimp::RANGE0 $eg 255
-    ::crimp::RANGE0 $sb 255
-    ::crimp::RANGE0 $eb 255
+    ::crimp::CheckMaxPInt $sr 255
+    ::crimp::CheckMaxPInt $er 255
+    ::crimp::CheckMaxPInt $sg 255
+    ::crimp::CheckMaxPInt $eg 255
+    ::crimp::CheckMaxPInt $sb 255
+    ::crimp::CheckMaxPInt $eb 255
 
     return [::crimp::join::2rgb \
 		[::crimp::read::tcl grey8 [RAMP $sr $er $size]] \
@@ -3355,20 +3384,20 @@ proc ::crimp::gradient::rgb {s e size} {
 }
 
 proc ::crimp::gradient::rgba {s e size} {
-    ::crimp::TUPLE $s 4 {RGBA quadruple}
-    ::crimp::TUPLE $e 4 {RGBA quadruple}
+    ::crimp::CheckListN $s 4 {RGBA quadruple}
+    ::crimp::CheckListN $e 4 {RGBA quadruple}
 
     lassign $s sr sg sb sa
     lassign $e er eg eb ea
 
-    ::crimp::RANGE0 $sr 255
-    ::crimp::RANGE0 $er 255
-    ::crimp::RANGE0 $sg 255
-    ::crimp::RANGE0 $eg 255
-    ::crimp::RANGE0 $sb 255
-    ::crimp::RANGE0 $eb 255
-    ::crimp::RANGE0 $sa 255
-    ::crimp::RANGE0 $ea 255
+    ::crimp::CheckMaxPInt $sr 255
+    ::crimp::CheckMaxPInt $er 255
+    ::crimp::CheckMaxPInt $sg 255
+    ::crimp::CheckMaxPInt $eg 255
+    ::crimp::CheckMaxPInt $sb 255
+    ::crimp::CheckMaxPInt $eb 255
+    ::crimp::CheckMaxPInt $sa 255
+    ::crimp::CheckMaxPInt $ea 255
 
     return [::crimp::join::2rgba \
 		[::crimp::read::tcl grey8 [RAMP $sr $er $size]] \
@@ -3378,18 +3407,18 @@ proc ::crimp::gradient::rgba {s e size} {
 }
 
 proc ::crimp::gradient::hsv {s e size} {
-    ::crimp::TUPLE $s 3 {HSV triple}
-    ::crimp::TUPLE $e 3 {HSV triple}
+    ::crimp::CheckListN $s 3 {HSV triple}
+    ::crimp::CheckListN $e 3 {HSV triple}
 
     lassign $s sh ss sv
     lassign $e eh es ev
 
-    ::crimp::RANGE0 $sh 255
-    ::crimp::RANGE0 $eh 255
-    ::crimp::RANGE0 $ss 255
-    ::crimp::RANGE0 $es 255
-    ::crimp::RANGE0 $sv 255
-    ::crimp::RANGE0 $ev 255
+    ::crimp::CheckMaxPInt $sh 255
+    ::crimp::CheckMaxPInt $eh 255
+    ::crimp::CheckMaxPInt $ss 255
+    ::crimp::CheckMaxPInt $es 255
+    ::crimp::CheckMaxPInt $sv 255
+    ::crimp::CheckMaxPInt $ev 255
 
     return [::crimp::join::2hsv \
 		[::crimp::read::tcl grey8 [RAMP $sh $eh $size]] \
@@ -3398,23 +3427,23 @@ proc ::crimp::gradient::hsv {s e size} {
 }
 
 proc ::crimp::gradient::float {s e size} {
-    ::crimp::REQNUM $s
-    ::crimp::REQNUM $e
+    ::crimp::CheckDouble $s
+    ::crimp::CheckDouble $e
 
     return [::crimp::read::tcl float [RAMPF $s $e $size]]
 }
 
 proc ::crimp::gradient::fpcomplex {s e size} {
-    ::crimp::TUPLE $s 2 {complex number}
-    ::crimp::TUPLE $e 2 {complex number}
+    ::crimp::CheckListN $s 2 {complex number}
+    ::crimp::CheckListN $e 2 {complex number}
 
     lassign $s sre sim
     lassign $e ere eim
 
-    ::crimp::REQNUM $sre
-    ::crimp::REQNUM $sim
-    ::crimp::REQNUM $ere
-    ::crimp::REQNUM $eim
+    ::crimp::CheckDouble $sre
+    ::crimp::CheckDouble $sim
+    ::crimp::CheckDouble $ere
+    ::crimp::CheckDouble $eim
 
     return [::crimp::join::2complex \
 		[::crimp::read::tcl float [RAMPF $sre $ere $size]] \

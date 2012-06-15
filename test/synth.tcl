@@ -207,12 +207,19 @@ proc astcl {i} {
 }
 
 proc astclf {digits i} {
+    if {[string match {crimp/transform *} $i]} {
+	return [lreplace $i end end [astclf $digits [lindex $i end]]]
+    }
     # Treat as list, and replace the binary pixel data with the nested-list tcl representation.
     lreplace $i end end [join [F %.${digits}f [crimp write 2string tcl $i]] \n]
 }
 
 proc iconst {t x y w h p} {
     list crimp::image::$t $x $y $w $h {} [trim $p]
+}
+
+proc tconst {p} {
+    list crimp/transform [iconst float 0 0 3 3 $p]
 }
 
 proc lmap {f list} {

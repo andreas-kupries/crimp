@@ -1,0 +1,126 @@
+# -*- tcl -*-
+# -------------------------------------------------------------------------
+
+source [file join \
+            [file dirname [file join [pwd] [info script]]] \
+            testutilities.tcl]
+
+testsNeedTcl     8.5
+testsNeedTcltest 2
+
+support { useLocalFile synth.tcl }
+support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
+testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+
+# -------------------------------------------------------------------------
+## Supporting commands, creation and manipulation of projective transforms.
+##
+## Note: Transforms are 2-element Tcl lists (type tag + 3x3 float image).
+##       The second element contains the transform matrix.
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-1.0 {projective transforms, wrong\#args, not enough} -body {
+    crimp transform
+} -returnCodes error -result {wrong # args: should be "crimp transform subcommand ?argument ...?"}
+
+test crimp-proj-transform-1.1 {projective transforms, invalid method} -body {
+    crimp transform BOGUS
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be affine, chain, invert, projective, quadrilateral, reflect, rotate, scale, shear, or translate}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-2.0 {projective transforms, raw projective, wrong\#args, not enough} -body {
+    crimp transform projective
+} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-3.0 {projective transforms, raw affine, wrong\#args, not enough} -body {
+    crimp transform affine
+} -returnCodes error -result {wrong # args: should be "crimp transform affine a b c d e f"}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-4.0 {projective transforms, translate, wrong\#args, not enough} -body {
+    crimp transform translate
+} -returnCodes error -result {wrong # args: should be "crimp transform translate dx dy"}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-5.0 {projective transforms, scale, wrong\#args, not enough} -body {
+    crimp transform scale
+} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy"}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-6.0 {projective transforms, shear, wrong\#args, not enough} -body {
+    crimp transform shear
+} -returnCodes error -result {wrong # args: should be "crimp transform shear sx sy"}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-7.0 {projective transforms, reflect, wrong\#args, not enough} -body {
+    crimp transform reflect
+} -returnCodes error -result {wrong # args: should be "crimp transform reflect subcommand ?argument ...?"}
+
+test crimp-proj-transform-7.1 {projective transforms, invalid method} -body {
+    crimp transform reflect BOGUS
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be line, x, or y}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-8.0 {projective transforms, reflect @ line, wrong\#args, not enough} -body {
+    crimp transform reflect line
+} -returnCodes error -result {wrong # args: should be "crimp transform reflect line lx ly"}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-9.0 {projective transforms, reflect @ x-axis, wrong\#args, too many} -body {
+    crimp transform reflect x TOOMUCH
+} -returnCodes error -result {wrong # args: should be "crimp transform reflect x"}
+
+test crimp-proj-transform-9.1 {projective transforms, reflect @ x-axis, wrong\#args, not enough} -body {
+    crimp transform reflect x
+} -returnCodes error -result {} -constraints known-todo
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-10.0 {projective transforms, reflect @ y-axis, wrong\#args, too many} -body {
+    crimp transform reflect y TOOMUCH
+} -returnCodes error -result {wrong # args: should be "crimp transform reflect y"}
+
+test crimp-proj-transform-10.1 {projective transforms, reflect @ y-axis, wrong\#args, not enough} -body {
+    crimp transform reflect y
+} -returnCodes error -result {} -constraints known-todo
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-11.0 {projective transforms, rotate, wrong\#args, not enough} -body {
+    crimp transform rotate
+} -returnCodes error -result {wrong # args: should be "crimp transform rotate theta ?p?"}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-11.0 {projective transforms, quadrilateral, wrong\#args, not enough} -body {
+    crimp transform quadrilateral
+} -returnCodes error -result {wrong # args: should be "crimp transform quadrilateral src dst"}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-11.0 {projective transforms, chain, wrong\#args, not enough} -body {
+    crimp transform chain
+} -returnCodes error -result {wrong # args: should be "crimp transform chain t ..."}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-11.0 {projective transforms, invert, wrong\#args, not enough} -body {
+    crimp transform invert
+} -returnCodes error -result {wrong # args: should be "crimp transform invert a"}
+
+# -------------------------------------------------------------------------
+testsuiteCleanup
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

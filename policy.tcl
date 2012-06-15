@@ -2676,7 +2676,12 @@ proc ::crimp::register::TranslationCore {needle haystack} {
 ## projective transforms, i.e. perspective.
 
 namespace eval ::crimp::transform {
-    namespace export {[a-z]*}
+    # Explicitly listing the exported names, to avoid re-exporting the
+    # math commands imported below.
+    namespace export \
+	projective affine translate scale shear reflect rotate \
+	quadrilateral chain invert
+
     namespace ensemble create
     namespace import ::tcl::mathfunc::*
     namespace import ::tcl::mathop::*
@@ -2721,6 +2726,7 @@ proc ::crimp::transform::shear {sx sy} {
 namespace eval ::crimp::transform::reflect {
     namespace export line x y
     namespace ensemble create
+    namespace import ::crimp::transform::affine
     # TODO line segment (arbitrary line).
 }
 

@@ -95,6 +95,38 @@ proc t_fpcomplex {} {
     }]
 }
 
+proc t_3x3identity {} {
+    return [F %.1f {
+	{1 0 0}
+	{0 1 0}
+	{0 0 1}
+    }]
+}
+
+proc t_3x3test {} {
+    return [F %.1f {
+	{1 0 5}
+	{0 1 2}
+	{0 0 1}
+    }]
+}
+
+proc t_3x3idtrans {} {
+    return [F %.1f {
+	{0 0 1}
+	{0 1 0}
+	{1 0 0}
+    }]
+}
+
+proc t_3x3testb {} {
+    return [F %.1f {
+	{0 3 0}
+	{2 0 4}
+	{0 5 0}
+    }]
+}
+
 # # ## ### ##### ######## ############# #####################
 
 proc ramp {} { crimp read tcl grey8 [t_ramp] }
@@ -109,6 +141,14 @@ proc hsv  {} { crimp read tcl hsv  [t_hsv]  }
 
 proc float     {} { crimp read tcl float     [t_float]     }
 proc fpcomplex {} { crimp read tcl fpcomplex [t_fpcomplex] }
+
+# # ## ### ##### ######## ############# #####################
+## Standard transform matrices
+
+proc mid    {} { crimp read tcl float [t_3x3identity] }
+proc midt   {} { crimp read tcl float [t_3x3idtrans] }
+proc mtest  {} { crimp read tcl float [t_3x3test] }
+proc mtestb {} { crimp read tcl float [t_3x3testb] }
 
 # # ## ### ##### ######## ############# #####################
 

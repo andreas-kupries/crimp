@@ -147,28 +147,117 @@ test crimp-gradient-ramp-1.8.3 "[origin] image gradient ramp generation, rgb, in
     crimp gradient rgb {0 0 0} {4 5 6 7} 2
 } -returnCodes error -result {expected RGB triple but got "4 5 6 7"}
 
+foreach i {0 1 2 3 4 5} {
+    foreach bad {X 280 -1} j {9 10 11} {
+        set base [lreplace {0 0 0 0 0 0} $i $i $bad]
+        set start [lrange $base 0 2]
+        set end   [lrange $base 3 end]
 
+        test crimp-gradient-ramp-1.$j.3.$i "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
+            crimp gradient rgb $start $end 2
+        } -returnCodes error -result "expected integer between 0 and 255 but got \"$bad\""
+    }
+}
 
+# -------------------------------------------------------------------------
 
-test crimp-gradient-ramp-1.9.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
-    crimp gradient rgb {X 0 0} {0 0 0} 2
-} -returnCodes error -result {expected integer between 0 and 255 but got "X"}
+test crimp-gradient-ramp-1.6.4 "[origin] image gradient ramp generation, rgba, invalid arguments" -body {
+    crimp gradient rgba S E 2
+} -returnCodes error -result {expected RGBA quadruple but got "S"}
 
-test crimp-gradient-ramp-1.10.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
-    crimp gradient rgb {280 0 0} {0 0 0} 2
-} -returnCodes error -result {expected integer between 0 and 255 but got "280"}
+test crimp-gradient-ramp-1.7.4 "[origin] image gradient ramp generation, rgba, invalid arguments" -body {
+    crimp gradient rgba {4 5 6} E 2
+} -returnCodes error -result {expected RGBA quadruple but got "4 5 6"}
 
-test crimp-gradient-ramp-1.11.3 "[origin] image gradient ramp generation, rgb, invalid arguments" -body {
-    crimp gradient rgb {-1 0 0} {0 0 0} 2
-} -returnCodes error -result {expected integer between 0 and 255 but got "-1"}
+test crimp-gradient-ramp-1.7.4 "[origin] image gradient ramp generation, rgba, invalid arguments" -body {
+    crimp gradient rgba {0 0 0 0} E 2
+} -returnCodes error -result {expected RGBA quadruple but got "E"}
 
-# continue, test all positions.
+test crimp-gradient-ramp-1.8.4 "[origin] image gradient ramp generation, rgba, invalid arguments" -body {
+    crimp gradient rgba {0 0 0 0} {4 5 6} 2
+} -returnCodes error -result {expected RGBA quadruple but got "4 5 6"}
 
+foreach i {0 1 2 3 4 5 6 7} {
+    foreach bad {X 280 -1} j {9 10 11} {
+        set base [lreplace {0 0 0 0 0 0 0 0} $i $i $bad]
+        set start [lrange $base 0 3]
+        set end   [lrange $base 4 end]
 
+        test crimp-gradient-ramp-1.$j.4.$i "[origin] image gradient ramp generation, rgba, invalid arguments" -body {
+            crimp gradient rgba $start $end 2
+        } -returnCodes error -result "expected integer between 0 and 255 but got \"$bad\""
+    }
+}
 
+# -------------------------------------------------------------------------
 
+test crimp-gradient-ramp-1.6.5 "[origin] image gradient ramp generation, hsv, invalid arguments" -body {
+    crimp gradient hsv S E 2
+} -returnCodes error -result {expected HSV triple but got "S"}
 
+test crimp-gradient-ramp-1.7.5 "[origin] image gradient ramp generation, hsv, invalid arguments" -body {
+    crimp gradient hsv {4 5 6 7} E 2
+} -returnCodes error -result {expected HSV triple but got "4 5 6 7"}
 
+test crimp-gradient-ramp-1.7.5 "[origin] image gradient ramp generation, hsv, invalid arguments" -body {
+    crimp gradient hsv {0 0 0} E 2
+} -returnCodes error -result {expected HSV triple but got "E"}
+
+test crimp-gradient-ramp-1.8.5 "[origin] image gradient ramp generation, hsv, invalid arguments" -body {
+    crimp gradient hsv {0 0 0} {4 5 6 7} 2
+} -returnCodes error -result {expected HSV triple but got "4 5 6 7"}
+
+foreach i {0 1 2 3 4 5} {
+    foreach bad {X 280 -1} j {9 10 11} {
+        set base [lreplace {0 0 0 0 0 0} $i $i $bad]
+        set start [lrange $base 0 2]
+        set end   [lrange $base 3 end]
+
+        test crimp-gradient-ramp-1.$j.5.$i "[origin] image gradient ramp generation, hsv, invalid arguments" -body {
+            crimp gradient hsv $start $end 2
+        } -returnCodes error -result "expected integer between 0 and 255 but got \"$bad\""
+    }
+}
+
+# -------------------------------------------------------------------------
+
+test crimp-gradient-ramp-1.6.6 "[origin] image gradient ramp generation, float, invalid arguments" -body {
+    crimp gradient float S E 2
+} -returnCodes error -result {expected number but got "S"}
+
+test crimp-gradient-ramp-1.9.6 "[origin] image gradient ramp generation, float, invalid arguments" -body {
+    crimp gradient float 50 E 2
+} -returnCodes error -result {expected number but got "E"}
+
+# -------------------------------------------------------------------------
+
+test crimp-gradient-ramp-1.6.7 "[origin] image gradient ramp generation, fpcomplex, invalid arguments" -body {
+    crimp gradient fpcomplex S E 2
+} -returnCodes error -result {expected complex number but got "S"}
+
+test crimp-gradient-ramp-1.7.7 "[origin] image gradient ramp generation, fpcomplex, invalid arguments" -body {
+    crimp gradient fpcomplex {4 5 6 7} E 2
+} -returnCodes error -result {expected complex number but got "4 5 6 7"}
+
+test crimp-gradient-ramp-1.7.7 "[origin] image gradient ramp generation, fpcomplex, invalid arguments" -body {
+    crimp gradient fpcomplex {0 0} E 2
+} -returnCodes error -result {expected complex number but got "E"}
+
+test crimp-gradient-ramp-1.8.7 "[origin] image gradient ramp generation, fpcomplex, invalid arguments" -body {
+    crimp gradient fpcomplex {0 0} {4 5 6 7} 2
+} -returnCodes error -result {expected complex number but got "4 5 6 7"}
+
+foreach i {0 1 2 3} {
+    foreach bad {X} j {9} {
+        set base [lreplace {0 0 0 0} $i $i $bad]
+        set start [lrange $base 0 1]
+        set end   [lrange $base 2 end]
+
+        test crimp-gradient-ramp-1.$j.7.$i "[origin] image gradient ramp generation, fpcomplex, invalid arguments" -body {
+            crimp gradient fpcomplex $start $end 2
+        } -returnCodes error -result "expected number but got \"$bad\""
+    }
+}
 
 # -------------------------------------------------------------------------
 

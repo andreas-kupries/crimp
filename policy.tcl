@@ -18,6 +18,11 @@ proc ::crimp::RANGE0 {x max} {
     }
 }
 
+proc ::crimp::REQNUM {x} {
+    if {[string is double -strict $x]} return
+    return -code error "expected number but got \"$x\""
+}
+
 proc ::crimp::ALIGN {image size where fe values} {
     # Do nothing if the image is at the requested size.
 
@@ -3385,13 +3390,23 @@ proc ::crimp::gradient::hsv {s e size} {
 }
 
 proc ::crimp::gradient::float {s e size} {
+    ::crimp::REQNUM $s
+    ::crimp::REQNUM $e
+
     return [::crimp::read::tcl float [RAMPF $s $e $size]]
 }
 
 proc ::crimp::gradient::fpcomplex {s e size} {
-    # TODO: check list sizes, elements.
+    ::crimp::TUPLE $s 2 {complex number}
+    ::crimp::TUPLE $e 2 {complex number}
+
     lassign $s sre sim
     lassign $e ere eim
+
+    ::crimp::REQNUM $sre
+    ::crimp::REQNUM $sim
+    ::crimp::REQNUM $ere
+    ::crimp::REQNUM $eim
 
     return [::crimp::join::2complex \
 		[::crimp::read::tcl float [RAMPF $sre $ere $size]] \

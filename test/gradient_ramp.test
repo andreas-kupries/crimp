@@ -223,11 +223,11 @@ foreach i {0 1 2 3 4 5} {
 
 test crimp-gradient-ramp-1.6.6 "[origin] image gradient ramp generation, float, invalid arguments" -body {
     crimp gradient float S E 2
-} -returnCodes error -result {expected number but got "S"}
+} -returnCodes error -result {expected floating-point number but got "S"}
 
 test crimp-gradient-ramp-1.9.6 "[origin] image gradient ramp generation, float, invalid arguments" -body {
     crimp gradient float 50 E 2
-} -returnCodes error -result {expected number but got "E"}
+} -returnCodes error -result {expected floating-point number but got "E"}
 
 # -------------------------------------------------------------------------
 
@@ -255,7 +255,7 @@ foreach i {0 1 2 3} {
 
         test crimp-gradient-ramp-1.$j.7.$i "[origin] image gradient ramp generation, fpcomplex, invalid arguments" -body {
             crimp gradient fpcomplex $start $end 2
-        } -returnCodes error -result "expected number but got \"$bad\""
+        } -returnCodes error -result "expected floating-point number but got \"$bad\""
     }
 }
 
@@ -333,7 +333,7 @@ foreach {n itype x} {
     6 float     0
     7 fpcomplex {0 0}
 } {
-    test crimp-gradient-ramp-5.$n "image gradient ramp generation, $itype, location handling" -body {
+    test crimp-gradient-ramp-5.$n "[origin] image gradient ramp generation, $itype, location handling" -body {
 	crimp at [crimp gradient $itype $x $x 2]
     } -result {0 0}
 }

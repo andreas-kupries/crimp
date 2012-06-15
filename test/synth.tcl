@@ -211,8 +211,14 @@ proc iota {n} {
     return $res
 }
 
+# Use in the label of testcases to show their location when the label
+# is printed. This is usually done because the test failed.
 proc origin {} {
-    array set _ [info frame -1]
+    if {[catch {
+	array set _ [info frame -1]
+    }]} return
+    if {![info exists _(file)]} return
+    if {![info exists _(line)]} return
     return (@[file tail $_(file)]:$_(line))
 }
 

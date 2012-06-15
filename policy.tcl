@@ -323,7 +323,7 @@ namespace eval ::crimp::flip {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::rotate {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -365,7 +365,7 @@ proc ::crimp::Resize {interpolation image w h} {
 ## structuring element, the flat 3x3 brick.
 
 namespace eval ::crimp::morph {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -412,7 +412,7 @@ proc ::crimp::morph::toggle {image} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::montage {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -423,6 +423,7 @@ proc ::crimp::montage::horizontal {args} {
     set border    const
     set alignment center
 
+    # TODO: refactor option/argument processing, see also montage/horizontal
     set at 0
     while {1} {
 	set opt [lindex $args $at]
@@ -455,7 +456,7 @@ proc ::crimp::montage::horizontal {args} {
 	crimp::BORDER [::crimp::TypeOf $image] $border
 	return $image
     } elseif {[llength $args] == 0} {
-	return -code error "No images to montage"
+	return -code error "wrong \# args: should be \"crimp montage horizontal ?-border B? ?-align A? image ?image...?\""
     }
 
     # Check type, and compute max height, for border expansion.
@@ -495,6 +496,7 @@ proc ::crimp::montage::vertical {args} {
     set border    const
     set alignment middle
 
+    # TODO: refactor option/argument processing, see also montage/horizontal
     set at 0
     while {1} {
 	set opt [lindex $args $at]
@@ -527,7 +529,7 @@ proc ::crimp::montage::vertical {args} {
 	crimp::BORDER [::crimp::TypeOf $image] $border
 	return $image
     } elseif {[llength $args] == 0} {
-	return -code error "No images to montage"
+	return -code error "wrong \# args: should be \"crimp montage vertical ?-border B? ?-align A? image ?image...?\""
     }
 
     # Check type, and compute max width, for border expansion.
@@ -573,7 +575,7 @@ proc ::crimp::solarize {image n} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::effect {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -604,10 +606,10 @@ proc ::crimp::effect::charcoal {image} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::threshold {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
     namespace eval global {
-	namespace export *
+	namespace export {[a-z]*}
 	namespace ensemble create
     }
 }
@@ -1183,7 +1185,7 @@ proc ::crimp::integrate {image} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::downsample {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -1220,7 +1222,7 @@ proc ::crimp::downsample::y {image factor} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::upsample {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -1257,7 +1259,7 @@ proc ::crimp::upsample::y {image factor} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::decimate {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -1300,7 +1302,7 @@ proc ::crimp::decimate::y {image factor kernel} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::interpolate {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -1443,7 +1445,7 @@ proc ::crimp::cut {image dx dy w h} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::alpha {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -2951,7 +2953,7 @@ proc ::crimp::warp::Projective {interpolation image transform} {
 # # ## ### ##### ######## #############
 
 namespace eval ::crimp::kernel {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -3057,7 +3059,7 @@ proc ::crimp::kernel::image {kernel} {
 ## Image pyramids
 
 namespace eval ::crimp::pyramid {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 
@@ -3650,7 +3652,7 @@ proc ::crimp::table::stretch {min max} {
 }
 
 namespace eval ::crimp::table::threshold {
-    namespace export *
+    namespace export {[a-z]*}
     namespace ensemble create
 }
 

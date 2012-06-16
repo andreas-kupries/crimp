@@ -3,6 +3,9 @@
 ## This file defines a number of commands on top of the C primitives
 ## which are easier to use than directly calling on the latter.
 
+package require math::special   ; # -> ::crimp::table::fgauss::discrete
+package require math::constants ; # -> ::crimp::table::fgauss::sampled (pi)
+
 namespace eval ::crimp {}
 
 # # ## ### ##### ######## #############

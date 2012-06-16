@@ -141,11 +141,46 @@ test crimp-proj-transform-5.2 {projective transforms, scale, wrong\#args, too ma
     crimp transform scale SX SY toomuch
 } -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy"}
 
-test crimp-proj-transform-5.2 {projective transforms, scale, invalid arguments} -body {
+test crimp-proj-transform-5.3 {projective transforms, scale, invalid arguments} -body {
     crimp transform scale SX SY
 } -returnCodes error -result {expected floating-point number but got "SX"}
-# TODO: go through all arguments.
-# TODO: proper result.
+
+test crimp-proj-transform-5.4 {projective transforms, scale, invalid arguments} -body {
+    crimp transform scale 0 SY
+} -returnCodes error -result {expected floating-point number but got "SY"}
+
+test crimp-proj-transform-5.5 {projective transforms, scale} -body {
+    astclf 1 [crimp transform scale 0 0]
+    # possible todo: scale to nothing. non-invertible ?! reject zero ?
+} -result [tconst {
+    0.0  0.0  0.0
+    0.0  0.0  0.0
+    0.0  0.0  1.0
+}]
+
+test crimp-proj-transform-5.6 {projective transforms, scale} -body {
+    astclf 1 [crimp transform scale 1 1]
+} -result [tconst {
+    1.0  0.0  0.0
+    0.0  1.0  0.0
+    0.0  0.0  1.0
+}]
+
+test crimp-proj-transform-5.7 {projective transforms, scale} -body {
+    astclf 1 [crimp transform scale 5 -0.5]
+} -result [tconst {
+    5.0  0.0  0.0
+    0.0 -0.5  0.0
+    0.0  0.0  1.0
+}]
+
+test crimp-proj-transform-5.8 {projective transforms, scale} -body {
+    astclf 1 [crimp transform scale 0.5 -5]
+} -result [tconst {
+    0.5  0.0  0.0
+    0.0 -5.0  0.0
+    0.0  0.0  1.0
+}]
 
 # -------------------------------------------------------------------------
 
@@ -164,8 +199,35 @@ test crimp-proj-transform-6.2 {projective transforms, shear, wrong\#args, too ma
 test crimp-proj-transform-6.3 {projective transforms, shear, invalid arguments} -body {
     crimp transform shear SX SY
 } -returnCodes error -result {expected floating-point number but got "SX"}
-# TODO: go through all arguments.
-# TODO: proper result.
+
+test crimp-proj-transform-6.4 {projective transforms, shear, invalid arguments} -body {
+    crimp transform shear 0 SY
+} -returnCodes error -result {expected floating-point number but got "SY"}
+
+# check the output of shearing transform
+test crimp-proj-transform-6.5 {projective transforms, shear} -body {
+    astclf 1 [crimp transform shear 0 0]
+} -result [tconst {
+    1.0  0.0  0.0
+    1.0  0.0  0.0
+    0.0  0.0  1.0
+}]
+
+test crimp-proj-transform-6.6 {projective transforms, shear} -body {
+    astclf 1 [crimp transform shear 3 4]
+} -result [tconst {
+    1.0  3.0  4.0
+    1.0  0.0  0.0
+    0.0  0.0  1.0
+}]
+
+test crimp-proj-transform-6.6 {projective transforms, shear} -body {
+    astclf 1 [crimp transform shear -3 -4]
+} -result [tconst {
+    1.0 -3.0 -4.0
+    1.0  0.0  0.0
+    0.0  0.0  1.0
+}]
 
 # -------------------------------------------------------------------------
 
@@ -191,11 +253,57 @@ test crimp-proj-transform-8.2 {projective transforms, reflect @ line, wrong\#arg
     crimp transform reflect line LX LY toomuch
 } -returnCodes error -result {wrong # args: should be "crimp transform reflect line lx ly"}
 
-test crimp-proj-transform-8.0 {projective transforms, reflect @ line, invalid arguments} -body {
+test crimp-proj-transform-8.3 {projective transforms, reflect @ line, invalid arguments} -body {
     crimp transform reflect line LX LY
 } -returnCodes error -result {expected floating-point number but got "LX"}
-# TODO: go through all arguments.
-# TODO: proper result.
+
+test crimp-proj-transform-8.4 {projective transforms, reflect @ line, invalid arguments} -body {
+    crimp transform reflect line 0 LY
+} -returnCodes error -result {expected floating-point number but got "LY"}
+
+test crimp-proj-transform-8.5 {projective transforms, reflect @ line, maybe invalid arguments} -body {
+    astclf 4 [crimp transform reflect line 0 0]
+    # This should result in a singlar (non-invertible) matrix, as the reflection line is undetermined at zero.
+    # possible TODO: reject (0,0) or nearby points.
+    # alternative: scale point to magnitude 10, then calculate the line.
+} -result [tconst {
+    0.0000  0.0000  0.0000
+    0.0000  0.0000  0.0000
+    0.0000  0.0000  1.0000
+}]
+
+test crimp-proj-transform-8.6 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line 5 5]
+} -result [tconst {
+     0.0000 50.0000 0.0000
+    50.0000  0.0000 0.0000
+     0.0000  0.0000 1.0000
+}]
+#### query 8.6/7 - The line is the same, just different points on it.
+#### ------------- why is the transform different. test this visually.
+test crimp-proj-transform-8.7 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line 10 10]
+} -result [tconst {
+      0.0000 200.0000 0.0000
+    200.0000   0.0000 0.0000
+      0.0000   0.0000 1.0000
+}]
+
+test crimp-proj-transform-8.8 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line 5 10]
+} -result [tconst {
+    -75.0000 100.0000 0.0000
+    100.0000  75.0000 0.0000
+      0.0000   0.0000 1.0000
+}]
+
+test crimp-proj-transform-8.9 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line 10 5]
+} -result [tconst {
+     75.0000  100.0000  0.0000
+    100.0000  -75.0000  0.0000
+      0.0000    0.0000  1.0000
+}]
 
 # -------------------------------------------------------------------------
 

@@ -2683,7 +2683,7 @@ namespace eval ::crimp::transform {
     # Explicitly listing the exported names, to avoid re-exporting the
     # math commands imported below.
     namespace export \
-	projective affine translate scale shear reflect rotate \
+	identity projective affine translate scale shear reflect rotate \
 	quadrilateral chain invert
 
     namespace ensemble create
@@ -2691,6 +2691,10 @@ namespace eval ::crimp::transform {
     namespace import ::tcl::mathop::*
 
     variable typecode crimp/transform
+}
+
+proc ::crimp::transform::identity {} {
+    return [projective 1 0 0 0 1 0 0 0]
 }
 
 proc ::crimp::transform::projective {a b c d e f g h} {
@@ -2724,7 +2728,7 @@ proc ::crimp::transform::scale {sx sy} {
 
 proc ::crimp::transform::shear {sx sy} {
     # Shear in the x, y directions
-    return [affine 1 $sx $sy 1 0 0]
+    return [projective 1 0 0 0 1 0 $sx $sy]
 }
 
 namespace eval ::crimp::transform::reflect {
@@ -2754,9 +2758,17 @@ proc ::crimp::transform::reflect::line {lx ly} {
     # also needs translations, which can be combined, by proper choice
     # of the rotation point.
 
-    set a [expr {$lx*$lx-$ly*$ly}]
-    set b [expr {2*$lx*$ly}]
-    set c [expr {$ly*$ly-$lx*$lx}]
+    math::constants::constants eps
+
+    set d [expr {$lx*$lx + $ly*$ly}]
+    if {$d <= $eps} {
+	return -code error "Expected non-null vector, got ($lx, $ly)"
+    }
+
+    set a [expr {($lx*$lx - $ly*$ly)/double($d)}]
+    set b [expr {(2*$lx*$ly)        /double($d)}]
+    set c [expr {($ly*$ly - $lx*$lx)/double($d)}]
+
     return [affine $a $b 0 $b $c 0]
 }
 
@@ -2817,14 +2829,15 @@ proc ::crimp::transform::chain {t args} {
 	CHECK $t
 	return $t
     }
-    set args [linsert $args 0 $t]
-    while {[llength $args] > 1} {
-	set args [lreplace $args end-1 end \
-		      [MAKE [::crimp::matmul3x3_float \
-				 [CHECK [lindex $args end-1]] \
-				 [CHECK [lindex $args end]]]]]
+
+    set     args [lreverse $args]
+    lappend args $t
+
+    set res [CHECK [lindex $args 0]]
+    foreach m [lrange $args 1 end] {
+	set res [::crimp::matmul3x3_float $res [CHECK $m]]
     }
-    return [lindex $args 0]
+    return [MAKE $res]
 }
 
 proc ::crimp::transform::invert {a} {
@@ -2841,9 +2854,9 @@ proc ::crimp::transform::CheckQuad {quad} {
     return
 }
 
-proc ::crimp::transform::CheckPoint {quad} {
-    ::crimp::CheckListN $quad 4 {2d point}
-    lassign $quad a b
+proc ::crimp::transform::CheckPoint {p} {
+    ::crimp::CheckListN $p 2 {2d point}
+    lassign $p a b
     ::crimp::CheckDouble $a
     ::crimp::CheckDouble $b
     return

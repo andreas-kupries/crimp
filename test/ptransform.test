@@ -25,7 +25,7 @@ test crimp-proj-transform-1.0 {projective transforms, wrong\#args, not enough} -
 
 test crimp-proj-transform-1.1 {projective transforms, invalid method} -body {
     crimp transform BOGUS
-} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be affine, chain, invert, projective, quadrilateral, reflect, rotate, scale, shear, or translate}
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be affine, chain, identity, invert, projective, quadrilateral, reflect, rotate, scale, shear, or translate}
 
 # -------------------------------------------------------------------------
 
@@ -68,8 +68,46 @@ test crimp-proj-transform-2.8 {projective transforms, raw projective, wrong\#arg
 test crimp-proj-transform-2.9 {projective transforms, raw projective, invalid arguments} -body {
     crimp transform projective A B C D E F G H
 } -returnCodes error -result {expected floating-point number but got "A"}
-# TODO: go through all arguments.
-# TODO: proper result.
+
+test crimp-proj-transform-2.10 {projective transforms, raw projective, invalid arguments} -body {
+    crimp transform projective 0 B C D E F G H
+} -returnCodes error -result {expected floating-point number but got "B"}
+
+test crimp-proj-transform-2.11 {projective transforms, raw projective, invalid arguments} -body {
+    crimp transform projective 0 0 C D E F G H
+} -returnCodes error -result {expected floating-point number but got "C"}
+
+test crimp-proj-transform-2.12 {projective transforms, raw projective, invalid arguments} -body {
+    crimp transform projective 0 0 0 D E F G H
+} -returnCodes error -result {expected floating-point number but got "D"}
+
+test crimp-proj-transform-2.13 {projective transforms, raw projective, invalid arguments} -body {
+    crimp transform projective 0 0 0 0 E F G H
+} -returnCodes error -result {expected floating-point number but got "E"}
+
+test crimp-proj-transform-2.14 {projective transforms, raw projective, invalid arguments} -body {
+    crimp transform projective 0 0 0 0 0 F G H
+} -returnCodes error -result {expected floating-point number but got "F"}
+
+test crimp-proj-transform-2.15 {projective transforms, raw projective, invalid arguments} -body {
+    crimp transform projective 0 0 0 0 0 0 G H
+} -returnCodes error -result {expected floating-point number but got "G"}
+
+test crimp-proj-transform-2.16 {projective transforms, raw projective, invalid arguments} -body {
+    crimp transform projective 0 0 0 0 0 0 0 H
+} -returnCodes error -result {expected floating-point number but got "H"}
+
+test crimp-proj-transform-2.17 {projective transforms, raw projective} -body {
+    astclf 1 [crimp transform projective 0  2  3  4  5  6  7  8]
+    #                                    sx          sy          scale
+    #                                          tx       ty       translate
+    #                                    r  r     r  r           rotate
+    #                                                      sx sy shear
+} -result [tconst {
+    0.0 2.0 3.0
+    4.0 5.0 6.0
+    7.0 8.0 1.0
+}]
 
 # -------------------------------------------------------------------------
 
@@ -104,8 +142,37 @@ test crimp-proj-transform-3.6 {projective transforms, raw affine, wrong\#args, t
 test crimp-proj-transform-3.7 {projective transforms, raw affine, invalid arguments} -body {
     crimp transform affine A B C D E F
 } -returnCodes error -result {expected floating-point number but got "A"}
-# TODO: go through all arguments.
-# TODO: proper result.
+
+test crimp-proj-transform-3.8 {projective transforms, raw affine, invalid arguments} -body {
+    crimp transform affine 0 B C D E F
+} -returnCodes error -result {expected floating-point number but got "B"}
+
+test crimp-proj-transform-3.9 {projective transforms, raw affine, invalid arguments} -body {
+    crimp transform affine 0 0 C D E F
+} -returnCodes error -result {expected floating-point number but got "C"}
+
+test crimp-proj-transform-3.10 {projective transforms, raw affine, invalid arguments} -body {
+    crimp transform affine 0 0 0 D E F
+} -returnCodes error -result {expected floating-point number but got "D"}
+
+test crimp-proj-transform-3.11 {projective transforms, raw affine, invalid arguments} -body {
+    crimp transform affine 0 0 0 0 E F
+} -returnCodes error -result {expected floating-point number but got "E"}
+
+test crimp-proj-transform-3.12 {projective transforms, raw affine, invalid arguments} -body {
+    crimp transform affine 0 0 0 0 0 F
+} -returnCodes error -result {expected floating-point number but got "F"}
+
+test crimp-proj-transform-3.13 {projective transforms, raw affine} -body {
+    astclf 1 [crimp transform affine 0  2  3  4  5  6]
+    #                                sx          sy          scale
+    #                                      tx       ty       translate
+    #                                r  r     r  r           rotate
+} -result [tconst {
+    0.0 2.0 3.0
+    4.0 5.0 6.0
+    0.0 0.0 1.0
+}]
 
 # -------------------------------------------------------------------------
 
@@ -124,8 +191,18 @@ test crimp-proj-transform-4.2 {projective transforms, translate, wrong\#args, to
 test crimp-proj-transform-4.3 {projective transforms, translate, invalid arguments} -body {
     crimp transform translate DX DY
 } -returnCodes error -result {expected floating-point number but got "DX"}
-# TODO: go through all arguments.
-# TODO: proper result.
+
+test crimp-proj-transform-4.4 {projective transforms, translate, invalid arguments} -body {
+    crimp transform translate 0 DY
+} -returnCodes error -result {expected floating-point number but got "DY"}
+
+test crimp-proj-transform-4.5 {projective transforms, translate} -body {
+    astclf 1 [crimp transform translate 2 3]
+} -result [tconst {
+    1.0 0.0 2.0
+    0.0 1.0 3.0
+    0.0 0.0 1.0
+}]
 
 # -------------------------------------------------------------------------
 
@@ -204,29 +281,28 @@ test crimp-proj-transform-6.4 {projective transforms, shear, invalid arguments} 
     crimp transform shear 0 SY
 } -returnCodes error -result {expected floating-point number but got "SY"}
 
-# check the output of shearing transform
 test crimp-proj-transform-6.5 {projective transforms, shear} -body {
     astclf 1 [crimp transform shear 0 0]
 } -result [tconst {
     1.0  0.0  0.0
-    1.0  0.0  0.0
+    0.0  1.0  0.0
     0.0  0.0  1.0
 }]
 
 test crimp-proj-transform-6.6 {projective transforms, shear} -body {
     astclf 1 [crimp transform shear 3 4]
 } -result [tconst {
-    1.0  3.0  4.0
     1.0  0.0  0.0
-    0.0  0.0  1.0
+    0.0  1.0  0.0
+    3.0  4.0  1.0
 }]
 
 test crimp-proj-transform-6.6 {projective transforms, shear} -body {
     astclf 1 [crimp transform shear -3 -4]
 } -result [tconst {
-    1.0 -3.0 -4.0
-    1.0  0.0  0.0
-    0.0  0.0  1.0
+     1.0  0.0  0.0
+     0.0  1.0  0.0
+    -3.0 -4.0  1.0
 }]
 
 # -------------------------------------------------------------------------
@@ -261,48 +337,44 @@ test crimp-proj-transform-8.4 {projective transforms, reflect @ line, invalid ar
     crimp transform reflect line 0 LY
 } -returnCodes error -result {expected floating-point number but got "LY"}
 
-test crimp-proj-transform-8.5 {projective transforms, reflect @ line, maybe invalid arguments} -body {
+test crimp-proj-transform-8.5 {projective transforms, reflect @ line, invalid arguments} -body {
     astclf 4 [crimp transform reflect line 0 0]
-    # This should result in a singlar (non-invertible) matrix, as the reflection line is undetermined at zero.
-    # possible TODO: reject (0,0) or nearby points.
-    # alternative: scale point to magnitude 10, then calculate the line.
-} -result [tconst {
-    0.0000  0.0000  0.0000
-    0.0000  0.0000  0.0000
-    0.0000  0.0000  1.0000
-}]
+    # Reflection at (0,0) is unspecified, we have no direction for the vector.
+} -returnCodes error -result {Expected non-null vector, got (0, 0)}
 
 test crimp-proj-transform-8.6 {projective transforms, reflect @ line} -body {
     astclf 4 [crimp transform reflect line 5 5]
 } -result [tconst {
-     0.0000 50.0000 0.0000
-    50.0000  0.0000 0.0000
-     0.0000  0.0000 1.0000
+    0.0000  1.0000  0.0000
+    1.0000  0.0000  0.0000
+    0.0000  0.0000  1.0000
 }]
-#### query 8.6/7 - The line is the same, just different points on it.
-#### ------------- why is the transform different. test this visually.
+
+# note: 8.7 and 8.8 specify the same line, just using vector of
+# different magnitude along it. The transform must be same.
+
 test crimp-proj-transform-8.7 {projective transforms, reflect @ line} -body {
     astclf 4 [crimp transform reflect line 10 10]
 } -result [tconst {
-      0.0000 200.0000 0.0000
-    200.0000   0.0000 0.0000
-      0.0000   0.0000 1.0000
+    0.0000  1.0000  0.0000
+    1.0000  0.0000  0.0000
+    0.0000  0.0000  1.0000
 }]
 
 test crimp-proj-transform-8.8 {projective transforms, reflect @ line} -body {
     astclf 4 [crimp transform reflect line 5 10]
 } -result [tconst {
-    -75.0000 100.0000 0.0000
-    100.0000  75.0000 0.0000
-      0.0000   0.0000 1.0000
+    -0.6000  0.8000  0.0000
+     0.8000  0.6000  0.0000
+     0.0000  0.0000  1.0000
 }]
 
 test crimp-proj-transform-8.9 {projective transforms, reflect @ line} -body {
     astclf 4 [crimp transform reflect line 10 5]
 } -result [tconst {
-     75.0000  100.0000  0.0000
-    100.0000  -75.0000  0.0000
-      0.0000    0.0000  1.0000
+    0.6000   0.8000  0.0000
+    0.8000  -0.6000  0.0000
+    0.0000   0.0000  1.0000
 }]
 
 # -------------------------------------------------------------------------
@@ -346,8 +418,34 @@ test crimp-proj-transform-11.1 {projective transforms, rotate, wrong\#args, too 
 test crimp-proj-transform-11.2 {projective transforms, rotate, invalid arguments} -body {
     crimp transform rotate THETA P
 } -returnCodes error -result {expected floating-point number but got "THETA"}
-# TODO: go through all arguments.
-# TODO: proper result.
+
+test crimp-proj-transform-11.3 {projective transforms, rotate, invalid arguments} -body {
+    crimp transform rotate 1 P
+} -returnCodes error -result {expected 2d point but got "P"}
+
+test crimp-proj-transform-11.4 {projective transforms, rotate, invalid arguments} -body {
+    crimp transform rotate 1 {X Y}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-11.5 {projective transforms, rotate, invalid arguments} -body {
+    crimp transform rotate 1 {0 Y}
+} -returnCodes error -result {expected floating-point number but got "Y"}
+
+test crimp-proj-transform-11.6 {projective transforms, rotate, invalid arguments} -body {
+    astclf 4 [crimp transform rotate 2 {-50 -50}]
+} -result [tconst {
+     0.9994  0.0349 -1.7145
+    -0.0349  0.9994  1.7754
+     0.0000  0.0000  1.0000
+}]
+
+test crimp-proj-transform-11.7 {projective transforms, rotate, invalid arguments} -body {
+    astclf 4 [crimp transform rotate 1]
+} -result [tconst {
+     0.9998  0.0175  0.0000
+    -0.0175  0.9998  0.0000
+     0.0000  0.0000  1.0000
+}]
 
 # -------------------------------------------------------------------------
 
@@ -378,8 +476,66 @@ test crimp-proj-transform-13.0 {projective transforms, chain, wrong\#args, not e
 test crimp-proj-transform-13.1 {projective transforms, chain, invalid arguments} -body {
     crimp transform chain T
 } -returnCodes error -result {expected projective transform but got "T"}
-# TODO: go through all arguments.
-# TODO: proper result.
+
+
+test crimp-proj-transform-13.2 {projective transforms, chain, single} -body {
+    astclf 4 [crimp transform chain [crimp transform projective 2 3 4 5 6 7 8 9]]
+} -result [tconst {
+    2.0000  3.0000  4.0000
+    5.0000  6.0000  7.0000
+    8.0000  9.0000  1.0000
+}]
+
+test crimp-proj-transform-13.3 {projective transforms, chain, single} -body {
+    astclf 4 [crimp transform chain [crimp transform rotate 2]]
+} -result [tconst {
+     0.9994  0.0349  0.0000
+    -0.0349  0.9994  0.0000
+     0.0000  0.0000  1.0000
+}]
+
+test crimp-proj-transform-13.4 {projective transforms, chain, translations} -body {
+    astclf 4 [crimp transform chain \
+                  [crimp transform translate 10 10] \
+                  [crimp transform translate 50 50]]
+} -result [tconst {
+    1.0000  0.0000 60.0000
+    0.0000  1.0000 60.0000
+    0.0000  0.0000  1.0000
+}]
+
+test crimp-proj-transform-13.5 {projective transforms, chain, translate+rotate} -body {
+    astclf 4 [crimp transform chain \
+                  [crimp transform rotate 2] \
+                  [crimp transform translate 50 50]]
+} -result [tconst {
+     0.9994 0.0349 50.0000
+    -0.0349 0.9994 50.0000
+     0.0000 0.0000 1.0000
+
+}]
+
+test crimp-proj-transform-13.6 {projective transforms, chain, rotate+translate} -body {
+    astclf 4 [crimp transform chain \
+                  [crimp transform translate 50 50] \
+                  [crimp transform rotate 2]]
+} -result [tconst {
+     0.9994 0.0349 51.7145
+    -0.0349 0.9994 48.2246
+     0.0000 0.0000  1.0000
+
+}]
+
+test crimp-proj-transform-13.7 {projective transforms, chain, translated rotation} -body {
+    astclf 4 [crimp transform chain \
+                  [crimp transform translate -50 -50] \
+                  [crimp transform rotate 2] \
+                  [crimp transform translate 50 50]]
+} -result [tconst {
+     0.9994  0.0349 -1.7145
+    -0.0349  0.9994  1.7754
+     0.0000  0.0000  1.0000
+}]
 
 # -------------------------------------------------------------------------
 
@@ -395,7 +551,38 @@ test crimp-proj-transform-14.2 {projective transforms, invert, invalid arguments
     crimp transform invert A
 } -returnCodes error -result {expected projective transform but got "A"}
 
-# TODO: proper result.
+test crimp-proj-transform-14.3 {projective transforms, invert, identity} -body {
+    astclf 4 [crimp transform invert [crimp transform identity]]
+    # note the -0 in the result :(
+} -result [tconst {
+    1.0000 -0.0000  0.0000
+   -0.0000  1.0000 -0.0000
+    0.0000 -0.0000  1.0000
+}]
+
+test crimp-proj-transform-14.4 {projective transforms, invert, rotate} -body {
+    astclf 4 [crimp transform invert [crimp transform rotate -2]]
+    # inverse of 'rotate -2' is 'rotate 2'.
+    # but note the -0 elements :(
+} -result [tconst {
+     0.9994  0.0349 -0.0000
+    -0.0349  0.9994 -0.0000
+     0.0000 -0.0000  1.0000
+}]
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-15.0 {projective transforms, identity, wrong\#args, too many} -body {
+    crimp transform identity toomuch
+} -returnCodes error -result {wrong # args: should be "crimp transform identity"}
+
+test crimp-proj-transform-15.2 {projective transforms, identity} -body {
+    astclf 4 [crimp transform identity]
+} -result [tconst {
+    1.0000  0.0000  0.0000
+    0.0000  1.0000  0.0000
+    0.0000  0.0000  1.0000
+}]
 
 # -------------------------------------------------------------------------
 testsuiteCleanup

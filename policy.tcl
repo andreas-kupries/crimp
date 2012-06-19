@@ -2847,10 +2847,10 @@ proc ::crimp::transform::invert {a} {
 proc ::crimp::transform::CheckQuad {quad} {
     ::crimp::CheckListN $quad 4 {4-element quadrilateral}
     lassign $quad a b c d
-    ::crimp::CheckDouble $a
-    ::crimp::CheckDouble $b
-    ::crimp::CheckDouble $c
-    ::crimp::CheckDouble $d
+    ::crimp::transform::CheckPoint $a
+    ::crimp::transform::CheckPoint $b
+    ::crimp::transform::CheckPoint $c
+    ::crimp::transform::CheckPoint $d
     return
 }
 

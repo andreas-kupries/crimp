@@ -464,7 +464,107 @@ test crimp-proj-transform-12.2 {projective transforms, quadrilateral, wrong\#arg
 test crimp-proj-transform-12.3 {projective transforms, quadrilateral, invalid arguments} -body {
     crimp transform quadrilateral SRC DST
 } -returnCodes error -result {expected 4-element quadrilateral but got "SRC"}
-# TODO: go through all arguments.
+
+test crimp-proj-transform-12.4 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} DST
+} -returnCodes error -result {expected 4-element quadrilateral but got "DST"}
+
+test crimp-proj-transform-12.5 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {X {0 0} {0 0} {0 0}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected 2d point but got "X"}
+
+test crimp-proj-transform-12.6 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} X {0 0} {0 0}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected 2d point but got "X"}
+
+test crimp-proj-transform-12.7 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} X 0} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected 2d point but got "X"}
+
+test crimp-proj-transform-12.8 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} X} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected 2d point but got "X"}
+
+test crimp-proj-transform-12.9 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {X {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected 2d point but got "X"}
+
+test crimp-proj-transform-12.10 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} X {0 0} {0 0}}
+} -returnCodes error -result {expected 2d point but got "X"}
+
+test crimp-proj-transform-12.11 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} {0 0} X {0 0}}
+} -returnCodes error -result {expected 2d point but got "X"}
+
+test crimp-proj-transform-12.12 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} {0 0} {0 0} X}
+} -returnCodes error -result {expected 2d point but got "X"}
+
+test crimp-proj-transform-12.13 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{X 0} {0 0} {0 0} {0 0}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.14 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 X} {0 0} {0 0} {0 0}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.15 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {X 0} {0 0} {0 0}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.16 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 X} {0 0} {0 0}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.17 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {X 0} {0 0}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.18 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 X} {0 0}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.19 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {X 0}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.20 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 X}} {{0 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.21 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{X 0} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.22 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 X} {0 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.23 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} {X 0} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.24 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} {0 X} {0 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.25 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} {0 0} {X 0} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.26 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} {0 0} {0 X} {0 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.27 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} {0 0} {0 0} {X 0}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-12.28 {projective transforms, quadrilateral, invalid arguments} -body {
+    crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} {0 0} {0 0} {0 X}}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
 # TODO: proper result.
 
 # -------------------------------------------------------------------------

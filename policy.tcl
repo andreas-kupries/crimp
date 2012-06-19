@@ -2732,42 +2732,54 @@ proc ::crimp::transform::shear {sx sy} {
 }
 
 namespace eval ::crimp::transform::reflect {
-    namespace export line x y
+    namespace export line x y linesegment
     namespace ensemble create
     namespace import ::crimp::transform::affine
-    # TODO line segment (arbitrary line).
+    namespace import ::crimp::transform::chain
+
+    namespace import ::tcl::mathfunc::*
+    namespace import ::tcl::mathop::*
 }
 
-proc ::crimp::transform::reflect::line {lx ly} {
-    ::crimp::CheckDouble $lx
-    ::crimp::CheckDouble $ly
+proc ::crimp::transform::reflect::line {a {b {}}} {
+    ::crimp::transform::CheckPoint $a
+    lassign $a ax ay
 
-    # Reflect along the line (lx, ly) through the origin.
-    # This can be handled as a chain of
+    if {[llength [info level 0]] == 3} {
+	::crimp::transform::CheckPoint $b
+	lassign $b bx by
+
+	# Reflect along the line through the 2 points A and B. This is
+	# done by translating A to the origin, reflecting through B-A
+	# (which is ga line through the origin and can be done by the
+	# simpler case below), and lastly translating everything back
+	# by -A.
+
+	return [chain \
+		    [::crimp::transform::translate $ax $ay] \
+		    [line [list [- $bx $ax] [- $by $ay]]] \
+		    [::crimp::transform::translate [- $ax] [- $ay]]]
+    }
+
+    # Reflect along the line A through the origin.
+
+    # While this could be handled as a chain of
     # (a) rotation through the origin to map the line to either x- or y-axis
     # (b) reflection along the chosen axis,
     # (c) and rotation back to the chosen line.
-    # Here we use the direct approach.
-    # See http://en.wikipedia.org/wiki/Transformation_matrix
-
-    # Note: A reflection through an arbitrary line (i.e. not through
-    # the origin), needs two additional steps. After the first
-    # rotation the line is parallel to an axis, and has to be
-    # translated on it. Ditto we have to undo the translation before
-    # rotating back. As the rotation is through an arbitray point it
-    # also needs translations, which can be combined, by proper choice
-    # of the rotation point.
+    # here we use the direct approach instead, as described at
+    #     http://en.wikipedia.org/wiki/Transformation_matrix
 
     math::constants::constants eps
 
-    set d [expr {$lx*$lx + $ly*$ly}]
+    set d [expr {$ax*$ax + $ay*$ay}]
     if {$d <= $eps} {
-	return -code error "Expected non-null vector, got ($lx, $ly)"
+	return -code error "Expected non-null vector, got ($ax, $ay)"
     }
 
-    set a [expr {($lx*$lx - $ly*$ly)/double($d)}]
-    set b [expr {(2*$lx*$ly)        /double($d)}]
-    set c [expr {($ly*$ly - $lx*$lx)/double($d)}]
+    set a [expr {($ax*$ax - $ay*$ay)/double($d)}]
+    set b [expr {(2*$ax*$ay)        /double($d)}]
+    set c [expr {($ay*$ay - $ax*$ax)/double($d)}]
 
     return [affine $a $b 0 $b $c 0]
 }

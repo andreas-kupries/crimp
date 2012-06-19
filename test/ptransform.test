@@ -319,62 +319,95 @@ test crimp-proj-transform-7.1 {projective transforms, invalid method} -body {
 
 test crimp-proj-transform-8.0 {projective transforms, reflect @ line, wrong\#args, not enough} -body {
     crimp transform reflect line
-} -returnCodes error -result {wrong # args: should be "crimp transform reflect line lx ly"}
+} -returnCodes error -result {wrong # args: should be "crimp transform reflect line a ?b?"}
 
-test crimp-proj-transform-8.1 {projective transforms, reflect @ line, wrong\#args, not enough} -body {
-    crimp transform reflect line LX
-} -returnCodes error -result {wrong # args: should be "crimp transform reflect line lx ly"}
+test crimp-proj-transform-8.1 {projective transforms, reflect @ line, wrong\#args, too many} -body {
+    crimp transform reflect line A B toomuch
+} -returnCodes error -result {wrong # args: should be "crimp transform reflect line a ?b?"}
 
-test crimp-proj-transform-8.2 {projective transforms, reflect @ line, wrong\#args, too many} -body {
-    crimp transform reflect line LX LY toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform reflect line lx ly"}
+test crimp-proj-transform-8.2 {projective transforms, reflect @ line, wrong\#args, invalid arguments} -body {
+    crimp transform reflect line A
+} -returnCodes error -result {expected 2d point but got "A"}
 
-test crimp-proj-transform-8.3 {projective transforms, reflect @ line, invalid arguments} -body {
-    crimp transform reflect line LX LY
-} -returnCodes error -result {expected floating-point number but got "LX"}
+test crimp-proj-transform-8.3 {projective transforms, reflect @ line, wrong\#args, invalid arguments} -body {
+    crimp transform reflect line {X 0}
+} -returnCodes error -result {expected floating-point number but got "X"}
 
-test crimp-proj-transform-8.4 {projective transforms, reflect @ line, invalid arguments} -body {
-    crimp transform reflect line 0 LY
-} -returnCodes error -result {expected floating-point number but got "LY"}
+test crimp-proj-transform-8.4 {projective transforms, reflect @ line, wrong\#args, invalid arguments} -body {
+    crimp transform reflect line {0 Y}
+} -returnCodes error -result {expected floating-point number but got "Y"}
 
 test crimp-proj-transform-8.5 {projective transforms, reflect @ line, invalid arguments} -body {
-    astclf 4 [crimp transform reflect line 0 0]
+    crimp transform reflect line {0 0} B
+} -returnCodes error -result {expected 2d point but got "B"}
+
+test crimp-proj-transform-8.6 {projective transforms, reflect @ line, invalid arguments} -body {
+    crimp transform reflect line {0 0} {X 0}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-8.7 {projective transforms, reflect @ line, invalid arguments} -body {
+    crimp transform reflect line {0 0} {0 Y}
+} -returnCodes error -result {expected floating-point number but got "Y"}
+
+test crimp-proj-transform-8.8 {projective transforms, reflect @ line, invalid arguments} -body {
+    astclf 4 [crimp transform reflect line {0 0}]
     # Reflection at (0,0) is unspecified, we have no direction for the vector.
 } -returnCodes error -result {Expected non-null vector, got (0, 0)}
 
-test crimp-proj-transform-8.6 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line 5 5]
+test crimp-proj-transform-8.9 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line {5 5}]
 } -result [tconst {
     0.0000  1.0000  0.0000
     1.0000  0.0000  0.0000
     0.0000  0.0000  1.0000
 }]
 
-# note: 8.7 and 8.8 specify the same line, just using vector of
+# Note: 8.10 and 8.11 specify the same line, just using vector of
 # different magnitude along it. The transform must be same.
 
-test crimp-proj-transform-8.7 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line 10 10]
+test crimp-proj-transform-8.10 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line {10 10}]
 } -result [tconst {
     0.0000  1.0000  0.0000
     1.0000  0.0000  0.0000
     0.0000  0.0000  1.0000
 }]
 
-test crimp-proj-transform-8.8 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line 5 10]
+test crimp-proj-transform-8.11 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line {5 10}]
 } -result [tconst {
     -0.6000  0.8000  0.0000
      0.8000  0.6000  0.0000
      0.0000  0.0000  1.0000
 }]
 
-test crimp-proj-transform-8.9 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line 10 5]
+test crimp-proj-transform-8.12 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line {10 5}]
 } -result [tconst {
     0.6000   0.8000  0.0000
     0.8000  -0.6000  0.0000
     0.0000   0.0000  1.0000
+}]
+
+test crimp-proj-transform-8.13 {projective transforms, reflect @ line, invalid arguments} -body {
+    astclf 4 [crimp transform reflect line {5 5} {5 5}]
+    # Reflection at (0,0) is unspecified, we have no direction for the vector.
+} -returnCodes error -result {Expected non-null vector, got (0, 0)}
+
+test crimp-proj-transform-8.14 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line {0 0} {5 5}]
+} -result [tconst {
+    0.0000  1.0000  0.0000
+    1.0000  0.0000  0.0000
+    0.0000  0.0000  1.0000
+}]
+
+test crimp-proj-transform-8.15 {projective transforms, reflect @ line} -body {
+    astclf 4 [crimp transform reflect line {2 0} {5 5}]
+} -result [tconst {
+    -0.4706  0.8824 -2.9412
+     0.8824  0.4706  1.7647
+     0.0000  0.0000  1.0000
 }]
 
 # -------------------------------------------------------------------------

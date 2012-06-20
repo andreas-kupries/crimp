@@ -15,6 +15,16 @@ proc t_ramp {} {
     list $ramp
 }
 
+proc t_sample {} {
+    return [trim {
+	{ 0.2 1.1 2.0 3.4 4.3}
+	{ 1.3 2.2 3.1 4.0 0.4}
+	{ 2.4 3.3 4.2 0.1 1.0}
+	{ 3.0 4.4 0.3 1.2 2.1}
+	{ 4.1 0.0 1.4 2.3 3.2}
+    }]
+}
+
 proc t_grey8 {} {
     return [trim {
 	{ 0  1  2  3  4}
@@ -129,7 +139,8 @@ proc t_3x3testb {} {
 
 # # ## ### ##### ######## ############# #####################
 
-proc ramp {} { crimp read tcl grey8 [t_ramp] }
+proc ramp   {} { crimp read tcl grey8 [t_ramp]   }
+proc sample {} { crimp read tcl float [t_sample] }
 
 proc grey8  {} { crimp read tcl grey8  [t_grey8]  }
 proc grey16 {} { crimp read tcl grey16 [t_grey16] }

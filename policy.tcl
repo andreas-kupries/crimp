@@ -91,7 +91,7 @@ proc ::crimp::INTERPOLATE {argv} {
 		set val [lindex $args $at]
 		set legal {nneighbour bilinear bicubic}
 		if {$val ni $legal} {
-		    return -code error "Expected one of [linsert end [join $legal ,] or], got \"$val\""
+		    return -code error "Expected one of [linsert [::join $legal {, }] end-1 or], got \"$val\""
 		}
 		set imethod $val
 	    }
@@ -2966,7 +2966,23 @@ namespace eval ::crimp::warp {
 
 # Alt syntax: Single vector field, this will require a 2d-float type.
 proc ::crimp::warp::field {args} {
-    return [Field [::crimp::INTERPOLATE args] {*}$args]
+    set interpolation [::crimp::INTERPOLATE args]
+    if {[catch {
+	set result [Field $interpolation {*}$args]
+    } msg]} {
+	if {[string match wrong* $msg]} {
+	    # fix up.
+	    set cmd [lindex [info level 0] 0]
+	    return -code error \
+		[string map \
+		     [list {Field interpolation} $cmd] \
+		     $msg]
+	} else {
+	    # rethrow
+	    return -code error $msg
+	}
+    }
+    return $result
 }
 
 proc ::crimp::warp::Field {interpolation image xvec yvec} {
@@ -2997,7 +3013,23 @@ proc ::crimp::warp::Field {interpolation image xvec yvec} {
 }
 
 proc ::crimp::warp::projective {args} {
-    return [Projective [::crimp::INTERPOLATE args] {*}$args]
+    set interpolation [::crimp::INTERPOLATE args]
+    if {[catch {
+	set result [Projective $interpolation {*}$args]
+    } msg]} {
+	if {[string match wrong* $msg]} {
+	    # fix up.
+	    set cmd [lindex [info level 0] 0]
+	    return -code error \
+		[string map \
+		     [list {Projective interpolation} $cmd] \
+		     $msg]
+	} else {
+	    # rethrow
+	    return -code error $msg
+	}
+    }
+    return $results
 }
 
 proc ::crimp::warp::Projective {interpolation image transform} {

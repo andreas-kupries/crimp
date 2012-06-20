@@ -1909,6 +1909,11 @@ quadrilateral [arg src] on to the quadrilateral [arg dst].
 [para] Each quadrilateral is specified as a list of 4 points, each
 point a pair of x- and y-coordinates.
 
+[para] The 4 points of each quadrilateral define its corners starting
+at the top left and going in clock-wise order.
+
+[comment {== todo == image}]
+
 [call [cmd ::crimp] [method {transform reflect line}] [opt [arg a]] [arg b]]
 [keywords {projective transform} {transform reflect} {reflective transforms} {reflect about line} {affine transform}]
 

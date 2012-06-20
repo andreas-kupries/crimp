@@ -2882,8 +2882,16 @@ proc ::crimp::transform::Q2UNIT {quad} {
     # Dong-Keun Kim, Byung-Tae Jang, Chi-Jung Hwang
     # http://portal.acm.org/citation.cfm?id=884607
     # http://www.informatik.uni-trier.de/~ley/db/conf/ssiai/ssiai2002.html
+    # http://www.decew.net/OSS/References/Quadrilateral%20mapping.pdf
 
-    lassign $quad pa pb pc pd
+    lassign $quad pc pd pb pa
+    # Map from top-left clock-wise to the zig-zag ordering used in the paper.
+    # *---*
+    # |c d|
+    # |   |
+    # |a b|
+    # *---*
+
     lassign $pa ax ay
     lassign $pb bx by
     lassign $pc cx cy

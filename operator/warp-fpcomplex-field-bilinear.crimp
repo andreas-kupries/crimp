@@ -1,0 +1,84 @@
+warp_fpcomplex_field_bilinear
+Tcl_Obj* imageObj
+Tcl_Obj* xvecObj
+Tcl_Obj* yvecObj
+
+/*
+ * Warp image using the given vector field.
+ */
+
+crimp_image* image;
+crimp_image* xvector;
+crimp_image* yvector;
+crimp_image* result;
+int x, y;
+double xf, yf;
+
+crimp_input (imageObj, image,   fpcomplex);
+crimp_input (xvecObj,  xvector, float);
+crimp_input (yvecObj,  yvector, float);
+
+if (!crimp_eq_dim (xvector, yvector)) {
+    Tcl_SetResult(interp, "Unable to warp, expected equally-sized coordinate fields", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+/*
+ * Create result and scan through it, sampling the input under the guidance of
+ * the coordinate fields.
+ */
+
+result = crimp_new_at (image->itype, crimp_x (xvector), crimp_y (xvector), crimp_w (xvector), crimp_h (xvector));
+
+for (y = 0; y < crimp_h (result); y++) {
+    for (x = 0; x < crimp_w (result); x++) {
+	int ixw, iyw;
+
+	xf = FLOATP (xvector, x, y);
+	yf = FLOATP (yvector, x, y);
+
+	/*
+	 * Perform bilinear interpolation (1) using the nearest 2x2 pixels
+	 * around the sampling location.
+	 *
+	 * (Ad 1) http://en.wikipedia.org/wiki/Bilinear_interpolation
+	 */
+
+        ixw = xf;
+        iyw = yf;
+
+        xf -= ixw;
+        yf -= iyw;
+
+	{
+            float re = 0;
+            float im = 0;
+	    int ix, iy;
+            for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, crimp_h (image)); iy++) {
+                yf = 1 - yf;
+                for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, crimp_w (image)); ix++) {
+                    xf = 1 - xf;
+
+		    re += RE (image, ix, iy) * yf * xf;
+		    im += RE (image, ix, iy) * yf * xf;
+                }
+            }
+
+	    RE (result, x, y) = re;
+	    IM (result, x, y) = im;
+        }
+    }
+}
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

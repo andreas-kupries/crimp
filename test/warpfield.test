@@ -59,6 +59,8 @@ test crimp-warp-field-1.5 {image warp field, invalid arguments, bad option} -bod
 # Note: coordinate samplers must be convertible to (float x2)
 #       => grey8, grey16, grey32, float, but not rgb, rgba, hsv
 
+# TODO: rgb rgba hsv warping
+
 # -------------------------------------------------------------------------
 
 set n 2

@@ -48,10 +48,66 @@ test crimp-warp-projective-1.4 {image warp projective, invalid arguments, bad op
 
 # 2 args: input, t
 # option -interpolate: bilinear (default), bicubic, nneighbour
-# supported inputs: grey8 grey16 grey32 rgb rgba hsv float
-# TODO implementation: fpcomplex
+# supported inputs: grey8 grey16 grey32 rgb rgba hsv float fpcomplex
+# TODO 
 
 # -------------------------------------------------------------------------
+
+
+set n 2
+foreach itype [greys] {
+    test crimp-warp-field-${n}.0 "[origin] image warp projective, $itype, nearest neighbour" -body {
+        astcl [crimp warp projective -interpolate nneighbour [$itype] [crimp transform reflect line {2 4} {4 0}]]
+        # permutations of the main diagonal
+    } -result [iconst $itype -13 -7 8 8 {
+        0  0  0 0  0   0  0  0
+        0  0  0 9  4   3  0  0
+        0  0 19 14 8   2  2  0
+        0 24 18 13 12  7  1  0
+        0  0 23 17 11  6  5  0
+        0  0 22 21 16 10  5  0
+        0  0  0 20 15 15  0  0
+        0  0  0  0 20  0  0  0
+
+    }]
+
+    test crimp-warp-field-${n}.1 "[origin] image warp projective, $itype, nearest neighbour" -body {
+        astcl [crimp warp projective -interpolate nneighbour [$itype] [crimp transform rotate 45 {2 2}]]
+    } -result [iconst $itype 0 -5 8 8 {
+        0 0  0  4  4  0  0  0
+        0 0  2  3  9 14  0  0
+        0 1  2  7 13 14 19  0
+        0 0  6 12 12 18 24 24
+        0 5 10 11 17 22 23  0
+        0 0 10 15 21 22  0  0
+        0 0  0 20 20  0  0  0
+        0 0  0  0  0  0  0  0
+    }]
+
+    # validate...
+    test crimp-warp-field-${n}.2 "[origin] image warp projective, $itype, bilinear (default)" -body {
+        astcl [crimp warp projective [$itype] [crimp transform reflect line {2 4} {4 0}]]
+    } -result [iconst $itype 0 0 5 5 {
+    }]
+
+    test crimp-warp-field-${n}.3 "[origin] image warp projective, $itype, bilinear (default)" -body {
+        astcl [crimp warp projective [$itype] [crimp transform rotate 45 {2 2}]]
+    } -result [iconst $itype 0 0 5 5 {
+    }]
+
+    test crimp-warp-field-${n}.4 "[origin] image warp projective, $itype, bicubic" -body {
+        astcl [crimp warp projective -interpolate bicubic [$itype] [crimp transform reflect line {2 4} {4 0}]]
+
+    } -result [iconst $itype 0 0 5 5 {
+    }]
+
+    test crimp-warp-field-${n}.5 "[origin] image warp projective, $itype, bicubic" -body {
+        astcl [crimp warp projective -interpolate bicubic [$itype] [crimp transform rotate 45 {2 2}]]
+    } -result [iconst $itype 0 0 5 5 {
+    }]
+
+    incr n
+}
 
 # -------------------------------------------------------------------------
 ## Handling of input location: Transformed coordinates of input location, to grid.

@@ -3029,7 +3029,7 @@ proc ::crimp::warp::projective {args} {
 	    return -code error $msg
 	}
     }
-    return $results
+    return $result
 }
 
 proc ::crimp::warp::Projective {interpolation image transform} {

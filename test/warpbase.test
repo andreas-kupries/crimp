@@ -24,7 +24,6 @@ test crimp-warp-base-0.1 {image warp, invalid method} -body {
     crimp warp BOGUS
 } -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be box, field, point, or projective}
 
-
 # -------------------------------------------------------------------------
 
 test crimp-warp-point-1.0 {image warp point, wrong\#args, not enough} -body {
@@ -47,43 +46,79 @@ test crimp-warp-point-1.4 {image warp point, invalid point} -body {
     crimp warp point [crimp transform reflect line {2 4} {4 0}] {1 Y}
 } -returnCodes error -result {expected floating-point number but got "Y"}
 
+# -------------------------------------------------------------------------
+## Simple point transforms.
 
+set n 0
+foreach {p pi pm pr} {
+    { 0  0}     {0.0000 0.0000}   {-6.4000 -3.2000}  {0.8284 -2.0000}
+    {10  0}    {10.0000 0.0000}  {-12.4000 -11.2000} {7.8995 -9.0711}
+    { 0 10}     {0.0000 10.0000} {-14.4000 2.8000}   {7.8995 5.0711}
+    {10 10}    {10.0000 10.0000} {-20.4000 -5.2000}  {14.9706 -2.0000}
+} {
+    # TODO: validate the result manually
+    test crimp-warp-point-2.0.$n "[origin] image warp point, identity" -setup {
+        set t [crimp transform identity]
+    } -body {
+        lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
+    } -cleanup {
+        unset t
+    } -result $pi
+
+    test crimp-warp-point-2.1.$n "[origin] image warp point, reflection" -setup {
+        set t [crimp transform reflect line {2 4} {4 0}]
+    } -body {
+        lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
+    } -cleanup {
+        unset t
+    } -result $pm
+
+    test crimp-warp-point-2.2.$n "[origin] image warp point, rotation" -setup {
+        set t [crimp transform rotate 45 {2 2}]
+    } -body {
+        lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
+    } -cleanup {
+        unset t
+    } -result $pr
+
+    incr n
+}
 
 # -------------------------------------------------------------------------
 
-test crimp-warp-box-1.0 {image warp box, wrong\#args, not enough} -body {
+test crimp-warp-box-3.0 {image warp box, wrong\#args, not enough} -body {
     crimp warp box
 } -returnCodes error -result {wrong # args: should be "crimp warp box transform geometry"}
 
-test crimp-warp-box-1.1 {image warp box, wrong\#args, not enough} -body {
+test crimp-warp-box-3.1 {image warp box, wrong\#args, not enough} -body {
     crimp warp box T
 } -returnCodes error -result {wrong # args: should be "crimp warp box transform geometry"}
 
-test crimp-warp-box-1.2 {image warp box, wrong\#args, too many} -body {
+test crimp-warp-box-3.2 {image warp box, wrong\#args, too many} -body {
     crimp warp box T G toomuch
 } -returnCodes error -result {wrong # args: should be "crimp warp box transform geometry"}
 
-test crimp-warp-box-1.3 {image warp box, invalid transform} -body {
+test crimp-warp-box-3.3 {image warp box, invalid transform} -body {
     crimp warp box T G
 } -returnCodes error -result {expected projective transform but got "T"}
 
-test crimp-warp-box-1.4 {image warp box, invalid box} -body {
+test crimp-warp-box-3.4 {image warp box, invalid box} -body {
     crimp warp box [crimp transform reflect line {2 4} {4 0}] G
 } -returnCodes error -result {wrong # args: should be "crimp::warp_box forwardObj x y w h"}
 
-test crimp-warp-box-1.5 {image warp box, invalid box} -body {
+test crimp-warp-box-3.5 {image warp box, invalid box} -body {
     crimp warp box [crimp transform reflect line {2 4} {4 0}] {X 1 5 5}
 } -returnCodes error -result {expected integer but got "X"}
 
-test crimp-warp-box-1.6 {image warp box, invalid box} -body {
+test crimp-warp-box-3.6 {image warp box, invalid box} -body {
     crimp warp box [crimp transform reflect line {2 4} {4 0}] {1 Y 5 5}
 } -returnCodes error -result {expected integer but got "Y"}
 
-test crimp-warp-box-1.7 {image warp box, invalid box} -body {
+test crimp-warp-box-3.7 {image warp box, invalid box} -body {
     crimp warp box [crimp transform reflect line {2 4} {4 0}] {1 1 W 5}
 } -returnCodes error -result {expected integer but got "W"}
 
-test crimp-warp-box-1.8 {image warp box, invalid box} -body {
+test crimp-warp-box-3.8 {image warp box, invalid box} -body {
     crimp warp box [crimp transform reflect line {2 4} {4 0}] {1 1 5 H}
 } -returnCodes error -result {expected integer but got "H"}
 

@@ -1,0 +1,33 @@
+warp_box
+Tcl_Obj* forwardObj
+int x
+int y
+int w
+int h
+
+crimp_image* forward;
+crimp_geometry a;
+crimp_geometry z;
+Tcl_Obj* list [4];
+
+crimp_input (forwardObj, forward, float);
+
+if (!crimp_require_dim (forward, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+a.x = x;
+a.y = y;
+a.w = w;
+a.h = h;
+
+crimp_geo_warp_box (&a, forward, &z);
+
+list [0] = Tcl_NewIntObj (z.x);
+list [1] = Tcl_NewIntObj (z.y);
+list [2] = Tcl_NewIntObj (z.w);
+list [3] = Tcl_NewIntObj (z.h);
+
+Tcl_SetObjResult (interp, Tcl_NewListObj (4, list));
+return TCL_OK;

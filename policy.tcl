@@ -2964,6 +2964,21 @@ namespace eval ::crimp::warp {
     namespace ensemble create
 }
 
+proc ::crimp::warp::point {t args} {
+    set m [::crimp::transform::CHECK $t]
+    set r {}
+    foreach p $args {
+	lappend r [crimp::warp_point $m {*}$p]
+    }
+    return $r
+}
+
+proc ::crimp::warp::box {t geometry} {
+    return [crimp::warp_box \
+		[::crimp::transform::CHECK $t] \
+		{*}$geometry]
+}
+
 # Alt syntax: Single vector field, this will require a 2d-float type.
 proc ::crimp::warp::field {args} {
     set interpolation [::crimp::INTERPOLATE args]

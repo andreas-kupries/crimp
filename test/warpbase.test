@@ -50,13 +50,14 @@ test crimp-warp-point-1.4 {image warp point, invalid point} -body {
 ## Simple point transforms.
 
 set n 0
-foreach {p pi pm pr} {
-    { 0  0}     {0.0000 0.0000}   {-6.4000 -3.2000}  {0.8284 -2.0000}
-    {10  0}    {10.0000 0.0000}  {-12.4000 -11.2000} {7.8995 -9.0711}
-    { 0 10}     {0.0000 10.0000} {-14.4000 2.8000}   {7.8995 5.0711}
-    {10 10}    {10.0000 10.0000} {-20.4000 -5.2000}  {14.9706 -2.0000}
+foreach {p pi pm pr ps pt} {
+    { 0  0}     {0.0000 0.0000}   {-6.4000 -3.2000}  {0.8284 -2.0000}  {0.0000 0.0000}   {2.0000 3.0000}
+    {10  0}    {10.0000 0.0000}  {-12.4000 -11.2000} {7.8995 -9.0711}  {20.0000 0.0000}  {12.0000 3.0000}
+    { 0 10}     {0.0000 10.0000} {-14.4000 2.8000}   {7.8995 5.0711}   {0.0000 30.0000}  {2.0000 13.0000}
+    {10 10}    {10.0000 10.0000} {-20.4000 -5.2000}  {14.9706 -2.0000} {20.0000 30.0000} {12.0000 13.0000}
 } {
-    # TODO: validate the result manually
+    # TODO: validate the results manually
+    # /ok
     test crimp-warp-point-2.0.$n "[origin] image warp point, identity" -setup {
         set t [crimp transform identity]
     } -body {
@@ -65,6 +66,7 @@ foreach {p pi pm pr} {
         unset t
     } -result $pi
 
+    # /validate
     test crimp-warp-point-2.1.$n "[origin] image warp point, reflection" -setup {
         set t [crimp transform reflect line {2 4} {4 0}]
     } -body {
@@ -73,6 +75,7 @@ foreach {p pi pm pr} {
         unset t
     } -result $pm
 
+    # /validate
     test crimp-warp-point-2.2.$n "[origin] image warp point, rotation" -setup {
         set t [crimp transform rotate 45 {2 2}]
     } -body {
@@ -80,6 +83,24 @@ foreach {p pi pm pr} {
     } -cleanup {
         unset t
     } -result $pr
+
+    # /ok
+    test crimp-warp-point-2.3.$n "[origin] image warp point, scale" -setup {
+        set t [crimp transform scale 2 3]
+    } -body {
+        lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
+    } -cleanup {
+        unset t
+    } -result $ps
+
+    # /ok
+    test crimp-warp-point-2.4.$n "[origin] image warp point, translate" -setup {
+        set t [crimp transform translate 2 3]
+    } -body {
+        lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
+    } -cleanup {
+        unset t
+    } -result $pt
 
     incr n
 }

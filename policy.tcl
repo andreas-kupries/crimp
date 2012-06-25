@@ -2964,8 +2964,8 @@ namespace eval ::crimp::warp {
     namespace ensemble create
 }
 
-proc ::crimp::warp::point {t args} {
-    set m [::crimp::transform::CHECK $t]
+proc ::crimp::warp::point {transform args} {
+    set m [::crimp::transform::CHECK $transform]
     set r {}
     foreach p $args {
 	lappend r [crimp::warp_point $m {*}$p]
@@ -2973,9 +2973,9 @@ proc ::crimp::warp::point {t args} {
     return $r
 }
 
-proc ::crimp::warp::box {t geometry} {
+proc ::crimp::warp::box {transform geometry} {
     return [crimp::warp_box \
-		[::crimp::transform::CHECK $t] \
+		[::crimp::transform::CHECK $transform] \
 		{*}$geometry]
 }
 

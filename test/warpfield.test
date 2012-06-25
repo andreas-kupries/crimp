@@ -17,16 +17,6 @@ testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 ## (x/y coordinate fields for result, sampling into the input).
 # -------------------------------------------------------------------------
 
-test crimp-warp-field-0.0 {image warp field, wrong\#args} -body {
-    crimp warp
-} -returnCodes error -result {wrong # args: should be "crimp warp subcommand ?argument ...?"}
-
-test crimp-warp-field-0.1 {image warp field, wrong\#args} -body {
-    crimp warp BOGUS
-} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be field, or projective}
-
-# -------------------------------------------------------------------------
-
 test crimp-warp-field-1.0 {image warp field, wrong\#args, not enough} -body {
     crimp warp field
 } -returnCodes error -result {wrong # args: should be "::crimp::warp::field image xvec yvec"}

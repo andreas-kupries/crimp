@@ -1,0 +1,36 @@
+warp_point
+Tcl_Obj* forwardObj
+double x
+double y
+
+/*
+ * Warp the 2D-point using the specified transform.
+ */
+
+crimp_image* forward;
+Tcl_Obj* list [2];
+
+crimp_input (forwardObj, forward, float);
+
+if (!crimp_require_dim (forward, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+crimp_geo_warp_point (forward, &x, &y);
+
+list [0] = Tcl_NewDoubleObj (x);
+list [1] = Tcl_NewDoubleObj (y);
+
+Tcl_SetObjResult (interp, Tcl_NewListObj (2, list));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

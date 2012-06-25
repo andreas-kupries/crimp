@@ -13,10 +13,12 @@
  */
 
 extern void         crimp_geo_warp_point (crimp_image* matrix, double* x, double* y);
+extern void         crimp_geo_warp_box   (crimp_geometry* input,
+					  crimp_image*    forward,
+					  crimp_geometry* output);
 extern crimp_image* crimp_geo_warp_init  (crimp_image* input,
 					  crimp_image* forward,
 					  int* origx, int* origy);
-
 
 /*
  * Local Variables:

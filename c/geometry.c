@@ -26,8 +26,8 @@ crimp_geo_warp_point (crimp_image* matrix, double* x, double* y)
     *y = (*y) / w;
 }
 
-crimp_image*
-crimp_geo_warp_init (crimp_image* input, crimp_image* forward, int* origx, int* origy)
+void
+crimp_geo_warp_box (crimp_geometry* input, crimp_image* forward, crimp_geometry* output)
 {
     /*
      * Run the four corners of the input through the forward transformation to
@@ -38,28 +38,31 @@ crimp_geo_warp_init (crimp_image* input, crimp_image* forward, int* origx, int* 
      * computing the input corners.
      */
 
-    crimp_image* result;
     double xlu, xru, xld, xrd, left, right;
     double ylu, yru, yld, yrd, up, down;
     int ileft, iright, iup, idown, w, h, iorigx, iorigy, oc = 0;
 
-    iorigx = crimp_x (input);
-    iorigy = crimp_y (input);
+    iorigx = input->x;
+    iorigy = input->y;
 
     xlu = - iorigx;
     ylu = - iorigy;
+
     crimp_geo_warp_point (forward, &xlu, &ylu);
 
-    xru = - iorigx + crimp_w(input) - 1;
+    xru = - iorigx + input->w - 1;
     yru = - iorigy;
+
     crimp_geo_warp_point (forward, &xru, &yru);
 
     xld = - iorigx;
-    yld = - iorigy + crimp_h(input);
+    yld = - iorigy + input->h;
+
     crimp_geo_warp_point (forward, &xld, &yld);
 
-    xrd = - iorigx + crimp_w(input) - 1;
-    yrd = - iorigy + crimp_h(input) - 1;
+    xrd = - iorigx + input->w - 1;
+    yrd = - iorigy + input->h - 1;
+
     crimp_geo_warp_point (forward, &xrd, &yrd);
 
     left  = MIN (MIN (xlu,xld), MIN (xru,xrd));
@@ -72,13 +75,21 @@ crimp_geo_warp_init (crimp_image* input, crimp_image* forward, int* origx, int* 
     iup    = up;    if (iup    > up)    iup --;
     idown  = down;  if (idown  < down)  idown ++;
 
-    w = iright - ileft + 1;
-    h = idown  - iup   + 1;
+    output->x = ileft;
+    output->y = iup;
+    output->w = iright - ileft + 1;
+    output->h = idown  - iup   + 1;
+}
 
-    *origx = ileft;
-    *origy = iup;
+crimp_image*
+crimp_geo_warp_init (crimp_image* input, crimp_image* forward, int* origx, int* origy)
+{
+    crimp_image* result;
+    crimp_geometry warped;
 
-    result = crimp_new_at (input->itype, ileft, iup, w, h);
+    crimp_geo_warp_box (&input->geo, forward, &warped);
+
+    result = crimp_new_atg (input->itype, warped);
     return result;
 }
 

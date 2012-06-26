@@ -2732,10 +2732,12 @@ proc ::crimp::transform::shear {sx sy} {
 }
 
 namespace eval ::crimp::transform::reflect {
-    namespace export line x y linesegment
+    namespace export line x y line
     namespace ensemble create
+
     namespace import ::crimp::transform::affine
     namespace import ::crimp::transform::chain
+    namespace import ::crimp::transform::translate
 
     namespace import ::tcl::mathfunc::*
     namespace import ::tcl::mathop::*
@@ -2756,9 +2758,9 @@ proc ::crimp::transform::reflect::line {a {b {}}} {
 	# by -A.
 
 	return [chain \
-		    [::crimp::transform::translate $ax $ay] \
+		    [translate [- $ax] [- $ay]] \
 		    [line [list [- $bx $ax] [- $by $ay]]] \
-		    [::crimp::transform::translate [- $ax] [- $ay]]]
+		    [translate $ax $ay]]
     }
 
     # Reflect along the line A through the origin.
@@ -2813,7 +2815,7 @@ proc ::crimp::transform::rotate {theta {p {0 0}}} {
 	lassign $p x y
 	set dx [- $x]
 	set dy [- $y]
-	set r [chain [translate $x $y] $r [translate $dx $dy]]
+	set r [chain [translate $dx $dy] $r [translate $x $y]]
     }
 
     return $r
@@ -2830,10 +2832,10 @@ proc ::crimp::transform::quadrilateral {src dst} {
 
     CheckQuad $src
     CheckQuad $dst
-    return [chain [Q2UNIT $dst] [invert [Q2UNIT $src]]]
-    #              ~~~~~~~~~~~   ~~~~~~~~~~~~~~~~
-    #         unit rect -> dst   src -> unit rect
-}
+    return [chain [invert [Q2UNIT $src]] [Q2UNIT $dst]]
+    #             ~~~~~~~~~~~~~~~~       ~~~~~~~~~~~
+    #             src -> unit rect       unit rect -> dst
+} 
 
 proc ::crimp::transform::chain {t args} {
     if {[llength $args] == 0} {

@@ -405,9 +405,9 @@ test crimp-proj-transform-8.14 {projective transforms, reflect @ line} -body {
 test crimp-proj-transform-8.15 {projective transforms, reflect @ line} -body {
     astclf 4 [crimp transform reflect line {2 0} {5 5}]
 } -result [tconst {
-    -0.4706  0.8824 -2.9412
-     0.8824  0.4706  1.7647
-     0.0000  0.0000  1.0000
+    -0.4706 0.8824  2.9412
+     0.8824 0.4706 -1.7647
+     0.0000 0.0000  1.0000
 }]
 
 # -------------------------------------------------------------------------
@@ -464,15 +464,15 @@ test crimp-proj-transform-11.5 {projective transforms, rotate, invalid arguments
     crimp transform rotate 1 {0 Y}
 } -returnCodes error -result {expected floating-point number but got "Y"}
 
-test crimp-proj-transform-11.6 {projective transforms, rotate, invalid arguments} -body {
+test crimp-proj-transform-11.6 {projective transforms, rotate} -body {
     astclf 4 [crimp transform rotate 2 {-50 -50}]
 } -result [tconst {
-     0.9994  0.0349 -1.7145
-    -0.0349  0.9994  1.7754
+     0.9994  0.0349  1.7145
+    -0.0349  0.9994 -1.7754
      0.0000  0.0000  1.0000
 }]
 
-test crimp-proj-transform-11.7 {projective transforms, rotate, invalid arguments} -body {
+test crimp-proj-transform-11.7 {projective transforms, rotate, origin} -body {
     astclf 4 [crimp transform rotate 1]
 } -result [tconst {
      0.9998  0.0175  0.0000
@@ -603,9 +603,9 @@ test crimp-proj-transform-12.29 {projective transforms, quadrilateral} -body {
                   {{0 0} {15 5} {30 30} {5 15}} \
                   {{0 0} {40 0} {40 40} {0 40}}]
 } -result [tconst {
-    -0.3750  0.3750 -0.1875
-    -1.5000  0.5000  1.7500
-    -4.3750  0.3750  3.8125
+     1.1250 -2.8750 37.5000
+    -2.8750  1.1250 37.5000
+    -0.0344 -0.0344  1.6875
 }]
 
 test crimp-proj-transform-12.30 {projective transforms, quadrilateral} -body {
@@ -613,9 +613,9 @@ test crimp-proj-transform-12.30 {projective transforms, quadrilateral} -body {
                   {{0 0} {40 0} {40 40} {0 40}} \
                   {{0 0} {15 5} {30 30} {5 15}}]
 } -result [tconst {
-    -0.8333  1.0000  -0.5000
-     1.2917  1.5000  -0.6250
-    -1.0833  1.0000  -0.2500
+    -2.1250 -2.3750 100.0000
+    -2.3750 -2.1250 100.0000
+    -0.0917 -0.0917   4.6667
 }]
 
 test crimp-proj-transform-12.31 {projective transforms, quadrilateral} -body {
@@ -628,9 +628,9 @@ test crimp-proj-transform-12.31 {projective transforms, quadrilateral} -body {
                        {{0 0} {15 5} {30 30} {5 15}}]]
     # inverse mappings yield back identity. note the -0 :(
 } -result [tconst {
-    1.0000 -0.0000  0.0000
-    0.0000  1.0000  0.0000
-    0.0000 -0.0000  1.0000
+     1.0000  0.0000  0.0000
+    -0.0000  1.0000  0.0000
+    -0.0000 -0.0000  1.0000
 }]
 
 # -------------------------------------------------------------------------

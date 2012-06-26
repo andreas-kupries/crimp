@@ -2813,9 +2813,10 @@ proc ::crimp::transform::rotate {theta {p {0 0}}} {
     set r [affine $c $s 0 $sn $c 0]
     if {$p ne {0 0}} {
 	lassign $p x y
-	set dx [- $x]
-	set dy [- $y]
-	set r [chain [translate $dx $dy] $r [translate $x $y]]
+	set r [chain \
+		   [translate [- $x] [- $y]] \
+		   $r \
+		   [translate $x $y]]
     }
 
     return $r
@@ -2833,8 +2834,8 @@ proc ::crimp::transform::quadrilateral {src dst} {
     CheckQuad $src
     CheckQuad $dst
     return [chain [invert [Q2UNIT $src]] [Q2UNIT $dst]]
-    #             ~~~~~~~~~~~~~~~~       ~~~~~~~~~~~
-    #             src -> unit rect       unit rect -> dst
+    #             ~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~     
+    #             src -> unit rect 	 unit rect -> dst
 } 
 
 proc ::crimp::transform::chain {t args} {
@@ -2844,13 +2845,24 @@ proc ::crimp::transform::chain {t args} {
 	return $t
     }
 
-    set     args [lreverse $args]
-    lappend args $t
-
-    set res [CHECK [lindex $args 0]]
-    foreach m [lrange $args 1 end] {
-	set res [::crimp::matmul3x3_float $res [CHECK $m]]
+    set res [CHECK $t]
+    foreach m $args {
+	set res [::crimp::matmul3x3_float [CHECK $m] $res]
+	# res = M * res
+	# => going from the left, swapping the arguments
+	# => folding from the right
+	# => t becomes rightmost in the chain.
     }
+
+    # Example t args = t1 t2 t3 t4
+    # res = t1
+    # res = t2*res = t2*t1
+    # res = t3*res = t3*t2*t1
+    # res = t4*res = t4*t3*t2*t1
+    #
+    # The warping of a 2d vector by multiplication from the right thus
+    # gets the transforms applied in order t1, t2, ...
+
     return [MAKE $res]
 }
 

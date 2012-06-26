@@ -1863,14 +1863,10 @@ pieces together.
 [call [cmd ::crimp] [method {transform chain}] [arg transform]...]
 [keywords {projective transform} {transform chaining} {chain transforms}]
 
-This method computes and returns the projective transformation generated
-by applying the specified transformations in the given order, i.e with
-the transformation at the beginning of the argument list applied first,
-then the one after it, etc.
-
-[para][emph Note] that application of a transformation to a point vector
-multiplies the row point vector from the left, explaining the above.
-
+This method computes and returns the projective transformation
+equivalent to the application of the specified transformations to a 2d
+point in the given order, i.e with the transformation at the beginning
+of the argument list applied first, then the one after it, etc.
 
 [call [cmd ::crimp] [method {transform identity}]]
 [keywords {projective transform} {transform identity} {identity transforms}]
@@ -1921,22 +1917,22 @@ at the top left and going in clock-wise order.
 [call [cmd ::crimp] [method {transform reflect line}] [opt [arg a]] [arg b]]
 [keywords {projective transform} {transform reflect} {reflective transforms} {reflect about line} {affine transform}]
 
-This methods returns the projective transformation which reflects the image
-about an arbitrary line specified by the two points [arg a] and [b], each
-point a pair of x- and y-coordinates.. If point [arg a] is not specified
-it defaults to (0,0), i.e. the coordinate origin.
+This methods returns the projective transformation which reflects the
+image about an arbitrary line specified by the two points [arg a] and
+[arg b], each point a pair of x- and y-coordinates.. If point [arg a]
+is not specified it defaults to (0,0), i.e. the coordinate origin.
 
 [call [cmd ::crimp] [method {transform reflect x}]]
 [keywords {projective transform} {transform reflect} {reflective transforms} {reflect about aix} {affine transform}]
 
-This methods returns the projective transformation which reflects the image
-about the x-axis.
+This methods returns the projective transformation which reflects the
+image about the x-axis.
 
 [call [cmd ::crimp] [method {transform reflect y}]]
 [keywords {projective transform} {transform reflect} {reflective transforms} {reflect about aix} {affine transform}]
 
-This methods returns the projective transformation which reflects the image
-about the y-axis.
+This methods returns the projective transformation which reflects the
+image about the y-axis.
 
 [call [cmd ::crimp] [method {transform rotate}] [arg theta] [opt [arg center]]]
 [keywords {projective transform} {transform rotation} {rotate transforms} {rotate about a point} {affine transform}]
@@ -1963,16 +1959,19 @@ respective axis.
 [keywords {projective transform} {transform shear} {shearing transforms}]
 
 This methods returns the projective transformation which shears an
-image by factor [arg sx] along the width, and [arg sy] along the height.
+image by factor [arg sx] along the width, and [arg sy] along the
+height.
 
 [call [cmd ::crimp] [method {transform translate}] [arg dx] [arg dy]]
 [keywords {projective transform} {transform translate} {translate transforms} translation {affine transform}]
 
 This methods returns the projective transformation which translates an
 image by [arg dx] pixels along the x-axis, and [arg dx] pixels along
-the y-axis. Values larger than [const 0] move the image to the right,
-or down, along the specified dimension, while values less than
-[const 0] move it to the left, or up.
+the y-axis.
+
+Values larger than [const 0] move the image to the right, or down,
+along the specified dimension, while values less than [const 0] move
+it to the left, or up.
 
 [list_end]
 

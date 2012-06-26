@@ -102,6 +102,12 @@ crimp_la_multiply_matrix_3x3 (crimp_image* a, crimp_image* b)
     /*
      * Unrolled scalar products, no loops whatsoever. This is possible only
      * because we know the size, and the size is small.
+     *
+     *             Z            = A            * B
+     *             ( .. .. .. )   ( .. .. .. )   ( .. x0 .. )
+     * A * B = Z = ( .. xy .. ) = ( 0y 1y 2y ) * ( .. x1 .. )
+     *             ( .. .. .. )   ( .. .. .. )   ( .. x2 .. )
+     *
      */
 
 #define SP3(r,x,y) FLOATP (r, x, y) = FLOATP (a,0,y) * FLOATP (b,x,0) + FLOATP (a,1,y) * FLOATP (b,x,1) + FLOATP (a,2,y) * FLOATP (b,x,2)
@@ -123,8 +129,13 @@ void
 crimp_la_multiply_matrix_3v (crimp_image* matrix, double* x, double* y, double* w)
 {
     /*
-     * Inlined multiplication of matrix and row! vector (x, y, w).
-     * The vector is multiplied from the left!
+     * Inlined multiplication of matrix and column! vector (x, y, w).
+     * The vector is multiplied from the right
+     *
+     *  z      = A            * v
+     *  ( .. )   ( .. .. .. )   ( .0 )
+     *  ( .y ) = ( 0y 1y 2y ) * ( .1 )
+     *  ( .. )   ( .. .. .. )   ( .2 )
      */
 
     double xo = (*x) * FLOATP (matrix, 0, 0) + (*y) * FLOATP (matrix, 1, 0) + (*w) * FLOATP (matrix, 2, 0);

@@ -123,7 +123,8 @@ void
 crimp_la_multiply_matrix_3v (crimp_image* matrix, double* x, double* y, double* w)
 {
     /*
-     * Inlined multiplication of matrix and vector
+     * Inlined multiplication of matrix and row! vector (x, y, w).
+     * The vector is multiplied from the left!
      */
 
     double xo = (*x) * FLOATP (matrix, 0, 0) + (*y) * FLOATP (matrix, 1, 0) + (*w) * FLOATP (matrix, 2, 0);

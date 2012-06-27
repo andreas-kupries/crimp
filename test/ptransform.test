@@ -205,6 +205,29 @@ test crimp-proj-transform-4.5 {projective transforms, translate} -body {
 }]
 
 # -------------------------------------------------------------------------
+## Randomized testing. Translation.
+
+apply {{} {
+    set n 0
+    foreach _ [iota 500] {
+        lassign [a-translation] p r d
+
+        test crimp-proj-transform-4.6.$n "[origin] projective transforms, translate, fuzz" -setup {
+            set t [crimp transform translate {*}$d]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -result $r -match 4digits
+        # NOTE: We have differences in the 5th digit for about 1 in 10 random cases
+        # (about 48 of 500 failures in the higher precision)
+        # (float vs double issue ?)
+
+        incr n
+    }
+}}
+
+# -------------------------------------------------------------------------
 
 test crimp-proj-transform-5.0 {projective transforms, scale, wrong\#args, not enough} -body {
     crimp transform scale
@@ -258,6 +281,27 @@ test crimp-proj-transform-5.8 {projective transforms, scale} -body {
     0.0 -5.0  0.0
     0.0  0.0  1.0
 }]
+
+# -------------------------------------------------------------------------
+## Randomized testing. Scaling.
+
+apply {{} {
+    set n 0
+    foreach _ [iota 500] {
+        lassign [a-scaling] p r f
+
+        test crimp-proj-transform-5.9.$n "[origin] projective transforms, scaling, fuzz" -setup {
+            set t [crimp transform scale {*}$f]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -result $r -match 2digits
+        # Precision only to within 2 digits for float!
+
+        incr n
+    }
+}}
 
 # -------------------------------------------------------------------------
 
@@ -409,6 +453,27 @@ test crimp-proj-transform-8.15 {projective transforms, reflect @ line} -body {
      0.8824 0.4706 -1.7647
      0.0000 0.0000  1.0000
 }]
+
+# -------------------------------------------------------------------------
+## Randomized testing. Reflection along arbitrary line.
+
+apply {{} {
+    set n 0
+    foreach _ [iota 500] {
+        lassign [a-reflection] p r a b
+
+        test crimp-proj-transform-8.16.$n "[origin] projective transforms, reflection, fuzz" -setup {
+            set t [crimp transform reflect line $a $b]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -result $r -match 4digits
+        # Precision only to within 2 digits for float!
+
+        incr n
+    }
+}}
 
 # -------------------------------------------------------------------------
 

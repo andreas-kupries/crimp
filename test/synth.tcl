@@ -282,12 +282,14 @@ proc origin {} {
 
 # # ## ### ##### ######## ############# #####################
 ## Check two lists of numbers for component-wise numeric equality
-## (1) To within 4 digits after the decimal point.
+## (1) To within N digits after the decimal point.
+##     Instantiated for N in {2, 4}
 ## (2) To within machine accuracy
 
-proc match4digits {expected actual} {
+proc matchNdigits {n expected actual} {
+    set x 1e-$n
     foreach a $actual e $expected {
-        if {abs($a-$e) > 1e-4} {
+        if {abs($a-$e) > $x} {
 	    #puts MF|$a|$e|[expr {abs($a-$e)}]
 	    return 0
         }
@@ -306,7 +308,8 @@ proc matchdigits {expected actual} {
     return 1
 }
 
-customMatch 4digits match4digits
+customMatch 2digits {matchNdigits 2}
+customMatch 4digits {matchNdigits 4}
 customMatch epsilon matchdigits
 
 # # ## ### ##### ######## ############# #####################
@@ -316,7 +319,7 @@ customMatch epsilon matchdigits
 proc p {x y} { list $x $y }
 
 proc pnorm {p} {
-    lassign $v x y
+    lassign $p x y
     expr {hypot($x,$y)}
 }
 
@@ -335,6 +338,17 @@ proc p+ {a b} {
 proc p*s {p f} {
     lassign $p x y
     p [expr {$x * $f}] [expr {$y * $f}]
+}
+
+proc p* {p f} {
+    lassign $p px py
+    lassign $f fx fy
+    p [expr {$px * $fx}] [expr {$py * $fy}]
+}
+
+proc p/s {p f} {
+    lassign $p x y
+    p [expr {$x / double($f)}] [expr {$y / double($f)}]
 }
 
 proc p/ {a b} {
@@ -373,6 +387,74 @@ proc prand {} {
 
 proc prand/0 {} {
     p [rand/0 -300 300] [rand/0 -300 300]
+}
+
+# # ## ### ##### ######## ############# #####################
+## geometric constructions for randomized testing.
+
+proc a-translation {} {
+    set p [prand]    ; # A point to translate
+    set d [prand]    ; # A translation vector
+    set r [p+ $p $d] ; # The translation result.
+
+    # point, result, and translation parameters
+    list $p $r $d
+}
+
+proc a-scaling {} {
+    set p [prand]    ; # A point to scale
+    set f [prand/0]  ; # Scale factors
+    set r [p* $p $f] ; # The scaling result.
+
+    # point, result, and scaling parameters
+    list $p $r $d
+}
+
+proc a-reflection {} {
+    math::constants::constants eps
+
+    # To set up the reflection we choose a line to reflect about via
+    # two points (taking care to reject 0-length lines). The
+    # line-vector and its orthogonal are an orthonormal basis of the
+    # 2D plane with in which the reflection is about the y-axis
+    # (a--b), making it a simple change of the sign. Assuming we
+    # choose a as the null of the coordinate system. This then allows
+    # us to easily create two points in the coordinate system which
+    # are reflections of each other. Covnersion into the regular
+    # coordinate system then gives us a point plus reflection result
+    # we can test the transform against.
+
+    while {1} {
+	set a [prand] ; # The line to reflect about.
+	set b [prand] ; # This shall be the y-axis of
+	#             ; # a custom coordinate system.
+	set ya [p- $b $a]
+
+	# Iterate until we have something which is not 0.
+	set l [pnorm $ya]
+	if {$l < $eps} continue
+	# Normalize y-axis vector to length 1.
+	set ya [p/s $ya $l]
+	break
+    }
+    set xa [portho $ya] ;# The x-axis vector is orthogonal to y.
+
+    # Now we can generate a point in the new coordinate system
+    # whose reflection is easy to compute also (in the cusotm
+    # coordinates), just flip the sign on the
+    # x-coordinate. Covnert both to the regular coordinate system.
+
+    set u [rand -100 100] ; # x, custom
+    set v [rand -100 100] ; # y, custom
+
+    # Point and reflection, relative to custom coordinate null (== a).
+    set p [p+ $a [p+ [p*s $xa          $u]   [p*s $ya $v]]]
+    set r [p+ $a [p+ [p*s $xa [expr {- $u}]] [p*s $ya $v]]]
+
+    # side note: It is useful to dump all the points and lines as
+    # a DIA for visualization.
+
+    list $p $r $a $b
 }
 
 # # ## ### ##### ######## ############# #####################

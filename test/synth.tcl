@@ -281,4 +281,99 @@ proc origin {} {
 }
 
 # # ## ### ##### ######## ############# #####################
+## Check two lists of numbers for component-wise numeric equality
+## (1) To within 4 digits after the decimal point.
+## (2) To within machine accuracy
+
+proc match4digits {expected actual} {
+    foreach a $actual e $expected {
+        if {abs($a-$e) > 1e-4} {
+	    #puts MF|$a|$e|[expr {abs($a-$e)}]
+	    return 0
+        }
+    }
+    return 1
+}
+
+proc matchdigits {expected actual} {
+    math::constants::constants eps
+    foreach a $actual e $expected {
+        if {abs($a-$e) > $eps} {
+	    #puts MF|$a|$e|[expr {abs($a-$e)}]|$eps
+	    return 0
+        }
+    }
+    return 1
+}
+
+customMatch 4digits match4digits
+customMatch epsilon matchdigits
+
+# # ## ### ##### ######## ############# #####################
+## Various 2D vector arithmetic primitives.
+## Avoiding a dependency on tcllib's math::geometry.
+
+proc p {x y} { list $x $y }
+
+proc pnorm {p} {
+    lassign $v x y
+    expr {hypot($x,$y)}
+}
+
+proc p- {a b} {
+    lassign $a ax ay
+    lassign $b bx by
+    p [expr {$ax - $bx}] [expr {$ay - $by}]
+}
+
+proc p+ {a b} {
+    lassign $a ax ay
+    lassign $b bx by
+    p [expr {$ax + $bx}] [expr {$ay + $by}]
+}
+
+proc p*s {p f} {
+    lassign $p x y
+    p [expr {$x * $f}] [expr {$y * $f}]
+}
+
+proc p/ {a b} {
+    lassign $a ax ay
+    lassign $b bx by
+    p \
+	[expr {double($ax) / double($bx)}] \
+	[expr {double($ay) / double($by)}]
+}
+
+proc portho {p} {
+    lassign $p x y
+    p $y [expr {- $x}]
+}
+
+# # ## ### ##### ######## ############# #####################
+## Easy random numbers, uniformly distributed in a range.
+## Plus convenience commands for angles and 2d-points
+
+proc rand {a b} { expr {$a + rand()*($b - $a)} }
+
+proc rand/0 {a b} {
+    while {1} {
+	set x [rand $a $b]
+	if {$x != 0} { return $x }
+    }
+}
+
+proc arand {} {
+    rand -360 360
+}
+
+proc prand {} {
+    p [rand -300 300] [rand -300 300]
+}
+
+proc prand/0 {} {
+    p [rand/0 -300 300] [rand/0 -300 300]
+}
+
+# # ## ### ##### ######## ############# #####################
 return

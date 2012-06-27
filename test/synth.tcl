@@ -287,7 +287,11 @@ proc origin {} {
 ## (2) To within machine accuracy
 
 proc matchNdigits {n expected actual} {
-    set x 1e-$n
+    if {$n <= 0} {
+	set x 1e[expr {- $n}]
+    } else {
+	set x 1e-$n
+    }
     foreach a $actual e $expected {
         if {abs($a-$e) > $x} {
 	    #puts MF|$a|$e|[expr {abs($a-$e)}]
@@ -308,6 +312,7 @@ proc matchdigits {expected actual} {
     return 1
 }
 
+customMatch -1digits {matchNdigits -1}
 customMatch 2digits {matchNdigits 2}
 customMatch 4digits {matchNdigits 4}
 customMatch epsilon matchdigits
@@ -407,7 +412,7 @@ proc a-scaling {} {
     set r [p* $p $f] ; # The scaling result.
 
     # point, result, and scaling parameters
-    list $p $r $d
+    list $p $r $f
 }
 
 proc a-reflection {} {
@@ -455,6 +460,27 @@ proc a-reflection {} {
     # a DIA for visualization.
 
     list $p $r $a $b
+}
+
+proc a-rotation {} {
+    math::constants::constants pi
+
+    # We set it up from scratch as two sin,cos vectors on the unit
+    # circle, scaled and translated to a rotation point.
+
+    set theta1 [arand]
+    set theta2 [arand]
+    set scale  [rand/0 -10 10]
+    set center [prand]
+    set theta  [expr {$theta2 - $theta1}]
+
+    set p [p [expr {cos ($theta1*$pi/180.)}] [expr {sin ($theta1*$pi/180.)}]]
+    set r [p [expr {cos ($theta2*$pi/180.)}] [expr {sin ($theta2*$pi/180.)}]]
+    
+    set p [p+ $center $p]
+    set r [p+ $center $r]
+
+    list $p $r $center $theta
 }
 
 # # ## ### ##### ######## ############# #####################

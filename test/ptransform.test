@@ -469,7 +469,7 @@ apply {{} {
         } -cleanup {
             unset t
         } -result $r -match 4digits
-        # Precision only to within 2 digits for float!
+        # Precision only to within 4 digits for float!
 
         incr n
     }
@@ -544,6 +544,28 @@ test crimp-proj-transform-11.7 {projective transforms, rotate, origin} -body {
     -0.0175  0.9998  0.0000
      0.0000  0.0000  1.0000
 }]
+
+# -------------------------------------------------------------------------
+## Randomized testing. Rotation around arbitrary point.
+
+apply {{} {
+    set n 0
+    foreach _ [iota 500] {
+        lassign [a-rotation] p r c a
+
+        test crimp-proj-transform-11.7.$n "[origin] projective transforms, rotation, fuzz" -setup {
+            set t [crimp transform rotate $a $c]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -result $r -match -1digits
+        # Precision not even to within 0 digits for float!
+        # The single-precision is hitting is hard here.
+
+        incr n
+    }
+}}
 
 # -------------------------------------------------------------------------
 

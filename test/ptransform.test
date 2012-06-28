@@ -102,7 +102,7 @@ test crimp-proj-transform-2.17 {projective transforms, raw projective} -body {
     #                                    sx          sy          scale
     #                                          tx       ty       translate
     #                                    r  r     r  r           rotate
-    #                                                      sx sy shear
+    #                                       sx    sy             shear
 } -result [tconst {
     0.0 2.0 3.0
     4.0 5.0 6.0
@@ -168,6 +168,7 @@ test crimp-proj-transform-3.13 {projective transforms, raw affine} -body {
     #                                sx          sy          scale
     #                                      tx       ty       translate
     #                                r  r     r  r           rotate
+    #                                   sx    sy             shear
 } -result [tconst {
     0.0 2.0 3.0
     4.0 5.0 6.0
@@ -318,7 +319,7 @@ test crimp-proj-transform-6.2 {projective transforms, shear, wrong\#args, too ma
 } -returnCodes error -result {wrong # args: should be "crimp transform shear sx sy"}
 
 test crimp-proj-transform-6.3 {projective transforms, shear, invalid arguments} -body {
-    crimp transform shear SX SY
+    crimp transform shear SX 0
 } -returnCodes error -result {expected floating-point number but got "SX"}
 
 test crimp-proj-transform-6.4 {projective transforms, shear, invalid arguments} -body {
@@ -336,17 +337,17 @@ test crimp-proj-transform-6.5 {projective transforms, shear} -body {
 test crimp-proj-transform-6.6 {projective transforms, shear} -body {
     astclf 1 [crimp transform shear 3 4]
 } -result [tconst {
-    1.0  0.0  0.0
-    0.0  1.0  0.0
-    3.0  4.0  1.0
+    1.0  4.0  0.0
+    3.0  1.0  0.0
+    0.0  0.0  1.0
 }]
 
 test crimp-proj-transform-6.6 {projective transforms, shear} -body {
     astclf 1 [crimp transform shear -3 -4]
 } -result [tconst {
-     1.0  0.0  0.0
-     0.0  1.0  0.0
-    -3.0 -4.0  1.0
+     1.0 -4.0  0.0
+    -3.0  1.0  0.0
+     0.0  0.0  1.0
 }]
 
 # -------------------------------------------------------------------------
@@ -357,16 +358,8 @@ apply {{} {
     foreach _ [iota 500] {
         lassign [a-shear] p r s
 
-puts |||---------------------------
-puts p|$p|
-puts r|$r|
-puts s|$s|
-
         test crimp-proj-transform-6.7.$n "[origin] projective transforms, shear, fuzz" -setup {
             set t [crimp transform shear {*}$s]
-
-puts [astclf 4 $t]
-
         } -body {
             lindex [crimp warp point $t $p] 0
         } -cleanup {

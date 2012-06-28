@@ -2693,10 +2693,6 @@ namespace eval ::crimp::transform {
     variable typecode crimp/transform
 }
 
-proc ::crimp::transform::identity {} {
-    return [projective 1 0 0 0 1 0 0 0]
-}
-
 proc ::crimp::transform::projective {a b c d e f g h} {
     #                   | a b c |
     # Create the matrix | d e f | for a projective transform.
@@ -2711,24 +2707,57 @@ proc ::crimp::transform::projective {a b c d e f g h} {
 
 proc ::crimp::transform::affine {a b c d e f} {
     # An affine transform is a special case of the projective, without
-    # perspective warping. Its matrix is | a b c |
-    #                                    | d e f |
-    return [projective $a $b $c $d $e $f 0 0]
+    # perspective warping.
+    #
+    # Its matrix is | a b c | which is the same as | a b c | in the
+    #               | d e f |                      | d e f |
+    #                                              | 0 0 1 |
+    # fully projective form.
+
+    return [projective \
+		$a $b $c \
+		$d $e $f \
+		0  0]
+}
+
+proc ::crimp::transform::identity {} {
+    # | 1 0 0 |
+    # | 0 1 0 |
+    # | 0 0 1 |
+    return [projective \
+		1 0 0 \
+		0 1 0 \
+		0 0]
 }
 
 proc ::crimp::transform::translate {dx dy} {
     # Translate in the x, y directions
-    return [affine 1 0 $dx 0 1 $dy]
+    # | 1 0 DX |
+    # | 0 1 DY |
+    # | 0 0 1  |
+    return [affine \
+		1 0 $dx \
+		0 1 $dy]
 }
 
 proc ::crimp::transform::scale {sx sy} {
     # Scale in the x, y directions
-    return [affine $sx 0 0 0 $sy 0]
+    # | SX 0  0 |
+    # | 0  SY 0 |
+    # | 0  0  1 |
+    return [affine \
+		$sx 0   0 \
+		0   $sy 0]
 }
 
 proc ::crimp::transform::shear {sx sy} {
     # Shear in the x, y directions
-    return [projective 1 0 0 0 1 0 $sx $sy]
+    # | 1  SY 0 |
+    # | SX 1  0 |
+    # | 0  0  1 |
+    return [affine \
+		1   $sy 0 \
+		$sx 1   0]
 }
 
 namespace eval ::crimp::transform::reflect {

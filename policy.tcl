@@ -2938,6 +2938,7 @@ proc ::crimp::transform::CheckPoint {p} {
 proc ::crimp::transform::Q2UNIT {quad} {
     # Calculate the transform from the unit rectangle to the specified
     # quad.
+
     # Derived from the paper.
     # A Planar Perspective Image Matching using Point Correspondences and Rectangle-to-Quadrilateral Mapping
     # Dong-Keun Kim, Byung-Tae Jang, Chi-Jung Hwang
@@ -2945,10 +2946,16 @@ proc ::crimp::transform::Q2UNIT {quad} {
     # http://www.informatik.uni-trier.de/~ley/db/conf/ssiai/ssiai2002.html
     # http://www.decew.net/OSS/References/Quadrilateral%20mapping.pdf
 
-    lassign $quad pc pd pb pa
-    # Map from top-left clock-wise to the zig-zag ordering used in the paper.
-    # *---*   *-------*
-    # |c d|   |p2' p3'|
+    # Errata:
+    # (a) Figure 1 in the paper has p2, p3 (p2', p3') swapped.
+    # (b) The transform matrix A is transposed (or written for left-multiplication).
+
+    lassign $quad pa pb pc pd
+    # Map from top-left clock-wise for our y-axis.
+    # Flipped relative to regular.
+    #
+    # *---*   *-------* <== Figure 1
+    # |d c|   |p3' p2'|
     # |   | = |       |
     # |a b|   |p0' p1'|
     # *---*   *-------*
@@ -2958,15 +2965,34 @@ proc ::crimp::transform::Q2UNIT {quad} {
     lassign $pc cx cy ; # x2, y2
     lassign $pd dx dy ; # x3, y3
 
+    #puts ""
+    #puts %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    #puts "0 = $ax $ay"
+    #puts "1 = $bx $by"
+    #puts "2 = $cx $cy"
+    #puts "3 = $dx $dy"
+    #puts =================================================================
+
+    set dxd [expr {$ax - $bx + $cx - $dx}] ; # \delta x3
+    set dyd [expr {$ay - $by + $cy - $dy}] ; # \delta y3
+
     set dxb [expr {$bx - $cx}]             ; # \delta x1
     set dxc [expr {$dx - $cx}]             ; # \delta x2
-    set dxd [expr {$ax - $bx + $cx - $dx}] ; # \delta x3
 
     set dyb [expr {$by - $cy}]             ; # \delta y1
     set dyc [expr {$dy - $cy}]             ; # \delta y2
-    set dyd [expr {$ay - $by + $cy - $dy}] ; # \delta y3
+
+    #puts "delta x1 = $dxb"
+    #puts "delta x2 = $dxc"
+    #puts "delta x3 = $dxd"
+
+    #puts "delta y1 = $dyb"
+    #puts "delta y2 = $dyc"
+    #puts "delta y3 = $dyd"
 
     set D [expr {($dxb*$dyc - $dyb*$dxc)}]
+
+    #puts "D = $D"
 
     set g [expr {($dxd*$dyd - $dxc*$dyd)/double($D)}] ; # a6
     set h [expr {($dxb*$dyd - $dyb*$dxd)/double($D)}] ; # a7
@@ -2979,14 +3005,19 @@ proc ::crimp::transform::Q2UNIT {quad} {
     set e [expr {$dy * (1+$h) - $ay}] ; # a4
     set f $ay                         ; # a5
 
-    # | a0 a3 a6 |   | a d g |
+    # | a0 a3 a6 |   | a d g | => Errate (b), transpose.
     # | a1 a4 a7 | = | b e h |
     # | a2 a5 1  |   | c f 1 |
 
+    #puts =================================================================
+    #puts "a0 = $a  a3 = $d  a6 = $g"
+    #puts "a1 = $b  a4 = $e  a7 = $h"
+    #puts "a2 = $c  a5 = $f"
+    #puts %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     return [projective \
-		$a $d $g \
-		$b $e $h \
-		$c $f]
+		$a $b $c \
+		$d $e $f \
+		$g $h]
 }
 
 proc ::crimp::transform::MAKE {m} {

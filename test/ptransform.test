@@ -732,12 +732,14 @@ test crimp-proj-transform-12.28 {projective transforms, quadrilateral, invalid a
 
 # -------------------------------------------------------------------------
 ## Quadrilateral mappings representing various simple transformations, i.e.
-## identity, translation, scaling, rotation, and shear.
+## identity, translation, scaling, rotation, shear, and reflection.
+## DONE      DONE         DONE               DONE
 
 test crimp-proj-transform-12.29 {projective transforms, quadrilateral, identity} -body {
-    decode_transform [crimp transform quadrilateral \
-                          {{0 0} {1 0} {1 1} {0 1}} \
-                          {{0 0} {1 0} {1 1} {0 1}}]
+    decode_transform \
+        [crimp transform quadrilateral \
+             {{0 0} {1 0} {1 1} {0 1}} \
+             {{0 0} {1 0} {1 1} {0 1}}]
 } -match 4digits -result {
     1 0 0
     0 1 0
@@ -745,9 +747,10 @@ test crimp-proj-transform-12.29 {projective transforms, quadrilateral, identity}
 }
 
 test crimp-proj-transform-12.30 {projective transforms, quadrilateral, translation x} -body {
-    decode_transform [crimp transform quadrilateral \
-                          {{0 0} {1 0} {1 1} {0 1}} \
-                          {{5 0} {6 0} {6 1} {5 1}}]
+    decode_transform \
+        [crimp transform quadrilateral \
+             {{0 0} {1 0} {1 1} {0 1}} \
+             {{5 0} {6 0} {6 1} {5 1}}]
 } -match 4digits -result {
     1 0 5
     0 1 0
@@ -755,8 +758,124 @@ test crimp-proj-transform-12.30 {projective transforms, quadrilateral, translati
 }
 
 test crimp-proj-transform-12.31 {projective transforms, quadrilateral, translation y} -body {
-    decode_transform [crimp transform quadrilateral \
-                          {{0 0} {1 0} {1 1} {0 1}} \
+    decode_transform \
+        [crimp transform quadrilateral \
+             {{0 0} {1 0} {1 1} {0 1}} \
+             {{0 6} {1 6} {1 7} {0 7}}]
+} -match 4digits -result {
+    1 0 0
+    0 1 6
+    0 0 1
+}
+
+test crimp-proj-transform-12.32 {projective transforms, quadrilateral, scale x} -body {
+    decode_transform \
+        [crimp transform quadrilateral \
+             {{0 0} {1 0} {1 1} {0 1}} \
+             {{0 0} {4 0} {4 1} {0 1}}]
+} -match 4digits -result {
+    4 0 0
+    0 1 0
+    0 0 1
+}
+
+test crimp-proj-transform-12.33 {projective transforms, quadrilateral, scale y} -body {
+    decode_transform \
+        [crimp transform quadrilateral \
+             {{0 0} {1 0} {1 1} {0 1}} \
+             {{0 0} {1 0} {1 5} {0 5}}]
+} -match 4digits -result {
+    1 0 0
+    0 5 0
+    0 0 1
+}
+
+test crimp-proj-transform-12.34 {projective transforms, quadrilateral, shear x} -body {
+    decode_transform \
+        [crimp transform quadrilateral \
+             {{0 0} {1 0} {1 1} {0 1}} \
+             {{0 0} {1 0} {2 1} {1 1}}]
+} -match 4digits -result {
+    1 1 0
+    0 1 0
+    0 0 1
+}
+
+test crimp-proj-transform-12.35 {projective transforms, quadrilateral, shear y} -body {
+    decode_transform \
+        [crimp transform quadrilateral \
+             {{0 0} {1 0} {1 1} {0 1}} \
+             {{0 0} {1 1} {1 2} {0 1}}]
+} -match 4digits -result {
+    1 0 0
+    1 1 0
+    0 0 1
+}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-12.38 {projective transforms, quadrilateral, general} -body {
+    decode_transform \
+        [crimp transform quadrilateral \
+             {{0 0} {15 5} {30 30} {5 15}} \
+             {{0 0} {40 0} {40 40} {0 40}}]
+} -match 4digits -result {
+    24      -8    0
+    -1.3333  4    0
+     0.5167 -0.15 1
+}
+
+test crimp-proj-transform-12.39 {projective transforms, quadrilateral, general inverse} -body {
+    decode_transform \
+        [crimp transform quadrilateral \
+             {{0 0} {40 0} {40 40} {0 40}} \
+             {{0 0} {15 5} {30 30} {5 15}}]
+} -match 4digits -result {
+     0.0469  0.0938 0
+     0.0156  0.2813 0
+    -0.0219 -0.0063 1
+}
+
+test crimp-proj-transform-12.40 {projective transforms, quadrilateral, inverse yield identity} -body {
+    decode_transform \
+        [crimp transform chain \
+             [crimp transform quadrilateral \
+                  {{0 0} {15 5} {30 30} {5 15}} \
+                  {{0 0} {40 0} {40 40} {0 40}}] \
+             [crimp transform quadrilateral \
+                  {{0 0} {40 0} {40 40} {0 40}} \
+                  {{0 0} {15 5} {30 30} {5 15}}]]
+    # inverse mappings yield back identity. note the -0 :(
+} -match 4digits -result {
+    1 0 0
+    0 1 0
+    0 0 1
+}
+
+# -------------------------------------------------------------------------
+## Whitebox testing, internals of the quadrilateral: Q2UNIT.
+## Calculate various simple affine transforms. See also 12.29+
+
+test crimp-proj-transform-12.50 {projective transforms, quadrilateral core, identity} -body {
+    decode_transform [crimp::transform::Q2UNIT \
+                          {{0 0} {1 0} {1 1} {0 1}}]
+} -match 4digits -result {
+    1 0 0
+    0 1 0
+    0 0 1
+}
+
+test crimp-proj-transform-12.51 {projective transforms, quadrilateral core, translation x} -body {
+    decode_transform [crimp::transform::Q2UNIT \
+                          {{5 0} {6 0} {6 1} {5 1}}]
+} -match 4digits -result {
+    1 0 5
+    0 1 0
+    0 0 1
+}
+
+test crimp-proj-transform-12.52 {projective transforms, quadrilateral core, translation y} -body {
+    decode_transform [crimp::transform::Q2UNIT \
                           {{0 6} {1 6} {1 7} {0 7}}]
 } -match 4digits -result {
     1 0 0
@@ -764,42 +883,41 @@ test crimp-proj-transform-12.31 {projective transforms, quadrilateral, translati
     0 0 1
 }
 
-# -------------------------------------------------------------------------
+test crimp-proj-transform-12.53 {projective transforms, quadrilateral core, scale x} -body {
+    decode_transform [crimp::transform::Q2UNIT \
+                          {{0 0} {4 0} {4 1} {0 1}}]
+} -match 4digits -result {
+    4 0 0
+    0 1 0
+    0 0 1
+}
 
-test crimp-proj-transform-12.34 {projective transforms, quadrilateral} -body {
-    astclf 4 [crimp transform quadrilateral \
-                  {{0 0} {15 5} {30 30} {5 15}} \
-                  {{0 0} {40 0} {40 40} {0 40}}]
-} -result [tconst {
-     1.1250 -2.8750 37.5000
-    -2.8750  1.1250 37.5000
-    -0.0344 -0.0344  1.6875
-}]
+test crimp-proj-transform-12.54 {projective transforms, quadrilateral core, scale y} -body {
+    decode_transform [crimp::transform::Q2UNIT \
+                          {{0 0} {1 0} {1 5} {0 5}}]
+} -match 4digits -result {
+    1 0 0
+    0 5 0
+    0 0 1
+}
 
-test crimp-proj-transform-12.35 {projective transforms, quadrilateral} -body {
-    astclf 4 [crimp transform quadrilateral \
-                  {{0 0} {40 0} {40 40} {0 40}} \
-                  {{0 0} {15 5} {30 30} {5 15}}]
-} -result [tconst {
-    -2.1250 -2.3750 100.0000
-    -2.3750 -2.1250 100.0000
-    -0.0917 -0.0917   4.6667
-}]
+test crimp-proj-transform-12.55 {projective transforms, quadrilateral core, shear x} -body {
+    decode_transform [crimp::transform::Q2UNIT \
+                          {{0 0} {1 0} {2 1} {1 1}}]
+} -match 4digits -result {
+    1 1 0
+    0 1 0
+    0 0 1
+}
 
-test crimp-proj-transform-12.36 {projective transforms, quadrilateral} -body {
-    astclf 4 [crimp transform chain \
-                  [crimp transform quadrilateral \
-                       {{0 0} {15 5} {30 30} {5 15}} \
-                       {{0 0} {40 0} {40 40} {0 40}}] \
-                  [crimp transform quadrilateral \
-                       {{0 0} {40 0} {40 40} {0 40}} \
-                       {{0 0} {15 5} {30 30} {5 15}}]]
-    # inverse mappings yield back identity. note the -0 :(
-} -result [tconst {
-     1.0000  0.0000  0.0000
-    -0.0000  1.0000  0.0000
-    -0.0000 -0.0000  1.0000
-}]
+test crimp-proj-transform-12.56 {projective transforms, quadrilateral core, shear y} -body {
+    decode_transform [crimp::transform::Q2UNIT \
+                          {{0 0} {1 1} {1 2} {0 1}}]
+} -match 4digits -result {
+    1 0 0
+    1 1 0
+    0 0 1
+}
 
 # -------------------------------------------------------------------------
 ## Whitebox testing, internals of the quadrilateral: Q2UNIT.
@@ -815,7 +933,7 @@ apply {{} { return
         # | |
         # d-c
 
-        test crimp-proj-transform-12.40.$n "[origin] projective transforms, quadrilateral core, fuzz" -setup {
+        test crimp-proj-transform-12.60.$n "[origin] projective transforms, quadrilateral core, fuzz" -setup {
             set t [crimp::transform::Q2UNIT [list $a $b $c $d]]
         } -body {
             # Flatten the 4 result points into single list.

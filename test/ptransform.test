@@ -730,7 +730,43 @@ test crimp-proj-transform-12.28 {projective transforms, quadrilateral, invalid a
     crimp transform quadrilateral {{0 0} {0 0} {0 0} {0 0}} {{0 0} {0 0} {0 0} {0 X}}
 } -returnCodes error -result {expected floating-point number but got "X"}
 
-test crimp-proj-transform-12.29 {projective transforms, quadrilateral} -body {
+# -------------------------------------------------------------------------
+## Quadrilateral mappings representing various simple transformations, i.e.
+## identity, translation, scaling, rotation, and shear.
+
+test crimp-proj-transform-12.29 {projective transforms, quadrilateral, identity} -body {
+    decode_transform [crimp transform quadrilateral \
+                          {{0 0} {1 0} {1 1} {0 1}} \
+                          {{0 0} {1 0} {1 1} {0 1}}]
+} -match 4digits -result {
+    1 0 0
+    0 1 0
+    0 0 1
+}
+
+test crimp-proj-transform-12.30 {projective transforms, quadrilateral, translation x} -body {
+    decode_transform [crimp transform quadrilateral \
+                          {{0 0} {1 0} {1 1} {0 1}} \
+                          {{5 0} {6 0} {6 1} {5 1}}]
+} -match 4digits -result {
+    1 0 5
+    0 1 0
+    0 0 1
+}
+
+test crimp-proj-transform-12.31 {projective transforms, quadrilateral, translation y} -body {
+    decode_transform [crimp transform quadrilateral \
+                          {{0 0} {1 0} {1 1} {0 1}} \
+                          {{0 6} {1 6} {1 7} {0 7}}]
+} -match 4digits -result {
+    1 0 0
+    0 1 6
+    0 0 1
+}
+
+# -------------------------------------------------------------------------
+
+test crimp-proj-transform-12.34 {projective transforms, quadrilateral} -body {
     astclf 4 [crimp transform quadrilateral \
                   {{0 0} {15 5} {30 30} {5 15}} \
                   {{0 0} {40 0} {40 40} {0 40}}]
@@ -740,7 +776,7 @@ test crimp-proj-transform-12.29 {projective transforms, quadrilateral} -body {
     -0.0344 -0.0344  1.6875
 }]
 
-test crimp-proj-transform-12.30 {projective transforms, quadrilateral} -body {
+test crimp-proj-transform-12.35 {projective transforms, quadrilateral} -body {
     astclf 4 [crimp transform quadrilateral \
                   {{0 0} {40 0} {40 40} {0 40}} \
                   {{0 0} {15 5} {30 30} {5 15}}]
@@ -750,7 +786,7 @@ test crimp-proj-transform-12.30 {projective transforms, quadrilateral} -body {
     -0.0917 -0.0917   4.6667
 }]
 
-test crimp-proj-transform-12.31 {projective transforms, quadrilateral} -body {
+test crimp-proj-transform-12.36 {projective transforms, quadrilateral} -body {
     astclf 4 [crimp transform chain \
                   [crimp transform quadrilateral \
                        {{0 0} {15 5} {30 30} {5 15}} \
@@ -764,6 +800,42 @@ test crimp-proj-transform-12.31 {projective transforms, quadrilateral} -body {
     -0.0000  1.0000  0.0000
     -0.0000 -0.0000  1.0000
 }]
+
+# -------------------------------------------------------------------------
+## Whitebox testing, internals of the quadrilateral: Q2UNIT.
+## Computes transform from the unit rectangle to the given input corners.
+## Just randomized testing.
+
+apply {{} { return
+    set n 0
+    foreach _ [iota 500] {
+        lassign [a-box] a b c d
+        # box has the corners
+        # a-b
+        # | |
+        # d-c
+
+        test crimp-proj-transform-12.40.$n "[origin] projective transforms, quadrilateral core, fuzz" -setup {
+            set t [crimp::transform::Q2UNIT [list $a $b $c $d]]
+        } -body {
+            # Flatten the 4 result points into single list.
+            join [crimp warp point $t {0 0} {1 0} {1 1} {0 1}]
+        } -cleanup {
+puts ""
+puts -|-----------------------------------
+puts a|$a
+puts b|$b
+puts c|$c
+puts d|$d
+puts t|[join [split [lindex [astclf 4 $t] 1 6] \n] \nt|]
+
+            unset t
+} -result [join [list $a $b $c $d]] -match 4digits
+
+
+        incr n
+    }
+}}
 
 # -------------------------------------------------------------------------
 
@@ -881,6 +953,8 @@ test crimp-proj-transform-15.2 {projective transforms, identity} -body {
     0.0000  1.0000  0.0000
     0.0000  0.0000  1.0000
 }]
+
+# No randomized testing of this one, trivial.
 
 # -------------------------------------------------------------------------
 testsuiteCleanup

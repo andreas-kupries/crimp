@@ -217,6 +217,25 @@ proc astcl {i} {
     lreplace $i end end [join [crimp write 2string tcl $i] \n]
 }
 
+
+proc decode_transform {actual} {
+    # Validate that actual is a transform.
+    # (tag + embedded 3x3 float image)
+    if {[llength $actual] != 2} { error "bad transform: length 2 expected" }
+    lassign $actual tag image
+    if {$tag ne "crimp/transform"} { error "bad transform: bad tag $tag" }
+    if {[llength $image] != 7} { error "bad transform: length 7 expected" }
+    lassign $image type x y w h m p
+    if {$type ne "crimp::image::float"} { error "bad transform: bad type $type" }
+    if {$x != 0}  { error "bad transform: bad origin x" }
+    if {$y != 0}  { error "bad transform: bad origin y" }
+    if {$w != 3}  { error "bad transform: bad width" }
+    if {$h != 3}  { error "bad transform: bad height" }
+    if {$m ne {}} { error "bad transform: bad meta" }
+    # Basic validation ok. Now unpack the pixels.
+    return [join [crimp write 2string tcl $image]]
+}
+
 proc astclf {digits i} {
     if {[string match {crimp/transform *} $i]} {
 	return [lreplace $i end end [astclf $digits [lindex $i end]]]
@@ -502,6 +521,10 @@ proc a-shear {} {
     set r [p [expr {$px + $sy*$py}] [expr {$py + $sx*$px}]]
 
     list $p $r [p $sx $sy]
+}
+
+proc a-box {} {
+    list [prand] [prand] [prand] [prand]
 }
 
 # # ## ### ##### ######## ############# #####################

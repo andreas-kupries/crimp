@@ -232,25 +232,37 @@ apply {{} {
 
 test crimp-proj-transform-5.0 {projective transforms, scale, wrong\#args, not enough} -body {
     crimp transform scale
-} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy"}
+} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy ?p?"}
 
 test crimp-proj-transform-5.1 {projective transforms, scale, wrong\#args, not enough} -body {
     crimp transform scale SX
-} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy"}
+} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy ?p?"}
 
 test crimp-proj-transform-5.2 {projective transforms, scale, wrong\#args, too many} -body {
-    crimp transform scale SX SY toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy"}
+    crimp transform scale SX SY P toomuch
+} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy ?p?"}
 
 test crimp-proj-transform-5.3 {projective transforms, scale, invalid arguments} -body {
-    crimp transform scale SX SY
+    crimp transform scale SX 1
 } -returnCodes error -result {expected floating-point number but got "SX"}
 
 test crimp-proj-transform-5.4 {projective transforms, scale, invalid arguments} -body {
-    crimp transform scale 0 SY
+    crimp transform scale 1 SY
 } -returnCodes error -result {expected floating-point number but got "SY"}
 
-test crimp-proj-transform-5.5 {projective transforms, scale} -body {
+test crimp-proj-transform-5.5 {projective transforms, scale, invalid arguments} -body {
+    crimp transform scale 1 1 P
+} -returnCodes error -result {expected 2d point but got "P"}
+
+test crimp-proj-transform-5.6 {projective transforms, scale, invalid arguments} -body {
+    crimp transform scale 1 1 {X 0}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-proj-transform-5.7 {projective transforms, scale, invalid arguments} -body {
+    crimp transform scale 1 1 {0 Y}
+} -returnCodes error -result {expected floating-point number but got "Y"}
+
+test crimp-proj-transform-5.6 {projective transforms, scale} -body {
     astclf 1 [crimp transform scale 0 0]
     # possible todo: scale to nothing. non-invertible ?! reject zero ?
 } -result [tconst {
@@ -259,7 +271,7 @@ test crimp-proj-transform-5.5 {projective transforms, scale} -body {
     0.0  0.0  1.0
 }]
 
-test crimp-proj-transform-5.6 {projective transforms, scale} -body {
+test crimp-proj-transform-5.7 {projective transforms, scale} -body {
     astclf 1 [crimp transform scale 1 1]
 } -result [tconst {
     1.0  0.0  0.0
@@ -267,7 +279,7 @@ test crimp-proj-transform-5.6 {projective transforms, scale} -body {
     0.0  0.0  1.0
 }]
 
-test crimp-proj-transform-5.7 {projective transforms, scale} -body {
+test crimp-proj-transform-5.8 {projective transforms, scale} -body {
     astclf 1 [crimp transform scale 5 -0.5]
 } -result [tconst {
     5.0  0.0  0.0
@@ -275,7 +287,7 @@ test crimp-proj-transform-5.7 {projective transforms, scale} -body {
     0.0  0.0  1.0
 }]
 
-test crimp-proj-transform-5.8 {projective transforms, scale} -body {
+test crimp-proj-transform-5.9 {projective transforms, scale} -body {
     astclf 1 [crimp transform scale 0.5 -5]
 } -result [tconst {
     0.5  0.0  0.0
@@ -283,16 +295,27 @@ test crimp-proj-transform-5.8 {projective transforms, scale} -body {
     0.0  0.0  1.0
 }]
 
+
+
+test crimp-proj-transform-5.7 {projective transforms, scale about point != null} -body {
+    astclf 1 [crimp transform scale 2 2 {4 3}]
+} -result [tconst {
+    2.0  0.0 -4.0
+    0.0  2.0 -3.0
+    0.0  0.0  1.0
+}]
+
+
 # -------------------------------------------------------------------------
 ## Randomized testing. Scaling.
 
 apply {{} {
     set n 0
     foreach _ [iota 500] {
-        lassign [a-scaling] p r f
+        lassign [a-scaling] p r f c
 
         test crimp-proj-transform-5.9.$n "[origin] projective transforms, scaling, fuzz" -setup {
-            set t [crimp transform scale {*}$f]
+            set t [crimp transform scale {*}$f $c]
         } -body {
             lindex [crimp warp point $t $p] 0
         } -cleanup {

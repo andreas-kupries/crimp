@@ -483,5 +483,22 @@ proc a-rotation {} {
     list $p $r $center $theta
 }
 
+proc a-shear {} {
+
+    set p [prand] ; # A point to shear
+
+    set sx [rand -5 5]
+    set sy [rand -5 5]
+
+    #set s [prand] ; # The shear factors per axis.
+
+    lassign $p px py
+    #lassign $s sx sy
+
+    set r [p [expr {$px + $sy*$py}] [expr {$py + $sx*$px}]]
+
+    list $p $r [p $sx $sy]
+}
+
 # # ## ### ##### ######## ############# #####################
 return

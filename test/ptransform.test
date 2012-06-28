@@ -350,6 +350,35 @@ test crimp-proj-transform-6.6 {projective transforms, shear} -body {
 }]
 
 # -------------------------------------------------------------------------
+## Randomized testing. Shearing
+
+apply {{} {
+    set n 0
+    foreach _ [iota 500] {
+        lassign [a-shear] p r s
+
+puts |||---------------------------
+puts p|$p|
+puts r|$r|
+puts s|$s|
+
+        test crimp-proj-transform-6.7.$n "[origin] projective transforms, shear, fuzz" -setup {
+            set t [crimp transform shear {*}$s]
+
+puts [astclf 4 $t]
+
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -result $r -match 4digits
+        # Precision only to within 4 digits for float!
+
+        incr n
+    }
+}}
+
+# -------------------------------------------------------------------------
 
 test crimp-proj-transform-7.0 {projective transforms, reflect, wrong\#args, not enough} -body {
     crimp transform reflect

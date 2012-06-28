@@ -2740,14 +2740,32 @@ proc ::crimp::transform::translate {dx dy} {
 		0 1 $dy]
 }
 
-proc ::crimp::transform::scale {sx sy} {
-    # Scale in the x, y directions
-    # | SX 0  0 |
+proc ::crimp::transform::scale {sx sy {p {0 0}}} {
+    CheckPoint $p
+
+    # Scale in the x, y directions.
+    # | SX 0  0 | for p = (0,0)
     # | 0  SY 0 |
     # | 0  0  1 |
-    return [affine \
+    #
+    # For p != (0,0) we have to chain 3 transformations:
+    # (a) Translate P to (0.0), i.e. translate -P.
+    # (b) Scale
+    # (c) Translate back, i.e. translate P.
+
+    set r [affine \
 		$sx 0   0 \
 		0   $sy 0]
+
+    if {$p ne {0 0}} {
+	lassign $p x y
+	set r [chain \
+		   [translate [- $x] [- $y]] \
+		   $r \
+		   [translate $x $y]]
+    }
+
+    return $r
 }
 
 proc ::crimp::transform::shear {sx sy} {

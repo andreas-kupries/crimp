@@ -407,12 +407,16 @@ proc a-translation {} {
 }
 
 proc a-scaling {} {
-    set p [prand]    ; # A point to scale
+    set p [prand]    ; # A point to scale, relative to 0
     set f [prand/0]  ; # Scale factors
-    set r [p* $p $f] ; # The scaling result.
+    set r [p* $p $f] ; # The scaling result, relative to 0
+    set c [prand]    ; # New center of scaling.
+
+    set p  [p+ $c $p]
+    set r  [p+ $c $r]
 
     # point, result, and scaling parameters
-    list $p $r $f
+    list $p $r $f $c
 }
 
 proc a-reflection {} {

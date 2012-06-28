@@ -2947,38 +2947,46 @@ proc ::crimp::transform::Q2UNIT {quad} {
 
     lassign $quad pc pd pb pa
     # Map from top-left clock-wise to the zig-zag ordering used in the paper.
-    # *---*
-    # |c d|
-    # |   |
-    # |a b|
-    # *---*
+    # *---*   *-------*
+    # |c d|   |p2' p3'|
+    # |   | = |       |
+    # |a b|   |p0' p1'|
+    # *---*   *-------*
 
-    lassign $pa ax ay
-    lassign $pb bx by
-    lassign $pc cx cy
-    lassign $pd dx dy
+    lassign $pa ax ay ; # x0, y0
+    lassign $pb bx by ; # x1, y1
+    lassign $pc cx cy ; # x2, y2
+    lassign $pd dx dy ; # x3, y3
 
-    set dxb [expr {$bx - $cx}]
-    set dxc [expr {$dx - $cx}]
-    set dxd [expr {$ax - $bx + $cx - $dx}]
+    set dxb [expr {$bx - $cx}]             ; # \delta x1
+    set dxc [expr {$dx - $cx}]             ; # \delta x2
+    set dxd [expr {$ax - $bx + $cx - $dx}] ; # \delta x3
 
-    set dyb [expr {$by - $cy}]
-    set dyc [expr {$dy - $cy}]
-    set dyd [expr {$ay - $by + $cy - $dy}]
+    set dyb [expr {$by - $cy}]             ; # \delta y1
+    set dyc [expr {$dy - $cy}]             ; # \delta y2
+    set dyd [expr {$ay - $by + $cy - $dy}] ; # \delta y3
 
     set D [expr {($dxb*$dyc - $dyb*$dxc)}]
-    set g [expr {($dxd*$dyd - $dxc*$dyd)/double($D)}]
-    set h [expr {($dxb*$dyd - $dyb*$dxd)/double($D)}]
 
-    set a [expr {$bx * (1+$g) - $ax}]
-    set b [expr {$dx * (1+$h) - $ax}]
-    set c $ax
+    set g [expr {($dxd*$dyd - $dxc*$dyd)/double($D)}] ; # a6
+    set h [expr {($dxb*$dyd - $dyb*$dxd)/double($D)}] ; # a7
 
-    set d [expr {$by * (1+$g) - $ay}]
-    set e [expr {$dy * (1+$h) - $ay}]
-    set f $ay
+    set a [expr {$bx * (1+$g) - $ax}] ; # a0
+    set b [expr {$dx * (1+$h) - $ax}] ; # a1
+    set c $ax                         ; # a2
 
-    return [projective $a $b $c $d $e $f $g $h]
+    set d [expr {$by * (1+$g) - $ay}] ; # a3
+    set e [expr {$dy * (1+$h) - $ay}] ; # a4
+    set f $ay                         ; # a5
+
+    # | a0 a3 a6 |   | a d g |
+    # | a1 a4 a7 | = | b e h |
+    # | a2 a5 1  |   | c f 1 |
+
+    return [projective \
+		$a $d $g \
+		$b $e $h \
+		$c $f]
 }
 
 proc ::crimp::transform::MAKE {m} {

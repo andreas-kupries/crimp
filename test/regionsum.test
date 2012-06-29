@@ -41,7 +41,7 @@ if 0 {
     set n 0
     foreach itype [types] {
         if {$itype eq "float"} continue ; # skip the good type
-        test crimp-regionsum-1.4.$n "[origin] region_sum images, bogus image type" -body {
+        test crimp-regionsum-1.4.$n "region_sum images, bogus image type" -body {
             crimp region_sum [$itype] 1
         } -returnCodes error -result {}
         incr n

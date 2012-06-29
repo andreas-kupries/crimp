@@ -60,7 +60,7 @@ foreach {p pi pm pr ps pt pro pmo} {
 
     # TODO: validate the results manually
     # /ok
-    test crimp-warp-point-2.0.$n "[origin] image warp point, identity" -setup {
+    test crimp-warp-point-2.0.$n "image warp point, identity" -setup {
         set t [crimp transform identity]
     } -body {
         lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
@@ -69,7 +69,7 @@ foreach {p pi pm pr ps pt pro pmo} {
     } -result $pi
 
     # /validate
-    test crimp-warp-point-2.1.$n "[origin] image warp point, reflection" -setup {
+    test crimp-warp-point-2.1.$n "image warp point, reflection" -setup {
         set t [crimp transform reflect line {2 4} {4 0}]
     } -body {
         lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
@@ -78,7 +78,7 @@ foreach {p pi pm pr ps pt pro pmo} {
     } -result $pm
 
     # /ok
-    test crimp-warp-point-2.2.$n "[origin] image warp point, rotation" -setup {
+    test crimp-warp-point-2.2.$n "image warp point, rotation" -setup {
         set t [crimp transform rotate 45 {2 2}]
     } -body {
         lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
@@ -87,7 +87,7 @@ foreach {p pi pm pr ps pt pro pmo} {
     } -result $pr
 
     # /ok
-    test crimp-warp-point-2.3.$n "[origin] image warp point, scale" -setup {
+    test crimp-warp-point-2.3.$n "image warp point, scale" -setup {
         set t [crimp transform scale 2 3]
     } -body {
         lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
@@ -96,7 +96,7 @@ foreach {p pi pm pr ps pt pro pmo} {
     } -result $ps
 
     # /ok
-    test crimp-warp-point-2.4.$n "[origin] image warp point, translate" -setup {
+    test crimp-warp-point-2.4.$n "image warp point, translate" -setup {
         set t [crimp transform translate 2 3]
     } -body {
         lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
@@ -104,7 +104,7 @@ foreach {p pi pm pr ps pt pro pmo} {
         unset t
     } -result $pt
 
-    test crimp-warp-point-2.5.$n "[origin] image warp point, rotation origin" -setup {
+    test crimp-warp-point-2.5.$n "image warp point, rotation origin" -setup {
         set t [crimp transform rotate 45]
     } -body {
         lmap {format %.4f} [lindex [crimp warp point $t $p] 0]
@@ -112,7 +112,7 @@ foreach {p pi pm pr ps pt pro pmo} {
         unset t
     } -result $pro
 
-    test crimp-warp-point-2.6.$n "[origin] image warp point, reflection origin" -setup {
+    test crimp-warp-point-2.6.$n "image warp point, reflection origin" -setup {
         set t [crimp transform reflect line {10 10}]
     } -body {
         lmap {format %.4f} [lindex [crimp warp point $t $p] 0]

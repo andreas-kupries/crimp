@@ -34,7 +34,7 @@ set n 0
 foreach itype [types] {
     if {$itype ni {rgb rgba hsv}} continue ; # Skip the supported types
 
-    test crimp-integrate-1.3.$n "[origin] image integrate, $itype, unsupported image type" -body {
+    test crimp-integrate-1.3.$n "image integrate, $itype, unsupported image type" -body {
         crimp integrate [$itype]
     } -returnCodes error -result "Unable to integrate images of type \"$itype\""
     incr n

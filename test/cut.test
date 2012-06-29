@@ -90,7 +90,7 @@ foreach {k itype} {
     4 grey32
 } {
     # identity
-    test crimp-cut-$k.0 "[origin] image cut, identity, $itype" -body {
+    test crimp-cut-$k.0 "image cut, identity, $itype" -body {
         astcl [crimp cut [$itype] 0 0 5 5]
     } -result [iconst $itype 0 0 5 5 {
          0  1  2  3  4
@@ -101,28 +101,28 @@ foreach {k itype} {
     }]
 
     #border aligned inside
-    test crimp-cut-$k.1 "[origin] image cut, nw, $itype" -body {
+    test crimp-cut-$k.1 "image cut, nw, $itype" -body {
         astcl [crimp cut [$itype] 0 0 2 2]
     } -result [iconst $itype 0 0 2 2 {
         0  1
         5  6
     }]
 
-    test crimp-cut-$k.2 "[origin] image cut, ne, $itype" -body {
+    test crimp-cut-$k.2 "image cut, ne, $itype" -body {
         astcl [crimp cut [$itype] 3 0 2 2]
     } -result [iconst $itype 3 0 2 2 {
         3  4
         8  9
     }]
 
-    test crimp-cut-$k.3 "[origin] image cut, se, $itype" -body {
+    test crimp-cut-$k.3 "image cut, se, $itype" -body {
         astcl [crimp cut [$itype] 3 3 2 2]
     } -result [iconst $itype 3 3 2 2 {
         18 19
         23 24
     }]
 
-    test crimp-cut-$k.4 "[origin] image cut, sw, $itype" -body {
+    test crimp-cut-$k.4 "image cut, sw, $itype" -body {
         astcl [crimp cut [$itype] 0 3 2 2]
     } -result [iconst $itype 0 3 2 2 {
         15 16
@@ -130,7 +130,7 @@ foreach {k itype} {
     }]
 
 
-    test crimp-cut-$k.5 "[origin] image cut, north, $itype" -body {
+    test crimp-cut-$k.5 "image cut, north, $itype" -body {
         astcl [crimp cut [$itype] 1 0 3 3]
     } -result [iconst $itype 1 0 3 3 {
          1  2  3
@@ -138,7 +138,7 @@ foreach {k itype} {
         11 12 13
     }]
 
-    test crimp-cut-$k.6 "[origin] image cut, east, $itype" -body {
+    test crimp-cut-$k.6 "image cut, east, $itype" -body {
         astcl [crimp cut [$itype] 2 1 3 3]
     } -result [iconst $itype 2 1 3 3 {
          7  8  9
@@ -146,7 +146,7 @@ foreach {k itype} {
         17 18 19
     }]
 
-    test crimp-cut-$k.7 "[origin] image cut, south, $itype" -body {
+    test crimp-cut-$k.7 "image cut, south, $itype" -body {
         astcl [crimp cut [$itype] 1 2 3 3]
     } -result [iconst $itype 1 2 3 3 {
         11 12 13
@@ -154,7 +154,7 @@ foreach {k itype} {
         21 22 23
     }]
 
-    test crimp-cut-$k.8 "[origin] image cut, west, $itype" -body {
+    test crimp-cut-$k.8 "image cut, west, $itype" -body {
         astcl [crimp cut [$itype] 0 1 3 3]
     } -result [iconst $itype 0 1 3 3 {
          5  6  7
@@ -163,7 +163,7 @@ foreach {k itype} {
     }]
 
     # fully inside
-    test crimp-cut-$k.9 "[origin] image cut, inside, $itype" -body {
+    test crimp-cut-$k.9 "image cut, inside, $itype" -body {
         astcl [crimp cut [$itype] 1 1 3 3]
     } -result [iconst $itype 1 1 3 3 {
          6  7  8
@@ -182,7 +182,7 @@ foreach {k itype} {
         16  1  7 south
         17 -3  1 west
     } {
-        test crimp-cut-$k.$n "[origin] image cut, $label outside, $itype" -body {
+        test crimp-cut-$k.$n "image cut, $label outside, $itype" -body {
             astcl [crimp cut [$itype] $dx $dy 2 2]
         } -result [iconst $itype $dx $dy 2 2 {
             0 0
@@ -191,7 +191,7 @@ foreach {k itype} {
     }
 
     # border straddle
-    test crimp-cut-$k.18 "[origin] image cut, nw straddle, $itype" -body {
+    test crimp-cut-$k.18 "image cut, nw straddle, $itype" -body {
         astcl [crimp cut [$itype] -2 -2 3 3]
     } -result [iconst $itype -2 -2 3 3 {
         0 0 0
@@ -199,7 +199,7 @@ foreach {k itype} {
         0 0 0
     }]
 
-    test crimp-cut-$k.19 "[origin] image cut, north straddle, $itype" -body {
+    test crimp-cut-$k.19 "image cut, north straddle, $itype" -body {
         astcl [crimp cut [$itype] 1 -2 3 3]
     } -result [iconst $itype 1 -2 3 3 {
         0 0 0
@@ -207,7 +207,7 @@ foreach {k itype} {
         1 2 3
     }]
 
-    test crimp-cut-$k.20 "[origin] image cut, ne straddle, $itype" -body {
+    test crimp-cut-$k.20 "image cut, ne straddle, $itype" -body {
         astcl [crimp cut [$itype] 4 -2 3 3]
     } -result [iconst $itype 4 -2 3 3 {
         0 0 0
@@ -215,7 +215,7 @@ foreach {k itype} {
         4 0 0
     }]
 
-    test crimp-cut-$k.21 "[origin] image cut, east straddle, $itype" -body {
+    test crimp-cut-$k.21 "image cut, east straddle, $itype" -body {
         astcl [crimp cut [$itype] 4 1 3 3]
     } -result [iconst $itype 4 1 3 3 {
          9 0 0
@@ -223,7 +223,7 @@ foreach {k itype} {
         19 0 0
     }]
 
-    test crimp-cut-$k.22 "[origin] image cut, se straddle, $itype" -body {
+    test crimp-cut-$k.22 "image cut, se straddle, $itype" -body {
         astcl [crimp cut [$itype] 4 4 3 3]
     } -result [iconst $itype 4 4 3 3 {
         24 0 0
@@ -231,7 +231,7 @@ foreach {k itype} {
          0 0 0
     }]
 
-    test crimp-cut-$k.23 "[origin] image cut, south straddle, $itype" -body {
+    test crimp-cut-$k.23 "image cut, south straddle, $itype" -body {
         astcl [crimp cut [$itype] 1 4 3 3]
     } -result [iconst $itype 1 4 3 3 {
         21 22 23
@@ -239,7 +239,7 @@ foreach {k itype} {
          0  0  0
     }]
 
-    test crimp-cut-$k.24 "[origin] image cut, sw straddle, $itype" -body {
+    test crimp-cut-$k.24 "image cut, sw straddle, $itype" -body {
         astcl [crimp cut [$itype] -2 4 3 3]
     } -result [iconst $itype -2 4 3 3 {
         0 0 20
@@ -247,7 +247,7 @@ foreach {k itype} {
         0 0  0
     }]
 
-    test crimp-cut-$k.25 "[origin] image cut, west straddle, $itype" -body {
+    test crimp-cut-$k.25 "image cut, west straddle, $itype" -body {
         astcl [crimp cut [$itype] -2 1 3 3]
     } -result [iconst $itype -2 1 3 3 {
         0 0  5
@@ -257,15 +257,15 @@ foreach {k itype} {
 
     # empty cuts
 
-    test crimp-cut-$k.26 "[origin] image cut, empty horizontal, $itype" -body {
+    test crimp-cut-$k.26 "image cut, empty horizontal, $itype" -body {
         astcl [crimp cut [$itype] -4 2 0 5]
     } -result [list crimp::image::$itype -4 2 0 5 {} {}]
 
-    test crimp-cut-$k.27 "[origin] image cut, empty vertical, $itype" -body {
+    test crimp-cut-$k.27 "image cut, empty vertical, $itype" -body {
         astcl [crimp cut [$itype] 2 -3 5 0]
     } -result [list crimp::image::$itype 2 -3 5 0 {} {}]
 
-    test crimp-cut-$k.28 "[origin] image cut, empty all, $itype" -body {
+    test crimp-cut-$k.28 "image cut, empty all, $itype" -body {
         astcl [crimp cut [$itype] 2 2 0 0]
     } -result [list crimp::image::$itype 2 2 0 0 {} {}]
 }
@@ -285,11 +285,11 @@ foreach {n itype} {
     6 float
     7 fpcomplex
 } {
-    test crimp-cut-10.$n "[origin] image cut, $itype, location handling" -body {
+    test crimp-cut-10.$n "image cut, $itype, location handling" -body {
 	crimp at [crimp cut [crimp place [$itype] 23 45] 4 5 2 2]
     } -result {27 50}
 
-    test crimp-cut-11.$n "[origin] image cut, $itype, location handling" -body {
+    test crimp-cut-11.$n "image cut, $itype, location handling" -body {
 	crimp at [crimp cut [crimp place [$itype] 23 45] -4 -5 2 2]
     } -result {19 40}
 }

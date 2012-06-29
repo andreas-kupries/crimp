@@ -38,7 +38,7 @@ test crimp-flip-2.1 {image flip horizontal, wrong\#args, too many} -body {
 
 set n 2
 foreach itype [types] {
-    test crimp-flip-2.$n "[origin] image flip horizontal, $itype" -body {
+    test crimp-flip-2.$n "image flip horizontal, $itype" -body {
 	crimp write 2string tcl [crimp flip horizontal [$itype]]
     } -result [fliph [t_$itype]] \
 	-constraints [expr {$itype ne "fpcomplex"
@@ -59,7 +59,7 @@ test crimp-flip-3.1 {image flip vertical, wrong\#args, too many} -body {
 
 set n 2
 foreach itype [types] {
-    test crimp-flip-3.$n "[origin] image flip vertical, $itype" -body {
+    test crimp-flip-3.$n "image flip vertical, $itype" -body {
 	crimp write 2string tcl [crimp flip vertical [$itype]]
     } -result [flipv [t_$itype]] \
 	-constraints [expr {$itype ne "fpcomplex"
@@ -80,7 +80,7 @@ test crimp-flip-4.1 {image flip transpose, wrong\#args, too many} -body {
 
 set n 2
 foreach itype [types] {
-    test crimp-flip-4.$n "[origin] image flip transpose, $itype" -body {
+    test crimp-flip-4.$n "image flip transpose, $itype" -body {
 	crimp write 2string tcl [crimp flip transpose [$itype]]
     } -result [fliptp [t_$itype]]
     incr n
@@ -98,7 +98,7 @@ test crimp-flip-5.1 {image flip transverse, wrong\#args, too many} -body {
 
 set n 2
 foreach itype [types] {
-    test crimp-flip-5.$n "[origin] image flip transverse, $itype" -body {
+    test crimp-flip-5.$n "image flip transverse, $itype" -body {
 	crimp write 2string tcl [crimp flip transverse [$itype]]
     } -result [fliptv [t_$itype]] \
 	-constraints [expr {$itype ne "fpcomplex"
@@ -118,7 +118,7 @@ foreach {k op} {
 } {
     set n 10
     foreach itype [types] {
-	test crimp-flip-$k.$n "[origin] image flip $op, $itype, input handling" -body {
+	test crimp-flip-$k.$n "image flip $op, $itype, input handling" -body {
 	    crimp at [crimp flip $op [crimp place [$itype] 4 5]]
 	} -result {4 5} \
 	    -constraints [expr {($itype ne "fpcomplex") && ($op ne "transpose")

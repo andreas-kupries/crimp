@@ -51,7 +51,7 @@ test crimp-montage-2.1 {image montage horizontal, wrong\#args, invalid arguments
 
 set k 0
 foreach itype [types] {
-    test crimp-montage-2.2.$k "[origin] image montage horizontal, invalid arguments" -body {
+    test crimp-montage-2.2.$k "image montage horizontal, invalid arguments" -body {
         crimp montage horizontal -border FOO [$itype]
     } -returnCodes error -result {Unknown border type "FOO", expected one of const, extend, mirror, replicate, or wrap}
     incr k
@@ -73,7 +73,7 @@ test crimp-montage-2.5 {image montage horizontal, invalid arguments} -body {
 
 set k 0
 foreach itype [greys] {
-    test crimp-montage-3.0.$k "[origin] image montage horizontal, $itype, simple" -body {
+    test crimp-montage-3.0.$k "image montage horizontal, $itype, simple" -body {
         astcl [crimp montage horizontal [$itype] [$itype]]
     } -result [iconst $itype 0 0 10 5 {
          0  1  2  3  4  0  1  2  3  4
@@ -85,7 +85,7 @@ foreach itype [greys] {
     incr k
 }
 
-test crimp-montage-3.0.3 "[origin] image montage horizontal, rgb, simple" -body {
+test crimp-montage-3.0.3 "image montage horizontal, rgb, simple" -body {
     astcl [crimp montage horizontal [rgb] [rgb]]
 } -result [iconst rgb 0 0 10 5 {
     { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74} { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
@@ -95,7 +95,7 @@ test crimp-montage-3.0.3 "[origin] image montage horizontal, rgb, simple" -body 
     {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72} {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
 }]
 
-test crimp-montage-3.0.4 "[origin] image montage horizontal, rgba, simple" -body {
+test crimp-montage-3.0.4 "image montage horizontal, rgba, simple" -body {
     astcl [crimp montage horizontal [rgba] [rgba]]
 } -result [iconst rgba 0 0 10 5 {
     { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87} { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87}
@@ -105,7 +105,7 @@ test crimp-montage-3.0.4 "[origin] image montage horizontal, rgba, simple" -body
     {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95} {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95}
 }]
 
-test crimp-montage-3.0.5 "[origin] image montage horizontal, hsv, simple" -body {
+test crimp-montage-3.0.5 "image montage horizontal, hsv, simple" -body {
     astcl [crimp montage horizontal [hsv] [hsv]]
 } -result [iconst hsv 0 0 10 5 {
     { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74} { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
@@ -115,7 +115,7 @@ test crimp-montage-3.0.5 "[origin] image montage horizontal, hsv, simple" -body 
     {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72} {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
 }]
 
-test crimp-montage-3.0.6 "[origin] image montage horizontal, float, simple" -body {
+test crimp-montage-3.0.6 "image montage horizontal, float, simple" -body {
     astclf 1 [crimp montage horizontal [float] [float]]
 } -result [iconst float 0 0 10 5 {
      0.0  1.0  2.0  3.0  4.0  0.0  1.0  2.0  3.0  4.0
@@ -125,7 +125,7 @@ test crimp-montage-3.0.6 "[origin] image montage horizontal, float, simple" -bod
     20.0 21.0 22.0 23.0 24.0 20.0 21.0 22.0 23.0 24.0
 }]
 
-test crimp-montage-3.0.7 "[origin] image montage horizontal, fpcomplex, simple" -body {
+test crimp-montage-3.0.7 "image montage horizontal, fpcomplex, simple" -body {
     astclf 1 [crimp montage horizontal [fpcomplex] [fpcomplex]]
 } -result [iconst fpcomplex 0 0 10 5 {
     { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0} { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}
@@ -147,7 +147,7 @@ test crimp-montage-4.1 {image montage vertical, wrong\#args, invalid arguments} 
 
 set k 0
 foreach itype [types] {
-    test crimp-montage-4.2.$k "[origin] image montage vertical, invalid arguments" -body {
+    test crimp-montage-4.2.$k "image montage vertical, invalid arguments" -body {
         crimp montage vertical -border FOO [$itype]
     } -returnCodes error -result {Unknown border type "FOO", expected one of const, extend, mirror, replicate, or wrap}
     incr k
@@ -169,7 +169,7 @@ test crimp-montage-4.5 {image montage vertical, invalid arguments} -body {
 
 set k 0
 foreach itype [greys] {
-    test crimp-montage-5.0.$k "[origin] image montage vertical, $itype, simple" -body {
+    test crimp-montage-5.0.$k "image montage vertical, $itype, simple" -body {
         astcl [crimp montage vertical [$itype] [$itype]]
     } -result [iconst $itype 0 0 5 10 {
          0  1  2  3  4
@@ -186,7 +186,7 @@ foreach itype [greys] {
     incr k
 }
 
-test crimp-montage-5.0.3 "[origin] image montage vertical, rgb, simple" -body {
+test crimp-montage-5.0.3 "image montage vertical, rgb, simple" -body {
     astcl [crimp montage vertical [rgb] [rgb]]
 } -result [iconst rgb 0 0 5 10 {
     { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
@@ -201,7 +201,7 @@ test crimp-montage-5.0.3 "[origin] image montage vertical, rgb, simple" -body {
     {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
 }]
 
-test crimp-montage-5.0.4 "[origin] image montage vertical, rgba, simple" -body {
+test crimp-montage-5.0.4 "image montage vertical, rgba, simple" -body {
     astcl [crimp montage vertical [rgba] [rgba]]
 } -result [iconst rgba 0 0 5 10 {
     { 0  1  2 75} {15 20 25 84} {30 31 32 85} {57 58 59 86} {60 69 74 87}
@@ -216,7 +216,7 @@ test crimp-montage-5.0.4 "[origin] image montage vertical, rgba, simple" -body {
     {12 13 14 79} {19 24 29 80} {38 37 36 93} {45 46 47 94} {64 65 72 95}
 }]
 
-test crimp-montage-5.0.5 "[origin] image montage vertical, hsv, simple" -body {
+test crimp-montage-5.0.5 "image montage vertical, hsv, simple" -body {
     astcl [crimp montage vertical [hsv] [hsv]]
 } -result [iconst hsv 0 0 5 10 {
     { 0  1  2} {15 20 25} {30 31 32} {57 58 59} {60 69 74}
@@ -231,7 +231,7 @@ test crimp-montage-5.0.5 "[origin] image montage vertical, hsv, simple" -body {
     {12 13 14} {19 24 29} {38 37 36} {45 46 47} {64 65 72}
 }]
 
-test crimp-montage-5.0.6 "[origin] image montage vertical, float, simple" -body {
+test crimp-montage-5.0.6 "image montage vertical, float, simple" -body {
     astclf 1 [crimp montage vertical [float] [float]]
 } -result [iconst float 0 0 5 10 {
      0.0  1.0  2.0  3.0  4.0
@@ -246,7 +246,7 @@ test crimp-montage-5.0.6 "[origin] image montage vertical, float, simple" -body 
     20.0 21.0 22.0 23.0 24.0
 }]
 
-test crimp-montage-5.0.7 "[origin] image montage vertical, fpcomplex, simple" -body {
+test crimp-montage-5.0.7 "image montage vertical, fpcomplex, simple" -body {
     astclf 1 [crimp montage vertical [fpcomplex] [fpcomplex]]
 } -result [iconst fpcomplex 0 0 5 10 {
     { 0.0  1.0} {15.0 20.0} {30.0 31.0} {57.0 58.0} {60.0 69.0}

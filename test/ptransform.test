@@ -216,7 +216,7 @@ apply {{} {
     foreach _ [iota 500] {
         lassign [a-translation] p r d
 
-        test crimp-proj-transform-4.6.$n "[origin] projective transforms, translate, fuzz" -setup {
+        test crimp-proj-transform-4.6.$n "projective transforms, translate, fuzz" -setup {
             set t [crimp transform translate {*}$d]
         } -body {
             lindex [crimp warp point $t $p] 0
@@ -319,7 +319,7 @@ apply {{} {
     foreach _ [iota 500] {
         lassign [a-scaling] p r f c
 
-        test crimp-proj-transform-5.9.$n "[origin] projective transforms, scaling, fuzz" -setup {
+        test crimp-proj-transform-5.9.$n "projective transforms, scaling, fuzz" -setup {
             set t [crimp transform scale {*}$f $c]
         } -body {
             lindex [crimp warp point $t $p] 0
@@ -389,7 +389,7 @@ apply {{} {
     foreach _ [iota 500] {
         lassign [a-shear] p r s
 
-        test crimp-proj-transform-6.7.$n "[origin] projective transforms, shear, fuzz" -setup {
+        test crimp-proj-transform-6.7.$n "projective transforms, shear, fuzz" -setup {
             set t [crimp transform shear {*}$s]
         } -body {
             lindex [crimp warp point $t $p] 0
@@ -522,7 +522,7 @@ apply {{} {
     foreach _ [iota 500] {
         lassign [a-reflection] p r a b
 
-        test crimp-proj-transform-8.16.$n "[origin] projective transforms, reflection, fuzz" -setup {
+        test crimp-proj-transform-8.16.$n "projective transforms, reflection, fuzz" -setup {
             set t [crimp transform reflect line $a $b]
         } -body {
             lindex [crimp warp point $t $p] 0
@@ -617,7 +617,7 @@ apply {{} {
     foreach _ [iota 500] {
         lassign [a-rotation] p r c a
 
-        test crimp-proj-transform-11.7.$n "[origin] projective transforms, rotation, fuzz" -setup {
+        test crimp-proj-transform-11.7.$n "projective transforms, rotation, fuzz" -setup {
             set t [crimp transform rotate $a $c]
         } -body {
             lindex [crimp warp point $t $p] 0
@@ -954,28 +954,15 @@ apply {{} { return
     set n 0
     foreach _ [iota 500] {
         lassign [a-box] a b c d
-        # box has the corners
-        # a-b
-        # | |
-        # d-c
 
-        test crimp-proj-transform-12.60.$n "[origin] projective transforms, quadrilateral core, fuzz" -setup {
+        test crimp-proj-transform-12.60.$n "projective transforms, quadrilateral core, fuzz" -setup {
             set t [crimp::transform::Q2UNIT [list $a $b $c $d]]
         } -body {
             # Flatten the 4 result points into single list.
             join [crimp warp point $t {0 0} {1 0} {1 1} {0 1}]
         } -cleanup {
-puts ""
-puts -|-----------------------------------
-puts a|$a
-puts b|$b
-puts c|$c
-puts d|$d
-puts t|[join [split [lindex [astclf 4 $t] 1 6] \n] \nt|]
-
             unset t
-} -result [join [list $a $b $c $d]] -match 4digits
-
+        } -result [join [list $a $b $c $d]] -match 4digits
 
         incr n
     }

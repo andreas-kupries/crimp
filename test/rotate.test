@@ -38,7 +38,7 @@ test crimp-rotate-2.1 {image rotate ccw, wrong\#args, too many} -body {
 
 set n 2
 foreach itype [types] {
-    test crimp-rotate-2.$n "[origin] image rotate ccw, $itype" -body {
+    test crimp-rotate-2.$n "image rotate ccw, $itype" -body {
 	crimp write 2string tcl [crimp rotate ccw [$itype]]
     } -result [flipv [fliptp [t_$itype]]] \
 	-constraints [expr {$itype ne "fpcomplex"
@@ -59,7 +59,7 @@ test crimp-rotate-3.1 {image rotate cw, wrong\#args, too many} -body {
 
 set n 2
 foreach itype [types] {
-    test crimp-rotate-3.$n "[origin] image rotate cw, $itype" -body {
+    test crimp-rotate-3.$n "image rotate cw, $itype" -body {
 	crimp write 2string tcl [crimp rotate cw [$itype]]
     } -result [fliph [fliptp [t_$itype]]] \
 	-constraints [expr {$itype ne "fpcomplex"
@@ -80,7 +80,7 @@ test crimp-rotate-4.1 {image rotate half, wrong\#args, too many} -body {
 
 set n 2
 foreach itype [types] {
-    test crimp-rotate-4.$n "[origin] image rotate half, $itype" -body {
+    test crimp-rotate-4.$n "image rotate half, $itype" -body {
 	crimp write 2string tcl [crimp rotate half [$itype]]
     } -result [fliph [flipv [t_$itype]]] \
 	-constraints [expr {$itype ne "fpcomplex"
@@ -99,7 +99,7 @@ foreach {k op} {
 } {
     set n 10
     foreach itype [types] {
-	test crimp-rotate-$k.$n "[origin] image rotate $op, $itype, input handling" -body {
+	test crimp-rotate-$k.$n "image rotate $op, $itype, input handling" -body {
 	    crimp at [crimp rotate $op [crimp place [$itype] 4 5]]
 	} -result {4 5} \
 	    -constraints [expr {($itype ne "fpcomplex")

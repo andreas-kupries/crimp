@@ -182,10 +182,9 @@ proc _test {{config {}}} {
 	_install $testpkg/lib $config
     }
 
-    # Then run the tests... Ensure that nothing on the cmdline is
-    # passed through and wrongly interpreted as configuration option.
+    # Then run the tests...
+    set log [open LOG w]
 
-    set ::argv {}
     cd [file dirname $::me]/test
 
     # options for tcltest. (l => line information for failed tests).
@@ -204,22 +203,26 @@ proc _test {{config {}}} {
     set cfailed  0
 
     set pipe [open "|[info nameofexecutable] all.tcl -verbose bpstenl"]
-    set log  [open LOG w]
 
     while {![eof $pipe]} {
 	if {[gets $pipe line] < 0} continue
 
 	puts $log $line ; # Full log.
 
-	# Flash report of activity...
-	puts -nonewline \r$line
-	flush stdout
+	if {[string match "++++*" $line] ||
+	    [string match "----*start" $line]} {
+	    # Flash report of activity...
+	    puts -nonewline "\r$line                                  "
+	    flush stdout
+	    continue
+	}
 
 	# Failed tests are reported immediately, in full.
 	if {[string match {*error: test failed*} $line]} {
 	    # shorten the shown path for the test file.
 	    set r [lassign [split $line :] path]
 	    set line [join [linsert $r 0 [file tail $path]] :]
+	    set line [string map {{error: test } {}} $line]
 	    puts \r$line\t\t
 	    continue
 	}
@@ -227,6 +230,8 @@ proc _test {{config {}}} {
 	# Collect the statistics (per .test file).
 	if {![string match *Total* $line]} continue
 	lassign $line file _ total _ passed _ skipped _ failed
+	if {$failed}  { set failed  " $failed"  } ; # indent, stand out.
+	if {$skipped} { set skipped " $skipped" } ; # indent, stand out.
 	M add row [list $file $total $passed $skipped $failed]
 
 	incr ctotal   $total

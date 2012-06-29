@@ -187,7 +187,62 @@ proc _test {{config {}}} {
 
     set ::argv {}
     cd [file dirname $::me]/test
-    uplevel \#0 {source all.tcl}
+
+    # options for tcltest. (l => line information for failed tests).
+    # Note: See tcllib's sak.tcl for a more mature and featureful system of
+    # running a testsuite and postprocessing results.
+
+    package require struct::matrix
+
+    struct::matrix M
+    M add columns 5
+    M add row {File Total Passed Skipped Failed}
+
+    set ctotal   0
+    set cpassed  0
+    set cskipped 0
+    set cfailed  0
+
+    set pipe [open "|[info nameofexecutable] all.tcl -verbose bpstenl"]
+    set log  [open LOG w]
+
+    while {![eof $pipe]} {
+	if {[gets $pipe line] < 0} continue
+
+	puts $log $line ; # Full log.
+
+	# Flash report of activity...
+	puts -nonewline \r$line
+	flush stdout
+
+	# Failed tests are reported immediately, in full.
+	if {[string match {*error: test failed*} $line]} {
+	    # shorten the shown path for the test file.
+	    set r [lassign [split $line :] path]
+	    set line [join [linsert $r 0 [file tail $path]] :]
+	    puts \r$line\t\t
+	    continue
+	}
+
+	# Collect the statistics (per .test file).
+	if {![string match *Total* $line]} continue
+	lassign $line file _ total _ passed _ skipped _ failed
+	M add row [list $file $total $passed $skipped $failed]
+
+	incr ctotal   $total
+	incr cpassed  $passed
+	incr cskipped $skipped
+	incr cfailed  $failed
+    }
+
+
+    M add row {File Total Passed Skipped Failed}
+    M add row [list {} $ctotal $cpassed $cskipped $cfailed]
+
+    puts "\n"
+    puts [M format 2string]
+    puts ""
+
     return
 }
 proc Hdrop {} { return "?destination?\n\tUninstall all packages.\n\tdestination = path of package directory, default \[info library\]." }

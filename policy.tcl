@@ -2835,12 +2835,16 @@ proc ::crimp::transform::reflect::line {a {b {}}} {
 
 proc ::crimp::transform::reflect::x {} {
     # Reflect along the x-axis.
-    return [affine -1 0 0 1 0 0]
+    return [affine \
+		-1 0 0 \
+		 0 1 0]
 }
 
 proc ::crimp::transform::reflect::y {} {
     # Reflect along the y-axis
-    return [affine 1 0 0 -1 0 0]
+    return [affine \
+		1  0 0 \
+		0 -1 0]
 }
 
 proc ::crimp::transform::rotate {theta {p {0 0}}} {

@@ -98,16 +98,17 @@ test crimp-proj-transform-2.16 {projective transforms, raw projective, invalid a
 } -returnCodes error -result {expected floating-point number but got "H"}
 
 test crimp-proj-transform-2.17 {projective transforms, raw projective} -body {
-    astclf 1 [crimp transform projective 0  2  3  4  5  6  7  8]
-    #                                    sx          sy          scale
-    #                                          tx       ty       translate
-    #                                    r  r     r  r           rotate
-    #                                       sx    sy             shear
-} -result [tconst {
-    0.0 2.0 3.0
-    4.0 5.0 6.0
-    7.0 8.0 1.0
-}]
+    decode_transform \
+        [crimp transform projective 0  2  3  4  5  6  7  8]
+    #                               sx          sy          scale
+    #                                     tx       ty       translate
+    #                               r  r     r  r           rotate
+    #                                  sx    sy             shear
+} -match 4digits -result {
+    0 2 3
+    4 5 6
+    7 8 1
+}
 
 # -------------------------------------------------------------------------
 
@@ -164,16 +165,17 @@ test crimp-proj-transform-3.12 {projective transforms, raw affine, invalid argum
 } -returnCodes error -result {expected floating-point number but got "F"}
 
 test crimp-proj-transform-3.13 {projective transforms, raw affine} -body {
-    astclf 1 [crimp transform affine 0  2  3  4  5  6]
-    #                                sx          sy          scale
-    #                                      tx       ty       translate
-    #                                r  r     r  r           rotate
-    #                                   sx    sy             shear
-} -result [tconst {
-    0.0 2.0 3.0
-    4.0 5.0 6.0
-    0.0 0.0 1.0
-}]
+    decode_transform \
+        [crimp transform affine 0  2  3  4  5  6]
+    #                           sx          sy          scale
+    #                                 tx       ty       translate
+    #                           r  r     r  r           rotate
+    #                              sx    sy             shear
+} -match 4digits -result {
+    0 2 3
+    4 5 6
+    0 0 1
+}
 
 # -------------------------------------------------------------------------
 
@@ -198,12 +200,13 @@ test crimp-proj-transform-4.4 {projective transforms, translate, invalid argumen
 } -returnCodes error -result {expected floating-point number but got "DY"}
 
 test crimp-proj-transform-4.5 {projective transforms, translate} -body {
-    astclf 1 [crimp transform translate 2 3]
-} -result [tconst {
-    1.0 0.0 2.0
-    0.0 1.0 3.0
-    0.0 0.0 1.0
-}]
+    decode_transform \
+        [crimp transform translate 2 3]
+} -match 4digits -result {
+    1 0 2
+    0 1 3
+    0 0 1
+}
 
 # -------------------------------------------------------------------------
 ## Randomized testing. Translation.
@@ -263,48 +266,50 @@ test crimp-proj-transform-5.7 {projective transforms, scale, invalid arguments} 
 } -returnCodes error -result {expected floating-point number but got "Y"}
 
 test crimp-proj-transform-5.6 {projective transforms, scale} -body {
-    astclf 1 [crimp transform scale 0 0]
+    decode_transform \
+        [crimp transform scale 0 0]
     # possible todo: scale to nothing. non-invertible ?! reject zero ?
-} -result [tconst {
-    0.0  0.0  0.0
-    0.0  0.0  0.0
-    0.0  0.0  1.0
-}]
+} -match 4digits -result {
+    0 0 0
+    0 0 0
+    0 0 1
+}
 
 test crimp-proj-transform-5.7 {projective transforms, scale} -body {
-    astclf 1 [crimp transform scale 1 1]
-} -result [tconst {
-    1.0  0.0  0.0
-    0.0  1.0  0.0
-    0.0  0.0  1.0
-}]
+    decode_transform \
+        [crimp transform scale 1 1]
+} -match 4digits -result {
+    1 0 0
+    0 1 0
+    0 0 1
+}
 
 test crimp-proj-transform-5.8 {projective transforms, scale} -body {
-    astclf 1 [crimp transform scale 5 -0.5]
-} -result [tconst {
+    decode_transform \
+        [crimp transform scale 5 -0.5]
+} -match 4digits -result {
     5.0  0.0  0.0
     0.0 -0.5  0.0
     0.0  0.0  1.0
-}]
+}
 
 test crimp-proj-transform-5.9 {projective transforms, scale} -body {
-    astclf 1 [crimp transform scale 0.5 -5]
-} -result [tconst {
-    0.5  0.0  0.0
-    0.0 -5.0  0.0
-    0.0  0.0  1.0
-}]
-
-
+    decode_transform \
+        [crimp transform scale 0.5 -5]
+} -match 4digits -result {
+    0.5  0.0  0
+    0.0 -5.0  0
+    0.0  0.0  1
+}
 
 test crimp-proj-transform-5.7 {projective transforms, scale about point != null} -body {
-    astclf 1 [crimp transform scale 2 2 {4 3}]
-} -result [tconst {
-    2.0  0.0 -4.0
-    0.0  2.0 -3.0
-    0.0  0.0  1.0
-}]
-
+    decode_transform \
+        [crimp transform scale 2 2 {4 3}]
+} -match 4digits -result {
+    2 0 -4
+    0 2 -3
+    0 0  1
+}
 
 # -------------------------------------------------------------------------
 ## Randomized testing. Scaling.
@@ -350,28 +355,31 @@ test crimp-proj-transform-6.4 {projective transforms, shear, invalid arguments} 
 } -returnCodes error -result {expected floating-point number but got "SY"}
 
 test crimp-proj-transform-6.5 {projective transforms, shear} -body {
-    astclf 1 [crimp transform shear 0 0]
-} -result [tconst {
-    1.0  0.0  0.0
-    0.0  1.0  0.0
-    0.0  0.0  1.0
-}]
+    decode_transform \
+        [crimp transform shear 0 0]
+} -match 4digits -result {
+    1 0 0
+    0 1 0
+    0 0 1
+}
 
 test crimp-proj-transform-6.6 {projective transforms, shear} -body {
-    astclf 1 [crimp transform shear 3 4]
-} -result [tconst {
-    1.0  4.0  0.0
-    3.0  1.0  0.0
-    0.0  0.0  1.0
-}]
+    decode_transform \
+        [crimp transform shear 3 4]
+} -match 4digits -result {
+    1 4 0
+    3 1 0
+    0 0 1
+}
 
 test crimp-proj-transform-6.6 {projective transforms, shear} -body {
-    astclf 1 [crimp transform shear -3 -4]
-} -result [tconst {
-     1.0 -4.0  0.0
-    -3.0  1.0  0.0
-     0.0  0.0  1.0
-}]
+    decode_transform \
+        [crimp transform shear -3 -4]
+} -match 4digits -result {
+     1 -4 0
+    -3  1 0
+     0  0 1
+}
 
 # -------------------------------------------------------------------------
 ## Randomized testing. Shearing
@@ -444,60 +452,67 @@ test crimp-proj-transform-8.8 {projective transforms, reflect @ line, invalid ar
 } -returnCodes error -result {Expected non-null vector, got (0, 0)}
 
 test crimp-proj-transform-8.9 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line {5 5}]
-} -result [tconst {
-    0.0000  1.0000  0.0000
-    1.0000  0.0000  0.0000
-    0.0000  0.0000  1.0000
-}]
+    decode_transform \
+        [crimp transform reflect line {5 5}]
+} -match 4digits -result {
+    0 1 0
+    1 0 0
+    0 0 1
+}
 
 # Note: 8.10 and 8.11 specify the same line, just using vector of
 # different magnitude along it. The transform must be same.
 
 test crimp-proj-transform-8.10 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line {10 10}]
-} -result [tconst {
-    0.0000  1.0000  0.0000
-    1.0000  0.0000  0.0000
-    0.0000  0.0000  1.0000
-}]
+    decode_transform \
+        [crimp transform reflect line {10 10}]
+} -match 4digits -result {
+    0 1 0
+    1 0 0
+    0 0 1
+}
 
 test crimp-proj-transform-8.11 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line {5 10}]
-} -result [tconst {
-    -0.6000  0.8000  0.0000
-     0.8000  0.6000  0.0000
-     0.0000  0.0000  1.0000
-}]
+    decode_transform \
+        [crimp transform reflect line {5 10}]
+} -match 4digits -result {
+    -0.6  0.8  0
+     0.8  0.6  0
+     0.0  0.0  1
+}
 
 test crimp-proj-transform-8.12 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line {10 5}]
-} -result [tconst {
+    decode_transform \
+        [crimp transform reflect line {10 5}]
+} -match 4digits -result {
     0.6000   0.8000  0.0000
     0.8000  -0.6000  0.0000
     0.0000   0.0000  1.0000
-}]
+}
 
 test crimp-proj-transform-8.13 {projective transforms, reflect @ line, invalid arguments} -body {
-    astclf 4 [crimp transform reflect line {5 5} {5 5}]
-    # Reflection at (0,0) is unspecified, we have no direction for the vector.
+    crimp transform reflect line {5 5} {5 5}
+    # Reflection at (0,0) is unspecified, we have no direction for the
+    # vector.
 } -returnCodes error -result {Expected non-null vector, got (0, 0)}
 
 test crimp-proj-transform-8.14 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line {0 0} {5 5}]
-} -result [tconst {
-    0.0000  1.0000  0.0000
-    1.0000  0.0000  0.0000
-    0.0000  0.0000  1.0000
-}]
+    decode_transform \
+        [crimp transform reflect line {0 0} {5 5}]
+} -match 4digits -result {
+    0 1 0
+    1 0 0
+    0 0 1
+}
 
 test crimp-proj-transform-8.15 {projective transforms, reflect @ line} -body {
-    astclf 4 [crimp transform reflect line {2 0} {5 5}]
-} -result [tconst {
+    decode_transform \
+        [crimp transform reflect line {2 0} {5 5}]
+} -match 4digits -result {
     -0.4706 0.8824  2.9412
      0.8824 0.4706 -1.7647
      0.0000 0.0000  1.0000
-}]
+}
 
 # -------------------------------------------------------------------------
 ## Randomized testing. Reflection along arbitrary line.
@@ -527,12 +542,13 @@ test crimp-proj-transform-9.0 {projective transforms, reflect @ x-axis, wrong\#a
 } -returnCodes error -result {wrong # args: should be "crimp transform reflect x"}
 
 test crimp-proj-transform-9.1 {projective transforms, reflect @ x-axis} -body {
-    astclf 1 [crimp transform reflect x]
-} -result [tconst {
-    -1.0  0.0  0.0
-     1.0  0.0  0.0
-     0.0  0.0  1.0
-}]
+    decode_transform \
+        [crimp transform reflect x]
+} -match 4digits -result {
+    -1 0 0
+     0 1 0
+     0 0 1
+}
 
 # -------------------------------------------------------------------------
 
@@ -541,12 +557,13 @@ test crimp-proj-transform-10.0 {projective transforms, reflect @ y-axis, wrong\#
 } -returnCodes error -result {wrong # args: should be "crimp transform reflect y"}
 
 test crimp-proj-transform-10.1 {projective transforms, reflect @ y-axis} -body {
-    astclf 1 [crimp transform reflect y]
-} -result [tconst {
-     1.0  0.0  0.0
-    -1.0  0.0  0.0
-     0.0  0.0  1.0
-}]
+    decode_transform \
+        [crimp transform reflect y]
+} -match 4digits -result {
+    1  0 0
+    0 -1 0
+    0  0 1
+}
 
 # -------------------------------------------------------------------------
 
@@ -575,20 +592,22 @@ test crimp-proj-transform-11.5 {projective transforms, rotate, invalid arguments
 } -returnCodes error -result {expected floating-point number but got "Y"}
 
 test crimp-proj-transform-11.6 {projective transforms, rotate} -body {
-    astclf 4 [crimp transform rotate 2 {-50 -50}]
-} -result [tconst {
+    decode_transform \
+        [crimp transform rotate 2 {-50 -50}]
+} -match 4digits -result {
      0.9994  0.0349  1.7145
     -0.0349  0.9994 -1.7754
      0.0000  0.0000  1.0000
-}]
+}
 
 test crimp-proj-transform-11.7 {projective transforms, rotate, origin} -body {
-    astclf 4 [crimp transform rotate 1]
-} -result [tconst {
+    decode_transform \
+        [crimp transform rotate 1]
+} -match 4digits -result {
      0.9998  0.0175  0.0000
     -0.0175  0.9998  0.0000
      0.0000  0.0000  1.0000
-}]
+}
 
 # -------------------------------------------------------------------------
 ## Randomized testing. Rotation around arbitrary point.
@@ -845,7 +864,7 @@ test crimp-proj-transform-12.40 {projective transforms, quadrilateral, inverse y
              [crimp transform quadrilateral \
                   {{0 0} {40 0} {40 40} {0 40}} \
                   {{0 0} {15 5} {30 30} {5 15}}]]
-    # inverse mappings yield back identity. note the -0 :(
+    # inverse mappings yield back identity.
 } -match 4digits -result {
     1 0 0
     0 1 0
@@ -857,8 +876,9 @@ test crimp-proj-transform-12.40 {projective transforms, quadrilateral, inverse y
 ## Calculate various simple affine transforms. See also 12.29+
 
 test crimp-proj-transform-12.50 {projective transforms, quadrilateral core, identity} -body {
-    decode_transform [crimp::transform::Q2UNIT \
-                          {{0 0} {1 0} {1 1} {0 1}}]
+    decode_transform \
+        [crimp::transform::Q2UNIT \
+             {{0 0} {1 0} {1 1} {0 1}}]
 } -match 4digits -result {
     1 0 0
     0 1 0
@@ -866,8 +886,9 @@ test crimp-proj-transform-12.50 {projective transforms, quadrilateral core, iden
 }
 
 test crimp-proj-transform-12.51 {projective transforms, quadrilateral core, translation x} -body {
-    decode_transform [crimp::transform::Q2UNIT \
-                          {{5 0} {6 0} {6 1} {5 1}}]
+    decode_transform \
+        [crimp::transform::Q2UNIT \
+             {{5 0} {6 0} {6 1} {5 1}}]
 } -match 4digits -result {
     1 0 5
     0 1 0
@@ -875,8 +896,9 @@ test crimp-proj-transform-12.51 {projective transforms, quadrilateral core, tran
 }
 
 test crimp-proj-transform-12.52 {projective transforms, quadrilateral core, translation y} -body {
-    decode_transform [crimp::transform::Q2UNIT \
-                          {{0 6} {1 6} {1 7} {0 7}}]
+    decode_transform \
+        [crimp::transform::Q2UNIT \
+             {{0 6} {1 6} {1 7} {0 7}}]
 } -match 4digits -result {
     1 0 0
     0 1 6
@@ -884,8 +906,9 @@ test crimp-proj-transform-12.52 {projective transforms, quadrilateral core, tran
 }
 
 test crimp-proj-transform-12.53 {projective transforms, quadrilateral core, scale x} -body {
-    decode_transform [crimp::transform::Q2UNIT \
-                          {{0 0} {4 0} {4 1} {0 1}}]
+    decode_transform \
+        [crimp::transform::Q2UNIT \
+             {{0 0} {4 0} {4 1} {0 1}}]
 } -match 4digits -result {
     4 0 0
     0 1 0
@@ -893,8 +916,9 @@ test crimp-proj-transform-12.53 {projective transforms, quadrilateral core, scal
 }
 
 test crimp-proj-transform-12.54 {projective transforms, quadrilateral core, scale y} -body {
-    decode_transform [crimp::transform::Q2UNIT \
-                          {{0 0} {1 0} {1 5} {0 5}}]
+    decode_transform \
+        [crimp::transform::Q2UNIT \
+             {{0 0} {1 0} {1 5} {0 5}}]
 } -match 4digits -result {
     1 0 0
     0 5 0
@@ -902,8 +926,9 @@ test crimp-proj-transform-12.54 {projective transforms, quadrilateral core, scal
 }
 
 test crimp-proj-transform-12.55 {projective transforms, quadrilateral core, shear x} -body {
-    decode_transform [crimp::transform::Q2UNIT \
-                          {{0 0} {1 0} {2 1} {1 1}}]
+    decode_transform \
+        [crimp::transform::Q2UNIT \
+             {{0 0} {1 0} {2 1} {1 1}}]
 } -match 4digits -result {
     1 1 0
     0 1 0
@@ -911,8 +936,9 @@ test crimp-proj-transform-12.55 {projective transforms, quadrilateral core, shea
 }
 
 test crimp-proj-transform-12.56 {projective transforms, quadrilateral core, shear y} -body {
-    decode_transform [crimp::transform::Q2UNIT \
-                          {{0 0} {1 1} {1 2} {0 1}}]
+    decode_transform \
+        [crimp::transform::Q2UNIT \
+             {{0 0} {1 1} {1 2} {0 1}}]
 } -match 4digits -result {
     1 0 0
     1 1 0
@@ -965,65 +991,70 @@ test crimp-proj-transform-13.1 {projective transforms, chain, invalid arguments}
     crimp transform chain T
 } -returnCodes error -result {expected projective transform but got "T"}
 
-
 test crimp-proj-transform-13.2 {projective transforms, chain, single} -body {
-    astclf 4 [crimp transform chain [crimp transform projective 2 3 4 5 6 7 8 9]]
-} -result [tconst {
-    2.0000  3.0000  4.0000
-    5.0000  6.0000  7.0000
-    8.0000  9.0000  1.0000
-}]
+    decode_transform \
+        [crimp transform chain \
+             [crimp transform projective 2 3 4 5 6 7 8 9]]
+} -match 4digits -result {
+    2 3 4
+    5 6 7
+    8 9 1
+}
 
 test crimp-proj-transform-13.3 {projective transforms, chain, single} -body {
-    astclf 4 [crimp transform chain [crimp transform rotate 2]]
-} -result [tconst {
-     0.9994  0.0349  0.0000
-    -0.0349  0.9994  0.0000
-     0.0000  0.0000  1.0000
-}]
+    decode_transform \
+        [crimp transform chain \
+             [crimp transform rotate 2]]
+} -match 4digits -result {
+     0.9994  0.0349  0
+    -0.0349  0.9994  0
+     0.0000  0.0000  1
+}
 
 test crimp-proj-transform-13.4 {projective transforms, chain, translations} -body {
-    astclf 4 [crimp transform chain \
+    decode_transform \
+        [crimp transform chain \
                   [crimp transform translate 10 10] \
                   [crimp transform translate 50 50]]
-} -result [tconst {
-    1.0000  0.0000 60.0000
-    0.0000  1.0000 60.0000
-    0.0000  0.0000  1.0000
-}]
+} -match 4digits -result {
+    1 0 60
+    0 1 60
+    0 0  1
+}
 
 test crimp-proj-transform-13.5 {projective transforms, chain, translate+rotate} -body {
-    astclf 4 [crimp transform chain \
-                  [crimp transform rotate 2] \
-                  [crimp transform translate 50 50]]
-} -result [tconst {
+    decode_transform \
+        [crimp transform chain \
+             [crimp transform rotate 2] \
+             [crimp transform translate 50 50]]
+} -match 4digits -result {
      0.9994 0.0349 50.0000
     -0.0349 0.9994 50.0000
      0.0000 0.0000 1.0000
-
-}]
+}
 
 test crimp-proj-transform-13.6 {projective transforms, chain, rotate+translate} -body {
-    astclf 4 [crimp transform chain \
-                  [crimp transform translate 50 50] \
-                  [crimp transform rotate 2]]
-} -result [tconst {
+    decode_transform \
+        [crimp transform chain \
+             [crimp transform translate 50 50] \
+             [crimp transform rotate 2]]
+} -match 4digits -result {
      0.9994 0.0349 51.7145
     -0.0349 0.9994 48.2246
      0.0000 0.0000  1.0000
-
-}]
+}
 
 test crimp-proj-transform-13.7 {projective transforms, chain, translated rotation} -body {
-    astclf 4 [crimp transform chain \
-                  [crimp transform translate -50 -50] \
-                  [crimp transform rotate 2] \
-                  [crimp transform translate 50 50]]
-} -result [tconst {
+    decode_transform \
+        [crimp transform chain \
+             [crimp transform translate -50 -50] \
+             [crimp transform rotate 2] \
+             [crimp transform translate 50 50]]
+} -match 4digits -result {
      0.9994  0.0349 -1.7145
     -0.0349  0.9994  1.7754
      0.0000  0.0000  1.0000
-}]
+}
 
 # -------------------------------------------------------------------------
 
@@ -1040,23 +1071,25 @@ test crimp-proj-transform-14.2 {projective transforms, invert, invalid arguments
 } -returnCodes error -result {expected projective transform but got "A"}
 
 test crimp-proj-transform-14.3 {projective transforms, invert, identity} -body {
-    astclf 4 [crimp transform invert [crimp transform identity]]
-    # note the -0 in the result :(
-} -result [tconst {
-    1.0000 -0.0000  0.0000
-   -0.0000  1.0000 -0.0000
-    0.0000 -0.0000  1.0000
-}]
+    decode_transform \
+        [crimp transform invert \
+             [crimp transform identity]]
+} -match 4digits -result {
+    1 0 0
+    0 1 0
+    0 0 1
+}
 
 test crimp-proj-transform-14.4 {projective transforms, invert, rotate} -body {
-    astclf 4 [crimp transform invert [crimp transform rotate -2]]
+    decode_transform \
+        [crimp transform invert \
+             [crimp transform rotate -2]]
     # inverse of 'rotate -2' is 'rotate 2'.
-    # but note the -0 elements :(
-} -result [tconst {
-     0.9994  0.0349 -0.0000
-    -0.0349  0.9994 -0.0000
-     0.0000 -0.0000  1.0000
-}]
+} -match 4digits -result {
+     0.9994 0.0349 0
+    -0.0349 0.9994 0
+     0.0000 0.0000 1
+}
 
 # -------------------------------------------------------------------------
 
@@ -1064,13 +1097,14 @@ test crimp-proj-transform-15.0 {projective transforms, identity, wrong\#args, to
     crimp transform identity toomuch
 } -returnCodes error -result {wrong # args: should be "crimp transform identity"}
 
-test crimp-proj-transform-15.2 {projective transforms, identity} -body {
-    astclf 4 [crimp transform identity]
-} -result [tconst {
-    1.0000  0.0000  0.0000
-    0.0000  1.0000  0.0000
-    0.0000  0.0000  1.0000
-}]
+test crimp-proj-transform-15.1 {projective transforms, identity} -body {
+    decode_transform \
+        [crimp transform identity]
+} -match 4digits -result {
+    1 0 0
+    0 1 0
+    0 0 1
+}
 
 # No randomized testing of this one, trivial.
 

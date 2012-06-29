@@ -291,6 +291,8 @@ proc iota {n} {
 # Use in the label of testcases to show their location when the label
 # is printed. This is usually done because the test failed.
 proc origin {} {
+    return
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ disabled, -verbose line does it.
     if {[catch {
 	array set _ [info frame -1]
     }]} return

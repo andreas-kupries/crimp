@@ -56,7 +56,7 @@ crimp_geo_warp_box (crimp_geometry* input, crimp_image* forward, crimp_geometry*
     crimp_geo_warp_point (forward, &xru, &yru);
 
     xld = - iorigx;
-    yld = - iorigy + input->h;
+    yld = - iorigy + input->h - 1;
 
     crimp_geo_warp_point (forward, &xld, &yld);
 

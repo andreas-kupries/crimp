@@ -14,6 +14,7 @@ testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 
 # -------------------------------------------------------------------------
 ## Geometry manipulation. Warp basics (points, geometries).
+## TODO: shear transform
 # -------------------------------------------------------------------------
 
 test crimp-warp-base-0.0 {image warp, wrong\#args} -body {
@@ -49,83 +50,86 @@ test crimp-warp-point-1.4 {image warp point, invalid point} -body {
 # -------------------------------------------------------------------------
 ## Simple point transforms. See ptransform.test also.
 
-set n 0
-foreach {p pi pm pr ps pt pro pmo pq} {
-    { 0  0} { 0  0} { 6.4  3.2} {-0.8284  2     } { 0  0} { 2  3} { 0       0     } { 0  0} {0 0}
-    {10  0} {10  0} { 0.4 -4.8} { 6.2426 -5.0711} {20  0} {12  3} { 7.0711 -7.0711} { 0 10} {-3.636363 1.818181}
-    { 0 10} { 0 10} {-1.6  9.2} { 6.2426  9.0711} { 0 30} { 2 13} { 7.0711  7.0711} {10  0} {20 -40}
-    {10 10} {10 10} {-7.6  1.2} {13.3137  2     } {20 30} {12 13} {14.1421  0     } {10 10} {-1.395348 -1.395348}
-} {
-    # input ident   reflect     rotate/(2,2)      scale   transl   rotate/origin    reflect/orig quad
+apply {{} {
+    set n 0
 
-    test crimp-warp-point-2.0.$n "image warp point, identity" -setup {
-        set t [crimp transform identity]
-    } -body {
-       lindex [crimp warp point $t $p] 0
-    } -cleanup {
-        unset t
-    } -match 4digits -result $pi
+    foreach {p pi pm pr ps pt pro pmo pq} {
+        { 0  0} { 0  0} { 6.4  3.2} {-0.8284  2     } { 0  0} { 2  3} { 0       0     } { 0  0} {0 0}
+        {10  0} {10  0} { 0.4 -4.8} { 6.2426 -5.0711} {20  0} {12  3} { 7.0711 -7.0711} { 0 10} {-3.636363 1.818181}
+        { 0 10} { 0 10} {-1.6  9.2} { 6.2426  9.0711} { 0 30} { 2 13} { 7.0711  7.0711} {10  0} {20 -40}
+        {10 10} {10 10} {-7.6  1.2} {13.3137  2     } {20 30} {12 13} {14.1421  0     } {10 10} {-1.395348 -1.395348}
+    } {
+        # input ident   reflect     rotate/(2,2)      scale   transl   rotate/origin    reflect/orig quad
 
-    test crimp-warp-point-2.1.$n "image warp point, reflection" -setup {
-        set t [crimp transform reflect line {2 4} {4 0}]
-    } -body {
-        lindex [crimp warp point $t $p] 0
-    } -cleanup {
-        unset t
-    } -match 4digits -result $pm
+        test crimp-warp-point-2.0.$n "image warp point, identity" -setup {
+            set t [crimp transform identity]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pi
 
-    test crimp-warp-point-2.2.$n "image warp point, rotation" -setup {
-        set t [crimp transform rotate 45 {2 2}]
-    } -body {
-        lindex [crimp warp point $t $p] 0
-    } -cleanup {
-        unset t
-    } -match 4digits -result $pr
+        test crimp-warp-point-2.1.$n "image warp point, reflection" -setup {
+            set t [crimp transform reflect line {2 4} {4 0}]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pm
 
-    test crimp-warp-point-2.3.$n "image warp point, scale" -setup {
-        set t [crimp transform scale 2 3]
-    } -body {
-        lindex [crimp warp point $t $p] 0
-    } -cleanup {
-        unset t
-    } -match 4digits -result $ps
+        test crimp-warp-point-2.2.$n "image warp point, rotation" -setup {
+            set t [crimp transform rotate 45 {2 2}]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pr
 
-    test crimp-warp-point-2.4.$n "image warp point, translate" -setup {
-        set t [crimp transform translate 2 3]
-    } -body {
-        lindex [crimp warp point $t $p] 0
-    } -cleanup {
-        unset t
-    } -match 4digits -result $pt
+        test crimp-warp-point-2.3.$n "image warp point, scale" -setup {
+            set t [crimp transform scale 2 3]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $ps
 
-    test crimp-warp-point-2.5.$n "image warp point, rotation origin" -setup {
-        set t [crimp transform rotate 45]
-    } -body {
-        lindex [crimp warp point $t $p] 0
-    } -cleanup {
-        unset t
-    } -match 4digits -result $pro
+        test crimp-warp-point-2.4.$n "image warp point, translate" -setup {
+            set t [crimp transform translate 2 3]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pt
 
-    test crimp-warp-point-2.6.$n "image warp point, reflection origin" -setup {
-        set t [crimp transform reflect line {10 10}]
-    } -body {
-        lindex [crimp warp point $t $p] 0
-    } -cleanup {
-        unset t
-    } -match 4digits -result $pmo
+        test crimp-warp-point-2.5.$n "image warp point, rotation origin" -setup {
+            set t [crimp transform rotate 45]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pro
 
-    test crimp-warp-point-2.7.$n "image warp point, quadrilateral" -setup {
-        set t [crimp transform quadrilateral \
-                   {{0 0} {0  1} {1 1} {1  0}} \
-                   {{0 0} {-1 2} {3 3} {4 -2}}]
-    } -body {
-        lindex [crimp warp point $t $p] 0
-    } -cleanup {
-        unset t
-    } -match 4digits -result $pq
+        test crimp-warp-point-2.6.$n "image warp point, reflection origin" -setup {
+            set t [crimp transform reflect line {10 10}]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pmo
 
-    incr n
-}
+        test crimp-warp-point-2.7.$n "image warp point, quadrilateral" -setup {
+            set t [crimp transform quadrilateral \
+                       {{0 0} {0  1} {1 1} {1  0}} \
+                       {{0 0} {-1 2} {3 3} {4 -2}}]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pq
+
+        incr n
+    }
+}}
 
 # -------------------------------------------------------------------------
 
@@ -164,6 +168,35 @@ test crimp-warp-box-3.7 {image warp box, invalid box} -body {
 test crimp-warp-box-3.8 {image warp box, invalid box} -body {
     crimp warp box [crimp transform reflect line {2 4} {4 0}] {1 1 5 H}
 } -returnCodes error -result {expected integer but got "H"}
+
+# -------------------------------------------------------------------------
+## Geometry transforms. Result is a new geometry minimally enclosing
+## the warped geometry.
+
+apply {{} {
+    set geometry { 0   0 11 11}
+
+    foreach {n result transform} {
+        0 { 0   0 11 11} {identity}
+        1 {-8  -5 16 16} {reflect line {2 4} {4 0}}
+        2 {-1  -6 16 17} {rotate 45 {2 2}}
+        3 { 0   0 21 31} {scale 2 3}
+        4 { 2   3 11 11} {translate 2 3}
+        5 { 0  -8 16 17} {rotate 45}
+        6 { 0   0 11 11} {reflect line {10 10}}
+        7 {-4 -40 25 43} {quadrilateral
+            {{0 0} {0  1} {1 1} {1  0}}
+            {{0 0} {-1 2} {3 3} {4 -2}}}
+    } {
+        test crimp-warp-box-4.$n "image warp box, $transform" -setup {
+            set t [crimp transform {*}$transform]
+        } -body {
+            crimp warp box $t $geometry
+        } -cleanup {
+            unset t
+        } -match 4digits -result $result
+    }
+}}
 
 # -------------------------------------------------------------------------
 testsuiteCleanup

@@ -89,6 +89,9 @@ crimp_geo_warp_init (crimp_image* input, crimp_image* forward, int* origx, int* 
 
     crimp_geo_warp_box (&input->geo, forward, &warped);
 
+    *origx = warped.x;
+    *origy = warped.y;
+
     result = crimp_new_atg (input->itype, warped);
     return result;
 }

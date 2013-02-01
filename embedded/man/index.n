@@ -1195,6 +1195,12 @@ region cut
 \fBfiles/crimp.n\fR
 crimp
 .RE
+region of interest
+.RS
+.TP
+\fBfiles/crimp.n\fR
+crimp
+.RE
 remapping
 .RS
 .TP

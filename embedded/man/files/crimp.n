@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev-infinite-plane/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -274,7 +274,7 @@ package require \fBcrimp::core  ?0.2?\fR
 .sp
 \fB::crimp\fR \fBcrop\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
 .sp
-\fB::crimp\fR \fBcut\fR \fIimage\fR \fIx\fR \fIy\fR \fIw\fR \fIh\fR
+\fB::crimp\fR \fBcut\fR \fIimage\fR \fIdx\fR \fIdy\fR \fIw\fR \fIh\fR
 .sp
 \fB::crimp\fR \fBdecimate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
 .sp
@@ -914,8 +914,12 @@ This method returns a blank image of the given image type and
 dimensions.  The \fIvalue\fRs after the dimensions are the pixel
 values to fill the pixels in the image's channels with, per its type.
 .sp
-This method currently support only the types \fBrgb\fR,
-\fBrgba\fR,\fBfpcomplex\fR, and \fBgrey8\fR.
+The method supports the image types \fBrgb\fR, \fBrgba\fR,
+\fBhsv\fR, \fBfloat\fR, \fBfpcomplex\fR, \fBgrey8\fR,
+\fBgrey16\fR, and \fBgrey32\fR.
+.sp
+For the multi-channel types the method automatically extends the
+pixel values with \fB0\fR if not enough values were provided.
 .TP
 \fB::crimp\fR \fBcrop\fR \fIimage\fR \fIww\fR \fIhn\fR \fIwe\fR \fIhs\fR
 This method is the counterpart to the \fBexpand\fR family of
@@ -948,15 +952,20 @@ V  |      |           |      |
 .PE
 .sp
 .TP
-\fB::crimp\fR \fBcut\fR \fIimage\fR \fIx\fR \fIy\fR \fIw\fR \fIh\fR
-This method cuts the rectangular region specified throught its \fIx\fR/\fIy\fR
+\fB::crimp\fR \fBcut\fR \fIimage\fR \fIdx\fR \fIdy\fR \fIw\fR \fIh\fR
+This method takes the rectangular region specified through its \fIx\fR/\fIy\fR
 position relative to the upper-left corner of the input \fIimage\fR and its
 dimensions, and returns it as its own image.
 .sp
-Locations and dimensions reaching outside of the input image
-are restricted to the interior of the input image. This means that
-both location and dimensions of the result may differ from what was
-specified by the arguments.
+Note that while both \fIw\fR and \fIh\fR are allowed to be \fB0\fR,
+resulting in the return of an empty image, they are not allowed to be negative.
+.sp
+Further note that it is allowed to specify regions which address pixels
+outside of the input image. In the result these pixels will be set to \fB0\fR
+(meaning black, opaque, etc. as per the semantics of the image type).
+.sp
+The location of the result is the location of the input, suuitably
+modified by \fIdx\fR and \fIdy\fR.
 .TP
 \fB::crimp\fR \fBdecimate xy\fR \fIimage\fR \fIfactor\fR \fIkernel\fR
 .TP
@@ -2694,7 +2703,7 @@ Adrien Bousseau, "Mathematical Morphology",
 PDF at \fIhttp://artis.imag.fr/Members/Adrien.Bousseau/morphology/\fR
 .PP
 .SH KEYWORDS
-affine, affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, canny, charcoal, clockwise, closing, composite blending, composition, computer vision, const expansion, convolution filter, counter-clockwise, cropping, cut region, cyclic wrap expansion, dilation, document processing, edge shrinking, edge-detection, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, geometry, gradient, histogram, hypot, image, integral image, internal gradient, inverse fourier transform, inversion, log-compression, log-polar transformation, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, perspective, photo, pixel mapping, prewitt, projective, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, remapping, replicate edge expansion, rescale, resize, roberts, rotate, rotation, sabattier effect, scale, scharr, sharpen, shrinking, sobel, solarization, sqrt-compression, standard deviation filter, statistics, stddev, summed area table, threshold, thresholding, toggle map, tophat, toroidal wrap expansion, transform, transform, fast fourier, transform, fourier, transform, inverse fourier, transformation, log-polar, translate, variance, vector, vector-field, warp, white tophat, windowing, wrap expansion
+affine, affine transform, alpha, alpha blending, alpha channel, average, binarization, black tophat, blending, canny, charcoal, clockwise, closing, composite blending, composition, computer vision, const expansion, convolution filter, counter-clockwise, cropping, cut region, cyclic wrap expansion, dilation, document processing, edge shrinking, edge-detection, effect, emboss, erosion, expansion, extend expansion, external gradient, extract rectangle, extract region, fast fourier transform, fft, filter, flip, fourier transform, gamma correction, geometry, gradient, histogram, hypot, image, integral image, internal gradient, inverse fourier transform, inversion, log-compression, log-polar transformation, matrix, max, max-filter, mean, mean filter, median, median-filter, middle, min, min-filter, mirror expansion, montage, morphology, opening, otsu threshold, perspective, photo, pixel mapping, prewitt, projective, projective transform, rank-order filter, rectangle cut, rectangle extraction, region cut, region of interest, remapping, replicate edge expansion, rescale, resize, roberts, rotate, rotation, sabattier effect, scale, scharr, sharpen, shrinking, sobel, solarization, sqrt-compression, standard deviation filter, statistics, stddev, summed area table, threshold, thresholding, toggle map, tophat, toroidal wrap expansion, transform, transform, fast fourier, transform, fourier, transform, inverse fourier, transformation, log-polar, translate, variance, vector, vector-field, warp, white tophat, windowing, wrap expansion
 .SH COPYRIGHT
 .nf
 Copyright (c) 2011 Andreas Kupries

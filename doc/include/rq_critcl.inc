@@ -12,7 +12,7 @@ processes.
 
 [para] The github repository providing releases of version 3 and
 higher, and the associated sources, can be found at
-[uri http://jcw.github.com/critcl].
+[uri http://andreas-kupries.github.com/critcl].
 
 [para] Any branch of the repository can be used (if not using the
 prebuild starkit or starpack), although the use of the stable branch

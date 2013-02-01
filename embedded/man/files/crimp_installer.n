@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev-trunk/embedded/man/files/crimp_installer.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_installer.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -356,7 +356,7 @@ Crimp requires version 3 or higher.
 .PP
 The github repository providing releases of version 3 and
 higher, and the associated sources, can be found at
-\fIhttp://jcw.github.com/critcl\fR.
+\fIhttp://andreas-kupries.github.com/critcl\fR.
 .PP
 Any branch of the repository can be used (if not using the
 prebuild starkit or starpack), although the use of the stable branch

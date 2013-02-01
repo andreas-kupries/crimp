@@ -63,7 +63,7 @@ ActiveTcl and TclDevKit).
 
 [subsection CriTcl]
 
-The tool [uri http://jcw.github.com/critcl critcl] is required to
+The tool [uri http://andreas-kupries.github.com/critcl critcl] is required to
 build CRIMP, either as an application found in the PATH, or as a Tcl
 package available to the [cmd tclsh] used to run CRIMP's
 [sectref {Build & Installation}] process.
@@ -101,7 +101,7 @@ the name of [cmd tclkit] for the starkit to work.
 [para]
 
 When not using a starkit, you have to get and install the sources per
-the instructions at the site, i.e. [uri http://jcw.github.com/critcl].
+the instructions at the site, i.e. [uri http://andreas-kupries.github.com/critcl].
 
 
 [section {Build & Installation}]

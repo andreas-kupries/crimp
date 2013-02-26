@@ -954,13 +954,13 @@ The demo framework has a number of hook points in the GUI for use
 by demos. These are:
 .RS
 .IP \(bu
-.left
+\.left
 .IP \(bu
-.right
+\.right
 .IP \(bu
-.top
+\.top
 .IP \(bu
-.bottom
+\.bottom
 .RE
 .IP
 These widgets are ttk::frames placed to the left, right, top and

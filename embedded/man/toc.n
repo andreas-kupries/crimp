@@ -242,20 +242,23 @@ Database Class:	\\fB\\$3\\fR
 doc
 .RS
 .TP
+\fBcrimp\fR
+\fIfiles/crimp.n\fR: CRIMP - Manipulation and Processing
+.TP
 \fBcrimp_bmp\fR
 \fIfiles/crimp_bmp.n\fR: CRIMP - BMP handling, Windows Bitmap
 .TP
 \fBcrimp_core\fR
 \fIfiles/crimp_core.n\fR: CRIMP - Foundation
 .TP
-\fBcrimp_sources\fR
-\fIfiles/crimp_sources.n\fR: CRIMP - How To Get The Sources
+\fBcrimp_devguide\fR
+\fIfiles/crimp_devguide.n\fR: CRIMP - The Developer's Guide
+.TP
+\fBcrimp_install_guide\fR
+\fIfiles/crimp_installer.n\fR: CRIMP - The Installer's Guide
 .TP
 \fBcrimp_introduction\fR
 \fIfiles/crimp_intro.n\fR: CRIMP - Introduction to CRIMP
-.TP
-\fBcrimp\fR
-\fIfiles/crimp.n\fR: CRIMP - Manipulation and Processing
 .TP
 \fBcrimp_pcx\fR
 \fIfiles/crimp_pcx.n\fR: CRIMP - PCX handling
@@ -272,14 +275,11 @@ doc
 \fBcrimp_sgi\fR
 \fIfiles/crimp_sgi.n\fR: CRIMP - SGI RASTER handling
 .TP
+\fBcrimp_sources\fR
+\fIfiles/crimp_sources.n\fR: CRIMP - How To Get The Sources
+.TP
 \fBcrimp_sun\fR
 \fIfiles/crimp_sun.n\fR: CRIMP - SUN RASTER handling
-.TP
-\fBcrimp_devguide\fR
-\fIfiles/crimp_devguide.n\fR: CRIMP - The Developer's Guide
-.TP
-\fBcrimp_install_guide\fR
-\fIfiles/crimp_installer.n\fR: CRIMP - The Installer's Guide
 .TP
 \fBcrimp_tk\fR
 \fIfiles/crimp_tk.n\fR: CRIMP - Tk Photo Handling

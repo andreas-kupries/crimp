@@ -243,43 +243,43 @@ doc
 .RS
 .TP
 \fBcrimp\fR
-\fIfiles/crimp.n\fR: CRIMP - Manipulation and Processing
+\fIfiles/crimp\&.n\fR: CRIMP - Manipulation and Processing
 .TP
 \fBcrimp_bmp\fR
-\fIfiles/crimp_bmp.n\fR: CRIMP - BMP handling, Windows Bitmap
+\fIfiles/crimp_bmp\&.n\fR: CRIMP - BMP handling, Windows Bitmap
 .TP
 \fBcrimp_core\fR
-\fIfiles/crimp_core.n\fR: CRIMP - Foundation
+\fIfiles/crimp_core\&.n\fR: CRIMP - Foundation
 .TP
 \fBcrimp_devguide\fR
-\fIfiles/crimp_devguide.n\fR: CRIMP - The Developer's Guide
+\fIfiles/crimp_devguide\&.n\fR: CRIMP - The Developer's Guide
 .TP
 \fBcrimp_install_guide\fR
-\fIfiles/crimp_installer.n\fR: CRIMP - The Installer's Guide
+\fIfiles/crimp_installer\&.n\fR: CRIMP - The Installer's Guide
 .TP
 \fBcrimp_introduction\fR
-\fIfiles/crimp_intro.n\fR: CRIMP - Introduction to CRIMP
+\fIfiles/crimp_intro\&.n\fR: CRIMP - Introduction to CRIMP
 .TP
 \fBcrimp_pcx\fR
-\fIfiles/crimp_pcx.n\fR: CRIMP - PCX handling
+\fIfiles/crimp_pcx\&.n\fR: CRIMP - PCX handling
 .TP
 \fBcrimp_pfm\fR
-\fIfiles/crimp_pfm.n\fR: CRIMP - PFM handling, NetPBM
+\fIfiles/crimp_pfm\&.n\fR: CRIMP - PFM handling, NetPBM
 .TP
 \fBcrimp_pgm\fR
-\fIfiles/crimp_pgm.n\fR: CRIMP - PGM handling, NetPBM
+\fIfiles/crimp_pgm\&.n\fR: CRIMP - PGM handling, NetPBM
 .TP
 \fBcrimp_ppm\fR
-\fIfiles/crimp_ppm.n\fR: CRIMP - PPM handling, NetPBM
+\fIfiles/crimp_ppm\&.n\fR: CRIMP - PPM handling, NetPBM
 .TP
 \fBcrimp_sgi\fR
-\fIfiles/crimp_sgi.n\fR: CRIMP - SGI RASTER handling
+\fIfiles/crimp_sgi\&.n\fR: CRIMP - SGI RASTER handling
 .TP
 \fBcrimp_sources\fR
-\fIfiles/crimp_sources.n\fR: CRIMP - How To Get The Sources
+\fIfiles/crimp_sources\&.n\fR: CRIMP - How To Get The Sources
 .TP
 \fBcrimp_sun\fR
-\fIfiles/crimp_sun.n\fR: CRIMP - SUN RASTER handling
+\fIfiles/crimp_sun\&.n\fR: CRIMP - SUN RASTER handling
 .TP
 \fBcrimp_tk\fR
-\fIfiles/crimp_tk.n\fR: CRIMP - Tk Photo Handling
+\fIfiles/crimp_tk\&.n\fR: CRIMP - Tk Photo Handling

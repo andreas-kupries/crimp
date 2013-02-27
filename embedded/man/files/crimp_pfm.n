@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_pfm.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_pfm\&.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -239,14 +239,14 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_pfm" n 0.2 doc "C Raster Image Manipulation Package"
+.TH "crimp_pfm" n 0\&.2 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
 crimp_pfm \- CRIMP - PFM handling, NetPBM
 .SH SYNOPSIS
-package require \fBTcl  8.5\fR
+package require \fBTcl  8\&.5\fR
 .sp
-package require \fBcrimp::pfm  ?0.2?\fR
+package require \fBcrimp::pfm  ?0\&.2?\fR
 .sp
 \fB::crimp\fR \fBread pfm\fR \fIstring\fR
 .sp
@@ -259,20 +259,20 @@ package require \fBcrimp::pfm  ?0.2?\fR
 .BE
 .SH DESCRIPTION
 This package provides commands for the conversion of CRIMP images to
-Portable Float Maps (PFM) and vice versa.
+Portable Float Maps (PFM) and vice versa\&.
 .PP
 \fINote\fR that in contrast to the PPM and PGM formats this is
-\fInot\fR an official format of the NetPBM suite.
+\fInot\fR an official format of the NetPBM suite\&.
 .PP
 PFM was derived from PGM by simply replacing the integer with
-floating-point values, in the pixel matrix.
+floating-point values, in the pixel matrix\&.
 .PP
 For a basic introduction of the whole CRIMP eco-system please
-read the \fICRIMP - Introduction to CRIMP\fR (sic!).
-The basic concepts used here, like images, image types, etc. are
-described in the reference manpage for the \fICRIMP - Foundation\fR.
+read the \fICRIMP - Introduction to CRIMP\fR (sic!)\&.
+The basic concepts used here, like images, image types, etc\&. are
+described in the reference manpage for the \fICRIMP - Foundation\fR\&.
 We will not repeat them here, but assume that the reader knows them
-already.
+already\&.
 .PP
 In the overall architecture this package resides in the middle
 layer of the system's architecture, between core and applications, as
@@ -282,13 +282,13 @@ IMAGE: arch_pam
 .PP
 .PP
 The commands it provides all fall into the I/O category of the
-general design.
+general design\&.
 .SH "TCL API"
 .TP
 \fB::crimp\fR \fBread pfm\fR \fIstring\fR
-This method extends the \fB::crimp read\fR ensemble. It takes the
+This method extends the \fB::crimp read\fR ensemble\&. It takes the
 (possibly binary) string holding an image in the PFM format and
-returns an image of type \fBrgb\fR containing it.
+returns an image of type \fBrgb\fR containing it\&.
 .TP
 \fB::crimp\fR \fBwrite 2string\fR \fIformat\fR \fIimage\fR
 .TP
@@ -299,17 +299,17 @@ The package extends the above ensemble with support for the following formats
 .RS
 .TP
 \fBpfm-plain\fR
-The plain ASCII format of portable float maps.
+The plain ASCII format of portable float maps\&.
 .TP
 \fBpfm-raw\fR
-The raw binary format of portable float maps.
+The raw binary format of portable float maps\&.
 .RE
 .sp
-The only supported image type is \fBfloat\fR.
+The only supported image type is \fBfloat\fR\&.
 .PP
 .SH REFERENCES
 .IP [1]
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR
+\fIhttp://en\&.wikipedia\&.org/wiki/Netpbm_format\fR
 .PP
 .SH KEYWORDS
 Export PFM image, Export image, PFM, Import PFM image, Import image, PFM, PFM, PFM image export, PFM image import, computer vision, document processing, image, matrix, photo, vector

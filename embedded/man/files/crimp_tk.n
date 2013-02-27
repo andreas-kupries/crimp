@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_tk.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_tk\&.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -239,16 +239,16 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_tk" n 0.2 doc "C Raster Image Manipulation Package"
+.TH "crimp_tk" n 0\&.2 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
 crimp_tk \- CRIMP - Tk Photo Handling
 .SH SYNOPSIS
-package require \fBTcl  8.5\fR
+package require \fBTcl  8\&.5\fR
 .sp
-package require \fBTk  8.5\fR
+package require \fBTk  8\&.5\fR
 .sp
-package require \fBcrimp::tk  ?0.2?\fR
+package require \fBcrimp::tk  ?0\&.2?\fR
 .sp
 \fB::crimp\fR \fBread tk\fR \fIphoto\fR
 .sp
@@ -257,15 +257,15 @@ package require \fBcrimp::tk  ?0.2?\fR
 .BE
 .SH DESCRIPTION
 This package provides commands for the conversion of CRIMP images to
-Tk photos image and vice versa, i.e. the export of images for display,
-and import from a display.
+Tk photos image and vice versa, i\&.e\&. the export of images for display,
+and import from a display\&.
 .PP
 For a basic introduction of the whole CRIMP eco-system please
-read the \fICRIMP - Introduction to CRIMP\fR (sic!).
-The basic concepts used here, like images, image types, etc. are
-described in the reference manpage for the \fICRIMP - Foundation\fR.
+read the \fICRIMP - Introduction to CRIMP\fR (sic!)\&.
+The basic concepts used here, like images, image types, etc\&. are
+described in the reference manpage for the \fICRIMP - Foundation\fR\&.
 We will not repeat them here, but assume that the reader knows them
-already.
+already\&.
 .PP
 In the overall architecture this package resides in the middle
 layer of the system's architecture, between core and applications, as
@@ -275,23 +275,23 @@ IMAGE: arch_tk
 .PP
 .PP
 The commands it provides all fall into the I/O category of the
-general design.
+general design\&.
 .SH "TCL API"
 .TP
 \fB::crimp\fR \fBread tk\fR \fIphoto\fR
-This method extends the \fB::crimp read\fR ensemble. It takes the
+This method extends the \fB::crimp read\fR ensemble\&. It takes the
 name of a \fITk photo\fR command and returns an image of type
-\fBrgba\fR containing the photo's contents.
+\fBrgba\fR containing the photo's contents\&.
 .TP
 \fB::crimp\fR \fBwrite 2tk\fR \fIphoto\fR \fIimage\fR
-This method extends the \fB::crimp write\fR ensemble. It takes two
+This method extends the \fB::crimp write\fR ensemble\&. It takes two
 arguments, the name of a \fITk photo\fR command and an image, and
-stores the image into the photo, overwriting the previous contents.
+stores the image into the photo, overwriting the previous contents\&.
 .sp
-The method returns the empty string.
+The method returns the empty string\&.
 .sp
 The supported image types are \fBgrey8\fR, \fBrgb\fR, and
-\fBrgba\fR.
+\fBrgba\fR\&.
 .PP
 .SH KEYWORDS
 Export tk photo, Import tk photo, Tk photo export, Tk photo import, computer vision, document processing, image, matrix, photo, vector

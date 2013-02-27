@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_intro.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_intro\&.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -246,16 +246,16 @@ crimp_introduction \- CRIMP - Introduction to CRIMP
 .SH DESCRIPTION
 Welcome to CRIMP, the C Raster Image Manipulation Package, a set of
 extensions of \fITcl\fR for the handling and processing of
-images. Due to the nature of images as a 2-dimensional table of
+images\&. Due to the nature of images as a 2-dimensional table of
 numbers some of the commands may reach into matrix and vector
-mathematics as well.
+mathematics as well\&.
 .SH "RELATED DOCUMENTS"
 .IP [1]
-\fICRIMP - How To Get The Sources\fR.
+\fICRIMP - How To Get The Sources\fR\&.
 .IP [2]
-\fICRIMP - The Installer's Guide\fR.
+\fICRIMP - The Installer's Guide\fR\&.
 .IP [3]
-\fICRIMP - The Developer's Guide\fR.
+\fICRIMP - The Developer's Guide\fR\&.
 .PP
 .SH "SYSTEM ARCHITECTURE"
 The system can be split into roughly three sections, as seen in the
@@ -268,70 +268,70 @@ These sections are:
 At the \fIcore\fR is a single package, \fBcrimp::core\fR,
 providing both C and Tcl level data types and accessors for images,
 plus rudimentary IO capabilities (conversion to and construction from
-matrices of numbers, represented by nested Tcl lists).
+matrices of numbers, represented by nested Tcl lists)\&.
 .sp
 While this package is functional on its own most of the truly
 interesting commands will be found in the packages built on top of
-this one.
+this one\&.
 .IP [2]
 The \fIprocessing\fR section contains a single package as well,
-\fBcrimp\fR. Built on top of the \fBcrimp::core\fR this
+\fBcrimp\fR\&. Built on top of the \fBcrimp::core\fR this
 package provides the majority of CRIMPs power for manipulating and
-transforming images in a number of ways.
+transforming images in a number of ways\&.
 .IP [3]
 The last section, for \fIIO\fR, currently contains five packages,
 each providing the ability to import and/or export CRIMP images from a
-specific external image format. These packages, all built on top of
+specific external image format\&. These packages, all built on top of
 the \fBcrimp::core\fR are
 .RS
 .TP
 \fBcrimp::bmp\fR
-This package provides the ability to read BMP images, i.e. the Windows
-bitmap format, as defined at \fIhttp://en.wikipedia.org/wiki/BMP_file_format\fR.
+This package provides the ability to read BMP images, i\&.e\&. the Windows
+bitmap format, as defined at \fIhttp://en\&.wikipedia\&.org/wiki/BMP_file_format\fR\&.
 .TP
 \fBcrimp::pcx\fR
 This package provides the ability to read PCX images, as defined at
-\fIhttp://en.wikipedia.org/wiki/PCX\fR.
+\fIhttp://en\&.wikipedia\&.org/wiki/PCX\fR\&.
 .TP
 \fBcrimp::pfm\fR
 This package provides the ability to read from and write to PFM
-images, i.e. the "Portable Float Map" format. This format is an
+images, i\&.e\&. the "Portable Float Map" format\&. This format is an
 unofficial derivative of the "Portable Grey Map" (see below), with the
-integer numbers of that format replaced with floating point values.
+integer numbers of that format replaced with floating point values\&.
 .TP
 \fBcrimp::pgm\fR
 This package provides the ability to read from and write to PGM
-images, i.e. the "Portable Grey Map" format as specified at
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
+images, i\&.e\&. the "Portable Grey Map" format as specified at
+\fIhttp://en\&.wikipedia\&.org/wiki/Netpbm_format\fR\&.
 .TP
 \fBcrimp::ppm\fR
 This package provides the ability to read from and write to PPM
-images, i.e. the "Portable Pix Map" format as specified at
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
+images, i\&.e\&. the "Portable Pix Map" format as specified at
+\fIhttp://en\&.wikipedia\&.org/wiki/Netpbm_format\fR\&.
 .TP
 \fBcrimp::sgi\fR
 This package provides the ability to read SGI raster images, as
-defined at \fIhttp://en.wikipedia.org/wiki/Silicon_Graphics_Image\fR.
+defined at \fIhttp://en\&.wikipedia\&.org/wiki/Silicon_Graphics_Image\fR\&.
 .TP
 \fBcrimp::sun\fR
 This package provides the ability to read SUN raster images, as
-defined at \fIhttp://www.fileformat.info/format/sunraster/egff.htm\fR.
+defined at \fIhttp://www\&.fileformat\&.info/format/sunraster/egff\&.htm\fR\&.
 .TP
 \fBcrimp::tk\fR
 This package provides the ability to convert CRIMP images into Tk
-photo images and vice versa. This is the \fIonly\fR package in the
+photo images and vice versa\&. This is the \fIonly\fR package in the
 whole set which is dependent on the \fBTk\fR package and its
-facilities.
+facilities\&.
 .RE
 .PP
-The package dependencies are shown in the next image. It is mostly
+The package dependencies are shown in the next image\&. It is mostly
 as you would exect, with pretty much everything depending the on the
-\fBcrimp::core\fR and that depending on nothing but itself.
+\fBcrimp::core\fR and that depending on nothing but itself\&.
 .PP
 Of note however is that the \fBcrimp::{ppm,pgm,pfm}\fR
-packages all depend on the main \fBcrimp\fR package. They all
+packages all depend on the main \fBcrimp\fR package\&. They all
 use the \fBcrimp convert\fR ensemble, enabling them to handle not
-only their natural image types, but a number of others as well.
+only their natural image types, but a number of others as well\&.
 .PP
 .PS
 .nf

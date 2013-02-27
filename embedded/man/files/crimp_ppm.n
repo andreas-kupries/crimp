@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_ppm.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_ppm\&.n' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -239,14 +239,14 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_ppm" n 0.2 doc "C Raster Image Manipulation Package"
+.TH "crimp_ppm" n 0\&.2 doc "C Raster Image Manipulation Package"
 .BS
 .SH NAME
 crimp_ppm \- CRIMP - PPM handling, NetPBM
 .SH SYNOPSIS
-package require \fBTcl  8.5\fR
+package require \fBTcl  8\&.5\fR
 .sp
-package require \fBcrimp::ppm  ?0.2?\fR
+package require \fBcrimp::ppm  ?0\&.2?\fR
 .sp
 \fB::crimp\fR \fBread ppm\fR \fIstring\fR
 .sp
@@ -259,14 +259,14 @@ package require \fBcrimp::ppm  ?0.2?\fR
 .BE
 .SH DESCRIPTION
 This package provides commands for the conversion of CRIMP images to
-Portable Pixmaps (PPM) and vice versa.
+Portable Pixmaps (PPM) and vice versa\&.
 .PP
 For a basic introduction of the whole CRIMP eco-system please
-read the \fICRIMP - Introduction to CRIMP\fR (sic!).
-The basic concepts used here, like images, image types, etc. are
-described in the reference manpage for the \fICRIMP - Foundation\fR.
+read the \fICRIMP - Introduction to CRIMP\fR (sic!)\&.
+The basic concepts used here, like images, image types, etc\&. are
+described in the reference manpage for the \fICRIMP - Foundation\fR\&.
 We will not repeat them here, but assume that the reader knows them
-already.
+already\&.
 .PP
 In the overall architecture this package resides in the middle
 layer of the system's architecture, between core and applications, as
@@ -276,13 +276,13 @@ IMAGE: arch_pam
 .PP
 .PP
 The commands it provides all fall into the I/O category of the
-general design.
+general design\&.
 .SH "TCL API"
 .TP
 \fB::crimp\fR \fBread ppm\fR \fIstring\fR
-This method extends the \fB::crimp read\fR ensemble. It takes the
+This method extends the \fB::crimp read\fR ensemble\&. It takes the
 (possibly binary) string holding an image in the PPM format and
-returns an image of type \fBrgb\fR containing it.
+returns an image of type \fBrgb\fR containing it\&.
 .TP
 \fB::crimp\fR \fBwrite 2string\fR \fIformat\fR \fIimage\fR
 .TP
@@ -294,19 +294,19 @@ The package extends the above ensemble with support for the following formats
 .TP
 \fBppm-plain\fR
 The plain ASCII format of portable pix maps, as per
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
+\fIhttp://en\&.wikipedia\&.org/wiki/Netpbm_format\fR\&.
 .TP
 \fBppm-raw\fR
 The raw binary format of portable pix maps, as per
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR.
+\fIhttp://en\&.wikipedia\&.org/wiki/Netpbm_format\fR\&.
 .RE
 .sp
 The supported image types are \fBgrey8\fR, \fBrgb\fR,
-\fBrgba\fR, and \fBhsv\fR.
+\fBrgba\fR, and \fBhsv\fR\&.
 .PP
 .SH REFERENCES
 .IP [1]
-\fIhttp://en.wikipedia.org/wiki/Netpbm_format\fR
+\fIhttp://en\&.wikipedia\&.org/wiki/Netpbm_format\fR
 .PP
 .SH KEYWORDS
 Export PPM image, Export image, PPM, Import PPM image, Import image, PPM, PPM, PPM image export, PPM image import, computer vision, document processing, image, matrix, photo, vector

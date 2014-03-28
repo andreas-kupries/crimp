@@ -43,8 +43,7 @@ The build system provides a small GUI for those not comfortable with
 the command line.
 
 This GUI is accessible by invoking [file build.tcl] without any
-arguments from the command line, or by invoking it through a
-double-click on the [file build.tcl] in a file explorer window.
+arguments from the command line.
 
 [para]
 

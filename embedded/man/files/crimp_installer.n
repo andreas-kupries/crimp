@@ -542,8 +542,7 @@ The command given above simply spells out the entire chain\&.
 The build system provides a small GUI for those not comfortable with
 the command line\&.
 This GUI is accessible by invoking "\fIbuild\&.tcl\fR" without any
-arguments from the command line, or by invoking it through a
-double-click on the "\fIbuild\&.tcl\fR" in a file explorer window\&.
+arguments from the command line\&.
 .PP
 To get help about the methods of "\fIbuild\&.tcl\fR", and their complete
 syntax, invoke "\fIbuild\&.tcl\fR" with argument \fBhelp\fR, i\&.e\&.,

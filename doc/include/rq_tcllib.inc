@@ -31,14 +31,13 @@ ensured for the ActiveTcl distribution. Others may have to run
 to make this happen.
 
 [para] Now, for those wishing to install the packages from source,
-the CVS repository for the two bundles can be found at
-[uri https://sourceforge.net/projects/tcllib].
+the fossil repository for the two bundles can be found at
+[uri https://core.tcl.tk/tcllib] and [uri https://core.tcl.tk/tklib].
 
-[para] Releases of Tcllib and Tklib can be found the associated
-Files section, or CVS can be used to check out the sub projects
-tcllib and tklib.
+[para] Releases of Tcllib and Tklib can be found there as well, or
+[syscmd fossil] can be used to check out specific revisions.
 
 [para] Tcl- and Tklib come with their own installation instructions.
 These will not be repeated here. If there are problems with their
 directions please file a bug against the Tcllib project at the above
-url, and not KineTcl.
+url, and not Crimp.

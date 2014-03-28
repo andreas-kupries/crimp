@@ -476,7 +476,7 @@ Its instructions will not be repeated here\&. If there are
 problems with their directions please file a bug against the Kettle
 project, and not Crimp\&.
 .SH "BUILD & INSTALLATION INSTRUCTIONS"
-.SH "BUILD & INSTALLATION (UNIX)"
+.SS "BUILD & INSTALLATION (UNIX)"
 This section describes the actions required to install CRIMP on Unix
 systems (Linux, BSD, and related, including OS X)\&.
 If you have to install CRIMP on a Windows machine see section
@@ -509,7 +509,7 @@ like
     /path/to/tclsh8\&.5 /path/to/crimp/build\&.tcl help
 
 .CE
-.SH "BUILD & INSTALLATION (WINDOWS)"
+.SS "BUILD & INSTALLATION (WINDOWS)"
 This section describes the actions required to install CRIMP on Windows(tm)
 systems\&.
 If you have to install CRIMP on a Unix machine (Linux, BSD, and

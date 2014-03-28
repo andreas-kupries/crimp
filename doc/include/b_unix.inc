@@ -1,4 +1,4 @@
-[section {Build & Installation (Unix)}]
+[subsection {Build & Installation (Unix)}]
 
 This section describes the actions required to install CRIMP on Unix
 systems (Linux, BSD, and related, including OS X).

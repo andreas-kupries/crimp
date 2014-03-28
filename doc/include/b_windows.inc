@@ -1,4 +1,4 @@
-[section {Build & Installation (Windows)}]
+[subsection {Build & Installation (Windows)}]
 
 This section describes the actions required to install CRIMP on Windows(tm)
 systems.

@@ -31,8 +31,8 @@ crimp_geo_warp_box (crimp_geometry* input, crimp_image* forward, crimp_geometry*
 {
     /*
      * Run the four corners of the input through the forward transformation to
-     * get their locations, and use the results to determine geometry of the
-     * output image, i.e. dimensions and location of its origin point.
+     * get their locations, then use the results to determine the geometry of
+     * the output image, i.e. dimensions and location of its origin point.
      *
      * NOTE: We have to take the origin of the input image into account when
      * computing the input corners.

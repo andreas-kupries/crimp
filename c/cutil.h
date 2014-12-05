@@ -53,6 +53,11 @@
  * Generator for uniform random floating-point values in the interval [0..1].
  */
 #define RAND_FLOAT() (rand() / (RAND_MAX + 1.0f))
+
+/*
+ * Generator for uniform random double-precision floating-point values in the interval [0..1].
+ */
+#define RAND_DOUBLE() (rand() / (RAND_MAX + ((double) 1)))
 
 /*
  * Local Variables:

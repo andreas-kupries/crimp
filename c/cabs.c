@@ -10,24 +10,33 @@ extern "C" {
 double f__cabs(double real, double imag)
 #endif
 {
-double temp;
+    double temp;
 
-if(real < 0)
+    if(real < 0)
 	real = -real;
-if(imag < 0)
+    if(imag < 0)
 	imag = -imag;
-if(imag > real){
+    if(imag > real){
 	temp = real;
 	real = imag;
 	imag = temp;
-}
-if((real+imag) == real)
+    }
+    if((real+imag) == real)
 	return(real);
 
-temp = imag/real;
-temp = real*sqrt(1.0 + temp*temp);  /*overflow!!*/
-return(temp);
+    temp = imag/real;
+    temp = real*sqrt(1.0 + temp*temp);  /*overflow!!*/
+    /* TODO: consider use of hypot */
+    return(temp);
 }
 #ifdef __cplusplus
 }
 #endif
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

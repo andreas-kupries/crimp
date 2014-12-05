@@ -9,11 +9,12 @@ package require Tcl 8.5
 # # ## ### ##### ######## ############# ######################
 ## Configuration
 
-set simple_types {float grey32 grey16 grey8}
+set simple_types {double float grey32 grey16 grey8}
 set multi_types  {rgb rgba fpcomplex}
 
 array set accessor {
     float     {FLOATP v}
+    double    {DOUBLEP v}
     grey32    {GREY32 v}
     grey16    {GREY16 v}
     grey8     {GREY8  v}
@@ -25,6 +26,7 @@ array set accessor {
 
 array set ctype {
     float     double
+    double    double
     grey32    int
     grey16    int
     grey8     int
@@ -162,6 +164,7 @@ proc generate {a z} {
 # # ## ### ##### ######## ############# ######################
 
 generate float     float
+generate double    double
 generate grey16    grey16
 generate grey32    grey32
 generate grey8     grey8

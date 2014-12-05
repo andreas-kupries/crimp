@@ -9,11 +9,12 @@ package require Tcl 8.5
 # # ## ### ##### ######## ############# ######################
 ## Configuration
 
-set simple_types {float grey32 grey16 grey8}
+set simple_types {double float grey32 grey16 grey8}
 set multi_types  {rgb rgba fpcomplex}
 
 array set accessor {
     float     {FLOATP v}
+    double    {DOUBLEP v}
     grey32    {GREY32 v}
     grey16    {GREY16 v}
     grey8     {GREY8  v}
@@ -25,6 +26,7 @@ array set accessor {
 
 array set ctype {
     float     double
+    double    double
     grey32    {int   }
     grey16    {int   }
     grey8     {int   }
@@ -228,22 +230,32 @@ proc generate {a b z} {
 # # ## ### ##### ######## ############# ######################
 ## Simple vs simple.
 
+generate double    double    double
+generate double    float     double
+generate double    grey16    double
+generate double    grey32    double
+generate double    grey8     double
+
 generate float     float     float
+generate float     double    double
 generate float     grey16    float
 generate float     grey32    float
 generate float     grey8     float
 
 generate grey16    float     float
+generate grey16    double    double
 generate grey16    grey16    grey16
 generate grey16    grey32    grey32
 generate grey16    grey8     grey16
 
 generate grey32    float     float
+generate grey32    double    double
 generate grey32    grey16    grey32
 generate grey32    grey32    grey32
 generate grey32    grey8     grey32
 
 generate grey8     float     float
+generate grey8     double    double
 generate grey8     grey16    grey16
 generate grey8     grey32    grey32
 generate grey8     grey8     grey8
@@ -251,6 +263,8 @@ generate grey8     grey8     grey8
 # # ## ### ##### ######## ############# ######################
 ## Some operation always generate float, regardless of input types
 ## Examples: hypot, atan2, pow.
+#
+## TODO: ? Tempted to switch these over to double results.
 
 generate grey16    grey16    float
 generate grey16    grey32    float
@@ -271,17 +285,23 @@ generate grey8     float     grey8
 generate grey16    float     grey16
 generate grey32    float     grey32
 
+generate grey8     double    grey8
+generate grey16    double    grey16
+generate grey32    double    grey32
+
 # # ## ### ##### ######## ############# ######################
 ## Complex vs. others, self and simple.
 
 generate fpcomplex fpcomplex fpcomplex
 
 generate fpcomplex float     fpcomplex
+generate fpcomplex double    fpcomplex
 generate fpcomplex grey16    fpcomplex
 generate fpcomplex grey32    fpcomplex
 generate fpcomplex grey8     fpcomplex
 
 generate float     fpcomplex fpcomplex
+generate double    fpcomplex fpcomplex
 generate grey16    fpcomplex fpcomplex
 generate grey32    fpcomplex fpcomplex
 generate grey8     fpcomplex fpcomplex

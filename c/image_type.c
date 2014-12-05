@@ -70,7 +70,10 @@ crimp_imagetype_init (void)
 
     static const char*     fp_cname [] = {"value"};
     static crimp_imagetype fp = { "crimp::image::float", sizeof(float), 1, &fp_cname };
-	
+
+    static const char*     dp_cname [] = {"value"};
+    static crimp_imagetype dp = { "crimp::image::double", sizeof(double), 1, &dp_cname };
+
     static const char*     fpcomplex_cname [] = {"real", "imaginary"};
     static crimp_imagetype fpcomplex = { "crimp::image::fpcomplex", 2*sizeof(float), 2, &fpcomplex_cname };
 
@@ -88,6 +91,7 @@ crimp_imagetype_init (void)
     crimp_imagetype_def (&grey32);
     crimp_imagetype_def (&grey16);
     crimp_imagetype_def (&fp);
+    crimp_imagetype_def (&dp);
     crimp_imagetype_def (&grey8);
     crimp_imagetype_def (&hsv);
     crimp_imagetype_def (&rgb);

@@ -7,8 +7,8 @@
 
 /*
  * Requirements. We represent matrices and vectors (which are 1xN, Nx1
- * matrices) as images, of type float. No need to invent additional
- * structures, as these will serve very well.
+ * matrices) as images, of type float (or double). No need to invent
+ * additional structures, as these will serve very well.
  */
 
 #include <image.h>

@@ -23,7 +23,7 @@ CRIMP_ASSERT_NOTIMGTYPE (image, float);
 CRIMP_ASSERT_NOTIMGTYPE (image, grey16);
 CRIMP_ASSERT_NOTIMGTYPE (image, grey32);
 
-crimp_input (forwardObj, forward, float);
+crimp_input (forwardObj, forward, double);
 
 if (!crimp_require_dim (forward, 3, 3)) {
     Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);

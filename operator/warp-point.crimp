@@ -10,7 +10,7 @@ double y
 crimp_image* forward;
 Tcl_Obj* list [2];
 
-crimp_input (forwardObj, forward, float);
+crimp_input (forwardObj, forward, double);
 
 if (!crimp_require_dim (forward, 3, 3)) {
     Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);

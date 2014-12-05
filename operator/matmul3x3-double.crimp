@@ -1,0 +1,38 @@
+matmul3x3_double
+Tcl_Obj* matAObj
+Tcl_Obj* matBObj
+
+/*
+ * Multiply two 3x3 double matrices A and B. Returns A*B.
+ */
+
+crimp_image* matA;
+crimp_image* matB;
+crimp_image* result;
+
+crimp_input (matAObj, matA, double);
+crimp_input (matBObj, matB, double);
+
+if (!crimp_require_dim (matA, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+if (!crimp_require_dim (matB, 3, 3)) {
+    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+    return TCL_ERROR;
+}
+
+result = crimp_la_multiply_matrix (matA, matB);
+
+Tcl_SetObjResult(interp, crimp_new_image_obj (result));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

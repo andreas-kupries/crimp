@@ -1,0 +1,24 @@
+div_double_grey32
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+double scale
+double offset
+
+/*
+ * Pixel- and channel-wise scaled and biased subtraction of two images. The
+ * images have to have equal dimensions. Values out of range are wrapped into
+ * it (modulo).
+ */
+
+#define BINOP(a,b) ((((b) == 0 ? WHITE : ((a) / (b))) / scale) + offset)
+#include "binop_double_grey32_double.c"
+#undef BINOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

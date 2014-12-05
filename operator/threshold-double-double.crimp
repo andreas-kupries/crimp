@@ -1,0 +1,20 @@
+threshold_double_double
+Tcl_Obj* imageAObj
+Tcl_Obj* imageBObj
+
+/*
+ * Thresholding of all pixels in the first image by the spatially varying
+ * threshold specified through the second image.
+ */
+
+#define BINOP(p,t) ((p) >= (t) ? BLACK : WHITE)
+#include "binop_double_double_double.c"
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

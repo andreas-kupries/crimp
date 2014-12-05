@@ -1,0 +1,19 @@
+cut_double
+Tcl_Obj* imageObj
+int x
+int y
+int w
+int h
+
+#define UNOP(a) (a)
+#include "unop_double.c"
+#undef UNOP
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

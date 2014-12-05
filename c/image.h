@@ -65,7 +65,7 @@ typedef struct crimp_image {
 #define A(iptr,x,y) (iptr)->pixel [ALPHA (iptr,x,y)]
 
 /*
- * Pixel Access Macros. GREY8, GREY16, GREY32, FLOATP.
+ * Pixel Access Macros. GREY8, GREY16, GREY32, FLOATP, DOUBLEP.
  *
  * NOTE: The casts should use standard types where we we know the size in
  *       bytes exactly, by definition.
@@ -75,10 +75,11 @@ typedef struct crimp_image {
     (((x)*SZ (iptr)) + \
      ((y)*SZ (iptr)*(((size_t) (iptr)->geo.w))))
 
-#define GREY8(iptr,x,y)  *((unsigned char*)  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
-#define GREY16(iptr,x,y) *((unsigned short*) &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
-#define GREY32(iptr,x,y) *((unsigned int* )  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
-#define FLOATP(iptr,x,y) *((float*)          &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define GREY8(iptr,x,y)   *((unsigned char*)  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define GREY16(iptr,x,y)  *((unsigned short*) &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define GREY32(iptr,x,y)  *((unsigned int* )  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define FLOATP(iptr,x,y)  *((float*)          &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+#define DOUBLEP(iptr,x,y) *((double*)         &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
 
 /*
  * Pixel as 2-complement numbers (-128..127, instead of unsigned 0..255).
@@ -147,13 +148,14 @@ typedef struct crimp_image {
 #define crimp_new(type,w,h)       (crimp_new_at  ((type), 0, 0, (w), (h)))
 #define crimp_newm(type,w,h,meta) (crimp_newm_at ((type), 0, 0, (w), (h), (meta)))
 
-#define crimp_new_hsv(w,h)       (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),     (w), (h)))
-#define crimp_new_rgba(w,h)      (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),    (w), (h)))
-#define crimp_new_rgb(w,h)       (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),     (w), (h)))
-#define crimp_new_grey8(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::grey8"),   (w), (h)))
-#define crimp_new_grey16(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::grey16"),  (w), (h)))
-#define crimp_new_grey32(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::grey32"),  (w), (h)))
-#define crimp_new_float(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::float"),   (w), (h)))
+#define crimp_new_hsv(w,h)       (crimp_new (crimp_imagetype_find ("crimp::image::hsv"),       (w), (h)))
+#define crimp_new_rgba(w,h)      (crimp_new (crimp_imagetype_find ("crimp::image::rgba"),      (w), (h)))
+#define crimp_new_rgb(w,h)       (crimp_new (crimp_imagetype_find ("crimp::image::rgb"),       (w), (h)))
+#define crimp_new_grey8(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::grey8"),     (w), (h)))
+#define crimp_new_grey16(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::grey16"),    (w), (h)))
+#define crimp_new_grey32(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::grey32"),    (w), (h)))
+#define crimp_new_float(w,h)     (crimp_new (crimp_imagetype_find ("crimp::image::float"),     (w), (h)))
+#define crimp_new_double(w,h)    (crimp_new (crimp_imagetype_find ("crimp::image::double"),    (w), (h)))
 #define crimp_new_fpcomplex(w,h) (crimp_new (crimp_imagetype_find ("crimp::image::fpcomplex"), (w), (h)))
 
 #define crimp_new_like(image)           (crimp_newm_at ((image)->itype, crimp_x(image), crimp_y(image), crimp_w(image), crimp_h(image), (image)->meta))
@@ -166,6 +168,7 @@ typedef struct crimp_image {
 #define crimp_new_grey16_at(x,y,w,h)    (crimp_new_at (crimp_imagetype_find ("crimp::image::grey16"),    (x), (y), (w), (h)))
 #define crimp_new_grey32_at(x,y,w,h)    (crimp_new_at (crimp_imagetype_find ("crimp::image::grey32"),    (x), (y), (w), (h)))
 #define crimp_new_float_at(x,y,w,h)     (crimp_new_at (crimp_imagetype_find ("crimp::image::float"),     (x), (y), (w), (h)))
+#define crimp_new_double_at(x,y,w,h)    (crimp_new_at (crimp_imagetype_find ("crimp::image::double"),    (x), (y), (w), (h)))
 #define crimp_new_fpcomplex_at(x,y,w,h) (crimp_new_at (crimp_imagetype_find ("crimp::image::fpcomplex"), (x), (y), (w), (h)))
 
 /*

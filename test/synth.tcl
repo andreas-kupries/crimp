@@ -226,7 +226,7 @@ proc decode_transform {actual} {
     if {$tag ne "crimp/transform"} { error "bad transform: bad tag $tag" }
     if {[llength $image] != 7} { error "bad transform: length 7 expected" }
     lassign $image type x y w h m p
-    if {$type ne "crimp::image::float"} { error "bad transform: bad type $type" }
+    if {$type ne "crimp::image::double"} { error "bad transform: bad type $type" }
     if {$x != 0}  { error "bad transform: bad origin x" }
     if {$y != 0}  { error "bad transform: bad origin y" }
     if {$w != 3}  { error "bad transform: bad width" }

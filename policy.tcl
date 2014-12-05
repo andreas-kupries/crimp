@@ -2698,7 +2698,7 @@ proc ::crimp::transform::projective {a b c d e f g h} {
     # Create the matrix | d e f | for a projective transform.
     #		        | g h 1 |
 
-    return [MAKE [::crimp::read::tcl float \
+    return [MAKE [::crimp::read::tcl double \
 		[list \
 		     [list $a $b $c] \
 		     [list $d $e $f] \
@@ -2898,7 +2898,7 @@ proc ::crimp::transform::chain {t args} {
 
     set res [CHECK $t]
     foreach m $args {
-	set res [::crimp::matmul3x3_float [CHECK $m] $res]
+	set res [::crimp::matmul3x3_double [CHECK $m] $res]
 	# res = M * res
 	# => going from the left, swapping the arguments
 	# => folding from the right
@@ -2918,7 +2918,7 @@ proc ::crimp::transform::chain {t args} {
 }
 
 proc ::crimp::transform::invert {a} {
-    return [MAKE [::crimp::matinv3x3_float [CHECK $a]]]
+    return [MAKE [::crimp::matinv3x3_double [CHECK $a]]]
 }
 
 proc ::crimp::transform::CheckQuad {quad} {
@@ -3036,7 +3036,7 @@ proc ::crimp::transform::CHECK {transform {prefix {}}} {
 	($len != 2) ||
 	([lindex $transform 0] ne $typecode) ||
 	[catch {::crimp::TypeOf [set m [lindex $transform 1]]} t] ||
-	($t ne "float") ||
+	($t ne "double") ||
 	([::crimp::dimensions $m] ne {3 3})
     } {
 	return -code error "${prefix}expected projective transform but got \"$transform\""
@@ -3266,6 +3266,41 @@ proc ::crimp::kernel::fpmake {kernelmatrix {offset {}}} {
     return [list $kw $kh $kernel 1 $offset]
 }
 
+proc ::crimp::kernel::dpmake {kernelmatrix {offset {}}} {
+    set matsum 0
+    foreach row $kernelmatrix {
+	foreach v $row {
+	    set matsum [expr {$matsum + $v}]
+	}
+    }
+
+    # auto-offset, if needed
+    if {$offset eq {}} {
+	# TODO :: Check against a suitable epsilon instead of exact zero.
+	if {$matsum == 0} {
+	    set offset 128
+	} else {
+	    set offset 0
+	}
+    }
+
+    set kernel [::crimp::read::tcl double $kernelmatrix]
+
+    lassign [::crimp::dimensions $kernel] w h
+
+    if {!($w % 2) || !($h % 2)} {
+	# Keep in sync with the convolve primitives.
+	# FUTURE :: Have an API to set the messages used by the primitives.
+	return -code error "bad kernel dimensions, expected odd size"
+    }
+
+    set kw [expr {$w/2}]
+    set kh [expr {$h/2}]
+
+    # The scale is fixed at 1, fp-kernels are assumed to have any
+    # scaling built in.
+    return [list $kw $kh $kernel 1 $offset]
+}
 
 proc ::crimp::kernel::transpose {kernel} {
     lassign $kernel w h K scale offset

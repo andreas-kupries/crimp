@@ -13,6 +13,9 @@ extern int crimp_piecewise_linear_map_grey8_grey32(Tcl_Interp*,
 extern int crimp_piecewise_linear_map_grey8_float(Tcl_Interp*,
     Tcl_Obj*, size_t, const unsigned char*, size_t, float*,
     size_t);
+extern int crimp_piecewise_linear_map_grey8_double(Tcl_Interp*,
+    Tcl_Obj*, size_t, const unsigned char*, size_t, double*,
+    size_t);
 extern int crimp_piecewise_linear_map_grey16_grey8(Tcl_Interp*,
     Tcl_Obj*, size_t, const unsigned short*, size_t, unsigned char*,
     size_t);
@@ -24,6 +27,9 @@ extern int crimp_piecewise_linear_map_grey16_grey32(Tcl_Interp*,
     size_t);
 extern int crimp_piecewise_linear_map_grey16_float(Tcl_Interp*,
     Tcl_Obj*, size_t, const unsigned short*, size_t, float*,
+    size_t);
+extern int crimp_piecewise_linear_map_grey16_double(Tcl_Interp*,
+    Tcl_Obj*, size_t, const unsigned short*, size_t, double*,
     size_t);
 extern int crimp_piecewise_linear_map_grey32_grey8(Tcl_Interp*,
     Tcl_Obj*, size_t, const unsigned int*, size_t, unsigned char*,
@@ -37,6 +43,9 @@ extern int crimp_piecewise_linear_map_grey32_grey32(Tcl_Interp*,
 extern int crimp_piecewise_linear_map_grey32_float(Tcl_Interp*,
     Tcl_Obj*, size_t, const unsigned int*, size_t, float*,
     size_t);
+extern int crimp_piecewise_linear_map_grey32_double(Tcl_Interp*,
+    Tcl_Obj*, size_t, const unsigned int*, size_t, double*,
+    size_t);
 extern int crimp_piecewise_linear_map_float_grey8(Tcl_Interp*,
     Tcl_Obj*, size_t, const float*, size_t, unsigned char*,
     size_t);
@@ -48,4 +57,19 @@ extern int crimp_piecewise_linear_map_float_grey32(Tcl_Interp*,
     size_t);
 extern int crimp_piecewise_linear_map_float_float(Tcl_Interp*,
     Tcl_Obj*, size_t, const float*, size_t, float*,
+    size_t);
+extern int crimp_piecewise_linear_map_double_grey8(Tcl_Interp*,
+    Tcl_Obj*, size_t, const double*, size_t, unsigned char*,
+    size_t);
+extern int crimp_piecewise_linear_map_double_grey16(Tcl_Interp*,
+    Tcl_Obj*, size_t, const double*, size_t, unsigned short*,
+    size_t);
+extern int crimp_piecewise_linear_map_double_grey32(Tcl_Interp*,
+    Tcl_Obj*, size_t, const double*, size_t, unsigned int*,
+    size_t);
+extern int crimp_piecewise_linear_map_double_float(Tcl_Interp*,
+    Tcl_Obj*, size_t, const double*, size_t, float*,
+    size_t);
+extern int crimp_piecewise_linear_map_double_double(Tcl_Interp*,
+    Tcl_Obj*, size_t, const double*, size_t, double*,
     size_t);

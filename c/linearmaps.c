@@ -19,7 +19,11 @@
 /*
  * Make the four functions, crimp_binarysearch_TYPE1 and 
  * crimp_linearmap_TYPE1_TYPE2, where TYPE1 and TYPE2 are in the
- * set {grey8, grey16, grey32, float}.
+ * set {grey8, grey16, grey32, float, double}.
+ */
+
+/*
+ * grey8 --> grey8/grey16/grey32/float/double
  */
 
 #define ITYPENAME grey8
@@ -58,6 +62,18 @@
 
 #undef OTYPENAME
 #undef OTYPE
+
+#define OTYPENAME double
+#define OTYPE double
+
+#include "linearmap.c"
+
+#undef OTYPENAME
+#undef OTYPE
+
+/*
+ * grey16 --> grey8/grey16/grey32/float/double
+ */
 
 #undef ITYPENAME
 #undef ITYPE
@@ -99,8 +115,20 @@
 #undef OTYPENAME
 #undef OTYPE
 
+#define OTYPENAME double
+#define OTYPE double
+
+#include "linearmap.c"
+
+#undef OTYPENAME
+#undef OTYPE
+
 #undef ITYPENAME
 #undef ITYPE
+
+/*
+ * grey32 --> grey8/grey16/grey32/float/double
+ */
 
 #define ITYPENAME grey32
 #define ITYPE unsigned int
@@ -139,8 +167,20 @@
 #undef OTYPENAME
 #undef OTYPE
 
+#define OTYPENAME double
+#define OTYPE double
+
+#include "linearmap.c"
+
+#undef OTYPENAME
+#undef OTYPE
+
 #undef ITYPENAME
 #undef ITYPE
+
+/*
+ * float --> grey8/grey16/grey32/float/double
+ */
 
 #define ITYPENAME float
 #define ITYPE float
@@ -173,6 +213,58 @@
 
 #define OTYPENAME float
 #define OTYPE float
+
+#include "linearmap.c"
+
+#undef OTYPENAME
+#undef OTYPE
+
+#undef ITYPENAME
+#undef ITYPE
+
+/*
+ * double --> grey8/grey16/grey32/float/double
+ */
+
+#define ITYPENAME double
+#define ITYPE double
+
+#include "binsearch.c"
+
+#define OTYPENAME grey8
+#define OTYPE unsigned char
+
+#include "linearmap.c"
+
+#undef OTYPENAME
+#undef OTYPE
+
+#define OTYPENAME grey16
+#define OTYPE unsigned short
+
+#include "linearmap.c"
+
+#undef OTYPENAME
+#undef OTYPE
+
+#define OTYPENAME grey32
+#define OTYPE unsigned int
+
+#include "linearmap.c"
+
+#undef OTYPENAME
+#undef OTYPE
+
+#define OTYPENAME float
+#define OTYPE float
+
+#include "linearmap.c"
+
+#undef OTYPENAME
+#undef OTYPE
+
+#define OTYPENAME double
+#define OTYPE double
 
 #include "linearmap.c"
 

@@ -39,7 +39,7 @@ for (yo = 0, yi = 0; yi < crimp_h (image); yo += factor, yi ++) {
 	V (result, x, yo) = V (image, x, yi);
     }
 
-    /* And insert factor black lines after the intput line*/
+    /* And insert factor black lines after the input line*/
     for (dy = 1; dy < factor; dy++) {
 	for (x = 0; x < crimp_w (image); x++) {
 	    H (result, x, yo + dy) = BLACK;

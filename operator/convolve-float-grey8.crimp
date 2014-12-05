@@ -5,7 +5,7 @@ int scale
 int offset
 
 /*
- * Generic convolution operator. The kernel to convole with is specified as a
+ * Generic convolution operator. The kernel to convolve with is specified as a
  * floating-point image together with a scaling factor. This way we do not
  * need a separate matrix Tcl_ObjType.
  *

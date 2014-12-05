@@ -104,7 +104,7 @@ crimp_la_invert_matrix_3x3 (crimp_image* matrix)
     } else if (CRIMP_IS_IMGTYPE (matrix, double)) {
 	return crimp_la_invert_matrix_3x3_double (matrix);
     } else {
-	CRIMP_ASSERT (0, "expected image type " CRIMP_STR(float) ", or " CRIMP_STR(double))
+	CRIMP_ASSERT (0, "expected image type " CRIMP_STR(float) ", or " CRIMP_STR(double));
     }
 }
 
@@ -280,6 +280,7 @@ crimp_la_multiply_matrix_3x3_ff (crimp_image* a, crimp_image* b)
     SP3 (result, 2, 1);
     SP3 (result, 2, 2);
 
+#undef SP3
     return result;
 }
 
@@ -313,6 +314,7 @@ crimp_la_multiply_matrix_3x3_fd (crimp_image* a, crimp_image* b)
     SP3 (result, 2, 1);
     SP3 (result, 2, 2);
 
+#undef SP3
     return result;
 }
 
@@ -346,6 +348,7 @@ crimp_la_multiply_matrix_3x3_df (crimp_image* a, crimp_image* b)
     SP3 (result, 2, 1);
     SP3 (result, 2, 2);
 
+#undef SP3
     return result;
 }
 
@@ -379,6 +382,7 @@ crimp_la_multiply_matrix_3x3_dd (crimp_image* a, crimp_image* b)
     SP3 (result, 2, 1);
     SP3 (result, 2, 2);
 
+#undef SP3
     return result;
 }
 
@@ -456,7 +460,7 @@ crimp_la_multiply_matrix_3v_double (crimp_image* matrix, double* x, double* y, d
     *w = wo;
 }
 
-crimp_image*
+void
 crimp_la_multiply_matrix_3v (crimp_image* matrix, double* x, double* y, double* w)
 {
     CRIMP_ASSERT (crimp_require_height(matrix, 3),"Unable to multiply matrix, not 3xN");
@@ -472,11 +476,11 @@ crimp_la_multiply_matrix_3v (crimp_image* matrix, double* x, double* y, double* 
      */
 
     if (CRIMP_IS_IMGTYPE (matrix, float)) {
-	return crimp_la_multiply_matrix_3v_float (matrix);
+	return crimp_la_multiply_matrix_3v_float (matrix, x, y, w);
     } else if (CRIMP_IS_IMGTYPE (matrix, double)) {
-	return crimp_la_multiply_matrix_3v_double (matrix);
+	return crimp_la_multiply_matrix_3v_double (matrix, x, y, w);
     } else {
-	CRIMP_ASSERT (0, "expected image type " CRIMP_STR(float) ", or " CRIMP_STR(double))
+	CRIMP_ASSERT (0, "expected image type " CRIMP_STR(float) ", or " CRIMP_STR(double));
     }
 }
 

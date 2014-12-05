@@ -6,7 +6,7 @@ Tcl_Obj*           line;
 crimp_image*       image;
 int x, y;
 
-crimp_input (imageObj, image, float);
+crimp_input (imageObj, image, double);
 
 res = Tcl_NewListObj (0, NULL);
 

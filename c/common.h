@@ -34,10 +34,10 @@
 	    "unexpected image type " CRIMP_STR(imtype))
 
 #define CRIMP_IS_IMGTYPE(image,imtype) \
-    ((image)->itype == crimp_imagetype_find ("crimp::image::" CRIMP_STR(imtype))
+    ((image)->itype == crimp_imagetype_find ("crimp::image::" CRIMP_STR(imtype)))
 
 #define CRIMP_ISNOT_IMGTYPE(image,imtype) \
-    ((image)->itype != crimp_imagetype_find ("crimp::image::" CRIMP_STR(imtype))
+    ((image)->itype != crimp_imagetype_find ("crimp::image::" CRIMP_STR(imtype)))
 
 /*
  * Assertions support in general, and asserting the proper range of an array

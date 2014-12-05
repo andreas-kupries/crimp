@@ -37,7 +37,7 @@ for (yo = 0, yi = 0; yi < crimp_h (image); yo += factor, yi ++) {
 	GREY16 (result, x, yo) = GREY16 (image, x, yi);
     }
 
-    /* And insert factor black lines after the intput line*/
+    /* And insert factor black lines after the input line*/
     for (dy = 1; dy < factor; dy++) {
 	for (x = 0; x < crimp_w (image); x++) {
 	    GREY16 (result, x, yo + dy) = BLACK;

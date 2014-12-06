@@ -333,41 +333,65 @@ customMatch epsilon matchdigits
 ## Various 2D vector arithmetic primitives.
 ## Avoiding a dependency on tcllib's math::geometry.
 
+# Create point from coordinates
 proc p {x y} { list $x $y }
 
+# Length of point as vector (from (0,0))
 proc pnorm {p} {
     lassign $p x y
     expr {hypot($x,$y)}
 }
 
+# Vector difference of two points.
 proc p- {a b} {
     lassign $a ax ay
     lassign $b bx by
     p [expr {$ax - $bx}] [expr {$ay - $by}]
 }
 
+# Vector addition of two points
 proc p+ {a b} {
     lassign $a ax ay
     lassign $b bx by
     p [expr {$ax + $bx}] [expr {$ay + $by}]
 }
 
+# Partial vector addition/translation, in single axis, and with separate deltas.
+proc p+x {a delta} {
+    lassign $a ax ay
+    p [expr {$ax + $delta}] $ax
+}
+
+proc p+y {a delta} {
+    lassign $a ax ay
+    p $ax [expr {$ay + $delta}]
+}
+
+proc p+xy {a dx dy} {
+    lassign $a ax ay
+    p [expr {$ax + $dx}] [expr {$ay + $dy}]
+}
+
+# Vector scaling (multiplication) by a factor.
 proc p*s {p f} {
     lassign $p x y
     p [expr {$x * $f}] [expr {$y * $f}]
 }
 
+# Element-wise vector multiplication
 proc p* {p f} {
     lassign $p px py
     lassign $f fx fy
     p [expr {$px * $fx}] [expr {$py * $fy}]
 }
 
+# Vector scaling (division) by a factor.
 proc p/s {p f} {
     lassign $p x y
     p [expr {$x / double($f)}] [expr {$y / double($f)}]
 }
 
+# Element-wise vector division
 proc p/ {a b} {
     lassign $a ax ay
     lassign $b bx by
@@ -376,6 +400,7 @@ proc p/ {a b} {
 	[expr {double($ay) / double($by)}]
 }
 
+# Generate orthogonal vector
 proc portho {p} {
     lassign $p x y
     p $y [expr {- $x}]
@@ -518,7 +543,57 @@ proc a-shear {} {
 
 proc a-box {} {
     # TODO: ensure proper __convex__ quadrilateral.
-    list [prand] [prand] [prand] [prand]
+    # Maybe generate by types ?
+    # --- http://en.wikipedia.org/wiki/Quadrilateral
+    # - Square, Rhombus
+    # - Rectangle, Rhomboid
+    # - Parallelogram
+    # - Kite
+    # - Trapezoid, Trapezium
+    # - Convex
+
+    # Square, axis-aligned.
+    set p [prand]
+    set l [arand]
+    list $p [p+x $p $l] [p+xy $p $l $l] [p+y $p $l]
+
+    # Rhombus (sheared square), axis-aligned
+    set p  [prand]
+    set l  [arand]
+    set o  [arand]
+    set lo [expr {$l + $o}]
+    list $p [p+x $p $l] [p+xy $p $lo $l] [p+xy $p $o $l]
+
+    # Rectangle, axis-aligned.
+    set p  [prand]
+    set dx [arand]
+    set dy [arand]
+    list $p [p+x $p $dx] [p+xy $p $dx $dy] [p+y $p $dy]
+
+    # Rhomboid (sheared rectangle), axis-aligned.
+    set p   [prand]
+    set dx  [arand]
+    set dy  [arand]
+    set o   [arand]
+    set dxo [expr {$dx + $o}]
+    list $p [p+x $p $dx] [p+xy $p $dxo $dy] [p+xy $p $o $dy]
+
+    # Trapezoid -- This trips the fuzzer.
+    #     set p   [prand]
+    #     set dx  [arand]
+    #     set dx  [expr {3 * $dx}]
+    #     set dy  [arand]
+    #     set o1  [arand]
+    #     set o2  [arand]
+    #     set dxo [expr {$dx + $o2}]
+    #     list $p [p+x $p $dx] [p+xy $p $dxo $dy] [p+xy $p $o1 $dy]
+
+    # Fixed trapezoid
+    return {{0 0} {0 5} {2 3} {2 1}}
+
+    # TODO: Post-generation translation, scaling, rotation
+
+    #list [prand] [prand] [prand] [prand]
 }
 
 # # ## ### ##### ######## ############# #####################

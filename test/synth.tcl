@@ -321,8 +321,12 @@ proc matchdigits {expected actual} {
 }
 
 customMatch -1digits {matchNdigits -1}
+customMatch 0digits {matchNdigits 0}
 customMatch 2digits {matchNdigits 2}
 customMatch 4digits {matchNdigits 4}
+customMatch 8digits {matchNdigits 8}
+customMatch 10digits {matchNdigits 10}
+customMatch 12digits {matchNdigits 12}
 customMatch epsilon matchdigits
 
 # # ## ### ##### ######## ############# #####################
@@ -513,6 +517,7 @@ proc a-shear {} {
 }
 
 proc a-box {} {
+    # TODO: ensure proper __convex__ quadrilateral.
     list [prand] [prand] [prand] [prand]
 }
 

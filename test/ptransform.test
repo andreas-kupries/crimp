@@ -953,7 +953,7 @@ test crimp-proj-transform-12.56 {projective transforms, quadrilateral core, shea
 
 # TODO: Re-enable. Test various forms of quadrilaterals...
 
-apply {{} { return
+apply {{} { #return
     set n 0
     foreach _ [iota 500] {
         lassign [a-box] a b c d

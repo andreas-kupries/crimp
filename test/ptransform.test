@@ -222,11 +222,9 @@ apply {{} {
             lindex [crimp warp point $t $p] 0
         } -cleanup {
             unset t
-        } -result $r -match 4digits
-        # NOTE: We have differences in the 5th digit for about 1 in 10 random cases
-        # (about 48 of 500 failures in the higher precision)
-        # (float vs double issue ?)
-
+        } -result $r -match epsilon
+        # With double we have match to the full precision.
+        # With float we were restricted to 4digits.
         incr n
     }
 }}
@@ -325,8 +323,9 @@ apply {{} {
             lindex [crimp warp point $t $p] 0
         } -cleanup {
             unset t
-        } -result $r -match 2digits
-        # Precision only to within 2 digits for float!
+        } -result $r -match 10digits
+        # With double we match to within 10 digits.
+        # For float the precision was only to within 2 digits!
 
         incr n
     }
@@ -395,8 +394,9 @@ apply {{} {
             lindex [crimp warp point $t $p] 0
         } -cleanup {
             unset t
-        } -result $r -match 4digits
-        # Precision only to within 4 digits for float!
+        } -result $r -match 12digits
+        # For double we match to within 12 digits.
+        # For float the precision matched only to within 4 digits!
 
         incr n
     }
@@ -528,8 +528,9 @@ apply {{} {
             lindex [crimp warp point $t $p] 0
         } -cleanup {
             unset t
-        } -result $r -match 4digits
-        # Precision only to within 4 digits for float!
+        } -result $r -match 12digits
+        # For double we match to within 12 digits.
+        # For float the precision matched only to within 4 digits!
 
         incr n
     }
@@ -624,8 +625,8 @@ apply {{} {
         } -cleanup {
             unset t
         } -result $r -match -1digits
-        # Precision not even to within 0 digits for float!
-        # The single-precision is hitting is hard here.
+        # Even for double the precision is not even to within 0 digits!
+        # Investigate, I suspect some code path is going through single-precision still.
 
         incr n
     }
@@ -949,6 +950,8 @@ test crimp-proj-transform-12.56 {projective transforms, quadrilateral core, shea
 ## Whitebox testing, internals of the quadrilateral: Q2UNIT.
 ## Computes transform from the unit rectangle to the given input corners.
 ## Just randomized testing.
+
+# TODO: Re-enable. Test various forms of quadrilaterals...
 
 apply {{} { return
     set n 0

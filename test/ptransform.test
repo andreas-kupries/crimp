@@ -618,7 +618,7 @@ apply {{} {
     foreach _ [iota 500] {
         lassign [a-rotation] p r c a
 
-        test crimp-proj-transform-11.7.$n "projective transforms, rotation, fuzz" -setup {
+        test crimp-proj-transform-11.8.$n "projective transforms, rotation, fuzz" -setup {
             set t [crimp transform rotate $a $c]
         } -body {
             lindex [crimp warp point $t $p] 0
@@ -952,20 +952,29 @@ test crimp-proj-transform-12.56 {projective transforms, quadrilateral core, shea
 ## Just randomized testing.
 
 # TODO: Re-enable. Test various forms of quadrilaterals...
+# TODO: kite, trapezium, generally rotating, scaling and translating the quad around.
 
-apply {{} { #return
+apply {{} {
     set n 0
     foreach _ [iota 500] {
-        lassign [a-box] a b c d
+        foreach {k q prec} {
+            60 a-quad-square    12digits
+            61 a-quad-rhombus   12digits
+            62 a-quad-rectangle 12digits
+            63 a-quad-rhomboid  12digits
+            64 a-quad-trapezoid 10digits
+        } {
+            lassign [$q] a b c d
 
-        test crimp-proj-transform-12.60.$n "projective transforms, quadrilateral core, fuzz" -setup {
-            set t [crimp::transform::Q2UNIT [list $a $b $c $d]]
-        } -body {
-            # Flatten the 4 result points into single list.
-            join [crimp warp point $t {0 0} {1 0} {1 1} {0 1}]
-        } -cleanup {
-            unset t
-        } -result [join [list $a $b $c $d]] -match 4digits
+            test crimp-proj-transform-12.$k.$n "projective transforms, quadrilateral core, $q, fuzz" -setup {
+                set t [crimp::transform::Q2UNIT [list $a $b $c $d]]
+            } -body {
+                # Flatten the 4 result points into single list.
+                join [crimp warp point $t {0 0} {1 0} {1 1} {0 1}]
+            } -cleanup {
+                unset t
+            } -result [join [list $a $b $c $d]] -match $prec
+        }
 
         incr n
     }

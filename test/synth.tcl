@@ -359,7 +359,7 @@ proc p+ {a b} {
 # Partial vector addition/translation, in single axis, and with separate deltas.
 proc p+x {a delta} {
     lassign $a ax ay
-    p [expr {$ax + $delta}] $ax
+    p [expr {$ax + $delta}] $ay
 }
 
 proc p+y {a delta} {
@@ -546,59 +546,90 @@ proc a-shear {} {
     list $p $r [p $sx $sy]
 }
 
-proc a-box {} {
-    # TODO: ensure proper __convex__ quadrilateral.
-    # Maybe generate by types ?
-    # --- http://en.wikipedia.org/wiki/Quadrilateral
-    # - Square, Rhombus
-    # - Rectangle, Rhomboid
-    # - Parallelogram
-    # - Kite
-    # - Trapezoid, Trapezium
-    # - Convex
+# TODO: ensure proper __convex__ quadrilateral.
+# Maybe generate by types ?
+# --- http://en.wikipedia.org/wiki/Quadrilateral
+# - Square, Rhombus
+# - Rectangle, Rhomboid
+# - Parallelogram
+# - Kite
+# - Trapezoid, Trapezium
+# - Convex
 
+proc a-quad-square {} {
     # Square, axis-aligned.
+    # p -------l- p+(l,0)
+    # |           |
+    # |l          |l
+    # |           |
+    # p+(0,l) -l- p+(l,l)
     set p [prand]
     set l [arand]
     list $p [p+x $p $l] [p+xy $p $l $l] [p+y $p $l]
+}
 
+proc a-quad-rhombus {} {
     # Rhombus (sheared square), axis-aligned
+    # p -------l- p+(l,0)
+    # \           \
+    #  \l          \l
+    #   \           \
+    #    p+(o,l) -l- p+(l+o,l)
+    # -o-
     set p  [prand]
     set l  [arand]
     set o  [arand]
     set lo [expr {$l + $o}]
     list $p [p+x $p $l] [p+xy $p $lo $l] [p+xy $p $o $l]
+}
 
+proc a-quad-rectangle {} {
     # Rectangle, axis-aligned.
+    # p ------dx--- p+(dx,0)
+    # |             |
+    # |dy           |dy
+    # |             |
+    # p+(0,dy) -dx- p+(dx,dy)
     set p  [prand]
     set dx [arand]
     set dy [arand]
     list $p [p+x $p $dx] [p+xy $p $dx $dy] [p+y $p $dy]
+}
 
+proc a-quad-rhomboid {} {
     # Rhomboid (sheared rectangle), axis-aligned.
+    # p ------dx--- p+(dx,0)
+    # \             \
+    #  \dy           \dy
+    #   \             \
+    #    p+(o,dy) -dx- p+(dx+o,dy)
+    # -o-
     set p   [prand]
     set dx  [arand]
     set dy  [arand]
     set o   [arand]
     set dxo [expr {$dx + $o}]
     list $p [p+x $p $dx] [p+xy $p $dxo $dy] [p+xy $p $o $dy]
+}
 
-    # Trapezoid -- This trips the fuzzer.
-    #     set p   [prand]
-    #     set dx  [arand]
-    #     set dx  [expr {3 * $dx}]
-    #     set dy  [arand]
-    #     set o1  [arand]
-    #     set o2  [arand]
-    #     set dxo [expr {$dx + $o2}]
-    #     list $p [p+x $p $dx] [p+xy $p $dxo $dy] [p+xy $p $o1 $dy]
+proc a-quad-trapezoid {} {
+    # Trapezoid, axis-aligned
+    # p ----------------dx- p+(dx,0)
+    #  \                   /
+    #   \dy               /dy
+    #    \               /
+    #     p+(o1,dy) --- p+(dx+o2,dy)
+    # -o1-
 
-    # Fixed trapezoid
-    return {{0 0} {0 5} {2 3} {2 1}}
-
-    # TODO: Post-generation translation, scaling, rotation
-
-    #list [prand] [prand] [prand] [prand]
+    set p   [prand]
+    set dx  [expr {3 * [arand]}]
+    set dy  [arand]
+    set o1  [arand]
+    set o2  [arand]
+    set dxo [expr {$dx + $o2}]
+    set res [list $p [p+x $p $dx] [p+xy $p $dxo $dy] [p+xy $p $o1 $dy]]
+    #puts P\t[join $res \nP\t]
+    set res
 }
 
 # # ## ### ##### ######## ############# #####################

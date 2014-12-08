@@ -460,13 +460,13 @@ proc a-reflection {} {
     math::constants::constants eps
 
     # To set up the reflection we choose a line to reflect about via
-    # two points (taking care to reject 0-length lines). The
+    # two points A, B (taking care to reject 0-length lines). The
     # line-vector and its orthogonal are an orthonormal basis of the
     # 2D plane with in which the reflection is about the y-axis
-    # (a--b), making it a simple change of the sign. Assuming we
-    # choose a as the null of the coordinate system. This then allows
+    # (A--B), making it a simple change of the sign. Assuming we
+    # choose A as the null of the coordinate system. This then allows
     # us to easily create two points in the coordinate system which
-    # are reflections of each other. Covnersion into the regular
+    # are reflections of each other. Conversion into the regular
     # coordinate system then gives us a point plus reflection result
     # we can test the transform against.
 
@@ -485,10 +485,10 @@ proc a-reflection {} {
     }
     set xa [portho $ya] ;# The x-axis vector is orthogonal to y.
 
-    # Now we can generate a point in the new coordinate system
-    # whose reflection is easy to compute also (in the cusotm
-    # coordinates), just flip the sign on the
-    # x-coordinate. Covnert both to the regular coordinate system.
+    # Now we can generate a point in the new coordinate system whose
+    # reflection is easy to compute also (in the custom coordinates),
+    # just flip the sign on the x-coordinate. Convert both to the
+    # regular coordinate system.
 
     set u [rand -100 100] ; # x, custom
     set v [rand -100 100] ; # y, custom
@@ -497,8 +497,8 @@ proc a-reflection {} {
     set p [p+ $a [p+ [p*s $xa          $u]   [p*s $ya $v]]]
     set r [p+ $a [p+ [p*s $xa [expr {- $u}]] [p*s $ya $v]]]
 
-    # side note: It is useful to dump all the points and lines as
-    # a DIA for visualization.
+    # Side note: It would be useful to dump all the points and lines
+    # as a DIAgram, for visualization.
 
     list $p $r $a $b
 }
@@ -512,20 +512,25 @@ proc a-rotation {} {
     set theta1 [arand]
     set theta2 [arand]
     set scale  [rand/0 -10 10]
+    while {abs($scale) < 0.5} { set scale  [rand/0 -10 10] }
+    # |scale| >= 0.5 ensured
+
     set center [prand]
     set theta  [expr {$theta2 - $theta1}]
 
     set p [p [expr {cos ($theta1*$pi/180.)}] [expr {sin ($theta1*$pi/180.)}]]
     set r [p [expr {cos ($theta2*$pi/180.)}] [expr {sin ($theta2*$pi/180.)}]]
     
-    set p [p+ $center $p]
-    set r [p+ $center $r]
+    set p [p+ $center [p*s $p $scale]]
+    set r [p+ $center [p*s $r $scale]]
 
     list $p $r $center $theta
+
+    # TODO: Use simpler rotations (around (0,0)) first, with an
+    # x-axis-aligned start vector, to check basics.
 }
 
 proc a-shear {} {
-
     set p [prand] ; # A point to shear
 
     set sx [rand -5 5]

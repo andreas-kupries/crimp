@@ -2690,6 +2690,9 @@ namespace eval ::crimp::transform {
     namespace import ::tcl::mathfunc::*
     namespace import ::tcl::mathop::*
 
+    math::constants::constants pi
+    variable torad [expr {$pi/180.0}]
+
     variable typecode crimp/transform
 }
 
@@ -2749,7 +2752,7 @@ proc ::crimp::transform::scale {sx sy {p {0 0}}} {
     # | 0  0  1 |
     #
     # For p != (0,0) we have to chain 3 transformations:
-    # (a) Translate P to (0.0), i.e. translate -P.
+    # (a) Translate P to (0,0), i.e. translate -P.
     # (b) Scale
     # (c) Translate back, i.e. translate P.
 
@@ -2830,7 +2833,9 @@ proc ::crimp::transform::reflect::line {a {b {}}} {
     set b [expr {(2*$ax*$ay)        /double($d)}]
     set c [expr {($ay*$ay - $ax*$ax)/double($d)}]
 
-    return [affine $a $b 0 $b $c 0]
+    return [affine \
+		$a $b 0 \
+		$b $c 0]
 }
 
 proc ::crimp::transform::reflect::x {} {
@@ -2848,20 +2853,29 @@ proc ::crimp::transform::reflect::y {} {
 }
 
 proc ::crimp::transform::rotate {theta {p {0 0}}} {
+    variable torad
     ::crimp::CheckDouble $theta
     CheckPoint $p
 
+    # Basic rotation matrix (around (0,0))
+    # | cos  sin 0 |
+    # | -sin cos 0 |
+    # | 0    0   1 |
+
     # Rotate around around a point, by default (0,0), i.e. the upper
     # left corner. Rotation around any other point is done by
-    # translation that point to (0,0), rotating, and then translating
-    # everything back.
+    # translation of that point to (0,0), rotating, and then
+    # translating everything back.
 
-    # convert angle from degree to radians.
-    set s  [sin [* $theta 0.017453292519943295769236907684886]]
-    set c  [cos [* $theta 0.017453292519943295769236907684886]]
+    # Convert angle from degree to radians.
+    set a  [* $theta $torad]
+    set s  [sin $a]
+    set c  [cos $a]
     set sn [- $s]
 
-    set r [affine $c $s 0 $sn $c 0]
+    set r [affine \
+	       $c  $s 0 \
+	       $sn $c 0]
     if {$p ne {0 0}} {
 	lassign $p x y
 	set r [chain \

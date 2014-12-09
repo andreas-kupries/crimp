@@ -85,6 +85,73 @@ test crimp-matrix-multiply-2.5 {transform matrix multiplication, float} -body {
 }]
 
 # -------------------------------------------------------------------------
+
+test crimp-matrix-multiply-3.0 {transform matrix multiplication, wrong\#args, not enough} -body {
+    crimp::matmul3x3_double
+} -returnCodes error -result {wrong # args: should be "crimp::matmul3x3_double matAObj matBObj"}
+
+test crimp-matrix-multiply-3.1 {transform matrix multiplication, wrong\#args, not enough} -body {
+    crimp::matmul3x3_double A
+} -returnCodes error -result {wrong # args: should be "crimp::matmul3x3_double matAObj matBObj"}
+
+test crimp-matrix-multiply-3.2 {transform matrix multiplication, wrong\#args, too many} -body {
+    crimp::matmul3x3_double A B toomuch
+} -returnCodes error -result {wrong # args: should be "crimp::matmul3x3_double matAObj matBObj"}
+
+# TODO: bad arguments - not 3x3 matrices
+
+# -------------------------------------------------------------------------
+
+test crimp-matrix-multiply-4.0 {transform matrix multiplication, double} -body {
+    astclf 1 [crimp::matmul3x3_double [dmid] [dmid]]
+} -result [iconst double 0 0 3 3 {
+    1.0 0.0  0.0
+    0.0 1.0 0.0
+    0.0 0.0  1.0
+}]
+
+test crimp-matrix-multiply-4.1 {transform matrix multiplication, double} -body {
+    astclf 1 [crimp::matmul3x3_double [dmid] [dmtest]]
+} -result [iconst double 0 0 3 3 {
+    1.0 0.0 5.0
+    0.0 1.0 2.0
+    0.0 0.0 1.0
+}]
+
+test crimp-matrix-multiply-4.2 {transform matrix multiplication, double} -body {
+    astclf 1 [crimp::matmul3x3_double [dmid] [dmtestb]]
+} -result [iconst double 0 0 3 3 {
+    0.0 3.0 0.0
+    2.0 0.0 4.0
+    0.0 5.0 0.0
+}]
+
+
+test crimp-matrix-multiply-4.3 {transform matrix multiplication, double} -body {
+    astclf 1 [crimp::matmul3x3_double [dmidt] [dmid]]
+} -result [iconst double 0 0 3 3 {
+    0.0 0.0 1.0
+    0.0 1.0 0.0
+    1.0 0.0 0.0
+}]
+
+test crimp-matrix-multiply-4.4 {transform matrix multiplication, double} -body {
+    astclf 1 [crimp::matmul3x3_double [dmidt] [dmtest]]
+} -result [iconst double 0 0 3 3 {
+    0.0 0.0 1.0
+    0.0 1.0 2.0
+    1.0 0.0 5.0
+}]
+
+test crimp-matrix-multiply-4.5 {transform matrix multiplication, double} -body {
+    astclf 1 [crimp::matmul3x3_double [dmidt] [dmtestb]]
+} -result [iconst double 0 0 3 3 {
+    0.0 5.0 0.0
+    2.0 0.0 4.0
+    0.0 3.0 0.0
+}]
+
+# -------------------------------------------------------------------------
 testsuiteCleanup
 
 # Local variables:

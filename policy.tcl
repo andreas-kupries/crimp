@@ -2690,8 +2690,7 @@ namespace eval ::crimp::transform {
     namespace import ::tcl::mathfunc::*
     namespace import ::tcl::mathop::*
 
-    math::constants::constants pi
-    variable torad [expr {$pi/180.0}]
+    math::constants::constants degtorad
 
     variable typecode crimp/transform
 }
@@ -2853,22 +2852,26 @@ proc ::crimp::transform::reflect::y {} {
 }
 
 proc ::crimp::transform::rotate {theta {p {0 0}}} {
-    variable torad
+    variable degtorad
     ::crimp::CheckDouble $theta
     CheckPoint $p
 
-    # Basic rotation matrix (around (0,0))
+    # Basic rotation matrix (around origin (0,0))
     # | cos  sin 0 |
     # | -sin cos 0 |
     # | 0    0   1 |
 
-    # Rotate around around a point, by default (0,0), i.e. the upper
-    # left corner. Rotation around any other point is done by
-    # translation of that point to (0,0), rotating, and then
-    # translating everything back.
+    # Notes:
+    # - The angle theta is given in degrees.
+    # - Positive theta == counter clockwise, means _negative y_ (1st quadrant).
+    # - Negative theta == clockwise,         means _positive y_ (1st quadrant).
+    # This mapping is due to our positive y-axis pointing _down_.
 
     # Convert angle from degree to radians.
-    set a  [* $theta $torad]
+    set a [* $theta $degtorad]
+
+    # Compute matrix elements for rotation around the origin i.e. the
+    # upper left corner.
     set s  [sin $a]
     set c  [cos $a]
     set sn [- $s]
@@ -2876,7 +2879,12 @@ proc ::crimp::transform::rotate {theta {p {0 0}}} {
     set r [affine \
 	       $c  $s 0 \
 	       $sn $c 0]
+
     if {$p ne {0 0}} {
+	# Rotation around any other (non-origin) point is done by
+	# translation of that point to the origin, rotating, and then
+	# translating back.
+
 	lassign $p x y
 	set r [chain \
 		   [translate [- $x] [- $y]] \

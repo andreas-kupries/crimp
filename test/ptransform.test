@@ -592,42 +592,97 @@ test crimp-proj-transform-11.5 {projective transforms, rotate, invalid arguments
     crimp transform rotate 1 {0 Y}
 } -returnCodes error -result {expected floating-point number but got "Y"}
 
-test crimp-proj-transform-11.6 {projective transforms, rotate} -body {
+# -------------------------------------------------------------------------
+# Rotate clock wise, counter clock wise, around origin, other point.
+
+test crimp-proj-transform-11.6.0 {projective transforms, rotate, origin, clock wise} -body {
     decode_transform \
-        [crimp transform rotate 2 {-50 -50}]
+        [crimp transform rotate -30]
 } -match 4digits -result {
-     0.9994  0.0349  1.7145
-    -0.0349  0.9994 -1.7754
+     0.8660 -0.4999  0.0000
+     0.4999  0.8660  0.0000
      0.0000  0.0000  1.0000
 }
 
-test crimp-proj-transform-11.7 {projective transforms, rotate, origin} -body {
+test crimp-proj-transform-11.6.1 {projective transforms, rotate, origin, clock wise, warp check} -body {
+    lindex [crimp warp point [crimp transform rotate -30] {10 0}] 0
+} -match 4digits -result { 8.6602 4.9999 }
+
+test crimp-proj-transform-11.6.2 {projective transforms, rotate, origin, clock wise, warp check} -body {
+    lindex [crimp warp point [crimp transform rotate -30] {0 10}] 0
+} -match 4digits -result { -4.9999 8.6602 }
+
+test crimp-proj-transform-11.7.0 {projective transforms, rotate, origin, counter clock wise} -body {
     decode_transform \
-        [crimp transform rotate 1]
+        [crimp transform rotate 30]
 } -match 4digits -result {
-     0.9998  0.0175  0.0000
-    -0.0175  0.9998  0.0000
-     0.0000  0.0000  1.0000
+    0.8660  0.4999  0.0000
+   -0.4999  0.8660  0.0000
+    0.0000  0.0000  1.0000
 }
+
+test crimp-proj-transform-11.7.1 {projective transforms, rotate, origin, counter clock wise, warp check} -body {
+    lindex [crimp warp point [crimp transform rotate 30] {10 0}] 0
+} -match 4digits -result { 8.6602 -4.9999 }
+
+test crimp-proj-transform-11.7.2 {projective transforms, rotate, origin, counter clock wise, warp check} -body {
+    lindex [crimp warp point [crimp transform rotate 30] {0 10}] 0
+} -match 4digits -result { 4.9999 8.6602 }
+
+test crimp-proj-transform-11.8.0 {projective transforms, rotate, non-origin, clock wise} -body {
+    decode_transform \
+        [crimp transform rotate -30 {50 50}]
+} -match 4digits -result {
+    0.8660 -0.4999  31.6987
+    0.4999  0.8660 -18.3013
+    0.0000  0.0000   1.0000
+}
+
+test crimp-proj-transform-11.8.1 {projective transforms, rotate, non-origin, clock wise, warp check} -body {
+    lindex [crimp warp point [crimp transform rotate -30 {50 50}] {60 50}] 0
+} -match 4digits -result { 58.6602 54.9999 }
+
+test crimp-proj-transform-11.8.2 {projective transforms, rotate, non-origin, clock wise, warp check} -body {
+    lindex [crimp warp point [crimp transform rotate -30 {50 50}] {50 60}] 0
+} -match 4digits -result { 45.0000 58.6602 }
+
+test crimp-proj-transform-11.9.0 {projective transforms, rotate, non-origin, counter clock wise} -body {
+    decode_transform \
+        [crimp transform rotate 30 {50 50}]
+} -match 4digits -result {
+    0.8660 0.4999 -18.3013
+   -0.4999 0.8660  31.6987
+    0.0000 0.0000   1.0000
+}
+
+test crimp-proj-transform-11.9.1 {projective transforms, rotate, non-origin, counter clock wise, warp check} -body {
+    lindex [crimp warp point [crimp transform rotate 30 {50 50}] {60 50}] 0
+} -match 4digits -result { 58.6602 45.0000 }
+
+test crimp-proj-transform-11.9.2 {projective transforms, rotate, non-origin, counter clock wise, warp check} -body {
+    lindex [crimp warp point [crimp transform rotate 30 {50 50}] {50 60}] 0
+} -match 4digits -result { 54.9999 58.6602 }
 
 # -------------------------------------------------------------------------
-## Randomized testing. Rotation around arbitrary point.
+## Randomized testing. Rotations around arbitrary points.
 
 apply {{} {
     set n 0
     foreach _ [iota 500] {
-        lassign [a-rotation] p r c a
+        foreach {k rot prec} {
+            10 an-origin-rotation 12digits
+            11 a-rotation         12digits
+        } {
+            lassign [$rot] p r c a
 
-        test crimp-proj-transform-11.8.$n "projective transforms, rotation, fuzz" -setup {
-            set t [crimp transform rotate $a $c]
-        } -body {
-            lindex [crimp warp point $t $p] 0
-        } -cleanup {
-            unset t
-        } -result $r -match -1digits
-        # Even for double the precision is not even to within 0 digits!
-        # Investigate, I suspect some code path is going through single-precision still.
-
+            test crimp-proj-transform-11.$k.$n "projective transforms, rotation, $rot, fuzz" -setup {
+                set t [crimp transform rotate $a $c]
+            } -body {
+                lindex [crimp warp point $t $p] 0
+            } -cleanup {
+                unset t
+            } -result $r -match $prec
+        }
         incr n
     }
 }}
@@ -951,7 +1006,6 @@ test crimp-proj-transform-12.56 {projective transforms, quadrilateral core, shea
 ## Computes transform from the unit rectangle to the given input corners.
 ## Just randomized testing.
 
-# TODO: Re-enable. Test various forms of quadrilaterals...
 # TODO: kite, trapezium, generally rotating, scaling and translating the quad around.
 
 apply {{} {

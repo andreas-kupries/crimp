@@ -348,6 +348,21 @@ proc pnorm {p} {
     expr {hypot($x,$y)}
 }
 
+proc polar {c} {
+    math::constants::constants radtodeg
+    # Convert cartesian point C to polar form (magnitude+angle).
+    lassign $c x y
+    list [expr {hypot($x,$y)}] [expr {$radtodeg * atan2($y,$x)}]
+}
+
+proc cartesian {p} {
+    math::constants::constants degtorad
+    # Convert polar-form P to cartesian C.
+    lassign $p m a
+    set a [expr {$a * $degtorad}]
+    list [expr {$m * cos ($a)}] [expr {- $m * sin ($a)}]
+}
+
 # Vector difference of two points.
 proc p- {a b} {
     lassign $a ax ay
@@ -510,30 +525,37 @@ proc a-reflection {} {
 }
 
 proc a-rotation {} {
-    math::constants::constants pi
-
-    # We set it up from scratch as two sin,cos vectors on the unit
-    # circle, scaled and translated to a rotation point.
+    # Random rotations around arbitrary points.  We set them up from
+    # scratch, as two vectors on the scaled unit circle, and
+    # translated to the chosen center point.
 
     set theta1 [arand]
     set theta2 [arand]
     set scale  [rand/0 -10 10]
-    while {abs($scale) < 0.5} { set scale  [rand/0 -10 10] }
+    while {abs($scale) < 0.5} { set scale [rand/0 -10 10] }
     # |scale| >= 0.5 ensured
 
     set center [prand]
-    set theta  [expr {$theta2 - $theta1}]
+    set dtheta [expr {$theta2 - $theta1}]
 
-    set p [p [expr {cos ($theta1*$pi/180.)}] [expr {sin ($theta1*$pi/180.)}]]
-    set r [p [expr {cos ($theta2*$pi/180.)}] [expr {sin ($theta2*$pi/180.)}]]
-    
-    set p [p+ $center [p*s $p $scale]]
-    set r [p+ $center [p*s $r $scale]]
+    set p [p+ $center [cartesian [p $scale $theta1]]]
+    set r [p+ $center [cartesian [p $scale $theta2]]]
+
+    list $p $r $center $dtheta
+}
+
+proc an-origin-rotation {} {
+    # Random rotations around the origin.
+    # Non random: Initial point (P) lies on the x-axis.
+
+    set center {0 0}
+    set theta  [arand]
+    set len    [rand 0.5 200]
+
+    set p [p $len 0]
+    set r [cartesian [p $len $theta]]
 
     list $p $r $center $theta
-
-    # TODO: Use simpler rotations (around (0,0)) first, with an
-    # x-axis-aligned start vector, to check basics.
 }
 
 proc a-shear {} {

@@ -64,6 +64,52 @@ test crimp-matrix-inverse-2.3 {transform matrix inversion, float, inverse multip
 }]
 
 # -------------------------------------------------------------------------
+
+test crimp-matrix-inverse-3.0 {transform matrix inversion, wrong\#args, not enough} -body {
+    crimp::matinv3x3_double
+} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_double matObj"}
+
+test crimp-matrix-inverse-3.1 {transform matrix inversion, wrong\#args, too many} -body {
+    crimp::matinv3x3_double M toomuch
+} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_double matObj"}
+
+# TODO: bad arguments - not 3x3 matrix, singular matrix (non-invertible).
+
+# -------------------------------------------------------------------------
+
+test crimp-matrix-inverse-4.0 {transform matrix inversion, double} -body {
+    astclf 1 [crimp::matinv3x3_double [dmid]]
+} -result [iconst double 0 0 3 3 {
+     1.0 -0.0  0.0
+    -0.0  1.0 -0.0
+     0.0 -0.0  1.0
+}]
+
+test crimp-matrix-inverse-4.1 {transform matrix inversion, double} -body {
+    astclf 1 [crimp::matinv3x3_double [dmtest]]
+} -result [iconst double 0 0 3 3 {
+     1.0 -0.0 -5.0
+    -0.0  1.0 -2.0
+     0.0 -0.0  1.0
+}]
+
+test crimp-matrix-inverse-4.2 {transform matrix inversion, double, inverse multiply to identity} -body {
+    astclf 2 [crimp::matmul3x3_double [crimp::matinv3x3_double [dmtest]] [dmtest]]
+} -result [iconst double 0 0 3 3 {
+    1.00 0.00 0.00
+    0.00 1.00 0.00
+    0.00 0.00 1.00
+}]
+
+test crimp-matrix-inverse-4.3 {transform matrix inversion, double, inverse multiply to identity} -body {
+    astclf 2 [crimp::matmul3x3_double [dmtest] [crimp::matinv3x3_double [dmtest]]]
+} -result [iconst double 0 0 3 3 {
+    1.00 0.00 0.00
+    0.00 1.00 0.00
+    0.00 0.00 1.00
+}]
+
+# -------------------------------------------------------------------------
 testsuiteCleanup
 
 # Local variables:

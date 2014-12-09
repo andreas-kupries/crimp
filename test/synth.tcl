@@ -151,6 +151,7 @@ proc rgba {} { crimp read tcl rgba [t_rgba] }
 proc hsv  {} { crimp read tcl hsv  [t_hsv]  }
 
 proc float     {} { crimp read tcl float     [t_float]     }
+proc double    {} { crimp read tcl double    [t_float]     }
 proc fpcomplex {} { crimp read tcl fpcomplex [t_fpcomplex] }
 
 # # ## ### ##### ######## ############# #####################
@@ -160,6 +161,11 @@ proc mid    {} { crimp read tcl float [t_3x3identity] }
 proc midt   {} { crimp read tcl float [t_3x3idtrans] }
 proc mtest  {} { crimp read tcl float [t_3x3test] }
 proc mtestb {} { crimp read tcl float [t_3x3testb] }
+
+proc dmid    {} { crimp read tcl double [t_3x3identity] }
+proc dmidt   {} { crimp read tcl double [t_3x3idtrans] }
+proc dmtest  {} { crimp read tcl double [t_3x3test] }
+proc dmtestb {} { crimp read tcl double [t_3x3testb] }
 
 # # ## ### ##### ######## ############# #####################
 
@@ -249,7 +255,7 @@ proc iconst {t x y w h p} {
 }
 
 proc tconst {p} {
-    list crimp/transform [iconst float 0 0 3 3 $p]
+    list crimp/transform [iconst double 0 0 3 3 $p]
 }
 
 proc lmap {f list} {

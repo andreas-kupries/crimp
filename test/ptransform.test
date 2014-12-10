@@ -1016,7 +1016,7 @@ apply {{} {
             61 a-quad-rhombus   12digits
             62 a-quad-rectangle 12digits
             63 a-quad-rhomboid  12digits
-            64 a-quad-trapezoid 10digits
+            64 a-quad-trapezoid 9digits
         } {
             lassign [$q] a b c d
 

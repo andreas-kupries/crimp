@@ -367,6 +367,7 @@ customMatch 0digits {matchNdigits 0}
 customMatch 2digits {matchNdigits 2}
 customMatch 4digits {matchNdigits 4}
 customMatch 8digits {matchNdigits 8}
+customMatch 9digits {matchNdigits 9}
 customMatch 10digits {matchNdigits 10}
 customMatch 12digits {matchNdigits 12}
 customMatch epsilon matchdigits

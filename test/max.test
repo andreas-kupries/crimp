@@ -27,17 +27,18 @@ test crimp-max-1.1 {image max, wrong\#args, too many} -body {
 # -------------------------------------------------------------------------
 # MAX (arity 2, commutative)
 # Supported combinations (commutations not mentioned):
-#          | grey8 grey16 grey32 rgb rgba hsv float fpcomplex
-# ---------+--------------------------------------------------
+#          | grey8 grey16 grey32 rgb rgba hsv float fpcomplex double
+# ---------+--------------------------------------------------------
 # grey8    | *
-# grey16   |
-# grey32   |
+# grey16   |       *
+# grey32   |              *
 # rgb      | *                   *
 # rgba     | *                   *   *
 # hsv      |
 # float    | *     *      *                    *
 # fpcomplex|
-# ---------+--------------------------------------------------
+# double   | *     *      *                                   *
+# ---------+--------------------------------------------------------
 #
 #  *--**-*-
 #  ------*-
@@ -54,6 +55,137 @@ test crimp-max-1.1 {image max, wrong\#args, too many} -body {
 test crimp-max-2.0 {image max, grey8, self} -body {
     crimp max [grey8] [grey8]
 } -result [grey8]
+
+# -------------------------------------------------------------------------
+# 16 combinations of t_cross with itself, 8 cardinal directions at 2 displacements each.
+
+foreach {n dx dy result} {
+    0  -2 -2 {-2 -2 7 7 {1 0 0 0 7 0 0
+                         0 2 0 9 0 0 0
+                         0 0 3 0 0 0 7
+                         0 8 0 4 0 9 0
+                         6 0 0 0 5 0 0
+                         0 0 0 8 0 4 0
+                         0 0 6 0 0 0 5}}
+    1  -1 -1 {-1 -1 6 6 {1 0 0 0 7 0
+                         0 2 0 9 0 7
+                         0 0 3 0 9 0
+                         0 8 0 4 0 0
+                         6 0 8 0 5 0
+                         0 6 0 0 0 5}}
+    2   1  1 { 0  0 6 6 {1 0 0 0 7 0
+                         0 2 0 9 0 7
+                         0 0 3 0 9 0
+                         0 8 0 4 0 0
+                         6 0 8 0 5 0
+                         0 6 0 0 0 5}}
+    3   2  2 { 0  0 7 7 {1 0 0 0 7 0 0
+                         0 2 0 9 0 0 0
+                         0 0 3 0 0 0 7
+                         0 8 0 4 0 9 0
+                         6 0 0 0 5 0 0
+                         0 0 0 8 0 4 0
+                         0 0 6 0 0 0 5}}
+    4  -2  2 {-2  0 7 7 {0 0 1 0 0 0 7
+                         0 0 0 2 0 9 0
+                         1 0 0 0 7 0 0
+                         0 2 0 9 0 4 0
+                         0 0 6 0 0 0 5
+                         0 8 0 4 0 0 0
+                         6 0 0 0 5 0 0}}
+    5  -1  1 {-1  0 6 6 {0 1 0 0 0 7
+                         1 0 2 0 9 0
+                         0 2 0 9 0 0
+                         0 0 8 0 4 0
+                         0 8 0 4 0 5
+                         6 0 0 0 5 0}}
+    6   1 -1 { 0 -1 6 6 {0 1 0 0 0 7
+                         1 0 2 0 9 0
+                         0 2 0 9 0 0
+                         0 0 8 0 4 0
+                         0 8 0 4 0 5
+                         6 0 0 0 5 0}}
+    7   2 -2 { 0 -2 7 7 {0 0 1 0 0 0 7
+                         0 0 0 2 0 9 0
+                         1 0 0 0 7 0 0
+                         0 2 0 9 0 4 0
+                         0 0 6 0 0 0 5
+                         0 8 0 4 0 0 0
+                         6 0 0 0 5 0 0}}
+    8   0  1 { 0  0 5 6 {1 0 0 0 7
+                         1 2 0 9 7
+                         0 2 3 9 0
+                         0 8 3 4 0
+                         6 8 0 4 5
+                         6 0 0 0 5}}
+    9   0  2 { 0  0 5 7 {1 0 0 0 7
+                         0 2 0 9 0
+                         1 0 3 0 7
+                         0 8 0 9 0
+                         6 0 3 0 5
+                         0 8 0 4 0
+                         6 0 0 0 5}}
+    10  0 -2 { 0 -2 5 7 {1 0 0 0 7
+                         0 2 0 9 0
+                         1 0 3 0 7
+                         0 8 0 9 0
+                         6 0 3 0 5
+                         0 8 0 4 0
+                         6 0 0 0 5}}
+    11  0 -1 { 0 -1 5 6 {1 0 0 0 7
+                         1 2 0 9 7
+                         0 2 3 9 0
+                         0 8 3 4 0
+                         6 8 0 4 5
+                         6 0 0 0 5}}
+    12  1  0 { 0  0 6 5 {1 1 0 0 7 7
+                         0 2 2 9 9 0
+                         0 0 3 3 0 0
+                         0 8 8 4 4 0
+                         6 6 0 0 5 5}}
+    13  2  0 { 0  0 7 5 {1 0 1 0 7 0 7
+                         0 2 0 9 0 9 0
+                         0 0 3 0 3 0 0
+                         0 8 0 8 0 4 0
+                         6 0 6 0 5 0 5}}
+    14 -2  0 {-2  0 7 5 {1 0 1 0 7 0 7
+                         0 2 0 9 0 9 0
+                         0 0 3 0 3 0 0
+                         0 8 0 8 0 4 0
+                         6 0 6 0 5 0 5}}
+    15 -1  0 {-1  0 6 5 {1 1 0 0 7 7
+                         0 2 2 9 9 0
+                         0 0 3 3 0 0
+                         0 8 8 4 4 0
+                         6 6 0 0 5 5}}
+} {
+    test crimp-max-3.$n "image max, grey8, ($dx, $dy)" -setup {
+        set base  [g8 t_cross]
+        set other [crimp rplace $base $dx $dy]
+    } -body {
+        astcl [crimp max $base $other]
+    } -cleanup {
+        unset base other
+    } -result [iconst grey8 {*}$result]
+
+    test crimp-max-6.$n "image max, grey16, ($dx, $dy)" -setup {
+        set base  [g16 t_cross]
+        set other [crimp rplace $base $dx $dy]
+    } -body {
+        astcl [crimp max $base $other]
+    } -cleanup {
+        unset base other
+    } -result [iconst grey16 {*}$result]
+
+    test crimp-max-5.$n "image max, grey32, ($dx, $dy)" -setup {
+        set base  [g32 t_cross]
+        set other [crimp rplace $base $dx $dy]
+    } -body {
+        astcl [crimp max $base $other]
+    } -cleanup {
+        unset base other
+    } -result [iconst grey32 {*}$result]
+}
 
 # -------------------------------------------------------------------------
 ## Handling of input location and geometry: Union of inputs.

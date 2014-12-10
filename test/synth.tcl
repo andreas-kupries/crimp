@@ -139,6 +139,16 @@ proc t_3x3testb {} {
     }]
 }
 
+proc t_cross {} {
+    return [trim {
+	{1 0 0 0 7}
+	{0 2 0 9 0}
+	{0 0 3 0 0}
+	{0 8 0 4 0}
+	{6 0 0 0 5}
+    }]
+}
+
 # # ## ### ##### ######## ############# #####################
 
 proc ramp   {} { crimp read tcl grey8 [t_ramp]   }
@@ -155,6 +165,10 @@ proc hsv  {} { crimp read tcl hsv  [t_hsv]  }
 proc float     {} { crimp read tcl float     [t_float]     }
 proc double    {} { crimp read tcl double    [t_float]     }
 proc fpcomplex {} { crimp read tcl fpcomplex [t_fpcomplex] }
+
+proc g8  {cmd} { crimp read tcl grey8  [$cmd] }
+proc g16 {cmd} { crimp read tcl grey16 [$cmd] }
+proc g32 {cmd} { crimp read tcl grey32 [$cmd] }
 
 # # ## ### ##### ######## ############# #####################
 ## Standard transform matrices

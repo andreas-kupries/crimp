@@ -4,6 +4,8 @@
 # A number of synthetic images of various types and other helper
 # functions specific to crimp.
 
+package require struct::matrix
+
 proc types {}  { return {grey8 grey16 grey32 rgb rgba hsv float fpcomplex} }
 proc greys {}  { return {grey8 grey16 grey32} }
 proc floats {} { return {float fpcomplex} }
@@ -218,12 +220,6 @@ proc normstat {s} {
     return $s
 }
 
-proc astcl {i} {
-    # Treat as list, and replace the binary pixel data with the nested-list tcl representation.
-    lreplace $i end end [join [crimp write 2string tcl $i] \n]
-}
-
-
 proc decode_transform {actual} {
     # Validate that actual is a transform.
     # (tag + embedded 3x3 float image)
@@ -242,16 +238,42 @@ proc decode_transform {actual} {
     return [join [crimp write 2string tcl $image]]
 }
 
+proc astcl {i} {
+    # Treat as list, and replace the binary pixel data with the nested-list tcl representation.
+    if {![crimp width $i] || ![crimp height $i]} {
+	return [lreplace $i end end [crimp write 2string tcl $i]]
+    }
+    return [lreplace $i end end]\n[format-pix [crimp width $i] [crimp write 2string tcl $i]]
+}
+
 proc astclf {digits i} {
     if {[string match {crimp/transform *} $i]} {
 	return [lreplace $i end end [astclf $digits [lindex $i end]]]
     }
+
+    if {![crimp width $i] || ![crimp height $i]} {
+	# Treat as list, and replace the binary pixel data with the nested-list tcl representation.
+	return [lreplace $i end end [F %.${digits}f [crimp write 2string tcl $i]]]
+    }
+
     # Treat as list, and replace the binary pixel data with the nested-list tcl representation.
-    lreplace $i end end [join [F %.${digits}f [crimp write 2string tcl $i]] \n]
+    return [lreplace $i end end]\n[format-pix [crimp width $i] [F %.${digits}f [crimp write 2string tcl $i]]]
 }
 
 proc iconst {t x y w h p} {
-    list crimp::image::$t $x $y $w $h {} [trim $p]
+    if {!$w || !$h} {
+	return [list crimp::image::$t $x $y $w $h {} [trim $p]]
+    }
+    return [list crimp::image::$t $x $y $w $h {}]\n[format-pix $w [split [trim $p] \n]]
+}
+
+proc format-pix {w rows} {
+    struct::matrix M
+    M add columns $w
+    foreach row $rows { M add row $row }
+    set data [M format 2string]
+    M destroy
+    return $data
 }
 
 proc tconst {p} {

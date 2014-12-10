@@ -177,24 +177,32 @@ apply {{} {
     set geometry { 0   0 11 11}
 
     foreach {n result transform} {
-        0 { 0   0 11 11} {identity}
-        1 {-8  -5 16 16} {reflect line {2 4} {4 0}}
-        2 {-1  -6 16 17} {rotate 45 {2 2}}
-        3 { 0   0 21 31} {scale 2 3}
-        4 { 2   3 11 11} {translate 2 3}
-        5 { 0  -8 16 17} {rotate 45}
-        6 { 0   0 11 11} {reflect line {10 10}}
-        7 {-4 -41 26 44} {quadrilateral
+        0 {{ 0   0 11 11} {0 0} {10 0} {10 10} {0 10}} {identity}
+        1 {{-8  -5 16 16} {0 0} {0 0} {0 0} {0 0}} {reflect line {2 4} {4 0}}
+        2 {{-1  -6 16 17} {0 0} {0 0} {0 0} {0 0}} {rotate 45 {2 2}}
+        3 {{ 0   0 21 31} {0 0} {20 0} {20 30} {0 30}} {scale 2 3}
+        4 {{ 2   3 11 11} {2 3} {12 3} {12 13} {2 13}} {translate 2 3}
+        5 {{ 0  -8 16 17} {0 0} {0 0} {0 0} {0 0}} {rotate 45}
+        6 {{ 0   0 11 11} {0 0} {0 0} {0 0} {0 0}} {reflect line {10 10}}
+        7 {{-4 -41 26 44} {0 0} {0 0} {0 0} {0 0}} {quadrilateral
             {{0 0} {0  1} {1 1} {1  0}}
             {{0 0} {-1 2} {3 3} {4 -2}}}
     } {
         test crimp-warp-box-4.$n "image warp box, $transform" -setup {
             set t [crimp transform {*}$transform]
+            lassign $geometry x y w h
+            incr w -1
+            incr h -1
+            # geometry (x y w h) => 4 points.
+            set a [p $x $y]
+            set b [p+x  $a $w]
+            set c [p+xy $a $w $h]
+            set d [p+y  $a $h]
         } -body {
-            crimp warp box $t $geometry
+            list {*}[crimp warp box $t $geometry] {*}[concat {*}[crimp warp point $t $a $b $c $d]]
         } -cleanup {
-            unset t
-        } -match 4digits -result $result
+            unset t a b c d x y w h
+        } -match 4digits -result [concat {*}$result]
     }
 }}
 

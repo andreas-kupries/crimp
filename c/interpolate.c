@@ -118,6 +118,14 @@ crimp_interpolate_bicubic (double a, double b, double c, double d,
      *           yfrac)
      */
 
+    return
+	crimp_interpolate_cubic ( crimp_interpolate_cubic (a,b,c,d,xfrac),
+				  crimp_interpolate_cubic (e,f,g,h,xfrac),
+				  crimp_interpolate_cubic (i,j,k,l,xfrac),
+				  crimp_interpolate_cubic (m,n,o,p,xfrac),
+				  yfrac);
+
+#if 0
     double p00 = a;    double p01 = b;    double p02 = c;    double p03 = d;
     double p10 = e;    double p11 = f;    double p12 = g;    double p13 = h;
     double p20 = i;    double p21 = j;    double p22 = k;    double p23 = l;
@@ -156,7 +164,8 @@ crimp_interpolate_bicubic (double a, double b, double c, double d,
 	(a00 + a01 * yfrac + a02 * y2 + a03 * y3)         +
 	(a10 + a11 * yfrac + a12 * y2 + a13 * y3) * xfrac +
 	(a20 + a21 * yfrac + a22 * y2 + a23 * y3) * x2    +
-	(a30 + a31 * yfrac + a32 * y2 + a33 * y3) * x3;	    
+	(a30 + a31 * yfrac + a32 * y2 + a33 * y3) * x3;
+#endif
 }
 
 

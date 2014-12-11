@@ -1,0 +1,167 @@
+# -*- tcl -*-
+# -------------------------------------------------------------------------
+
+source [file join \
+            [file dirname [file join [pwd] [info script]]] \
+            testutilities.tcl]
+
+testsNeedTcl     8.5
+testsNeedTcltest 2
+
+support {}
+testing {
+    useC [mainPath _test/lib]/crimp_core* crimp::core no
+}
+
+# -------------------------------------------------------------------------
+## Core math: cubic interpolation
+
+test crimp-core-math-2cubic-1.0 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.1 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.2 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.3 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.4 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.5 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.6 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.7 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.8 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.9 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H I
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.10 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H I J
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.11 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H I J K
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.12 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H I J K L
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.13 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H I J K L M
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.14 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H I J K L M N
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.15 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H I J K L M N O
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.16 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H I J K L M N O P
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.17 {interpolate bicubic, wrong args, not enough} -body {
+    crimp interpolate bicubic A B C D E F G H I J K L M N O P XF
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+test crimp-core-math-2cubic-1.18 {interpolate bicubic, wrong args, too many} -body {
+    crimp interpolate bicubic A B C D E F G H I J K L M N O P XF YF XXX
+} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+
+# -------------------------------------------------------------------------
+## Fixed functionality
+
+test crimp-core-math-2cubic-2.0 {interpolate bicubic, fixed setup} -body {
+    crimp interpolate bicubic \
+        0 0.5 0.5 1 \
+        1 1.5 1.5 2 \
+        1 1.5 1.5 2 \
+        2 2.5 2.5 3 \
+        0.5 0.5
+} -result 1.5 -match epsilon
+
+# -------------------------------------------------------------------------
+## Randomized functionality.
+
+apply {{} {
+    set w 0
+    foreach _ [iota 500] {
+        # Compute an interpolation.
+        set a [rand -10 10]
+        set b [rand -10 10]
+        set c [rand -10 10]
+        set d [rand -10 10]
+
+        set e [rand -10 10]
+        set f [rand -10 10]
+        set g [rand -10 10]
+        set h [rand -10 10]
+
+        set i [rand -10 10]
+        set j [rand -10 10]
+        set k [rand -10 10]
+        set l [rand -10 10]
+
+        set m [rand -10 10]
+        set n [rand -10 10]
+        set o [rand -10 10]
+        set p [rand -10 10]
+
+        set x [rand 0 1]
+        set y [rand 0 1]
+
+        set a1 [crimp interpolate cubic $a $b $c $d $x]
+        set b1 [crimp interpolate cubic $e $f $g $h $x]
+        set c1 [crimp interpolate cubic $i $j $k $l $x]
+        set d1 [crimp interpolate cubic $m $n $o $p $x]
+
+        # Could use interpolate cubic here as well.
+        set r [expr {$b1 + 0.5 * $y * ($c1 - $a1 + $y * (2.0*$a1 - 5.0*$b1 + 4.0*$c1 - $d1 + $y * (3.0*($b1 - $c1) + $d1 - $a1)))}]
+        # reorganize the formula to have proper x, x^2, x^3 terms.
+
+        # And check
+        test crimp-core-math-2cubic-3.$w "interpolate bicubic, fuzz" -body {
+            crimp interpolate bicubic \
+                $a $b $c $d \
+                $e $f $g $h \
+                $i $j $k $l \
+                $m $n $o $p \
+                $x $y
+        } -result $r -match 14digits
+
+        unset a b c d e f g h i j k l m n o p a1 b1 c1 d1 x y r
+        incr w
+    }
+}}
+
+# -------------------------------------------------------------------------
+testsuiteCleanup
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

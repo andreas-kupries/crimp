@@ -76,6 +76,7 @@ critcl::api header c/image.h
 critcl::api header c/volume.h
 critcl::api header c/buffer.h
 critcl::api header c/rect.h
+critcl::api header c/interpolate.h
 
 # - -- --- ----- -------- -------------
 ## image_type.h
@@ -287,6 +288,38 @@ critcl::api function void crimp_rect_union {
     {const crimp_geometry*} a
     {const crimp_geometry*} b
     {crimp_geometry*}       result
+}
+
+# - -- --- ----- -------- -------------
+## interpolate.h
+
+critcl::api function double crimp_interpolate_linear {
+    double a
+    double b
+    double xf
+}
+
+critcl::api function double crimp_interpolate_bilinear {
+    double a
+    double b
+    double c
+    double d
+    double xf
+    double yf
+}
+
+critcl::api function double crimp_interpolate_trlinear {
+    double a
+    double b
+    double c
+    double d
+    double e
+    double f
+    double g
+    double h
+    double xf
+    double yf
+    double zf
 }
 
 # # ## ### ##### ######## #############

@@ -61,6 +61,7 @@ critcl::csources c/volume.c
 critcl::csources c/image_type.c
 critcl::csources c/buffer.c
 critcl::csources c/rect.c
+critcl::csources c/interpolate.c
 
 # # ## ### ##### ######## #############
 ## Declare the Tcl layer of the package.
@@ -294,32 +295,37 @@ critcl::api function void crimp_rect_union {
 ## interpolate.h
 
 critcl::api function double crimp_interpolate_linear {
-    double a
-    double b
+    double a    double b
     double xf
 }
 
 critcl::api function double crimp_interpolate_bilinear {
-    double a
-    double b
-    double c
-    double d
+    double a    double b
+    double c    double d
     double xf
     double yf
 }
 
-critcl::api function double crimp_interpolate_trlinear {
-    double a
-    double b
-    double c
-    double d
-    double e
-    double f
-    double g
-    double h
+critcl::api function double crimp_interpolate_trilinear {
+    double a    double b    double c    double d
+    double e    double f    double g    double h
     double xf
     double yf
     double zf
+}
+
+critcl::api function double crimp_interpolate_cubic {
+    double a    double b    double c    double d
+    double xf
+}
+
+critcl::api function double crimp_interpolate_bicubic {
+    double a    double b    double c    double d
+    double e    double f    double g    double h
+    double i    double j    double k    double l
+    double m    double n    double o    double p
+    double xf
+    double yf
 }
 
 # # ## ### ##### ######## #############

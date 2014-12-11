@@ -1,0 +1,24 @@
+interpolate::bilinear
+double a
+double b
+double c
+double d
+double xf
+double yf
+
+double r = crimp_interpolate_bilinear (a, b,
+				       c, d,
+				       xf, yf);
+
+Tcl_SetObjResult (interp, Tcl_NewDoubleObj (r));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

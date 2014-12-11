@@ -8,30 +8,42 @@
 #include <tcl.h>
 
 /*
- * API :: Linear, Bilinear, Trilinear interpolations.
+ * API :: Linear, Bilinear, Trilinear, Cubic, Bicubic interpolations.
  */
 
-extern void crimp_interpolate_linear    (double a, double b,
-					 double frac);
-extern void crimp_interpolate_bilinear  (double a, double b,
-					 double c, double d,
+extern double crimp_interpolate_linear (double a, double b,
+					double frac);
+
+extern double crimp_interpolate_bilinear (double a, double b,
+					  double c, double d,
+					  double xfrac, double yfrac);
+
+extern double crimp_interpolate_trilinear (double a, double b, double c, double d,
+					   double e, double f, double g, double h,
+					   double xfrac, double yfrac, double zfrac);
+
+extern double crimp_interpolate_cubic (double a, double b, double c, double d,
+				       double frac);
+
+extern double crimp_interpolate_bicubic (double a, double b, double c, double d,
+					 double e, double f, double g, double h,
+					 double i, double j, double k, double l,
+					 double m, double n, double o, double p,
 					 double xfrac, double yfrac);
-extern void crimp_interpolate_trilinear (double a, double b, double c, double d,
-					 double e, double f, double g, double g,
-					 double xfrac, double yfrac, double zfrac);
+
 /*
  * Notes:
  *
  * - Linear:
- *   a ---- b  xfrac in [0,1] is a point between.
- #   0      1
+ *   a -- b  xfrac in [0,1] is a point between.
+ #   0    1
  *
  * - Bilinear:
- *   0      1
- * 0 a ---- b  xfrac in [0,1] is a point between (a,b)
- *   |      |  yfrac in [0,1] is a point between (a,c)
- *   |      |
- * 1 c ---- d
+ *   0    1
+ * 0 a -- b  xfrac in [0,1] is a point between (a,b)
+ *   |    |  yfrac in [0,1] is a point between (a,c)
+ *   |    |
+ * 1 c -- d
  *
  * - Trilinear:
  *     e ---- f  xfrac in [0,1] is a point between (a,b)
@@ -40,6 +52,20 @@ extern void crimp_interpolate_trilinear (double a, double b, double c, double d,
  *   | g -- | h
  *   |/     |/ 
  * 1 c ---- d
+ *
+ * - Cubic:
+ *   a -- b -- c -- d  xfrac in [0,1] is a point between (b,c).
+ #   -1   0    1    2
+ *
+ * - Bicubic:
+ *   -1    0    1    2
+ * -1 a -- b -- c -- d  xfrac in [0,1] is a point between (f,g)
+ *    |    |    |    |	yfrac in [0,1] is a point between (f,j)
+ *  0 e -- f -- g -- h
+ *    |    |    |    |  The area f-g-k-j is patch in which
+ *  1 i -- j -- k -- l  we interpolate.
+ *    |    |    |    |
+ *  2 m -- n -- o -- p
  */
 
 

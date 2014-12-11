@@ -1,0 +1,201 @@
+# -*- tcl -*-
+# -------------------------------------------------------------------------
+
+source [file join \
+            [file dirname [file join [pwd] [info script]]] \
+            testutilities.tcl]
+
+testsNeedTcl     8.5
+testsNeedTcltest 2
+
+support { useLocalFile synth.tcl }
+support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
+testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+
+# -------------------------------------------------------------------------
+## Point operation, minimum at each point.
+# -------------------------------------------------------------------------
+
+test crimp-min-1.0 {image min, wrong\#args, not enough} -body {
+    crimp min
+} -returnCodes error -result {wrong # args: should be "crimp min a b"}
+
+test crimp-min-1.1 {image min, wrong\#args, too many} -body {
+    crimp min A B toomuch
+} -returnCodes error -result {wrong # args: should be "crimp min a b"}
+
+# -------------------------------------------------------------------------
+# MIN (arity 2, commutative)
+# Supported combinations (commutations not mentioned):
+#          | grey8 grey16 grey32 rgb rgba hsv float fpcomplex double
+# ---------+--------------------------------------------------------
+# grey8    | *
+# grey16   |       *
+# grey32   |              *
+# rgb      | *                   *
+# rgba     | *                   *   *
+# hsv      |
+# float    | *     *      *                    *
+# fpcomplex|
+# double   | *     *      *                                   *
+# ---------+--------------------------------------------------------
+#
+#  *--**-*-
+#  ------*-
+#  ------*-
+#  *--**---
+#  *--**---
+#  --------
+#  ***---*-
+#  --------
+#
+# fpcomplex, hsv - Not supported at all
+# grey8 works with most of the types.
+
+test crimp-min-2.0 {image min, grey8, self} -body {
+    crimp min [grey8] [grey8]
+} -result [grey8]
+
+# -------------------------------------------------------------------------
+# 16 combinations of t_cross with itself, 8 cardinal directions at 2 displacements each.
+
+foreach {n dx dy result} {
+    0  -2 -2 {-2 -2 7 7 {_ _ _ _ _ _ _
+                         _ _ _ _ _ _ _
+                         _ _ 1 . . _ _
+                         _ _ . 2 . _ _
+                         _ _ . . 3 _ _
+                         _ _ _ _ _ _ _
+                         _ _ _ _ _ _ _}}
+    1  -1 -1 {-1 -1 6 6 {_ _ _ _ _ _
+                         _ 1 . 9 . _
+                         _ . 2 . 9 _
+                         _ 8 . 3 . _
+                         _ . 8 . 4 _
+                         _ _ _ _ _ _}}
+    2   1  1 { 0  0 6 6 {_ _ _ _ _ _
+                         _ 1 . 9 . _
+                         _ . 2 . 9 _
+                         _ 8 . 3 . _
+                         _ . 8 . 4 _
+                         _ _ _ _ _ _}}
+    3   2  2 { 0  0 7 7 {_ _ _ _ _ _ _
+                         _ _ _ _ _ _ _
+                         _ _ 1 . . _ _
+                         _ _ . 2 . _ _
+                         _ _ . . 3 _ _
+                         _ _ _ _ _ _ _
+                         _ _ _ _ _ _ _}}
+    4  -2  2 {-2  0 7 7 {_ _ _ _ _ _ _
+                         _ _ _ _ _ _ _
+                         _ _ . . 3 _ _
+                         _ _ . 8 . _ _
+                         _ _ 3 . . _ _
+                         _ _ _ _ _ _ _
+                         _ _ _ _ _ _ _}}
+    5  -1  1 {-1  0 6 6 {_ _ _ _ _ _
+                         _ . 2 . 7 _
+                         _ 2 . 3 . _
+                         _ . 3 . 4 _
+                         _ 6 . 4 . _
+                         _ _ _ _ _ _}}
+    6   1 -1 { 0 -1 6 6 {_ _ _ _ _ _
+                         _ . 2 . 7 _
+                         _ 2 . 3 . _
+                         _ . 3 . 4 _
+                         _ 6 . 4 . _
+                         _ _ _ _ _ _}}
+    7   2 -2 { 0 -2 7 7 {_ _ _ _ _ _ _
+                         _ _ _ _ _ _ _
+                         _ _ . . 3 _ _
+                         _ _ . 8 . _ _
+                         _ _ 3 . . _ _
+                         _ _ _ _ _ _ _
+                         _ _ _ _ _ _ _}}
+    8   0  1 { 0  0 5 6 {_ _ _ _ _
+                         1 2 . 9 7
+                         . 2 3 9 .
+                         . 8 3 4 .
+                         6 8 . 4 5
+                         _ _ _ _ _}}
+    9   0  2 { 0  0 5 7 {_ _ _ _ _
+                         _ _ _ _ _
+                         1 . 3 . 7
+                         . 2 . 4 .
+                         6 . 3 . 5
+                         _ _ _ _ _
+                         _ _ _ _ _}}
+    10  0 -2 { 0 -2 5 7 {_ _ _ _ _
+                         _ _ _ _ _
+                         1 . 3 . 7
+                         . 2 . 4 .
+                         6 . 3 . 5
+                         _ _ _ _ _
+                         _ _ _ _ _}}
+    11  0 -1 { 0 -1 5 6 {_ _ _ _ _
+                         1 2 . 9 7
+                         . 2 3 9 .
+                         . 8 3 4 .
+                         6 8 . 4 5
+                         _ _ _ _ _}}
+    12  1  0 { 0  0 6 5 {_ 1 . . 7 _
+                         _ 2 2 9 9 _
+                         _ . 3 3 . _
+                         _ 8 8 4 4 _
+                         _ 6 . . 5 _}}
+    13  2  0 { 0  0 7 5 {_ _ 1 . 7 _ _
+                         _ _ . 2 . _ _
+                         _ _ 3 . 3 _ _
+                         _ _ . 4 . _ _
+                         _ _ 6 . 5 _ _}}
+    14 -2  0 {-2  0 7 5 {_ _ 1 . 7 _ _
+                         _ _ . 2 . _ _
+                         _ _ 3 . 3 _ _
+                         _ _ . 4 . _ _
+                         _ _ 6 . 5 _ _}}
+    15 -1  0 {-1  0 6 5 {_ 1 . . 7 _
+                         _ 2 2 9 9 _
+                         _ . 3 3 . _
+                         _ 8 8 4 4 _
+                         _ 6 . . 5 _}}
+} {
+    set result [lreplace $result end end [string map {. 255 _ 0} [lindex $result end]]]
+
+    test crimp-min-3.$n "image min, grey8, ($dx, $dy)" -setup {
+        set base  [g8 t_cross2]
+        set other [crimp rplace $base $dx $dy]
+    } -body {
+        astcl [crimp min $base $other]
+    } -cleanup {
+        unset base other
+    } -result [iconst grey8 {*}$result]
+
+    test crimp-min-4.$n "image min, grey16, ($dx, $dy)" -setup {
+        set base  [g16 t_cross2]
+        set other [crimp rplace $base $dx $dy]
+    } -body {
+        astcl [crimp min $base $other]
+    } -cleanup {
+        unset base other
+    } -result [iconst grey16 {*}$result]
+
+    test crimp-min-5.$n "image min, grey32, ($dx, $dy)" -setup {
+        set base  [g32 t_cross2]
+        set other [crimp rplace $base $dx $dy]
+    } -body {
+        astcl [crimp min $base $other]
+    } -cleanup {
+        unset base other
+    } -result [iconst grey32 {*}$result]
+}
+
+# -------------------------------------------------------------------------
+## Handling of input location and geometry: Union of inputs.
+
+# -------------------------------------------------------------------------
+testsuiteCleanup
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

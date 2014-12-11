@@ -1,76 +1,83 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_installer.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file 'crimp_installer\&.man' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
-'\" The definitions below are for supplemental macros used in Tcl/Tk
-'\" manual entries.
-'\"
-'\" .AP type name in/out ?indent?
-'\"	Start paragraph describing an argument to a library procedure.
-'\"	type is type of argument (int, etc.), in/out is either "in", "out",
-'\"	or "in/out" to describe whether procedure reads or modifies arg,
-'\"	and indent is equivalent to second arg of .IP (shouldn't ever be
-'\"	needed;  use .AS below instead)
-'\"
-'\" .AS ?type? ?name?
-'\"	Give maximum sizes of arguments for setting tab stops.  Type and
-'\"	name are examples of largest possible arguments that will be passed
-'\"	to .AP later.  If args are omitted, default tab stops are used.
-'\"
-'\" .BS
-'\"	Start box enclosure.  From here until next .BE, everything will be
-'\"	enclosed in one large box.
-'\"
-'\" .BE
-'\"	End of box enclosure.
-'\"
-'\" .CS
-'\"	Begin code excerpt.
-'\"
-'\" .CE
-'\"	End code excerpt.
-'\"
-'\" .VS ?version? ?br?
-'\"	Begin vertical sidebar, for use in marking newly-changed parts
-'\"	of man pages.  The first argument is ignored and used for recording
-'\"	the version when the .VS was added, so that the sidebars can be
-'\"	found and removed when they reach a certain age.  If another argument
-'\"	is present, then a line break is forced before starting the sidebar.
-'\"
-'\" .VE
-'\"	End of vertical sidebar.
-'\"
-'\" .DS
-'\"	Begin an indented unfilled display.
-'\"
-'\" .DE
-'\"	End of indented unfilled display.
-'\"
-'\" .SO
-'\"	Start of list of standard options for a Tk widget.  The
-'\"	options follow on successive lines, in four columns separated
-'\"	by tabs.
-'\"
-'\" .SE
-'\"	End of list of standard options for a Tk widget.
-'\"
-'\" .OP cmdName dbName dbClass
-'\"	Start of description of a specific option.  cmdName gives the
-'\"	option's name as specified in the class command, dbName gives
-'\"	the option's name in the option database, and dbClass gives
-'\"	the option's class in the option database.
-'\"
-'\" .UL arg1 arg2
-'\"	Print arg1 underlined, then print arg2 normally.
-'\"
-'\" RCS: @(#) $Id: man.macros,v 1.1 2009/01/30 04:56:47 andreas_kupries Exp $
-'\"
-'\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.TH "crimp_install_guide" n 1 doc "C Raster Image Manipulation Package"
+.\" The -*- nroff -*- definitions below are for supplemental macros used
+.\" in Tcl/Tk manual entries.
+.\"
+.\" .AP type name in/out ?indent?
+.\"	Start paragraph describing an argument to a library procedure.
+.\"	type is type of argument (int, etc.), in/out is either "in", "out",
+.\"	or "in/out" to describe whether procedure reads or modifies arg,
+.\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+.\"	needed;  use .AS below instead)
+.\"
+.\" .AS ?type? ?name?
+.\"	Give maximum sizes of arguments for setting tab stops.  Type and
+.\"	name are examples of largest possible arguments that will be passed
+.\"	to .AP later.  If args are omitted, default tab stops are used.
+.\"
+.\" .BS
+.\"	Start box enclosure.  From here until next .BE, everything will be
+.\"	enclosed in one large box.
+.\"
+.\" .BE
+.\"	End of box enclosure.
+.\"
+.\" .CS
+.\"	Begin code excerpt.
+.\"
+.\" .CE
+.\"	End code excerpt.
+.\"
+.\" .VS ?version? ?br?
+.\"	Begin vertical sidebar, for use in marking newly-changed parts
+.\"	of man pages.  The first argument is ignored and used for recording
+.\"	the version when the .VS was added, so that the sidebars can be
+.\"	found and removed when they reach a certain age.  If another argument
+.\"	is present, then a line break is forced before starting the sidebar.
+.\"
+.\" .VE
+.\"	End of vertical sidebar.
+.\"
+.\" .DS
+.\"	Begin an indented unfilled display.
+.\"
+.\" .DE
+.\"	End of indented unfilled display.
+.\"
+.\" .SO ?manpage?
+.\"	Start of list of standard options for a Tk widget. The manpage
+.\"	argument defines where to look up the standard options; if
+.\"	omitted, defaults to "options". The options follow on successive
+.\"	lines, in three columns separated by tabs.
+.\"
+.\" .SE
+.\"	End of list of standard options for a Tk widget.
+.\"
+.\" .OP cmdName dbName dbClass
+.\"	Start of description of a specific option.  cmdName gives the
+.\"	option's name as specified in the class command, dbName gives
+.\"	the option's name in the option database, and dbClass gives
+.\"	the option's class in the option database.
+.\"
+.\" .UL arg1 arg2
+.\"	Print arg1 underlined, then print arg2 normally.
+.\"
+.\" .QW arg1 ?arg2?
+.\"	Print arg1 in quotes, then arg2 normally (for trailing punctuation).
+.\"
+.\" .PQ arg1 ?arg2?
+.\"	Print an open parenthesis, arg1 in quotes, then arg2 normally
+.\"	(for trailing punctuation) and then a closing parenthesis.
+.\"
+.\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
 .if t .wh -1.3i ^B
 .nr ^l \n(.l
 .ad b
-'\"	# Start an argument description
+.\"	# Start an argument description
 .de AP
 .ie !"\\$4"" .TP \\$4
 .el \{\
@@ -79,7 +86,7 @@
 .\}
 .ta \\n()Au \\n()Bu
 .ie !"\\$3"" \{\
-\&\\$1	\\fI\\$2\\fP	(\\$3)
+\&\\$1 \\fI\\$2\\fP (\\$3)
 .\".b
 .\}
 .el \{\
@@ -92,7 +99,7 @@
 .\}
 .\}
 ..
-'\"	# define tabbing values for .AP
+.\"	# define tabbing values for .AP
 .de AS
 .nr )A 10n
 .if !"\\$1"" .nr )A \\w'\\$1'u+3n
@@ -102,9 +109,9 @@
 .nr )C \\n()Bu+\\w'(in/out)'u+2n
 ..
 .AS Tcl_Interp Tcl_CreateInterp in/out
-'\"	# BS - start boxed text
-'\"	# ^y = starting y location
-'\"	# ^b = 1
+.\"	# BS - start boxed text
+.\"	# ^y = starting y location
+.\"	# ^b = 1
 .de BS
 .br
 .mk ^y
@@ -114,7 +121,7 @@
 .if n \l'\\n(.lu\(ul'
 .if n .fi
 ..
-'\"	# BE - end boxed text (draw box now)
+.\"	# BE - end boxed text (draw box now)
 .de BE
 .nf
 .ti 0
@@ -134,16 +141,16 @@
 .br
 .nr ^b 0
 ..
-'\"	# VS - start vertical sidebar
-'\"	# ^Y = starting y location
-'\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.\"	# VS - start vertical sidebar
+.\"	# ^Y = starting y location
+.\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
 .de VS
 .if !"\\$2"" .br
 .mk ^Y
 .ie n 'mc \s12\(br\s0
 .el .nr ^v 1u
 ..
-'\"	# VE - end of vertical sidebar
+.\"	# VE - end of vertical sidebar
 .de VE
 .ie n 'mc
 .el \{\
@@ -158,9 +165,9 @@
 .\}
 .nr ^v 0
 ..
-'\"	# Special macro to handle page bottom:  finish off current
-'\"	# box/sidebar if in box/sidebar mode, then invoked standard
-'\"	# page bottom macro.
+.\"	# Special macro to handle page bottom:  finish off current
+.\"	# box/sidebar if in box/sidebar mode, then invoked standard
+.\"	# page bottom macro.
 .de ^B
 .ev 2
 'ti 0
@@ -187,34 +194,36 @@
 .mk ^Y
 .\}
 ..
-'\"	# DS - begin display
+.\"	# DS - begin display
 .de DS
 .RS
 .nf
 .sp
 ..
-'\"	# DE - end display
+.\"	# DE - end display
 .de DE
 .fi
 .RE
 .sp
 ..
-'\"	# SO - start of list of standard options
+.\"	# SO - start of list of standard options
 .de SO
+'ie '\\$1'' .ds So \\fBoptions\\fR
+'el .ds So \\fB\\$1\\fR
 .SH "STANDARD OPTIONS"
 .LP
 .nf
-.ta 4c 8c 12c
+.ta 5.5c 11c
 .ft B
 ..
-'\"	# SE - end of list of standard options
+.\"	# SE - end of list of standard options
 .de SE
 .fi
 .ft R
 .LP
-See the \\fBoptions\\fR manual entry for details on the standard options.
+See the \\*(So manual entry for details on the standard options.
 ..
-'\"	# OP - start of full description for a single option
+.\"	# OP - start of full description for a single option
 .de OP
 .LP
 .nf
@@ -225,81 +234,103 @@ Database Class:	\\fB\\$3\\fR
 .fi
 .IP
 ..
-'\"	# CS - begin code excerpt
+.\"	# CS - begin code excerpt
 .de CS
 .RS
 .nf
 .ta .25i .5i .75i 1i
 ..
-'\"	# CE - end code excerpt
+.\"	# CE - end code excerpt
 .de CE
 .fi
 .RE
 ..
+.\"	# UL - underline word
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_install_guide" n 1 doc "C Raster Image Manipulation Package"
+.\"	# QW - apply quotation marks to word
+.de QW
+.ie '\\*(lq'"' ``\\$1''\\$2
+.\"" fix emacs highlighting
+.el \\*(lq\\$1\\*(rq\\$2
+..
+.\"	# PQ - apply parens and quotation marks to word
+.de PQ
+.ie '\\*(lq'"' (``\\$1''\\$2)\\$3
+.\"" fix emacs highlighting
+.el (\\*(lq\\$1\\*(rq\\$2)\\$3
+..
+.\"	# QR - quoted range
+.de QR
+.ie '\\*(lq'"' ``\\$1''\\-``\\$2''\\$3
+.\"" fix emacs highlighting
+.el \\*(lq\\$1\\*(rq\\-\\*(lq\\$2\\*(rq\\$3
+..
+.\"	# MT - "empty" string
+.de MT
+.QW ""
+..
 .BS
 .SH NAME
 crimp_install_guide \- CRIMP - The Installer's Guide
 .SH DESCRIPTION
 Welcome to CRIMP, the C Raster Image Manipulation Package, a set of
 extensions of \fITcl\fR for the handling and processing of
-images.
+images\&.
 .PP
 The audience of this document is anyone wishing to build the packages,
-for either themselves, or others.
+for either themselves, or others\&.
 .PP
 For a developer intending to extend or modify the packages we
 additionally provide
 .IP [1]
-\fICRIMP - The Developer's Guide\fR.
+\fICRIMP - The Developer's Guide\fR\&.
 .PP
 .PP
 Please read \fICRIMP - How To Get The Sources\fR first, if that was
-not done already. Here we assume that the sources are already
-available in a directory of your choice.
+not done already\&. Here we assume that the sources are already
+available in a directory of your choice\&.
 .PP
 .SH REQUISITES
-Before Crimp can be build and used a number of requisites must be installed. These are:
+Before Crimp can be build and used a number of requisites must be installed\&. These are:
 .IP [1]
-The scripting language Tcl.
-For details see \fBTcl\fR.
+The scripting language Tcl\&.
+For details see \fBTcl\fR\&.
 .IP [2]
-The \fBcritcl\fR package (C embedding) for \fBTcl\fR.
-For details see \fBCriTcl\fR.
+The \fBcritcl\fR package (C embedding) for \fBTcl\fR\&.
+For details see \fBCriTcl\fR\&.
 .IP [3]
-Various packages from the Tcllib/Tklib bundles for \fBTcl\fR.
-For details see \fBTcllib & Tklib\fR.
+Various packages from the Tcllib/Tklib bundles for \fBTcl\fR\&.
+For details see \fBTcllib & Tklib\fR\&.
 .PP
 This list assumes that the machine where Crimp is to be installed is
-essentially clean. Of course, if parts of the dependencies listed
-below are already installed the associated steps can be skipped. It is
+essentially clean\&. Of course, if parts of the dependencies listed
+below are already installed the associated steps can be skipped\&. It is
 still recommended to read their sections though, to validate that the
-dependencies they talk about are indeed installed.
+dependencies they talk about are indeed installed\&.
 .SS TCL
 As we are building a set of Tcl packages it should be pretty much
 obvious that a working Tcl installation is needed, and I will not
-belabor the point.
+belabor the point\&.
 .PP
 Out of the many use whatever you are comfortable with, as long
-as it provides Tcl 8.5, or higher, and Tk 8.5 or higher.
+as it provides Tcl 8\&.5, or higher, and Tk 8\&.5 or higher\&.
 .PP
 This may a Tcl installation provided by your operating system
 distribution, from a distribution-independent vendor, or built by
-yurself.
+yurself\&.
 .PP
-Myself, I used \fIActiveState's\fR [http://www.activestate.com]
-ActiveTcl 8.5 distribution during development of the binding, as I am
-most familiar with it.
+Myself, I used \fIActiveState's\fR [http://www\&.activestate\&.com]
+ActiveTcl 8\&.5 distribution during development of the binding, as I am
+most familiar with it\&.
 .PP
-\fI(Disclosure: I, Andreas Kupries, work for ActiveState, maintaining ActiveTcl and TclDevKit for them).\fR
+\fI(Disclosure: I, Andreas Kupries, work for ActiveState, maintaining ActiveTcl and TclDevKit for them)\&.\fR
 .PP
 This distribution can be found at
-\fIhttp://www.activestate.com/activetcl\fR. Retrieve the archive of
-ActiveTcl 8.5 for your platform and install it as directed by
-ActiveState.
+\fIhttp://www\&.activestate\&.com/activetcl\fR\&. Retrieve the archive of
+ActiveTcl 8\&.5 for your platform and install it as directed by
+ActiveState\&.
 .PP
 Assuming that ActiveTcl got installed I usually run the command
 .CS
@@ -310,8 +341,8 @@ Assuming that ActiveTcl got installed I usually run the command
 .CE
 to install all packages ActiveState provides, and the kitchensink, as
 the distribution itself usually contains only the most important set
-of packages. This ensures that the dependencies for \fBCriTcl\fR,
-and Crimp are all present, and more.
+of packages\&. This ensures that the dependencies for \fBCriTcl\fR,
+and Crimp are all present, and more\&.
 .PP
 If that is not your liking you have to read the sections for
 \fBCriTcl\fR, and Crimp to determine the exact set of packages
@@ -324,53 +355,53 @@ required, and install only these using
 .CE
 .PP
 Both \fBteacup\fR commands above assume that ActiveState's
-TEApot repository at \fIhttp://teapot.activestate.com\fR is in the
-list of repositories accessible to \fBteacup\fR. This is automatically
-ensured for the ActiveTcl distribution. Others may have to run
+TEApot repository at \fIhttp://teapot\&.activestate\&.com\fR is in the
+list of repositories accessible to \fBteacup\fR\&. This is automatically
+ensured for the ActiveTcl distribution\&. Others may have to run
 .CS
 
 
-    teacup archive add http://teapot.activestate.com
+    teacup archive add http://teapot\&.activestate\&.com
 
 .CE
-to make this happen.
+to make this happen\&.
 .PP
 For those wishing to build Tcl/Tk on their own, their sources
 can be found at
 .TP
 Tcl
-\fIhttp://core.tcl.tk/tcl/\fR
+\fIhttp://core\&.tcl\&.tk/tcl/\fR
 .TP
 Tk
-\fIhttp://core.tcl.tk/tk/\fR
+\fIhttp://core\&.tcl\&.tk/tk/\fR
 .PP
 .SS CRITCL
-To build Crimp the tool \fBcritcl\fR is required.
+To build Crimp the tool \fBcritcl\fR is required\&.
 .PP
 Crimp's build system accepts it either as an application found
 in the PATH (be it starkit or starpack), or as a Tcl package available
 to the \fBtclsh\fR used to run their build & installation
-processes.
+processes\&.
 .PP
-Crimp requires version 3 or higher.
+Crimp requires version 3 or higher\&.
 .PP
 The github repository providing releases of version 3 and
 higher, and the associated sources, can be found at
-\fIhttp://andreas-kupries.github.com/critcl\fR.
+\fIhttp://andreas-kupries\&.github\&.com/critcl\fR\&.
 .PP
 Any branch of the repository can be used (if not using the
 prebuild starkit or starpack), although the use of the stable branch
-\fImaster\fR is recommended.
+\fImaster\fR is recommended\&.
 .PP
 At the above url is also an explanation on how to build and
-install CriTcl, including a list of its dependencies.
+install CriTcl, including a list of its dependencies\&.
 .PP
-Its instructions will not be repeated here. If there are
+Its instructions will not be repeated here\&. If there are
 problems with their directions please file a bug against the critcl
-project, and not KineTcl.
+project, and not KineTcl\&.
 .SS "TCLLIB & TKLIB"
 To use Crimp a few packages found in the bundles Tcllib and Tklib
-are required. These packages are:
+are required\&. These packages are:
 .IP [1]
 snit (Tcllib)
 .IP [2]
@@ -392,57 +423,57 @@ be installed via
 .CE
 .PP
 The \fBteacup\fR command above assumes that ActiveState's
-TEApot repository at \fIhttp://teapot.activestate.com\fR is in the
-list of repositories accessible to \fBteacup\fR. This is automatically
-ensured for the ActiveTcl distribution. Others may have to run
+TEApot repository at \fIhttp://teapot\&.activestate\&.com\fR is in the
+list of repositories accessible to \fBteacup\fR\&. This is automatically
+ensured for the ActiveTcl distribution\&. Others may have to run
 .CS
 
 
-    teacup archive add http://teapot.activestate.com
+    teacup archive add http://teapot\&.activestate\&.com
 
 .CE
-to make this happen.
+to make this happen\&.
 .PP
 Now, for those wishing to install the packages from source,
 the CVS repository for the two bundles can be found at
-\fIhttps://sourceforge.net/projects/tcllib\fR.
+\fIhttps://sourceforge\&.net/projects/tcllib\fR\&.
 .PP
 Releases of Tcllib and Tklib can be found the associated
 Files section, or CVS can be used to check out the sub projects
-tcllib and tklib.
+tcllib and tklib\&.
 .PP
-Tcl- and Tklib come with their own installation instructions.
-These will not be repeated here. If there are problems with their
+Tcl- and Tklib come with their own installation instructions\&.
+These will not be repeated here\&. If there are problems with their
 directions please file a bug against the Tcllib project at the above
-url, and not KineTcl.
+url, and not KineTcl\&.
 .SH "BUILD & INSTALLATION"
 To install CRIMP simply run
 .CS
 
 
-    /path/to/tclsh8.5 /path/to/crimp/build.tcl install
+    /path/to/tclsh8\&.5 /path/to/crimp/build\&.tcl install
 
 .CE
-where "\fI/path/to/tclsh8.5\fR" is the tclsh of your Tcl installation, and
-"\fI/path/to/crimp\fR" the location of the CRIMP sources on your system.
+where "\fI/path/to/tclsh8\&.5\fR" is the tclsh of your Tcl installation, and
+"\fI/path/to/crimp\fR" the location of the CRIMP sources on your system\&.
 .PP
 This builds all packages and then places them in a directory where the
-\fBtclsh8.5\fR will find them.
+\fBtclsh8\&.5\fR will find them\&.
 .PP
-On Windows you can invoke the file "\fIbuild.tcl\fR" with a
-double-click.  This will pop up a small graphical interface for
-entering the destination and performing the installation. This
-handling of a double-click is restricted to Windows only however.
+On Windows you can invoke the file "\fIbuild\&.tcl\fR" with a
+double-click\&.  This will pop up a small graphical interface for
+entering the destination and performing the installation\&. This
+handling of a double-click is restricted to Windows only however\&.
 .PP
-On unix the same GUI is acessible by invoking "\fIbuild.tcl\fR" without
-any arguments.
+On unix the same GUI is acessible by invoking "\fIbuild\&.tcl\fR" without
+any arguments\&.
 .PP
-To get help about the methods of "\fIbuild.tcl\fR", and their complete
-syntax, invoke  "\fIbuild.tcl\fR" with argument \fBhelp\fR, i.e., like
+To get help about the methods of "\fIbuild\&.tcl\fR", and their complete
+syntax, invoke  "\fIbuild\&.tcl\fR" with argument \fBhelp\fR, i\&.e\&., like
 .CS
 
 
-    /path/to/tclsh8.5 /path/to/crimp/build.tcl help
+    /path/to/tclsh8\&.5 /path/to/crimp/build\&.tcl help
 
 .CE
 .SH KEYWORDS

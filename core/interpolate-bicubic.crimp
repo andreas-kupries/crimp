@@ -1,0 +1,38 @@
+interpolate::bicubic
+double a
+double b
+double c
+double d
+double e
+double f
+double g
+double h
+double i
+double j
+double k
+double l
+double m
+double n
+double o
+double p
+double xf
+double yf
+
+double r = crimp_interpolate_bicubic (a, b, c, d,
+				      e, f, g, h,
+				      i, j, k, l,
+				      m, n, o, p,
+				      xf, yf);
+
+Tcl_SetObjResult (interp, Tcl_NewDoubleObj (r));
+return TCL_OK;
+
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

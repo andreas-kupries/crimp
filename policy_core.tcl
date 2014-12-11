@@ -294,6 +294,17 @@ proc ::crimp::write::Str_tcl_hsv {image} {
 }
 
 # # ## ### ##### ######## #############
+## Hook/lace for the C level interpolators.
+
+namespace eval ::crimp::interpolate {
+    # See interpolate-*.crimp for the implementations of various
+    # interpolators (1,2,3-linear, 1,2-cubic).
+
+    namespace export {[a-z]*}
+    namespace ensemble create
+}
+
+# # ## ### ##### ######## #############
 ## And declare the main ensemble, the umbrella under which all public
 ## commands will be made accessible. The 'C' child namespace is where
 ## any non-exported C-level primitives should be placed.

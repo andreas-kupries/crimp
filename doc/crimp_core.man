@@ -330,6 +330,161 @@ This method returns the width of the [arg image] (in pixels).
 
 [list_end]
 
+[subsection {Math}]
+
+Currently the only core math operations are various linear and
+cubic interpolations, as listed below. They all exist within
+the [cmd {crimp interpolate}] ensemble. All arguments are
+double-precision floating point, as is the result.
+
+[list_begin definitions]
+
+[call [cmd ::crimp] [method {interpolate linear}] \
+     [arg a] [arg b] \
+     [arg x]]
+
+Linear interpolation between points A and B, with values
+[arg a] and [arg b]. [arg x] is the fractional location
+between the two points, with "[arg x]==0" mapping to
+[arg a], and "[arg x]==1" mapping to [arg b].
+
+[para] [arg x] outside of the interval [lb]0,1[rb] is
+allowed and can be useful.
+
+[para] Note that within the interval [lb]0,1[rb] the
+result of the interpolation is a value in the interval
+[lb][arg a],[arg b][rb].
+
+[call [cmd ::crimp] [method {interpolate bilinear}] \
+     [arg a] [arg b] \
+     [arg c] [arg d] \
+     [arg x] [arg y]]
+
+Bilinear interpolation over the square
+[example {
+    A--B
+    |  |
+    C--D
+}]
+with corresponding values [arg a] ... [arg d].
+
+[arg x] is the fractional location along the x-axis, while
+[arg y] is the fractional location along the y-axis.
+
+[para] [arg x]  and [arg y] outside of the interval [lb]0,1[rb] are
+allowed and may be useful.
+
+[para] Note that within the interval [lb]0,1[rb] the
+result of the interpolation is a value in the interval
+[lb]min([arg a],...,[arg d]),max([arg a],...,[arg d])[rb].
+
+[para] Note while the interpolation is linear when one of the
+x- or y-axes is kept constant the bilinear interpolation as a
+whole is [emph not] linear, but quadratic.
+
+[para] Conceptually bilinear interpolation is the same as
+[example {
+    linear ( linear (a, b, x),
+	     linear (c, d, x),
+	     y)
+}]
+
+[call [cmd ::crimp] [method {interpolate trilinear}] \
+     [arg a] [arg b] [arg c] [arg d] \
+     [arg e] [arg f] [arg g] [arg h] \
+     [arg x] [arg y] [arg z]]
+
+Trilinear interpolation over the cube
+[example {
+      E--F
+     /| /|
+    A--B H
+    |/ |/
+    C--D
+}]
+with corresponding values [arg a] ... [arg h].
+Note that point G in the graphic is hidden behind the edges of the cube.
+
+[arg x] is the fractional location along the x-axis, while
+[arg y] is the fractional location along the y-axis, while
+[arg z] is the fractional location along the z-axis.
+
+[para] [arg x]  and [arg y] outside of the interval [lb]0,1[rb] are
+allowed and may be useful.
+
+[para] Note that within the interval [lb]0,1[rb] the
+result of the interpolation is a value in the interval
+[lb]min([arg a],...,[arg h]),max([arg a],...,[arg h])[rb].
+
+[para] Note while the interpolation is linear when two of the axes
+(x, y, or z) are kept constant the trilinear interpolation as a
+whole is [emph not] linear, but cubic.
+
+[para] Conceptually trilinear interpolation is the same as
+[example {
+    linear ( bilinear (a, b, c, d, x, y),
+	     bilinear (e, f, g, h, x, y),
+	     z)
+}]
+
+[call [cmd ::crimp] [method {interpolate cubic}] \
+     [arg a] [arg b] [arg c] [arg d] \
+     [arg x]]
+
+Cubic interpolation between points B and C, with values
+[arg b] and [arg c]. [arg x] is the fractional location
+between the two points. The points A and D with associated
+values are before B and after C, they provide the information
+from which to compute the function's derivatives needed
+for the cubic.
+
+[para] While a value of [arg x] outside of the interval [lb]0,1[rb] is
+allowed the result is likely not useful.
+
+
+[call [cmd ::crimp] [method {interpolate bicubic}] \
+     [arg a] [arg b] [arg c] [arg d] \
+     [arg e] [arg f] [arg g] [arg h] \
+     [arg i] [arg j] [arg k] [arg l] \
+     [arg m] [arg n] [arg o] [arg p] \
+     [arg x] [arg y]]
+
+Bicubic interpolation over the patch
+[example {
+    A--B--C--D
+    |  |  |  |
+    E--F--G--H
+    |  |  |  |
+    I--J--K--L
+    |  |  |  |
+    M--N--O--P
+}]
+with corresponding values [arg a] ... [arg p].
+
+[arg x] is the fractional location along the x-axis, while
+[arg y] is the fractional location along the y-axis, within
+the square
+[example {
+    F--G
+    |  |
+    J--K
+}]
+
+[para] While values of [arg x]  and [arg y] outside of the
+interval [lb]0,1[rb] are allowed the result is likely not
+useful.
+
+[para] Conceptually bicubic interpolation is the same as
+[example {
+    cubic ( cubic (a, b, c, d, x),
+	    cubic (e, f, g, h, x),
+	    cubic (i, j, k, l, x),
+	    cubic (m, n, o, p, x),
+	    y)
+}]
+
+[list_end]
+
 [subsection {I/O commands}]
 [list_begin definitions]
 

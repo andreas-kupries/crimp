@@ -291,6 +291,13 @@ proc iconst {t x y w h p} {
     return [list crimp::image::$t $x $y $w $h {}]\n[format-pix $w [split [trim $p] \n]]
 }
 
+proc gconst {x y args} {
+    set h   [llength $args]
+    set w   [string length [lindex $args 0]]
+    set pix [join [split [string trim [join $args \n]] {}] { }]
+    list $x $y $w $h [string map {_ 0 . 255} $pix]
+}
+
 proc format-pix {w rows} {
     struct::matrix M
     M add columns $w

@@ -33,23 +33,23 @@ test crimp-matrix-inverse-1.1 {transform matrix inversion, wrong\#args, too many
 
 test crimp-matrix-inverse-2.0 {transform matrix inversion, float} -body {
     astclf 1 [crimp::matinv3x3_float [mid]]
-} -result [iconst float 0 0 3 3 {
-     1.0 -0.0  0.0
-    -0.0  1.0 -0.0
-     0.0 -0.0  1.0
+} -match image -result [iconst float 0 0 3 3 {
+    1.0 0.0 0.0
+    0.0 1.0 0.0
+    0.0 0.0 1.0
 }]
 
 test crimp-matrix-inverse-2.1 {transform matrix inversion, float} -body {
     astclf 1 [crimp::matinv3x3_float [mtest]]
-} -result [iconst float 0 0 3 3 {
-     1.0 -0.0 -5.0
-    -0.0  1.0 -2.0
-     0.0 -0.0  1.0
+} -match image -result [iconst float 0 0 3 3 {
+    1.0 0.0 -5.0
+    0.0 1.0 -2.0
+    0.0 0.0  1.0
 }]
 
 test crimp-matrix-inverse-2.2 {transform matrix inversion, float, inverse multiply to identity} -body {
     astclf 2 [crimp::matmul3x3_float [crimp::matinv3x3_float [mtest]] [mtest]]
-} -result [iconst float 0 0 3 3 {
+} -match image -result [iconst float 0 0 3 3 {
     1.00 0.00 0.00
     0.00 1.00 0.00
     0.00 0.00 1.00
@@ -57,7 +57,7 @@ test crimp-matrix-inverse-2.2 {transform matrix inversion, float, inverse multip
 
 test crimp-matrix-inverse-2.3 {transform matrix inversion, float, inverse multiply to identity} -body {
     astclf 2 [crimp::matmul3x3_float [mtest] [crimp::matinv3x3_float [mtest]]]
-} -result [iconst float 0 0 3 3 {
+} -match image -result [iconst float 0 0 3 3 {
     1.00 0.00 0.00
     0.00 1.00 0.00
     0.00 0.00 1.00
@@ -79,23 +79,23 @@ test crimp-matrix-inverse-3.1 {transform matrix inversion, wrong\#args, too many
 
 test crimp-matrix-inverse-4.0 {transform matrix inversion, double} -body {
     astclf 1 [crimp::matinv3x3_double [dmid]]
-} -result [iconst double 0 0 3 3 {
-     1.0 -0.0  0.0
-    -0.0  1.0 -0.0
-     0.0 -0.0  1.0
+} -match image -result [iconst double 0 0 3 3 {
+    1.0 0.0 0.0
+    0.0 1.0 0.0
+    0.0 0.0 1.0
 }]
 
 test crimp-matrix-inverse-4.1 {transform matrix inversion, double} -body {
     astclf 1 [crimp::matinv3x3_double [dmtest]]
-} -result [iconst double 0 0 3 3 {
-     1.0 -0.0 -5.0
-    -0.0  1.0 -2.0
-     0.0 -0.0  1.0
+} -match image -result [iconst double 0 0 3 3 {
+    1.0 0.0 -5.0
+    0.0 1.0 -2.0
+    0.0 0.0  1.0
 }]
 
 test crimp-matrix-inverse-4.2 {transform matrix inversion, double, inverse multiply to identity} -body {
     astclf 2 [crimp::matmul3x3_double [crimp::matinv3x3_double [dmtest]] [dmtest]]
-} -result [iconst double 0 0 3 3 {
+} -match image -result [iconst double 0 0 3 3 {
     1.00 0.00 0.00
     0.00 1.00 0.00
     0.00 0.00 1.00
@@ -103,7 +103,7 @@ test crimp-matrix-inverse-4.2 {transform matrix inversion, double, inverse multi
 
 test crimp-matrix-inverse-4.3 {transform matrix inversion, double, inverse multiply to identity} -body {
     astclf 2 [crimp::matmul3x3_double [dmtest] [crimp::matinv3x3_double [dmtest]]]
-} -result [iconst double 0 0 3 3 {
+} -match image -result [iconst double 0 0 3 3 {
     1.00 0.00 0.00
     0.00 1.00 0.00
     0.00 0.00 1.00

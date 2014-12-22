@@ -350,7 +350,7 @@ proc iota {n} {
 # # ## ### ##### ######## ############# #####################
 ## Check two lists of numbers for component-wise numeric equality
 ## (1) To within N digits after the decimal point.
-##     Instantiated for N in {2, 4}
+##     Instantiated for several N (see below)
 ## (2) To within machine accuracy
 
 proc matchNdigits {n expected actual} {
@@ -380,16 +380,50 @@ proc matchdigits {expected actual} {
 }
 
 customMatch -1digits {matchNdigits -1}
-customMatch 0digits {matchNdigits 0}
-customMatch 2digits {matchNdigits 2}
-customMatch 4digits {matchNdigits 4}
-customMatch 8digits {matchNdigits 8}
-customMatch 9digits {matchNdigits 9}
+customMatch  0digits {matchNdigits 0}
+customMatch  2digits {matchNdigits 2}
+customMatch  4digits {matchNdigits 4}
+customMatch  8digits {matchNdigits 8}
+customMatch  9digits {matchNdigits 9}
 customMatch 10digits {matchNdigits 10}
 customMatch 12digits {matchNdigits 12}
 customMatch 13digits {matchNdigits 13}
 customMatch 14digits {matchNdigits 14}
-customMatch epsilon matchdigits
+customMatch epsilon  matchdigits
+
+# Compare two images properly. Assume that both images are in full Tcl
+# representation. Especially the pixels, to allow for proper numerical
+# comparison.
+
+proc matchImage {expected actual} {
+    if {[llength $actual] < 7} {return 0}
+    set ep [lassign $expected etype ex ey ew eh em]
+    set ap [lassign $actual   atype ax ay aw ah am]
+    # em vs am should properly compared as dicts.
+    # does not truly matter however.
+    return [expr {
+        ($etype eq $atype) &&
+	($ex == $ax) && ($ey == $ay) &&
+	($ew == $aw) && ($eh == $ah) &&
+	($em eq $am) &&
+	[matchdigits $ep $ap]
+    }]
+}
+
+proc matchNImage {digits expected actual} {
+    if {[llength $actual] < 7} {return 0}
+    set ep [lassign $expected etype ex ey ew eh em]
+    set ap [lassign $actual   atype ax ay aw ah am]
+    return [expr {
+        ($etype eq $atype) &&
+	($ex == $ax) && ($ey == $ay) &&
+	($ew == $aw) && ($eh == $ah) &&
+	[matchNdigits $digits $ep $ap]
+    }]
+}
+
+customMatch image   matchImage
+customMatch image12 {matchNImage 12}
 
 # # ## ### ##### ######## ############# #####################
 ## Various 2D vector arithmetic primitives.

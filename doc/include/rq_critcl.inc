@@ -23,4 +23,4 @@ install CriTcl, including a list of its dependencies.
 
 [para] Its instructions will not be repeated here. If there are
 problems with their directions please file a bug against the critcl
-project, and not KineTcl.
+project, and not Crimp.

@@ -1,76 +1,83 @@
 '\"
-'\" Generated from file '/home/aku/Projects/Crimp/dev/embedded/man/files/crimp_devguide.n' by tcllib/doctools with format 'nroff'
+'\" Generated from file 'crimp_devguide\&.man' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
-'\" The definitions below are for supplemental macros used in Tcl/Tk
-'\" manual entries.
-'\"
-'\" .AP type name in/out ?indent?
-'\"	Start paragraph describing an argument to a library procedure.
-'\"	type is type of argument (int, etc.), in/out is either "in", "out",
-'\"	or "in/out" to describe whether procedure reads or modifies arg,
-'\"	and indent is equivalent to second arg of .IP (shouldn't ever be
-'\"	needed;  use .AS below instead)
-'\"
-'\" .AS ?type? ?name?
-'\"	Give maximum sizes of arguments for setting tab stops.  Type and
-'\"	name are examples of largest possible arguments that will be passed
-'\"	to .AP later.  If args are omitted, default tab stops are used.
-'\"
-'\" .BS
-'\"	Start box enclosure.  From here until next .BE, everything will be
-'\"	enclosed in one large box.
-'\"
-'\" .BE
-'\"	End of box enclosure.
-'\"
-'\" .CS
-'\"	Begin code excerpt.
-'\"
-'\" .CE
-'\"	End code excerpt.
-'\"
-'\" .VS ?version? ?br?
-'\"	Begin vertical sidebar, for use in marking newly-changed parts
-'\"	of man pages.  The first argument is ignored and used for recording
-'\"	the version when the .VS was added, so that the sidebars can be
-'\"	found and removed when they reach a certain age.  If another argument
-'\"	is present, then a line break is forced before starting the sidebar.
-'\"
-'\" .VE
-'\"	End of vertical sidebar.
-'\"
-'\" .DS
-'\"	Begin an indented unfilled display.
-'\"
-'\" .DE
-'\"	End of indented unfilled display.
-'\"
-'\" .SO
-'\"	Start of list of standard options for a Tk widget.  The
-'\"	options follow on successive lines, in four columns separated
-'\"	by tabs.
-'\"
-'\" .SE
-'\"	End of list of standard options for a Tk widget.
-'\"
-'\" .OP cmdName dbName dbClass
-'\"	Start of description of a specific option.  cmdName gives the
-'\"	option's name as specified in the class command, dbName gives
-'\"	the option's name in the option database, and dbClass gives
-'\"	the option's class in the option database.
-'\"
-'\" .UL arg1 arg2
-'\"	Print arg1 underlined, then print arg2 normally.
-'\"
-'\" RCS: @(#) $Id: man.macros,v 1.1 2009/01/30 04:56:47 andreas_kupries Exp $
-'\"
-'\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.TH "crimp_devguide" n 1 doc "C Raster Image Manipulation Package"
+.\" The -*- nroff -*- definitions below are for supplemental macros used
+.\" in Tcl/Tk manual entries.
+.\"
+.\" .AP type name in/out ?indent?
+.\"	Start paragraph describing an argument to a library procedure.
+.\"	type is type of argument (int, etc.), in/out is either "in", "out",
+.\"	or "in/out" to describe whether procedure reads or modifies arg,
+.\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+.\"	needed;  use .AS below instead)
+.\"
+.\" .AS ?type? ?name?
+.\"	Give maximum sizes of arguments for setting tab stops.  Type and
+.\"	name are examples of largest possible arguments that will be passed
+.\"	to .AP later.  If args are omitted, default tab stops are used.
+.\"
+.\" .BS
+.\"	Start box enclosure.  From here until next .BE, everything will be
+.\"	enclosed in one large box.
+.\"
+.\" .BE
+.\"	End of box enclosure.
+.\"
+.\" .CS
+.\"	Begin code excerpt.
+.\"
+.\" .CE
+.\"	End code excerpt.
+.\"
+.\" .VS ?version? ?br?
+.\"	Begin vertical sidebar, for use in marking newly-changed parts
+.\"	of man pages.  The first argument is ignored and used for recording
+.\"	the version when the .VS was added, so that the sidebars can be
+.\"	found and removed when they reach a certain age.  If another argument
+.\"	is present, then a line break is forced before starting the sidebar.
+.\"
+.\" .VE
+.\"	End of vertical sidebar.
+.\"
+.\" .DS
+.\"	Begin an indented unfilled display.
+.\"
+.\" .DE
+.\"	End of indented unfilled display.
+.\"
+.\" .SO ?manpage?
+.\"	Start of list of standard options for a Tk widget. The manpage
+.\"	argument defines where to look up the standard options; if
+.\"	omitted, defaults to "options". The options follow on successive
+.\"	lines, in three columns separated by tabs.
+.\"
+.\" .SE
+.\"	End of list of standard options for a Tk widget.
+.\"
+.\" .OP cmdName dbName dbClass
+.\"	Start of description of a specific option.  cmdName gives the
+.\"	option's name as specified in the class command, dbName gives
+.\"	the option's name in the option database, and dbClass gives
+.\"	the option's class in the option database.
+.\"
+.\" .UL arg1 arg2
+.\"	Print arg1 underlined, then print arg2 normally.
+.\"
+.\" .QW arg1 ?arg2?
+.\"	Print arg1 in quotes, then arg2 normally (for trailing punctuation).
+.\"
+.\" .PQ arg1 ?arg2?
+.\"	Print an open parenthesis, arg1 in quotes, then arg2 normally
+.\"	(for trailing punctuation) and then a closing parenthesis.
+.\"
+.\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
 .if t .wh -1.3i ^B
 .nr ^l \n(.l
 .ad b
-'\"	# Start an argument description
+.\"	# Start an argument description
 .de AP
 .ie !"\\$4"" .TP \\$4
 .el \{\
@@ -79,7 +86,7 @@
 .\}
 .ta \\n()Au \\n()Bu
 .ie !"\\$3"" \{\
-\&\\$1	\\fI\\$2\\fP	(\\$3)
+\&\\$1 \\fI\\$2\\fP (\\$3)
 .\".b
 .\}
 .el \{\
@@ -92,7 +99,7 @@
 .\}
 .\}
 ..
-'\"	# define tabbing values for .AP
+.\"	# define tabbing values for .AP
 .de AS
 .nr )A 10n
 .if !"\\$1"" .nr )A \\w'\\$1'u+3n
@@ -102,9 +109,9 @@
 .nr )C \\n()Bu+\\w'(in/out)'u+2n
 ..
 .AS Tcl_Interp Tcl_CreateInterp in/out
-'\"	# BS - start boxed text
-'\"	# ^y = starting y location
-'\"	# ^b = 1
+.\"	# BS - start boxed text
+.\"	# ^y = starting y location
+.\"	# ^b = 1
 .de BS
 .br
 .mk ^y
@@ -114,7 +121,7 @@
 .if n \l'\\n(.lu\(ul'
 .if n .fi
 ..
-'\"	# BE - end boxed text (draw box now)
+.\"	# BE - end boxed text (draw box now)
 .de BE
 .nf
 .ti 0
@@ -134,16 +141,16 @@
 .br
 .nr ^b 0
 ..
-'\"	# VS - start vertical sidebar
-'\"	# ^Y = starting y location
-'\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.\"	# VS - start vertical sidebar
+.\"	# ^Y = starting y location
+.\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
 .de VS
 .if !"\\$2"" .br
 .mk ^Y
 .ie n 'mc \s12\(br\s0
 .el .nr ^v 1u
 ..
-'\"	# VE - end of vertical sidebar
+.\"	# VE - end of vertical sidebar
 .de VE
 .ie n 'mc
 .el \{\
@@ -158,9 +165,9 @@
 .\}
 .nr ^v 0
 ..
-'\"	# Special macro to handle page bottom:  finish off current
-'\"	# box/sidebar if in box/sidebar mode, then invoked standard
-'\"	# page bottom macro.
+.\"	# Special macro to handle page bottom:  finish off current
+.\"	# box/sidebar if in box/sidebar mode, then invoked standard
+.\"	# page bottom macro.
 .de ^B
 .ev 2
 'ti 0
@@ -187,34 +194,36 @@
 .mk ^Y
 .\}
 ..
-'\"	# DS - begin display
+.\"	# DS - begin display
 .de DS
 .RS
 .nf
 .sp
 ..
-'\"	# DE - end display
+.\"	# DE - end display
 .de DE
 .fi
 .RE
 .sp
 ..
-'\"	# SO - start of list of standard options
+.\"	# SO - start of list of standard options
 .de SO
+'ie '\\$1'' .ds So \\fBoptions\\fR
+'el .ds So \\fB\\$1\\fR
 .SH "STANDARD OPTIONS"
 .LP
 .nf
-.ta 4c 8c 12c
+.ta 5.5c 11c
 .ft B
 ..
-'\"	# SE - end of list of standard options
+.\"	# SE - end of list of standard options
 .de SE
 .fi
 .ft R
 .LP
-See the \\fBoptions\\fR manual entry for details on the standard options.
+See the \\*(So manual entry for details on the standard options.
 ..
-'\"	# OP - start of full description for a single option
+.\"	# OP - start of full description for a single option
 .de OP
 .LP
 .nf
@@ -225,21 +234,43 @@ Database Class:	\\fB\\$3\\fR
 .fi
 .IP
 ..
-'\"	# CS - begin code excerpt
+.\"	# CS - begin code excerpt
 .de CS
 .RS
 .nf
 .ta .25i .5i .75i 1i
 ..
-'\"	# CE - end code excerpt
+.\"	# CE - end code excerpt
 .de CE
 .fi
 .RE
 ..
+.\"	# UL - underline word
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "crimp_devguide" n 1 doc "C Raster Image Manipulation Package"
+.\"	# QW - apply quotation marks to word
+.de QW
+.ie '\\*(lq'"' ``\\$1''\\$2
+.\"" fix emacs highlighting
+.el \\*(lq\\$1\\*(rq\\$2
+..
+.\"	# PQ - apply parens and quotation marks to word
+.de PQ
+.ie '\\*(lq'"' (``\\$1''\\$2)\\$3
+.\"" fix emacs highlighting
+.el (\\*(lq\\$1\\*(rq\\$2)\\$3
+..
+.\"	# QR - quoted range
+.de QR
+.ie '\\*(lq'"' ``\\$1''\\-``\\$2''\\$3
+.\"" fix emacs highlighting
+.el \\*(lq\\$1\\*(rq\\-\\*(lq\\$2\\*(rq\\$3
+..
+.\"	# MT - "empty" string
+.de MT
+.QW ""
+..
 .BS
 .SH NAME
 crimp_devguide \- CRIMP - The Developer's Guide
@@ -268,11 +299,11 @@ crimp_devguide \- CRIMP - The Developer's Guide
 .SH DESCRIPTION
 Welcome to CRIMP, the C Raster Image Manipulation Package, a set of
 extensions of \fITcl\fR for the handling and processing of
-images.
+images\&.
 .PP
 This document is a guide for developers working on the "C Raster Image
-Manipulation Package" (short CRIMP), i.e. maintainers fixing bugs,
-extending the package's functionality, etc.
+Manipulation Package" (short CRIMP), i\&.e\&. maintainers fixing bugs,
+extending the package's functionality, etc\&.
 .PP
 Please read
 .IP [1]
@@ -280,59 +311,59 @@ Please read
 .IP [2]
 \fICRIMP - The Installer's Guide\fR
 .PP
-first, if that was not done already.
+first, if that was not done already\&.
 Here we assume that the sources are already available in a directory
 of your choice, and that you not only know how to build and install
 them, but also have all the necessary requisites to actually do
-so. The guide to the sources in particular also explains which source
+so\&. The guide to the sources in particular also explains which source
 code management system is used, where to find it, how to set it up,
-etc.
+etc\&.
 .SH "PLAYING WITH CRIMP"
 For a demonstration of CRIMP's current abilities see the
-"\fIdemos.tcl\fR" application. Within the crimp source directory run it
+"\fIdemos\&.tcl\fR" application\&. Within the crimp source directory run it
 as
 .CS
 
 
-    tclsh8.5 demos.tcl
+    tclsh8\&.5 demos\&.tcl
 
 .CE
 or
 .CS
 
 
-    tclsh8.5 demos.tcl /path/to/crimp/packages ...
+    tclsh8\&.5 demos\&.tcl /path/to/crimp/packages \&.\&.\&.
 
 .CE
 If CRIMP's packages have already been installed, or can be found in
 one of the paths provided as arguments, then this will simply start
-the application.
+the application\&.
 Otherwise the demo application will attempt to automatically build
-them using the \fBcritcl\fR package in mode "compile & run". This
+them using the \fBcritcl\fR package in mode "compile & run"\&. This
 assumes that the \fBcritcl\fR v3 packages were installed, and not just
-the \fBcritcl\fR application.
+the \fBcritcl\fR application\&.
 If only the \fBcritcl\fR application was installed then this
 on-the-fly building of CRIMP is not possible and the packages must be
-installed first before using "\fIdemos.tcl\fR".
+installed first before using "\fIdemos\&.tcl\fR"\&.
 .PP
 After starting the application opens a GUI which shows two lists on
 the left side, of the images available to the demos, and of the demos
-themselves. The latter list changed contents dynamically based on the
-number of images selected (0, 1, or 2).
+themselves\&. The latter list changed contents dynamically based on the
+number of images selected (0, 1, or 2)\&.
 .PP
 After selecting image and demo the result of the demo is shown on the
 right side, usually as a plain image, the result of whatever operation
-was chosen. Some demos generate a slideshow of multiple images, or
-provide additional GUI elements, i.e. buttons, sliders, etc. for
-interactive manipulation of the demo.
+was chosen\&. Some demos generate a slideshow of multiple images, or
+provide additional GUI elements, i\&.e\&. buttons, sliders, etc\&. for
+interactive manipulation of the demo\&.
 .PP
 A few demos do not generate images, but print information to the log
 window, which is shown on the left, above the lists for images and
-demos.
+demos\&.
 .PP
 The size of the areas allocated to log window, selection lists, and
 demo results can be modified using the mouse, by dragging the panel
-separators.
+separators\&.
 .SH "DEVELOPING FOR CRIMP"
 .SS "ARCHITECTURE & CONCEPTS"
 Most of the overall architecture and concepts like images (image values), image-types,
@@ -342,7 +373,7 @@ and the general design, are all introduced in the user documentation, namely
 .IP [2]
 \fICRIMP - Foundation\fR
 .PP
-Here we concentrate on some details of the internals. First, the main data structures
+Here we concentrate on some details of the internals\&. First, the main data structures
 and their relationships:
 .PP
 .PS
@@ -352,12 +383,12 @@ and their relationships:
 Tcl_Obj <----* Tcl_Obj*    meta
 -------        image_type* itype *---> image_type
                int         x           -----------------
-               int         y            char*  name  *------> "...\\0"
+               int         y            char*  name  *------> "\&.\&.\&.\\0"
                int         w            int    size
                int         h            int    channels       -------------------
-               char[...]   pixel        char** cname *------>  cname[0]
-              -------------------      -----------------       cname[1] *------> "...\\0"
-                                                                ...
+               char[\&.\&.\&.]   pixel        char** cname *------>  cname[0]
+              -------------------      -----------------       cname[1] *------> "\&.\&.\&.\\0"
+                                                                \&.\&.\&.
                                                                cname[channels-1]
                                                               -------------------
 
@@ -365,21 +396,21 @@ Tcl_Obj <----* Tcl_Obj*    meta
 .PE
 .PP
 Yellow structures are allocated on the heap, whereas blue structures are statically
-allocated as (static, i.e. non-public) global variables.
+allocated as (static, i\&.e\&. non-public) global variables\&.
 .PP
-The named \fIimage_type\fRs declare the structure of image pixels, i.e. how
-many channels they have, their names, and the number of bytes per channel. This can
-be queried at Tcl level. The relevant declarations and definitions are in the files
-"\fIc/image_type.h\fR" and "\fIc/image_type.c\fR".
+The named \fIimage_type\fRs declare the structure of image pixels, i\&.e\&. how
+many channels they have, their names, and the number of bytes per channel\&. This can
+be queried at Tcl level\&. The relevant declarations and definitions are in the files
+"\fIc/image_type\&.h\fR" and "\fIc/image_type\&.c\fR"\&.
 .PP
 Regarding the \fIimage\fRs themselves, each is represented by a single
-heap-allocated structure with references to the type, i.e. pixel structure, and
+heap-allocated structure with references to the type, i\&.e\&. pixel structure, and
 user-specified meta data (held by a standard \fITcl_Obj\fR of type \fIdictionary\fR),
-dimensions, and the pixel data itself. The latter is part of the structure, and not
-allocated separately. The relevant declarations and definitions are in the files
-"\fIc/image.h\fR" and "\fIc/image.c\fR".
+dimensions, and the pixel data itself\&. The latter is part of the structure, and not
+allocated separately\&. The relevant declarations and definitions are in the files
+"\fIc/image\&.h\fR" and "\fIc/image\&.c\fR"\&.
 .PP
-From the Tcl level, i.e. string representation, things looks a bit differently
+From the Tcl level, i\&.e\&. string representation, things looks a bit differently
 .PP
 .PS
 .nf
@@ -405,189 +436,189 @@ set image { crimp::image::<type> <w> <h> <meta> <pixel> }
 .PP
 Each of the elements of an image are elements in a Tcl list, with the type string
 a pointer into the database of pixel structures and the pixel data represented by
-a bytearray.
+a bytearray\&.
 .SS "DIRECTORY STRUCTURE"
 .TP
 Helpers
 .RS
 .TP
 "\fItools/\fR"
-This directory contains helper scripts.
+This directory contains helper scripts\&.
 .TP
-"\fItools/makedoc.sh\fR"
+"\fItools/makedoc\&.sh\fR"
 .TP
-"\fItools/makefigures.sh\fR"
+"\fItools/makefigures\&.sh\fR"
 .TP
-"\fItools/makedocfigures.sh\fR"
+"\fItools/makedocfigures\&.sh\fR"
 These helper scripts, when run, (re)generate the embedded documentation
-from the documentation sources, or the figures, or both.
+from the documentation sources, or the figures, or both\&.
 This requires the applications \fBmimetex\fR, \fBconvert\fR
-(ImageMagick), \fBdtplite\fR, and \fBdia\fR. The latter is, for
-example, installed by ActiveTcl.
+(ImageMagick), \fBdtplite\fR, and \fBdia\fR\&. The latter is, for
+example, installed by ActiveTcl\&.
 .TP
-"\fItools/validatedoc.sh\fR"
+"\fItools/validatedoc\&.sh\fR"
 This helper script validates that the documentation markup conforms to
-the syntax of \fIdoctools\fR. Nothing is generated.
+the syntax of \fIdoctools\fR\&. Nothing is generated\&.
 .RE
 .TP
 Documentation
 .RS
 .TP
 "\fIdoc/\fR"
-This directory contains the documentation sources. The texts are written
+This directory contains the documentation sources\&. The texts are written
 in \fIdoctools\fR format, whereas the figures are a mixture of TeX (math
-formulas), and tklib's \fBdia\fR(gram) package and application.
+formulas), and tklib's \fBdia\fR(gram) package and application\&.
 .TP
 "\fIembedded/\fR"
 This directory contains the documentation converted to regular manpages
-(nroff) and HTML.
+(nroff) and HTML\&.
 It is called embedded because these files, while derived, are part of the
-fossil repository, i.e. embedded into it. This enables fossil to access
-and display these files when serving the repositories' web interface.
+fossil repository, i\&.e\&. embedded into it\&. This enables fossil to access
+and display these files when serving the repositories' web interface\&.
 The "Command Reference" link at
-\fIhttp://chiselapp.com/user/andreas_kupries/repository/crimp/home\fR
-is, for example, accessing the generated HTML.
+\fIhttp://chiselapp\&.com/user/andreas_kupries/repository/crimp/home\fR
+is, for example, accessing the generated HTML\&.
 .TP
 "\fIspecs/\fR"
 This directory contains specifications of the image file formats for which
-CRIMP provides readers and/or writers.
-Currently this is only PGM and PPM, i.e "Portable Grey Map" and
-"Portable Pix Map" respectively, and Windows's BMP format.
+CRIMP provides readers and/or writers\&.
+Currently this is only PGM and PPM, i\&.e "Portable Grey Map" and
+"Portable Pix Map" respectively, and Windows's BMP format\&.
 .RE
 .TP
 Demonstration Application and Framework
 .RS
 .TP
-"\fIdemos.tcl\fR"
-This is the demo application & framework.
+"\fIdemos\&.tcl\fR"
+This is the demo application & framework\&.
 .TP
 "\fIdemos/\fR"
-This directory is searched by "\fIdemos.tcl\fR" for the demonstrations to make
-available to its user. See \fBWriting a new demo\fR for information on the
-structure of a demonstration.
+This directory is searched by "\fIdemos\&.tcl\fR" for the demonstrations to make
+available to its user\&. See \fBWriting a new demo\fR for information on the
+structure of a demonstration\&.
 .TP
 "\fIimages/\fR"
-This directory is searched by "\fIdemos.tcl\fR" for the images to make
-available to its user and the demos. See \fBAdding a new demo image\fR
-for more information.
+This directory is searched by "\fIdemos\&.tcl\fR" for the images to make
+available to its user and the demos\&. See \fBAdding a new demo image\fR
+for more information\&.
 .RE
 .TP
 Package Code, General structure
 .RS
 .TP
-"\fIcrimp*.tcl\fR"
-These are the master files of the packages. Based on \fBcritcl\fR (v3) they
-contain all the necessary declarations to build their package.
+"\fIcrimp*\&.tcl\fR"
+These are the master files of the packages\&. Based on \fBcritcl\fR (v3) they
+contain all the necessary declarations to build their package\&.
 .sp
 Each file reads the primitives to implement from the files in the
 sub-directories "\fIcore/\fR" (crimp_core), "\fIoperator/\fR" (crimp), and
-"\fIformat/\fR" (crimp_*, except for core).
+"\fIformat/\fR" (crimp_*, except for core)\&.
 .TP
-"\fIsupport.tcl\fR"
-This is a shared helper file used by the package master files. It contains
-the general code to load and convert "\fI.crimp\fR" files.
+"\fIsupport\&.tcl\fR"
+This is a shared helper file used by the package master files\&. It contains
+the general code to load and convert "\fI\&.crimp\fR" files\&.
 .TP
-"\fIpolicy*.tcl\fR"
-These are the companions to the "\fIcrimp*.tcl\fR" files which implement the
+"\fIpolicy*\&.tcl\fR"
+These are the companions to the "\fIcrimp*\&.tcl\fR" files which implement the
 higher-level interfaces on top of the C-based primitive operations, and
-determine policies.
+determine policies\&.
 .sp
 The documentation (see "\fIdoc/\fR") mainly describes this higher-level API,
-plus the few primitives which are passed through unchanged, i.e. without
-getting wrapped into Tcl procedures.
+plus the few primitives which are passed through unchanged, i\&.e\&. without
+getting wrapped into Tcl procedures\&.
 .TP
-"\fIplot.tcl\fR"
-This is a companion Tcl file to "\fIcrimp_tk.tcl\fR" and "\fIpolicy_tk.tcl\fR"
-which implements a simple plot widget. It essentially wraps Tklib's
-\fBPlotchart\fR package into a simpler interface.
+"\fIplot\&.tcl\fR"
+This is a companion Tcl file to "\fIcrimp_tk\&.tcl\fR" and "\fIpolicy_tk\&.tcl\fR"
+which implements a simple plot widget\&. It essentially wraps Tklib's
+\fBPlotchart\fR package into a simpler interface\&.
 .sp
 The main user of this functionality is currently the demonstration framework,
-"\fIdemos.tcl\fR".
+"\fIdemos\&.tcl\fR"\&.
 .TP
 "\fIoperator/\fR"
 This directory contain the sources of the C-level primitives implemented by
-CRIMP.
+CRIMP\&.
 .sp
-The master file "\fIcrimp.tcl\fR" reads all the "\fI.crimp\fR" files found in
-this directory, converting them into proper \fBcritcl::cproc\fRs.
+The master file "\fIcrimp\&.tcl\fR" reads all the "\fI\&.crimp\fR" files found in
+this directory, converting them into proper \fBcritcl::cproc\fRs\&.
 .TP
 "\fIcore/\fR"
 This directory contain the sources of the core C-level primitives
-implemented by CRIMP.
+implemented by CRIMP\&.
 .sp
-The master file "\fIcrimp_core.tcl\fR" reads all the "\fI.crimp\fR" files found
-in this directory, converting them into proper \fBcritcl::cproc\fRs.
+The master file "\fIcrimp_core\&.tcl\fR" reads all the "\fI\&.crimp\fR" files found
+in this directory, converting them into proper \fBcritcl::cproc\fRs\&.
 .TP
 "\fIformat/\fR"
 This directory contain the sources of the C-level primitives for file
-and other I/O implemented by the various I/O packages.
+and other I/O implemented by the various I/O packages\&.
 .sp
-The master files "\fIcrimp_*.tcl\fR" read all the associated "\fI.crimp\fR"
+The master files "\fIcrimp_*\&.tcl\fR" read all the associated "\fI\&.crimp\fR"
 files found in this directory, converting them into proper
-\fBcritcl::cproc\fRs. I.e.
+\fBcritcl::cproc\fRs\&. I\&.e\&.
 .RS
 .TP
-"\fIcrimp_bmp.tcl\fR"
-"\fIformat/*bmp*.crimp\fR"
+"\fIcrimp_bmp\&.tcl\fR"
+"\fIformat/*bmp*\&.crimp\fR"
 .TP
-"\fIcrimp_pcx.tcl\fR"
-"\fIformat/*pcx*.crimp\fR"
+"\fIcrimp_pcx\&.tcl\fR"
+"\fIformat/*pcx*\&.crimp\fR"
 .TP
-"\fIcrimp_pfm.tcl\fR"
-"\fIformat/*pfm*.crimp\fR"
+"\fIcrimp_pfm\&.tcl\fR"
+"\fIformat/*pfm*\&.crimp\fR"
 .TP
-"\fIcrimp_pgm.tcl\fR"
-"\fIformat/*pgm*.crimp\fR"
+"\fIcrimp_pgm\&.tcl\fR"
+"\fIformat/*pgm*\&.crimp\fR"
 .TP
-"\fIcrimp_ppm.tcl\fR"
-"\fIformat/*ppm*.crimp\fR"
+"\fIcrimp_ppm\&.tcl\fR"
+"\fIformat/*ppm*\&.crimp\fR"
 .TP
-"\fIcrimp_sgi.tcl\fR"
-"\fIformat/*sgi*.crimp\fR"
+"\fIcrimp_sgi\&.tcl\fR"
+"\fIformat/*sgi*\&.crimp\fR"
 .TP
-"\fIcrimp_sun.tcl\fR"
-"\fIformat/*sun*.crimp\fR"
+"\fIcrimp_sun\&.tcl\fR"
+"\fIformat/*sun*\&.crimp\fR"
 .TP
-"\fIcrimp_tk.tcl\fR"
-"\fIformat/*tk*.crimp\fR"
+"\fIcrimp_tk\&.tcl\fR"
+"\fIformat/*tk*\&.crimp\fR"
 .RE
 .TP
 "\fIcop/\fR"
 (speak: C op ;)
 For a few of the primitives in operator/ (see above) the implementations were
-very similar. This directory contains "templates" for these implementations,
-with the actual primitives \fB#include\fR'ing them. The templates are configured
-through a number a C \fB#define\fR's for the parts where the primitives differ.
+very similar\&. This directory contains "templates" for these implementations,
+with the actual primitives \fB#include\fR'ing them\&. The templates are configured
+through a number a C \fB#define\fR's for the parts where the primitives differ\&.
 .sp
-The files all belong to package \fBcrimp\fR.
+The files all belong to package \fBcrimp\fR\&.
 .sp
-This is a first attempt at templating some of the C code. It works, but
-isn't really very nicely done.
+This is a first attempt at templating some of the C code\&. It works, but
+isn't really very nicely done\&.
 .sp
 While I (AK) have the general ida of using Tcl and Tcl-based macro-processors
 (like "expand", see Wiki) bouncing around in my head for a better templating
-and C code generation mechanism there is nothing concrete yet.
+and C code generation mechanism there is nothing concrete yet\&.
 .TP
 "\fIc/\fR"
 This directory contain the C sources for common/shared functionality,
 mainly the Tcl_ObjType's for "image type"-values and "image"-values,
 and complex functions I really did not wish to duplicate in the C
 primitives (AHE support, Rank-Order Filter support, geometry functions,
-FFT).
+FFT)\&.
 .sp
 As such some of it belongs to package \fBcrimp::core\fR, with the
-large remainder belonging to package \fBcrimp\fR.
+large remainder belonging to package \fBcrimp\fR\&.
 .TP
 "\fIreader/\fR"
 This directories contains the read procedures for image formats done in
-pure Tcl, and outside of the main I/O packages.
+pure Tcl, and outside of the main I/O packages\&.
 .sp
-Currently this is \fIRichard Suchenwirth\fR [http://wiki.tcl.tk/496]'s
-\fIstrimj\fR [http://wiki.tcl.tk/1881]'es.
+Currently this is \fIRichard Suchenwirth\fR [http://wiki\&.tcl\&.tk/496]'s
+\fIstrimj\fR [http://wiki\&.tcl\&.tk/1881]'es\&.
 .sp
 The files in these directories are declared as Tcl companion files of
-"\fIcrimp.tcl\fR", causing them to be sourced automatically by the critcl
-framework when CRIMP is loaded.
+"\fIcrimp\&.tcl\fR", causing them to be sourced automatically by the critcl
+framework when CRIMP is loaded\&.
 .RE
 .TP
 Package Code, Per Package
@@ -596,156 +627,156 @@ Package Code, Per Package
 \fBcrimp::core\fR
 .RS
 .TP
-"\fIcrimp_core.tcl\fR"
+"\fIcrimp_core\&.tcl\fR"
 .TP
-"\fIpolicy_core.tcl\fR"
+"\fIpolicy_core\&.tcl\fR"
 .TP
-"\fIcore/*.crimp\fR"
+"\fIcore/*\&.crimp\fR"
 .TP
-"\fIc/coreInt.h\fR"
+"\fIc/coreInt\&.h\fR"
 .TP
-"\fIc/image.[ch]\fR"
+"\fIc/image\&.[ch]\fR"
 .TP
-"\fIc/volume.[ch]\fR"
+"\fIc/volume\&.[ch]\fR"
 .TP
-"\fIc/image_type.[ch]\fR"
+"\fIc/image_type\&.[ch]\fR"
 .TP
-"\fIc/buffer.[ch]\fR"
+"\fIc/buffer\&.[ch]\fR"
 .RE
 .TP
 \fBcrimp\fR
 .RS
 .TP
-"\fIcrimp.tcl\fR"
+"\fIcrimp\&.tcl\fR"
 .TP
-"\fIpolicy.tcl\fR"
+"\fIpolicy\&.tcl\fR"
 .TP
-"\fIoperator/*.crimp\fR"
+"\fIoperator/*\&.crimp\fR"
 .TP
 "\fIreader/*\fR"
 .TP
 "\fIcop/*\fR"
 .TP
 "\fIc/*\fR"
-Regarding "\fIc/*\fR" only those not claimed by \fBcrimp::core\fR, see above.
+Regarding "\fIc/*\fR" only those not claimed by \fBcrimp::core\fR, see above\&.
 .RE
 .TP
 \fBcrimp::bmp\fR
 .RS
 .TP
-"\fIcrimp_bmp.tcl\fR"
+"\fIcrimp_bmp\&.tcl\fR"
 .TP
-"\fIpolicy_bmp.tcl\fR"
+"\fIpolicy_bmp\&.tcl\fR"
 .TP
-"\fIformat/*bmp*.crimp\fR"
+"\fIformat/*bmp*\&.crimp\fR"
 .TP
-"\fIformat/bmp.[ch]\fR"
+"\fIformat/bmp\&.[ch]\fR"
 .RE
 .TP
 \fBcrimp::pcx\fR
 .RS
 .TP
-"\fIcrimp_pcx.tcl\fR"
+"\fIcrimp_pcx\&.tcl\fR"
 .TP
-"\fIpolicy_pcx.tcl\fR"
+"\fIpolicy_pcx\&.tcl\fR"
 .TP
-"\fIformat/*pcx*.crimp\fR"
+"\fIformat/*pcx*\&.crimp\fR"
 .RE
 .TP
 \fBcrimp::pfm\fR
 .RS
 .TP
-"\fIcrimp_pfm.tcl\fR"
+"\fIcrimp_pfm\&.tcl\fR"
 .TP
-"\fIpolicy_pfm.tcl\fR"
+"\fIpolicy_pfm\&.tcl\fR"
 .TP
-"\fIformat/*pfm*.crimp\fR"
+"\fIformat/*pfm*\&.crimp\fR"
 .RE
 .TP
 \fBcrimp::pgm\fR
 .RS
 .TP
-"\fIcrimp_pgm.tcl\fR"
+"\fIcrimp_pgm\&.tcl\fR"
 .TP
-"\fIpolicy_pgm.tcl\fR"
+"\fIpolicy_pgm\&.tcl\fR"
 .TP
-"\fIformat/*pgm*.crimp\fR"
+"\fIformat/*pgm*\&.crimp\fR"
 .RE
 .TP
 \fBcrimp::ppm\fR
 .RS
 .TP
-"\fIcrimp_ppm.tcl\fR"
+"\fIcrimp_ppm\&.tcl\fR"
 .TP
-"\fIpolicy_ppm.tcl\fR"
+"\fIpolicy_ppm\&.tcl\fR"
 .TP
-"\fIformat/*ppm*.crimp\fR"
+"\fIformat/*ppm*\&.crimp\fR"
 .RE
 .TP
 \fBcrimp::sgi\fR
 .RS
 .TP
-"\fIcrimp_sgi.tcl\fR"
+"\fIcrimp_sgi\&.tcl\fR"
 .TP
-"\fIpolicy_sgi.tcl\fR"
+"\fIpolicy_sgi\&.tcl\fR"
 .TP
-"\fIformat/*sgi*.crimp\fR"
+"\fIformat/*sgi*\&.crimp\fR"
 .RE
 .TP
 \fBcrimp::sun\fR
 .RS
 .TP
-"\fIcrimp_sun.tcl\fR"
+"\fIcrimp_sun\&.tcl\fR"
 .TP
-"\fIpolicy_sun.tcl\fR"
+"\fIpolicy_sun\&.tcl\fR"
 .TP
-"\fIformat/*sun*.crimp\fR"
+"\fIformat/*sun*\&.crimp\fR"
 .RE
 .TP
 \fBcrimp::tk\fR
 .RS
 .TP
-"\fIcrimp_tk.tcl\fR"
+"\fIcrimp_tk\&.tcl\fR"
 .TP
-"\fIpolicy_tk.tcl\fR"
+"\fIpolicy_tk\&.tcl\fR"
 .TP
-"\fIplot.tcl\fR"
+"\fIplot\&.tcl\fR"
 .TP
-"\fIformat/*tk*.crimp\fR"
+"\fIformat/*tk*\&.crimp\fR"
 .RE
 .RE
 .PP
 .SS "WRITING A NEW PRIMITIVE"
 The individual primitive C level operations of CRIMP are found in the
-sub-directories "\fIcore/\fR", "\fIoperator/\fR", and "\fIformat/\fR".
-See the \fBDirectory structure\fR.
+sub-directories "\fIcore/\fR", "\fIoperator/\fR", and "\fIformat/\fR"\&.
+See the \fBDirectory structure\fR\&.
 .PP
-Each primitive is handled by a single file with the extension "\fI.crimp\fR".
+Each primitive is handled by a single file with the extension "\fI\&.crimp\fR"\&.
 .PP
 Note that all files found in these directories and which do not have the
-extension "\fI.crimp\fR" are by default ignored when "\fIcrimp.tcl\fR" loads
-and processes the primitives. The exception is if a package policy file
-declares them to be a part of the package in question.
+extension "\fI\&.crimp\fR" are by default ignored when "\fIcrimp\&.tcl\fR" loads
+and processes the primitives\&. The exception is if a package policy file
+declares them to be a part of the package in question\&.
 .PP
-To write a new primitive simply add a new file with the extension "\fI.crimp\fR"
+To write a new primitive simply add a new file with the extension "\fI\&.crimp\fR"
 to the directory and fill it with content according to the rules below, which
-specify the format of "\fI.crimp\fR" files.
+specify the format of "\fI\&.crimp\fR" files\&.
 .IP [1]
-A "\fI.crimp\fR" file is a plain text file.
+A "\fI\&.crimp\fR" file is a plain text file\&.
 .IP [2]
-The first line in the file contains the name of the primitive it implements.
+The first line in the file contains the name of the primitive it implements\&.
 .IP [3]
 All following lines, until the first empty line, describe the arguments of
-the primitive, i.e. their types and names.
+the primitive, i\&.e\&. their types and names\&.
 Note that a line containing only whitespace (space and tab characters) is
-\fInot\fR empty.
+\fInot\fR empty\&.
 .IP [4]
-Each line in the argument block describes a single argument.
+Each line in the argument block describes a single argument\&.
 .IP [5]
 All lines after the empty line terminating the argument block, to the end of
-the file, contain the C code implementing the primitive.
+the file, contain the C code implementing the primitive\&.
 .PP
-As an example, here are the contents of the "\fI.crimp\fR" file for one of
+As an example, here are the contents of the "\fI\&.crimp\fR" file for one of
 the primitives with one of the smallest implementations:
 .CS
 
@@ -761,137 +792,137 @@ the primitives with one of the smallest implementations:
 [9]     return TCL_OK;
 
 .CE
-Line 1 contains the name of the primitive, "width".
-Line 2 is the first line of the argument block.
-Line 3 terminates this argument block.
-Lines 4 to 9 are the implementation.
+Line 1 contains the name of the primitive, "width"\&.
+Line 2 is the first line of the argument block\&.
+Line 3 terminates this argument block\&.
+Lines 4 to 9 are the implementation\&.
 .PP
 This specific primitive extracts the width from the image it was given as
-argument and returns it as its result.
+argument and returns it as its result\&.
 .SS "WRITING A NEW HIGH-LEVEL COMMAND"
 The high-level commands wrapping around most of the C level primitives
-reside in the files matching the pattern "\fIpolicy*.tcl\fR".
+reside in the files matching the pattern "\fIpolicy*\&.tcl\fR"\&.
 .PP
 They usually have one of the following purposes:
 .PP
 .IP [1]
 Aggregating a group of related primitives into a single command
 which chooses the primitive to use automatically, based on the
-type(s) of its image argument(s).
+type(s) of its image argument(s)\&.
 The command \fB::crimp max\fR is an example of this, choosing
-and dispatching to the group of \fBmax_*_*\fR primitives.
+and dispatching to the group of \fBmax_*_*\fR primitives\&.
 .IP [2]
-A nicer (more tcl-ish) interface to a (group of) primitive(s).
+A nicer (more tcl-ish) interface to a (group of) primitive(s)\&.
 The command \fB::crimp meta\fR is an example of that,
 implementing a dict-like API on top of the raw \fBmeta_set\fR and
-\fBmeta_get\fR primitives.
+\fBmeta_get\fR primitives\&.
 .IP [3]
 Convenience methods which aggregate other commands, not
-necessarily primitives, into a larger functionality.
+necessarily primitives, into a larger functionality\&.
 The group of \fB::crimper filter sobel\fR methods is an example of
 this, wrapping around \fB::crimp filter convolve\fR (itself an example
 of (1)) and the commands for creating convolution kernels,
-implementing a specific well-known filter with a fixed kernel.
+implementing a specific well-known filter with a fixed kernel\&.
 .IP [4]
 Implementing functionality fully in Tcl, where primitives are not
-needed, or mostly not.
+needed, or mostly not\&.
 The \fB::crimp transform\fR and \fB::crimp table\fR commands
 are examples of this, computing projective transformations and pixel
-mapping tables, respectively.
+mapping tables, respectively\&.
 A better example might be the "::crimp pyramid" methods which
 encapsulate the higher-order structure of image pyramid
-processing, leaving the details callback commands.
+processing, leaving the details callback commands\&.
 .PP
 Their implementation has to obey the following rules:
 .IP [1]
 The CRIMP package has the namespace "::crimp" reserved for its
-use. All new procedures have to be defined in this namespace, or
-sub-ordinate namespaces.
+use\&. All new procedures have to be defined in this namespace, or
+sub-ordinate namespaces\&.
 .IP [2]
 New procedures extending an existing ensemble have to be defined
-in the namespace of that ensemble. (Rule (1) above could have been
+in the namespace of that ensemble\&. (Rule (1) above could have been
 subsumed into this, because the main command, "::crimp", is an
-ensemble).
+ensemble)\&.
 .IP [3]
 Any new command defined directly in the "::crimp" namespace,
-i.e. at the top-level of the hierarchy, has to be listed in the
-\fBnamespace export\fR clauses at the bottom of file "\fIpolicy.tcl\fR".
+i\&.e\&. at the top-level of the hierarchy, has to be listed in the
+\fBnamespace export\fR clauses at the bottom of file "\fIpolicy\&.tcl\fR"\&.
 .IP [4]
 Public procedures have to have a name starting with a lowercase
-character.
+character\&.
 .IP [5]
 Internal procedures have to have a name starting with an uppercase
-character.
+character\&.
 .PP
 .SS "WRITING A NEW DEMO"
-The individual demos used by "\fIdemos.tcl\fR" reside in the
-sub-directory "\fIdemos/\fR" of the sources.
+The individual demos used by "\fIdemos\&.tcl\fR" reside in the
+sub-directory "\fIdemos/\fR" of the sources\&.
 .PP
-Each demo is handled by a single file with the extension ".tcl".
+Each demo is handled by a single file with the extension "\&.tcl"\&.
 .PP
 Note that all files found in the directory and which do not have the
-extension "\fI.tcl\fR" are ignored when "\fIdemos.tcl\fR" looks for
-demos it can use.
+extension "\fI\&.tcl\fR" are ignored when "\fIdemos\&.tcl\fR" looks for
+demos it can use\&.
 .PP
 To write a new demo simply add a new file with the extension
-"\fI.tcl\fR" to the directory and fill it with content according to the
-rules below, which specify the format of the demo files.
+"\fI\&.tcl\fR" to the directory and fill it with content according to the
+rules below, which specify the format of the demo files\&.
 .PP
 .IP [1]
-A demo file is a Tcl script. As such it is a plain text file.
+A demo file is a Tcl script\&. As such it is a plain text file\&.
 .IP [2]
 A demo file contains a single command "def", taking two arguments,
-the name of the demo, and a Tcl dictionary describing it.
+the name of the demo, and a Tcl dictionary describing it\&.
 .IP [3]
 The dictionary describing the demo may contain the keys and values
-listed below. Some of the keys must exist, others are optional.
-Both will be noted in the desciptions of the keys, below.
+listed below\&. Some of the keys must exist, others are optional\&.
+Both will be noted in the desciptions of the keys, below\&.
 .RS
 .TP
 label
-Must exist. Its value is the name of the demo, as shown to
-and seen by the user of "\fIdemos.tcl\fR".
+Must exist\&. Its value is the name of the demo, as shown to
+and seen by the user of "\fIdemos\&.tcl\fR"\&.
 .TP
 active
-Optional. Its value is a script which will be executed by
-demos.tcl whenever it has to decide which demos to show in the
-list, based on the selection of images. The result has to be a
+Optional\&. Its value is a script which will be executed by
+demos\&.tcl whenever it has to decide which demos to show in the
+list, based on the selection of images\&. The result has to be a
 boolean value, with True signaling that the demo is suitable
-for the selection, and False that it should not be shown.
+for the selection, and False that it should not be shown\&.
 .TP
 setup
-Optional. Its value is a script which is run whenever this
-demo has been chosen by the user. It is expected to create
+Optional\&. Its value is a script which is run whenever this
+demo has been chosen by the user\&. It is expected to create
 any commands and state it may need during the processing
-of an image.
+of an image\&.
 .TP
 shutdown
-Optional. Its value is a script which is run whenever this
+Optional\&. Its value is a script which is run whenever this
 demo has been de-selected by the user (and possibly some other
-demo chosen). It is expected to clean up any dynamic resources
-the demo may have aquired (like timers, open files, etc.).
+demo chosen)\&. It is expected to clean up any dynamic resources
+the demo may have aquired (like timers, open files, etc\&.)\&.
 The script does not have to care about procedures and state in
-the ::DEMO namespace. These are automatically destroyed by the
-framework.
+the ::DEMO namespace\&. These are automatically destroyed by the
+framework\&.
 .TP
 setup_image
-Optional, technically. Its value is a script which is run
-whenever the image for the demo has changed. Its
+Optional, technically\&. Its value is a script which is run
+whenever the image for the demo has changed\&. Its
 responsibility is to apply the demo to the image and show any
-results. As such leaving this key out of the description makes
-pretty much no sense at all.
+results\&. As such leaving this key out of the description makes
+pretty much no sense at all\&.
 .RE
 .IP [4]
 All scripts (see demo description, above) are executed within the
 ::DEMO namespace and have access to its variables and commands
 .IP [5]
 The demo framework exports a number of supporting commands for use
-by the scripts in the individual demos. These are:
+by the scripts in the individual demos\&. These are:
 .RS
 .TP
 \fBcrimp\fR
 Of course, as demos have to have access to CRIMP's
-functionality. All known crimp packages are loaded, i.e.
+functionality\&. All known crimp packages are loaded, i\&.e\&.
 .RS
 .IP [1]
 \fBcrimp\fR
@@ -915,75 +946,75 @@ functionality. All known crimp packages are loaded, i.e.
 .TP
 \fBappdir\fR
 Returns the path of the directory the demo application is
-contained in.
+contained in\&.
 .TP
 \fBbase\fR ?\fIN\fR?
-Returns the N'th image selected by the user. Counted from 0.
-If not specified 'N' defaults 0.
+Returns the N'th image selected by the user\&. Counted from 0\&.
+If not specified 'N' defaults 0\&.
 .TP
 \fBbases\fR
-Returns the number of selected images. Most useful to the
-\'active' script.
+Returns the number of selected images\&. Most useful to the
+\'active' script\&.
 .TP
 \fBdemodir\fR
 Returns the path of the directory the demo's sources are
-contained in.
+contained in\&.
 .TP
 \fBthebases\fR
-Returns a list containing all selected images.
+Returns a list containing all selected images\&.
 .TP
 \fBshow_image\fR \fII\fR
 Takes an image I and displays it in the demo result area for
-the user to see.
+the user to see\&.
 .TP
 \fBshow_slides\fR \fILI\fR
 Takes a list of images and displays them in the demo result
 area for the user to see, as a slideshow which cycles through
-the images. The user gets a bevy of buttons to start/stop the
-cycling, change cycle interval, and direction.
+the images\&. The user gets a bevy of buttons to start/stop the
+cycling, change cycle interval, and direction\&.
 .TP
 \fBlog\fR \fIT\fR
 Writes the text T to the demo log window, followed by a newline
 .TP
 \fBlog*\fR \fIT\fR
-Writes the text T to the demo log window. No newline is added
-after the text.
+Writes the text T to the demo log window\&. No newline is added
+after the text\&.
 .RE
 .IP [6]
 The demo framework has a number of hook points in the GUI for use
-by demos. These are:
+by demos\&. These are:
 .RS
 .IP \(bu
-.left
+\&.left
 .IP \(bu
-.right
+\&.right
 .IP \(bu
-.top
+\&.top
 .IP \(bu
-.bottom
+\&.bottom
 .RE
 .IP
 These widgets are ttk::frames placed to the left, right, top and
-bottom of the demo result area and usually empty. The demo can put
-its own interface elements there, buttons, sliders, plots, etc. pp.
+bottom of the demo result area and usually empty\&. The demo can put
+its own interface elements there, buttons, sliders, plots, etc\&. pp\&.
 When not empty the layout roughly looks like:
 .sp
 .PS
 .nf
 +-------------------------------------------------------+
 |                                                       |
-|       .top                                            |
+|       \&.top                                            |
 |                                                       |
 +-------+---------------------------------------+-------+
 |       |                                       |       |
 |       |       demo result area                |       |
-| .left |                                       | .right|
+| \&.left |                                       | \&.right|
 |       |                                       |       |
 |       |                                       |       |
 |       |                                       |       |
 +-------+---------------------------------------+-------+
 |                                                       |
-|       .bottom                                         |
+|       \&.bottom                                         |
 |                                                       |
 +-------------------------------------------------------+
 
@@ -992,22 +1023,22 @@ When not empty the layout roughly looks like:
 .sp
 The demo's UI elements underneath these hooks are automatically
 destroyed when the demo is shut down, before its 'shutdown' script
-is run.
+is run\&.
 .PP
 .SS "ADDING A NEW DEMO IMAGE"
-The individual demonstration images used by "\fIdemos.tcl\fR" reside in
-the sub-directory "\fIimage/\fR" of the sources.
+The individual demonstration images used by "\fIdemos\&.tcl\fR" reside in
+the sub-directory "\fIimage/\fR" of the sources\&.
 .PP
-Each image is handled by a single file with the extension "\fI.png\fR",
-whose contents have to be in the PNG image file format.
+Each image is handled by a single file with the extension "\fI\&.png\fR",
+whose contents have to be in the PNG image file format\&.
 .PP
 Note that all files found in the directory, and which do not have the
-extension "\fI.png\fR", are ignored when "\fIdemos.tcl\fR" looks for
-images it can use.
+extension "\fI\&.png\fR", are ignored when "\fIdemos\&.tcl\fR" looks for
+images it can use\&.
 .PP
 To add a new image simply copy the image file into the directory,
-assuming that it has the correct extension and file format. Otherwise
-convert the image to PNG and change the extension to suit.
+assuming that it has the correct extension and file format\&. Otherwise
+convert the image to PNG and change the extension to suit\&.
 .SH KEYWORDS
 computer vision, document processing, image, matrix, photo, vector
 .SH COPYRIGHT

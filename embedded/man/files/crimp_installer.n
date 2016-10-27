@@ -293,7 +293,8 @@ not done already\&. Here we assume that the sources are already
 available in a directory of your choice\&.
 .PP
 .SH REQUISITES
-Before Crimp can be build and used a number of requisites must be installed\&. These are:
+Before Crimp can be build and used a number of requisites must be installed\&.
+These are:
 .IP [1]
 The scripting language Tcl\&.
 For details see \fBTcl\fR\&.
@@ -303,6 +304,9 @@ For details see \fBCriTcl\fR\&.
 .IP [3]
 Various packages from the Tcllib/Tklib bundles for \fBTcl\fR\&.
 For details see \fBTcllib & Tklib\fR\&.
+.IP [4]
+The \fBkettle\fR application (Build tool) for \fBTcl\fR\&.
+For details see \fBKettle\fR\&.
 .PP
 This list assumes that the machine where Crimp is to be installed is
 essentially clean\&. Of course, if parts of the dependencies listed
@@ -398,7 +402,7 @@ install CriTcl, including a list of its dependencies\&.
 .PP
 Its instructions will not be repeated here\&. If there are
 problems with their directions please file a bug against the critcl
-project, and not KineTcl\&.
+project, and not Crimp\&.
 .SS "TCLLIB & TKLIB"
 To use Crimp a few packages found in the bundles Tcllib and Tklib
 are required\&. These packages are:
@@ -435,18 +439,49 @@ ensured for the ActiveTcl distribution\&. Others may have to run
 to make this happen\&.
 .PP
 Now, for those wishing to install the packages from source,
-the CVS repository for the two bundles can be found at
-\fIhttps://sourceforge\&.net/projects/tcllib\fR\&.
+the fossil repository for the two bundles can be found at
+\fIhttps://core\&.tcl\&.tk/tcllib\fR and \fIhttps://core\&.tcl\&.tk/tklib\fR\&.
 .PP
-Releases of Tcllib and Tklib can be found the associated
-Files section, or CVS can be used to check out the sub projects
-tcllib and tklib\&.
+Releases of Tcllib and Tklib can be found there as well, or
+\fBfossil\fR can be used to check out specific revisions\&.
 .PP
 Tcl- and Tklib come with their own installation instructions\&.
 These will not be repeated here\&. If there are problems with their
 directions please file a bug against the Tcllib project at the above
-url, and not KineTcl\&.
-.SH "BUILD & INSTALLATION"
+url, and not Crimp\&.
+.SS KETTLE
+To build Crimp the tool \fBkettle\fR is required\&.
+.PP
+Crimp's build system requires it as an application found
+in the PATH\&.
+.PP
+Crimp requires version 1 or higher\&.
+.PP
+The fossil repository providing releases of this tool (and its
+associated package) can be found at
+\fIhttp://core\&.tcl\&.tk/akupries/kettle\fR\&.
+.PP
+A mirror of the repository can be found at
+\fIhttps://chiselapp\&.com/user/andreas_kupries/repository/Kettle\fR\&.
+.PP
+Use of either releases or of the head of the main branch is
+recommended\&. Usage of branches is strongly discouraged as these are
+used to work on experimental features and bugfixes of the tool\&. As
+such their stability is not guaranteed\&.
+.PP
+At the above url is also an explanation on how to build and
+install Kettle, including a list of its dependencies\&.
+.PP
+Its instructions will not be repeated here\&. If there are
+problems with their directions please file a bug against the Kettle
+project, and not Crimp\&.
+.SH "BUILD & INSTALLATION INSTRUCTIONS"
+.SS "BUILD & INSTALLATION (UNIX)"
+This section describes the actions required to install CRIMP on Unix
+systems (Linux, BSD, and related, including OS X)\&.
+If you have to install CRIMP on a Windows machine see section
+\fBBuild & Installation (Windows)\fR instead\&.
+.PP
 To install CRIMP simply run
 .CS
 
@@ -460,20 +495,62 @@ where "\fI/path/to/tclsh8\&.5\fR" is the tclsh of your Tcl installation, and
 This builds all packages and then places them in a directory where the
 \fBtclsh8\&.5\fR will find them\&.
 .PP
-On Windows you can invoke the file "\fIbuild\&.tcl\fR" with a
-double-click\&.  This will pop up a small graphical interface for
-entering the destination and performing the installation\&. This
-handling of a double-click is restricted to Windows only however\&.
-.PP
-On unix the same GUI is acessible by invoking "\fIbuild\&.tcl\fR" without
-any arguments\&.
+The build system provides a small GUI for those not comfortable with
+the command line\&.
+This GUI is accessible by invoking "\fIbuild\&.tcl\fR" without any
+arguments\&.
 .PP
 To get help about the methods of "\fIbuild\&.tcl\fR", and their complete
-syntax, invoke  "\fIbuild\&.tcl\fR" with argument \fBhelp\fR, i\&.e\&., like
+syntax, invoke "\fIbuild\&.tcl\fR" with argument \fBhelp\fR, i\&.e\&.,
+like
 .CS
 
 
     /path/to/tclsh8\&.5 /path/to/crimp/build\&.tcl help
+
+.CE
+.SS "BUILD & INSTALLATION (WINDOWS)"
+This section describes the actions required to install CRIMP on Windows(tm)
+systems\&.
+If you have to install CRIMP on a Unix machine (Linux, BSD, and
+related, including OS X) see section
+\fBBuild & Installation (Unix)\fR instead\&.
+.PP
+To install CRIMP simply run
+.CS
+
+
+    /path/to/tclsh8\&.5 /path/to/kettle -f /path/to/crimp/build\&.tcl install
+
+.CE
+where "\fI/path/to/tclsh8\&.5\fR" is the tclsh of your Tcl installation,
+"\fI/path/to/kettle\fR" is the installed \fBkettle\fR application,
+and "\fI/path/to/crimp\fR" the location of the CRIMP sources on your
+system\&.
+.PP
+This builds all packages and then places them in a directory where the
+\fBtclsh8\&.5\fR will find them\&.
+.PP
+The above is written without assuming any associations from
+extensions (like "\fI\&.tcl\fR") to executables responsible for the file
+with that extension\&.
+Actually, given that "\fIbuild\&.tcl\fR" is technically a
+"\fIkettle\fR"-script, which in turn is a "\fI\&.tcl\fR"-script I am not
+sure if Windows is able to handle such a chain of interpreters\&.
+The command given above simply spells out the entire chain\&.
+.PP
+The build system provides a small GUI for those not comfortable with
+the command line\&.
+This GUI is accessible by invoking "\fIbuild\&.tcl\fR" without any
+arguments from the command line\&.
+.PP
+To get help about the methods of "\fIbuild\&.tcl\fR", and their complete
+syntax, invoke "\fIbuild\&.tcl\fR" with argument \fBhelp\fR, i\&.e\&.,
+like
+.CS
+
+
+    /path/to/tclsh8\&.5 /path/to/kettle -f /path/to/crimp/build\&.tcl help
 
 .CE
 .SH KEYWORDS

@@ -1,17 +1,14 @@
-# -*- tcl -*-
-# -------------------------------------------------------------------------
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
 
-source [file join \
-            [file dirname [file join [pwd] [info script]]] \
-            testutilities.tcl]
+kt check Tcl     8.5
+kt check tcltest 2
 
-testsNeedTcl     8.5
-testsNeedTcltest 2
+kt local testing crimp::core
 
-support {}
-testing {
-    useC [mainPath _test/lib]/crimp_core* crimp::core no
-}
+
+#testing {    useC [mainPath _test/lib]/crimp_core* crimp::core no}
 
 proc empty {}     { crimp read tcl grey8 {} }
 proc emeta {dict} { crimp meta create [empty] {*}$dict }
@@ -65,11 +62,11 @@ foreach {accessor result} {
 } {
     test crimp-core-${accessor}-1.0 "Accessors: $accessor, wrong\#args, not enough" -body {
         crimp $accessor
-    } -returnCodes error -result "wrong \# args: should be \"crimp $accessor imageObj\""
+    } -returnCodes error -result "wrong \# args: should be \"crimp $accessor image\""
 
     test crimp-core-${accessor}-1.1 "Accessors: $accessor, wrong\#args, too many" -body {
         crimp $accessor IMAGE toomuch
-    } -returnCodes error -result "wrong \# args: should be \"crimp $accessor imageObj\""
+    } -returnCodes error -result "wrong \# args: should be \"crimp $accessor image\""
 
     test crimp-core-${accessor}-1.2 "Accessors: $accessor" -setup {
         set image [crimp read tcl grey8 {{1 2} {3 4}}]
@@ -85,11 +82,11 @@ foreach {accessor result} {
 
 test crimp-core-pixel-1.0 "Accessors: pixel, wrong\#args, not enough" -body {
     crimp pixel
-} -returnCodes error -result "wrong \# args: should be \"crimp pixel imageObj\""
+} -returnCodes error -result "wrong \# args: should be \"crimp pixel image\""
 
 test crimp-core-pixel-1.1 "Accessors: pixel, wrong\#args, too many" -body {
     crimp pixel IMAGE toomuch
-} -returnCodes error -result "wrong \# args: should be \"crimp pixel imageObj\""
+} -returnCodes error -result "wrong \# args: should be \"crimp pixel image\""
 
 test crimp-core-pixel-1.2 "Accessors: pixel" -setup {
     set image [crimp read tcl grey8 {{1 2} {3 4}}]
@@ -138,11 +135,11 @@ foreach {n itype channels} {
 
 test crimp-core-meta-1.0 {Accessor, meta_get, wrong\#args, not enough} -body {
     crimp::C::meta_get
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_get imageObj"}
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_get image"}
 
 test crimp-core-meta-1.1 {Accessor, meta_get, wrong\#args, too many} -body {
     crimp::C::meta_get IMAGE toomuch
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_get imageObj"}
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_get image"}
 
 test crimp-core-meta-1.2 {Accessor, meta_get, default} -setup {
     set image [empty]
@@ -577,19 +574,19 @@ test crimp-meta-20.6 {Accessor: meta merge command} {
 
 test crimp-core-place-1.0 "Accessors: place, wrong\#args, not enough" -body {
     crimp place
-} -returnCodes error -result "wrong \# args: should be \"crimp place imageObj x y\""
+} -returnCodes error -result "wrong \# args: should be \"crimp place image x y\""
 
 test crimp-core-place-1.1 "Accessors: place, wrong\#args, not enough" -body {
     crimp place IMAGE
-} -returnCodes error -result "wrong \# args: should be \"crimp place imageObj x y\""
+} -returnCodes error -result "wrong \# args: should be \"crimp place image x y\""
 
 test crimp-core-place-1.2 "Accessors: place, wrong\#args, not enough" -body {
     crimp place IMAGE x
-} -returnCodes error -result "wrong \# args: should be \"crimp place imageObj x y\""
+} -returnCodes error -result "wrong \# args: should be \"crimp place image x y\""
 
 test crimp-core-place-1.3 "Accessors: place, wrong\#args, too many" -body {
     crimp place IMAGE x y toomuch
-} -returnCodes error -result "wrong \# args: should be \"crimp place imageObj x y\""
+} -returnCodes error -result "wrong \# args: should be \"crimp place image x y\""
 
 test crimp-core-place-1.4 "Accessors: place" -setup {
     set image [crimp read tcl grey8 {{1 2} {3 4}}]
@@ -844,7 +841,9 @@ foreach {n itype} {
 rename emeta {}
 rename empty {}
 unset bboxexamples
-testsuiteCleanup
+
+# -------------------------------------------------------------------------
+cleanupTests
 
 # Local variables:
 # mode: tcl

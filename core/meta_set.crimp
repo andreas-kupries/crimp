@@ -1,49 +1,49 @@
-C::meta_set
-Tcl_Obj* imageObj
-Tcl_Obj* metaObj
+crimp_primitive C::meta_set {
+    Tcl_Obj* imageObj
+    Tcl_Obj* metaObj
+} object0 {
+    /*
+     * Create argument type providing both obj and image.
+     */
 
-crimp_image* image;
-
-crimp_input_any (imageObj, image);
-
-/*
- * Nothing to do if the assignment doesn't change anything.
- */
-
-if (metaObj == image->meta) {
-    Tcl_SetObjResult (interp, imageObj);
-    return TCL_OK;
+    crimp_image* image;
+    crimp_input_any (imageObj, image);
+    
+    /*
+     * Nothing to do if the assignment doesn't change anything.
+     */
+    
+    if (metaObj == image->meta) {
+        return imageObj;
+    }
+    
+    /*
+     * For a non-shared image we can replace in-place, avoiding a memory copy.
+     */
+    
+    if (!Tcl_IsShared(imageObj)) {
+        Tcl_IncrRefCount (metaObj);
+        Tcl_DecrRefCount (image->meta);
+        image->meta = metaObj;
+    
+	return imageObj;
+    }
+    
+    /*
+     * Create a new image with the modified meta data reference and otherwise
+     * identical.
+     */
+    
+    return crimp_new_image_obj (crimp_newm (image->itype,
+					    crimp_w(image), crimp_h(image),
+					    metaObj));
 }
-
-/*
- * For a non-shared image we can replace in-place, avoiding a memory copy.
- */
-
-if (!Tcl_IsShared(imageObj)) {
-    Tcl_IncrRefCount (metaObj);
-    Tcl_DecrRefCount (image->meta);
-    image->meta = metaObj;
-
-    Tcl_SetObjResult (interp, imageObj);
-    return TCL_OK;
-}
-
-/*
- * Create a new image with the modified meta data reference and otherwise
- * identical.
- */
-
-image = crimp_newm (image->itype, crimp_w(image), crimp_h(image), metaObj);
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (image));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

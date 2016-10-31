@@ -1,28 +1,25 @@
-channels
-Tcl_Obj* imageObj
+crimp_primitive channels {
+    image image
+} object0 {
+    Tcl_Obj*  result;
+    Tcl_Obj** listv;
+    int       i;
 
-crimp_image* image;
-Tcl_Obj**    listv;
-int          i;
+    listv = CRIMP_ALLOC_ARRAY (image->itype->channels, Tcl_Obj*);
+    for (i=0; i < image->itype->channels; i++) {
+	listv[i] = Tcl_NewStringObj (image->itype->cname [i], -1);
+    }
 
-crimp_input_any (imageObj, image);
-
-listv = CRIMP_ALLOC_ARRAY (image->itype->channels, Tcl_Obj*);
-for (i=0; i < image->itype->channels; i++) {
-    listv[i] = Tcl_NewStringObj (image->itype->cname [i], -1);
+    result = Tcl_NewListObj (image->itype->channels, listv);
+    ckfree ((char*) listv);
+    return result;
 }
-
-Tcl_SetObjResult (interp, Tcl_NewListObj (image->itype->channels, listv));
-ckfree ((char*) listv);
-
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

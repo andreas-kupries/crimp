@@ -1,0 +1,114 @@
+# - -- --- ----- -------- -------------
+critcl::csources   c/buffer.c
+critcl::api header c/buffer.h
+
+# - -- --- ----- -------- -------------
+
+critcl::api function void crimp_buf_init {
+    crimp_buffer* b
+    Tcl_Obj*      obj
+}
+
+critcl::api function int crimp_buf_has {
+    crimp_buffer* b
+    int           n
+}
+
+critcl::api function int crimp_buf_size {
+    crimp_buffer* b
+}
+
+critcl::api function int crimp_buf_tell {
+    crimp_buffer* b
+}
+
+critcl::api function int crimp_buf_check {
+    crimp_buffer* b
+    int           location
+}
+
+critcl::api function void crimp_buf_moveto {
+    crimp_buffer* b
+    int           location
+}
+
+critcl::api function void crimp_buf_skip {
+    crimp_buffer* b
+    int           n
+}
+
+critcl::api function void crimp_buf_align {
+    crimp_buffer* b
+    int           n
+}
+
+critcl::api function void crimp_buf_alignr {
+    crimp_buffer* b
+    int           base
+    int           n
+}
+
+critcl::api function int crimp_buf_match {
+    crimp_buffer* b
+    int           n
+    char*         str
+}
+
+critcl::api function void crimp_buf_read_uint8 {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint16le {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint32le {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint16be {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_uint32be {
+    crimp_buffer*   b
+    {unsigned int*} value
+}
+
+critcl::api function void crimp_buf_read_int8 {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int16le {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int32le {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int16be {
+    crimp_buffer*   b
+    int*            value
+}
+
+critcl::api function void crimp_buf_read_int32be {
+    crimp_buffer*   b
+    int*            value
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

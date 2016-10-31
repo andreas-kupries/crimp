@@ -1,7 +1,11 @@
-crimp_primitive height {
+crimp_primitive place {
     image image
-} int {
-    return crimp_h (image);
+    int   x
+    int   y
+} image {
+    image = crimp_dup (image);
+    crimp_place (image, x, y);
+    return image;
 }
 
 # - -- --- ----- -------- -------------

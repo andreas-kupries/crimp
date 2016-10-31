@@ -1,7 +1,7 @@
-crimp_primitive height {
+crimp_primitive y {
     image image
 } int {
-    return crimp_h (image);
+    return crimp_y (image);
 }
 
 # - -- --- ----- -------- -------------

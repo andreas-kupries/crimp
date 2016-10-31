@@ -1,10 +1,10 @@
-crimp_primitive dimensions {
+crimp_primitive at {
     image image
 } object0 {
     Tcl_Obj* list [2];
 
-    list [0] = Tcl_NewIntObj (crimp_w (image));
-    list [1] = Tcl_NewIntObj (crimp_h (image));
+    list [0] = Tcl_NewIntObj (crimp_x(image));
+    list [1] = Tcl_NewIntObj (crimp_y(image));
 
     return Tcl_NewListObj (2, list);
 }

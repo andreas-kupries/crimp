@@ -1,7 +1,7 @@
-crimp_primitive height {
+crimp_primitive type {
     image image
-} int {
-    return crimp_h (image);
+} image_type {
+    return image->itype;
 }
 
 # - -- --- ----- -------- -------------

@@ -138,6 +138,7 @@ crimp_primitive read::pfm {
 
     result = crimp_new_float (w, h);
     npix   = CRIMP_RECT_AREA (w, h);
+    /* From here on out jumps to notpfm have to release a partial result */
 
     /*fprintf(stderr,"raw=%d, w=%d, h=%d /%d\n", israw,w,h,npix);fflush(stderr);*/
 
@@ -170,6 +171,7 @@ crimp_primitive read::pfm {
 	    if (*next == ' ') {
 	        at = next + 1;	    
 	    } else if (npix) {
+		crimp_del (result);
 	        goto notpfm;
 	    }
         }
@@ -177,6 +179,7 @@ crimp_primitive read::pfm {
 
     if (npix > 0) {
         /*fprintf(stderr,"not enough pixels, %d left @%d\n", npix,at-bytes);fflush(stderr);*/
+	crimp_del (result);
         goto notpfm;
     }
 

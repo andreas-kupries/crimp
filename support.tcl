@@ -68,6 +68,28 @@ apply {{} {
 		return TCL_ERROR;
 	    }
 	}] crimp_image* crimp_image*
+
+	critcl::argtype image_obj_$type [string map $map {
+	    if (crimp_get_image_from_obj (interp, @@, &@A.i) != TCL_OK) {
+		return TCL_ERROR;
+	    }
+	    if (@A.i->itype != crimp_imagetype_find ("crimp::image::<<type>>")) {
+		Tcl_SetObjResult (interp,
+				  Tcl_NewStringObj ("expected image type <<type>>",
+						    -1));
+		return TCL_ERROR;
+	    }
+	    @A.o = @@;
+	}] crimp_image_obj crimp_image_obj
+
+	# Note, the support structure is shared with image_obj below,
+	# and the guard is specified to reflect that.
+	critcl::argtypesupport image_obj_$type {
+	    typedef struct crimp_image_obj {
+		Tcl_Obj*     o;
+		crimp_image* i;
+	    } crimp_image_obj;
+	} image_obj
     }
 
     critcl::argtype image {
@@ -75,6 +97,22 @@ apply {{} {
 	    return TCL_ERROR;
 	}
     } crimp_image* crimp_image*
+
+    critcl::argtype image_obj {
+	if (crimp_get_image_from_obj (interp, @@, &@A.i) != TCL_OK) {
+	    return TCL_ERROR;
+	}
+	@A.o = @@;
+    } crimp_image_obj crimp_image_obj
+
+    # Note, the support structure is shared with image_obj_<<type>>
+    # above, and the guard above was specified to match us here.
+    critcl::argtypesupport image_obj {
+	typedef struct crimp_image_obj {
+	    Tcl_Obj*     o;
+	    crimp_image* i;
+	} crimp_image_obj;
+    } image_obj
 
     critcl::resulttype image {
 	if (rv == NULL) { return TCL_ERROR; }
@@ -85,44 +123,16 @@ apply {{} {
     critcl::resulttype image_type {
 	Tcl_SetObjResult (interp, crimp_new_imagetype_obj(rv));
 	return TCL_OK;
-    } crimp_imagetype*
+    } {const crimp_imagetype*}
+
+    critcl::argtype photo {
+	@A = Tk_FindPhoto(interp, Tcl_GetString(@@));
+	if (!@A) {
+	    Tcl_AppendResult(interp, "image \"", Tcl_GetString(@@), "\" doesn't exist", NULL);
+	    return TCL_ERROR;
+	}
+    } Tk_PhotoHandle Tk_PhotoHandle
+
 }}
 
 # # ## ### ##### ######## #############
-## DEPRECATED, remove when all uses are gone.
-
-proc crimp_source_cproc {accept {reject {}}} {
-    set here [file dirname [file normalize [info script]]]
-
-    foreach pa $accept {
-	foreach filename [lsort -dict [glob -nocomplain -tails -directory $here $pa]] {
-	    set take 1
-	    foreach pr $reject {
-		if {![string match $pr $filename]} continue
-		set take 0
-		break
-	    }
-	    if {!$take} continue
-
-	    #critcl::msg -nonewline " \[[file rootname [file tail $filename]]\]"
-	    critcl::msg -nonewline .
-
-	    set chan [open $here/$filename r]
-	    set name ::crimp::[gets $chan]
-	    set params "Tcl_Interp* interp"
-	    set number 2
-	    while {1} {
-		incr number
-		set line [gets $chan]
-		if {$line eq ""} {
-		    break
-		}
-		append params " $line"
-	    }
-	    set body "\n#line $number \"[file tail $filename]\"\n[read $chan]"
-	    close $chan
-	    ::critcl::cproc $name $params ok $body
-	}
-    }
-    return
-}

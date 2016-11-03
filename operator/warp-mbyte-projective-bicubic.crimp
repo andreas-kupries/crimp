@@ -1,138 +1,134 @@
-warp_mbyte_projective_bicubic
-Tcl_Obj* imageObj
-Tcl_Obj* forwardObj
+crimp_primitive warp_mbyte_projective_bicubic {
+    image image
+    image_float forward
+} image {
+    /*
+     * Warp image using the given specified transform. The result is made large
+     * enough to contain all of the warped image, and will contain meta data about
+     * the location of the actual (0,0) origin point relative to the physical top
+     * left corner of the result. This last is required because translations in
+     * the transform may move pixels to negative positions which we cannot express
+     * with the regular memory grid.
+     */
 
-/*
- * Warp image using the given specified transform. The result is made large
- * enough to contain all of the warped image, and will contain meta data about
- * the location of the actual (0,0) origin point relative to the physical top
- * left corner of the result. This last is required because translations in
- * the transform may move pixels to negative positions which we cannot express
- * with the regular memory grid.
- */
+    crimp_image* backward;
+    crimp_image* result;
+    int x, y, xt, yt, origx, origy, c;
+    double xf, yf;
 
-crimp_image* image;
-crimp_image* forward;
-crimp_image* backward;
-crimp_image* result;
-int x, y, xt, yt, origx, origy, c;
-double xf, yf;
+    CRIMP_ASSERT_NOTIMGTYPE (image, float);
+    CRIMP_ASSERT_NOTIMGTYPE (image, grey16);
+    CRIMP_ASSERT_NOTIMGTYPE (image, grey32);
 
-crimp_input_any (imageObj, image);
-CRIMP_ASSERT_NOTIMGTYPE (image, float);
-CRIMP_ASSERT_NOTIMGTYPE (image, grey16);
-CRIMP_ASSERT_NOTIMGTYPE (image, grey32);
 
-crimp_input (forwardObj,  forward,  float);
+    if (!crimp_require_dim (forward, 3, 3)) {
+        Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+        return NULL;
+    }
 
-if (!crimp_require_dim (forward, 3, 3)) {
-    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
-    return TCL_ERROR;
-}
+    backward = crimp_la_invert_matrix_3x3 (forward);
+    if (!backward) {
+        Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);
+        return NULL;
+    }
 
-backward = crimp_la_invert_matrix_3x3 (forward);
-if (!backward) {
-    Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);
-    return TCL_ERROR;
-}
+    /*
+     * Determine size of the result, and the location of the origin point inside
+     * based on the four corners of the input image and the forward transformation.
+     */
 
-/*
- * Determine size of the result, and the location of the origin point inside
- * based on the four corners of the input image and the forward transformation.
- */
+    result = crimp_geo_warp_init (image, forward, &origx, &origy);
 
-result = crimp_geo_warp_init (image, forward, &origx, &origy);
+    for (y = 0, yt = origy; y < crimp_h (result); y++, yt++) {
+        for (x = 0, xt = origx; x < crimp_w (result); x++, xt++) {
+	    int ixw, iyw;
 
-for (y = 0, yt = origy; y < crimp_h (result); y++, yt++) {
-    for (x = 0, xt = origx; x < crimp_w (result); x++, xt++) {
-	int ixw, iyw;
+	    xf = xt;
+	    yf = yt;
+	    crimp_geo_warp_point (backward, &xf, &yf);
 
-	xf = xt;
-	yf = yt;
-	crimp_geo_warp_point (backward, &xf, &yf);
+	    /*
+	     * Perform bicubic interpolation (1,2) using the nearest 4x4 pixels
+	     * around the sampling location.
+	     *
+	     * (Ad 1) http://en.wikipedia.org/wiki/Bicubic_interpolation
+	     * (Ad 2) http://www.paulinternet.nl/?page=bicubic
+	     */
 
-	/*
-	 * Perform bicubic interpolation (1,2) using the nearest 4x4 pixels
-	 * around the sampling location.
-	 *
-	 * (Ad 1) http://en.wikipedia.org/wiki/Bicubic_interpolation
-	 * (Ad 2) http://www.paulinternet.nl/?page=bicubic
-	 */
+            ixw = xf;  xf -= ixw;
+            iyw = yf;  yf -= iyw;
 
-        ixw = xf;  xf -= ixw;
-        iyw = yf;  yf -= iyw;
+	    ixw --; xf += 1.; xf /= 3.;
+	    iyw --; yf += 1.; yf /= 3.;
 
-	ixw --; xf += 1.; xf /= 3.;
-	iyw --; yf += 1.; yf /= 3.;
+    #undef  SAMPLE
+    #define SAMPLE(dx,dy) ((((ixw+(dx)) < 0) || ((ixw+(dx)) >= crimp_w (image)) || ((iyw+(dy)) < 0) || ((iyw+(dy)) >= crimp_h (image))) ? BLACK : (CH (image, c, (ixw+(dx)), (iyw+(dy)))))
 
-#undef  SAMPLE
-#define SAMPLE(dx,dy) ((((ixw+(dx)) < 0) || ((ixw+(dx)) >= crimp_w (image)) || ((iyw+(dy)) < 0) || ((iyw+(dy)) >= crimp_h (image))) ? BLACK : (CH (image, c, (ixw+(dx)), (iyw+(dy)))))
+            for (c = 0; c < 4; ++c) {
+	        double p00 = SAMPLE(0,0);
+	        double p01 = SAMPLE(0,1);
+	        double p02 = SAMPLE(0,2);
+	        double p03 = SAMPLE(0,3);
+	        double p10 = SAMPLE(1,0);
+	        double p11 = SAMPLE(1,1);
+	        double p12 = SAMPLE(1,2);
+	        double p13 = SAMPLE(1,3);
+	        double p20 = SAMPLE(2,0);
+	        double p21 = SAMPLE(2,1);
+	        double p22 = SAMPLE(2,2);
+	        double p23 = SAMPLE(2,3);
+	        double p30 = SAMPLE(3,0);
+	        double p31 = SAMPLE(3,1);
+	        double p32 = SAMPLE(3,2);
+	        double p33 = SAMPLE(3,3);
 
-        for (c = 0; c < 4; ++c) {
-	    double p00 = SAMPLE(0,0);
-	    double p01 = SAMPLE(0,1);
-	    double p02 = SAMPLE(0,2);
-	    double p03 = SAMPLE(0,3);
-	    double p10 = SAMPLE(1,0);
-	    double p11 = SAMPLE(1,1);
-	    double p12 = SAMPLE(1,2);
-	    double p13 = SAMPLE(1,3);
-	    double p20 = SAMPLE(2,0);
-	    double p21 = SAMPLE(2,1);
-	    double p22 = SAMPLE(2,2);
-	    double p23 = SAMPLE(2,3);
-	    double p30 = SAMPLE(3,0);
-	    double p31 = SAMPLE(3,1);
-	    double p32 = SAMPLE(3,2);
-	    double p33 = SAMPLE(3,3);
+	        double a00 =      p11;
+	        double a01 = -.50*p10 +  .50*p12;
+	        double a02 =      p10 - 2.50*p11 + 2.00*p12 -  .50*p13;
+	        double a03 = -.50*p10 + 1.50*p11 - 1.50*p12 +  .50*p13;
+	        double a10 = -.50*p01 +  .50*p21;
+	        double a11 =  .25*p00 -  .25*p02 -  .25*p20 +  .25*p22;
+	        double a12 = -.50*p00 + 1.25*p01 -      p02 +  .25*p03 +  .50*p20 - 1.25*p21 +      p22 -  .25*p23;
+	        double a13 =  .25*p00 -  .75*p01 +  .75*p02 -  .25*p03 -  .25*p20 +  .75*p21 -  .75*p22 +  .25*p23;
+	        double a20 =      p01 - 2.50*p11 + 2.00*p21 -  .50*p31;
+	        double a21 = -.50*p00 +  .50*p02 + 1.25*p10 - 1.25*p12 -      p20 +      p22 +  .25*p30 -  .25*p32;
+	        double a22 =      p00 - 2.50*p01 + 2.00*p02 -  .50*p03 - 2.50*p10 + 6.25*p11 - 5.00*p12 + 1.25*p13 +
+		    2.00*p20 - 5.00*p21 + 4.00*p22 -     p23 - .50*p30 + 1.25*p31 -     p32 + .25*p33;
+	        double a23 = -.50*p00 + 1.50*p01 - 1.50*p02 +  .50*p03 + 1.25*p10 - 3.75*p11 + 3.75*p12 - 1.25*p13 -
+		    p20 + 3.00*p21 - 3.00*p22 +     p23 + .25*p30 -  .75*p31 + .75*p32 - .25*p33;
+	        double a30 = -.50*p01 + 1.50*p11 - 1.50*p21 +  .50*p31;
+	        double a31 =  .25*p00 -  .25*p02 -  .75*p10 +  .75*p12 +  .75*p20 -  .75*p22 -  .25*p30 +  .25*p32;
+	        double a32 = -.50*p00 + 1.25*p01 -      p02 +  .25*p03 + 1.50*p10 - 3.75*p11 + 3.00*p12 -  .75*p13 -
+		    1.50*p20 + 3.75*p21 - 3.00*p22 + .75*p23 + .50*p30 - 1.25*p31 +     p32 - .25*p33;
+	        double a33 =  .25*p00 -  .75*p01 +  .75*p02 -  .25*p03 -  .75*p10 + 2.25*p11 - 2.25*p12 +  .75*p13 +
+		    .75*p20 - 2.25*p21 + 2.25*p22 - .75*p23 - .25*p30 +  .75*p31 - .75*p32 + .25*p33;
 
-	    double a00 =      p11;
-	    double a01 = -.50*p10 +  .50*p12;
-	    double a02 =      p10 - 2.50*p11 + 2.00*p12 -  .50*p13;
-	    double a03 = -.50*p10 + 1.50*p11 - 1.50*p12 +  .50*p13;
-	    double a10 = -.50*p01 +  .50*p21;
-	    double a11 =  .25*p00 -  .25*p02 -  .25*p20 +  .25*p22;
-	    double a12 = -.50*p00 + 1.25*p01 -      p02 +  .25*p03 +  .50*p20 - 1.25*p21 +      p22 -  .25*p23;
-	    double a13 =  .25*p00 -  .75*p01 +  .75*p02 -  .25*p03 -  .25*p20 +  .75*p21 -  .75*p22 +  .25*p23;
-	    double a20 =      p01 - 2.50*p11 + 2.00*p21 -  .50*p31;
-	    double a21 = -.50*p00 +  .50*p02 + 1.25*p10 - 1.25*p12 -      p20 +      p22 +  .25*p30 -  .25*p32;
-	    double a22 =      p00 - 2.50*p01 + 2.00*p02 -  .50*p03 - 2.50*p10 + 6.25*p11 - 5.00*p12 + 1.25*p13 +
-		2.00*p20 - 5.00*p21 + 4.00*p22 -     p23 - .50*p30 + 1.25*p31 -     p32 + .25*p33;
-	    double a23 = -.50*p00 + 1.50*p01 - 1.50*p02 +  .50*p03 + 1.25*p10 - 3.75*p11 + 3.75*p12 - 1.25*p13 -
-		p20 + 3.00*p21 - 3.00*p22 +     p23 + .25*p30 -  .75*p31 + .75*p32 - .25*p33;
-	    double a30 = -.50*p01 + 1.50*p11 - 1.50*p21 +  .50*p31;
-	    double a31 =  .25*p00 -  .25*p02 -  .75*p10 +  .75*p12 +  .75*p20 -  .75*p22 -  .25*p30 +  .25*p32;
-	    double a32 = -.50*p00 + 1.25*p01 -      p02 +  .25*p03 + 1.50*p10 - 3.75*p11 + 3.00*p12 -  .75*p13 -
-		1.50*p20 + 3.75*p21 - 3.00*p22 + .75*p23 + .50*p30 - 1.25*p31 +     p32 - .25*p33;
-	    double a33 =  .25*p00 -  .75*p01 +  .75*p02 -  .25*p03 -  .75*p10 + 2.25*p11 - 2.25*p12 +  .75*p13 +
-		.75*p20 - 2.25*p21 + 2.25*p22 - .75*p23 - .25*p30 +  .75*p31 - .75*p32 + .25*p33;
+	        double x2 = xf * xf;
+	        double x3 = x2 * xf;
+	        double y2 = yf * yf;
+	        double y3 = y2 * yf;
 
-	    double x2 = xf * xf;
-	    double x3 = x2 * xf;
-	    double y2 = yf * yf;
-	    double y3 = y2 * yf;
+	        double r = 
+		    (a00 + a01 * yf + a02 * y2 + a03 * y3)      +
+		    (a10 + a11 * yf + a12 * y2 + a13 * y3) * xf +
+		    (a20 + a21 * yf + a22 * y2 + a23 * y3) * x2 +
+		    (a30 + a31 * yf + a32 * y2 + a33 * y3) * x3;	    
 
-	    double r = 
-		(a00 + a01 * yf + a02 * y2 + a03 * y3)      +
-		(a10 + a11 * yf + a12 * y2 + a13 * y3) * xf +
-		(a20 + a21 * yf + a22 * y2 + a23 * y3) * x2 +
-		(a30 + a31 * yf + a32 * y2 + a33 * y3) * x3;	    
-
-	    CH (result, c, x, y) = CLAMPT (0, int, r, MAXVAL_GREY8);
+	        CH (result, c, x, y) = CLAMPT (0, int, r, MAXVAL_GREY8);
+            }
         }
     }
+
+    crimp_del (backward);
+    return result;
+
 }
-
-crimp_del (backward);
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

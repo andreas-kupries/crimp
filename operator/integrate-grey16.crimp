@@ -1,64 +1,62 @@
-integrate_grey16
-Tcl_Obj* imageObj
+crimp_primitive integrate_grey16 {
+    image_grey16 image
+} image {
+    /*
+     * The input image is converted into an integral image, aka summed area table,
+     * where each pixel contains the sum of all pixels to the left and above of
+     * it, including the pixel itself.
+     *
+     * To avoid problems with overflow the result is always of type float.
+     *
+     * Ref: http://en.wikipedia.org/wiki/Summed_area_table
+     */
 
-/*
- * The input image is converted into an integral image, aka summed area table,
- * where each pixel contains the sum of all pixels to the left and above of
- * it, including the pixel itself.
- *
- * To avoid problems with overflow the result is always of type float.
- *
- * Ref: http://en.wikipedia.org/wiki/Summed_area_table
- */
+    crimp_image* result;
+    int          x, y;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y;
 
-crimp_input (imageObj, image, grey16);
+    result = crimp_new_float_at (crimp_x (image), crimp_y (image),
+			         crimp_w (image), crimp_h (image));
 
-result = crimp_new_float_at (crimp_x (image), crimp_y (image),
-			     crimp_w (image), crimp_h (image));
+    /* Initialize the accumulator */
+    FLOATP (result, 0, 0) = GREY16 (image, 0, 0);
 
-/* Initialize the accumulator */
-FLOATP (result, 0, 0) = GREY16 (image, 0, 0);
-
-/*
- * Initialize the first line of the result. Only looking back to results in the same line.
- */
-for (x = 1; x < crimp_w (result); x++) {
-    FLOATP (result, x, 0) = GREY16 (image, x, 0) + FLOATP (result, x-1, 0);
-}
-
-/*
- * Remainder of the image, looking back to results on the same line and the
- * previous line.
- */
-
-for (y = 1; y < crimp_h (result); y++) {
-    /* Initialize first column */
-    FLOATP (result, 0, y) = 
-	GREY16 (image,  0, y) +
-	FLOATP (result, 0, y-1);
-
+    /*
+     * Initialize the first line of the result. Only loimageing back to results in the same line.
+     */
     for (x = 1; x < crimp_w (result); x++) {
-	FLOATP (result, x, y) = 
-	    GREY16 (image,  x,   y) +
-	    FLOATP (result, x-1, y) +
-	    FLOATP (result, x,   y-1) -
-	    FLOATP (result, x-1, y-1);
+        FLOATP (result, x, 0) = GREY16 (image, x, 0) + FLOATP (result, x-1, 0);
     }
+
+    /*
+     * Remainder of the image, loimageing back to results on the same line and the
+     * previous line.
+     */
+
+    for (y = 1; y < crimp_h (result); y++) {
+        /* Initialize first column */
+        FLOATP (result, 0, y) = 
+	    GREY16 (image,  0, y) +
+	    FLOATP (result, 0, y-1);
+
+        for (x = 1; x < crimp_w (result); x++) {
+	    FLOATP (result, x, y) = 
+	        GREY16 (image,  x,   y) +
+	        FLOATP (result, x-1, y) +
+	        FLOATP (result, x,   y-1) -
+	        FLOATP (result, x-1, y-1);
+        }
+    }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

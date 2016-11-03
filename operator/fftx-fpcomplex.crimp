@@ -1,44 +1,42 @@
-fftx_fpcomplex
-Tcl_Obj* imageObj
+crimp_primitive fftx_fpcomplex {
+    image_fpcomplex image
+} image {
+    crimp_image* result;
+    int          y;
+    integer      n;
+    real*        workspace;
 
-crimp_image* image;
-crimp_image* result;
-int          y;
-integer      n;
-real*        workspace;
 
-crimp_input (imageObj, image, fpcomplex);
+    result = crimp_new_like (image);
 
-result = crimp_new_like (image);
+    n = crimp_w (image);
+    workspace = CRIMP_ALLOC_ARRAY (4*crimp_w (image)+15, real);
+    cffti_ (&n, workspace);
 
-n = crimp_w (image);
-workspace = CRIMP_ALLOC_ARRAY (4*crimp_w (image)+15, real);
-cffti_ (&n, workspace);
+    for (y = 0; y < crimp_h (image); y++) {
+        /*
+         * FFT on horizontal scan lines.  We copy each line to the result and then
+         * run the FFT on it in place.  The copying makes use of the identity
+         * between the float and real types to be quick.
+         */
+        memcpy (&RE (result, 0, y),
+	        &RE (image,  0, y),
+	        2*sizeof(float)*crimp_w (image));
 
-for (y = 0; y < crimp_h (image); y++) {
-    /*
-     * FFT on horizontal scan lines.  We copy each line to the result and then
-     * run the FFT on it in place.  The copying makes use of the identity
-     * between the float and real types to be quick.
-     */
-    memcpy (&RE (result, 0, y),
-	    &RE (image,  0, y),
-	    2*sizeof(float)*crimp_w (image));
+        cfftf_ (&n, &RE (result, 0, y), workspace);
+    }
 
-    cfftf_ (&n, &RE (result, 0, y), workspace);
+    ckfree ((char*) workspace);
+
+    return result;
+
 }
-
-ckfree ((char*) workspace);
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

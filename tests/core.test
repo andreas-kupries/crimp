@@ -151,15 +151,15 @@ test crimp-core-meta-1.2 {Accessor, meta_get, default} -setup {
 
 test crimp-core-meta-2.0 {Accessor, meta_set, wrong\#args, not enough} -body {
     crimp::C::meta_set
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set imageObj metaObj"}
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set image metaObj"}
 
 test crimp-core-meta-2.1 {Accessor, meta_set, wrong\#args, not enough} -body {
     crimp::C::meta_set IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set imageObj metaObj"}
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set image metaObj"}
 
 test crimp-core-meta-2.2 {Accessor, meta_set, wrong\#args, too many} -body {
     crimp::C::meta_set IMAGE VALUE toomuch
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set imageObj metaObj"}
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set image metaObj"}
 
 test crimp-core-meta-2.3 {Accessor, meta_set + meta_get} -setup {
     set image [empty]

@@ -1,21 +1,22 @@
-min_grey8_grey8
-Tcl_Obj* imageAObj
-Tcl_Obj* imageBObj
+crimp_primitive min_grey8_grey8 {
+    image_grey8 imageA
+    image_grey8 imageB
+} image {
+    /*
+     * Pixel- and channel-wise min-combination of two images. The images have to
+     * have equal dimensions.
+     */
 
-/*
- * Pixel- and channel-wise min-combination of two images. The images have to
- * have equal dimensions.
- */
-
-#define BINOP(a,b) (MIN((a),(b)))
-#include "binop_grey8_grey8_grey8.c"
-#undef BINOP
+    #define BINOP(a,b) (MIN((a),(b)))
+    #include "binop_grey8_grey8_grey8.c"
+    #undef BINOP
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

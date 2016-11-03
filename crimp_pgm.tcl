@@ -1,7 +1,7 @@
 # -*- tcl -*-
 # CRIMP :: PGM // Portable GreyMap // Import, Export
 #
-# (c) 2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
+# (c) 2011-2016 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
 #
 
 # # ## ### ##### ######## #############
@@ -14,16 +14,6 @@ package require critcl 3
 if {![critcl::compiling]} {
     error "Unable to build CRIMP::PGM, no proper compiler found."
 }
-
-# # ## ### ##### ######## #############
-## Get the local support code. We source it directly because this is
-## only needed for building the package, in any mode, and not during
-## the runtime. Thus not added to the 'tsources'.
-
-critcl::owns support.tcl
-::apply {{here} {
-    source $here/support.tcl
-}} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
 ## Administrivia
@@ -62,6 +52,16 @@ critcl::tsources policy_pgm.tcl
 critcl::api import crimp::core 0.2
 
 # # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+#
+## This is shared between the various packages.
+
+critcl::owns   support.tcl
+critcl::source support.tcl
+
+# # ## ### ##### ######## #############
 ## Main C section.
 
 critcl::ccode {
@@ -73,8 +73,8 @@ critcl::ccode {
 # # ## ### ##### ######## #############
 ## Pull in the PGM-specific pieces. These are fit under the read/write namespaces.
 
-critcl::owns        format/*pgm*.crimp
-crimp_source_cproc {format/*pgm*.crimp}
+critcl::owns format/*pgm*.crimp
+crimp_source format/*pgm*.crimp
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

@@ -1,49 +1,46 @@
-split_hsv
-Tcl_Obj* imageObj
+crimp_primitive split_hsv {
+    image_hsv image
+} object0 {
+    Tcl_Obj*         list[3];
+    const crimp_imagetype* grey = crimp_imagetype_find ("crimp::image::grey8");
+    crimp_image*     hue;
+    crimp_image*     sat;
+    crimp_image*     val;
+    int              x, y;
 
-Tcl_Obj*         list[3];
-const crimp_imagetype* grey = crimp_imagetype_find ("crimp::image::grey8");
-crimp_image*     image;
-crimp_image*     hue;
-crimp_image*     sat;
-crimp_image*     val;
-int              x, y;
 
-crimp_input (imageObj, image, hsv);
+    hue = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			      crimp_w (image), crimp_h (image));
+    sat = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			      crimp_w (image), crimp_h (image));
+    val = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			      crimp_w (image), crimp_h (image));
 
-hue = crimp_new_at (grey, crimp_x (image), crimp_y (image),
-			  crimp_w (image), crimp_h (image));
-sat = crimp_new_at (grey, crimp_x (image), crimp_y (image),
-			  crimp_w (image), crimp_h (image));
-val = crimp_new_at (grey, crimp_x (image), crimp_y (image),
-			  crimp_w (image), crimp_h (image));
+    for (y = 0; y < crimp_h (image); y++) {
+        for (x = 0; x < crimp_w (image); x++) {
 
-for (y = 0; y < crimp_h (image); y++) {
-    for (x = 0; x < crimp_w (image); x++) {
+	    /*
+	     * Placing the pixels of each color channel into their own images.
+	     */
 
-	/*
-	 * Placing the pixels of each color channel into their own images.
-	 */
-
-	GREY8 (hue, x, y) = H (image, x, y);
-	GREY8 (sat, x, y) = S (image, x, y);
-	GREY8 (val, x, y) = V (image, x, y);
+	    GREY8 (hue, x, y) = H (image, x, y);
+	    GREY8 (sat, x, y) = S (image, x, y);
+	    GREY8 (val, x, y) = V (image, x, y);
+        }
     }
+
+    list [0] = crimp_new_image_obj (hue);
+    list [1] = crimp_new_image_obj (sat);
+    list [2] = crimp_new_image_obj (val);
+
+    return Tcl_NewListObj (3, list);
 }
-
-list [0] = crimp_new_image_obj (hue);
-list [1] = crimp_new_image_obj (sat);
-list [2] = crimp_new_image_obj (val);
-
-Tcl_SetObjResult(interp, Tcl_NewListObj (3, list));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

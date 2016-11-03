@@ -1,16 +1,14 @@
-# -*- tcl -*-
-# -------------------------------------------------------------------------
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
 
-source [file join \
-            [file dirname [file join [pwd] [info script]]] \
-            testutilities.tcl]
+kt check Tcl     8.5
+kt check tcltest 2
 
-testsNeedTcl     8.5
-testsNeedTcltest 2
+kt source support/synth.tcl
 
-support { useLocalFile synth.tcl }
-support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
-testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+kt local support crimp::core
+kt local testing crimp
 
 # -------------------------------------------------------------------------
 ## Statistics. Basic and calculation of otsu thresholds
@@ -384,7 +382,7 @@ test crimp-threshold-5.3 {image thresholding, global, otsu, hsv} -body {
 } -result {30 31 36}
 
 # -------------------------------------------------------------------------
-testsuiteCleanup
+cleanupTests
 
 # Local variables:
 # mode: tcl

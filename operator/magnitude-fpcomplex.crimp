@@ -1,39 +1,34 @@
-magnitude_fpcomplex
-Tcl_Obj* imageObj
+crimp_primitive magnitude_fpcomplex {
+    image_fpcomplex image
+} image {
+    /*
+     * Pixel wise magnitude of a complex input image.
+     * The result is of type float.
+     */
 
-/*
- * Pixel wise magnitude of a complex input image.
- * The result is of type float.
- */
+    crimp_image* result;
 
-crimp_image* result;
-crimp_image* image;
+    int x, y;
 
-int x, y;
+    result = crimp_new_float_at (crimp_x (image), crimp_y (image),
+			         crimp_w (image), crimp_h (image));
 
-crimp_input (imageObj, image, fpcomplex);
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
 
-result = crimp_new_float_at (crimp_x (image), crimp_y (image),
-			     crimp_w (image), crimp_h (image));
-
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-
-	RE (result, x, y) = hypotf (RE (image, x, y),
-				    IM (image, x, y));
+	    RE (result, x, y) = hypotf (RE (image, x, y),
+				        IM (image, x, y));
+        }
     }
-}
 
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
+    return result;
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
- 
- 
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -1,0 +1,37 @@
+crimp_primitive expand_hsv_const {
+    image_hsv image
+    int ww
+    int hn
+    int we
+    int hs
+    int h
+    int s
+    int v
+} image {
+    /*
+     * Border expansion by constant pixel value.
+     */
+
+    #define FILL(xo,yo) {		\
+	    H (result, xo, yo) = h; \
+	    S (result, xo, yo) = s; \
+	    V (result, xo, yo) = v; \
+        }
+
+    #define COPY(xo,yo,xi,yi) {			\
+	    H (result, xo, yo) = H (image, xi, yi); \
+	    S (result, xo, yo) = S (image, xi, yi); \
+	    V (result, xo, yo) = V (image, xi, yi); \
+        }
+
+    #include <expand_op.c>
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

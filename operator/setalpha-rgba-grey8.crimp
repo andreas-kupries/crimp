@@ -1,43 +1,39 @@
-setalpha_rgba_grey8
-Tcl_Obj* imageObj
-Tcl_Obj* imageAlphaObj
+crimp_primitive setalpha_rgba_grey8 {
+    image_rgba image
+    image_grey8 imageA
+} image {
+    /*
+     * Replace the input's alpha channel with the data from the second image.
+     */
 
-/*
- * Replace the input's alpha channel with the data from the second image.
- */
+    crimp_image*     result;
+    int x, y;
 
-crimp_image*     result;
-crimp_image*     image;
-crimp_image*     imageA;
-int x, y;
 
-crimp_input (imageObj,      image,  rgba);
-crimp_input (imageAlphaObj, imageA, grey8);
-
-if (!crimp_eq_dim (image, imageA)) {
-    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-result = crimp_new_like (image);
-
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-	R (result, x, y) = R (image, x, y);
-	G (result, x, y) = G (image, x, y);
-	B (result, x, y) = B (image, x, y);
-	A (result, x, y) = GREY8 (imageA, x, y);
+    if (!crimp_eq_dim (image, imageA)) {
+        Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+        return NULL;
     }
-}
 
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
+    result = crimp_new_like (image);
+
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
+	    R (result, x, y) = R (image, x, y);
+	    G (result, x, y) = G (image, x, y);
+	    B (result, x, y) = B (image, x, y);
+	    A (result, x, y) = GREY8 (imageA, x, y);
+        }
+    }
+
+    return result;
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

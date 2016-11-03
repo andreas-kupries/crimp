@@ -1,27 +1,25 @@
-div_fpcomplex_fpcomplex
-Tcl_Obj* imageAObj
-Tcl_Obj* imageBObj
+crimp_primitive div_fpcomplex_fpcomplex {
+    image_fpcomplex imageA
+    image_fpcomplex imageB
+} image {
+    /*
+     * Pixel wise division of two images.
+     */
 
-/*
- * Pixel wise division of two images.
- */
-
-#define BINOP_GLOBAL(ar,ai,br,bi)			\
-    double temp;					\
-    temp = pow ((br),2) + pow ((bi),2);			\
-    temp = fabs(temp) <= pow(2,-24) ? WHITE : temp
-#define BINOP_RE(ar,ai,br,bi) ((((ar) * (br)) + ((ai) * (bi))) / temp)
-#define BINOP_IM(ar,ai,br,bi) ((((br) * (ai)) - ((ar) * (bi))) / temp)
-#include "binop_fpcomplex_fpcomplex_fpcomplex2.c"
+    #define BINOP_GLOBAL(ar,ai,br,bi)			\
+        double temp;					\
+        temp = pow ((br),2) + pow ((bi),2);			\
+        temp = fabs(temp) <= pow(2,-24) ? WHITE : temp
+    #define BINOP_RE(ar,ai,br,bi) ((((ar) * (br)) + ((ai) * (bi))) / temp)
+    #define BINOP_IM(ar,ai,br,bi) ((((br) * (ai)) - ((ar) * (bi))) / temp)
+    #include "binop_fpcomplex_fpcomplex_fpcomplex2.c"
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
-
-
-
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

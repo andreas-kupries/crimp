@@ -1,12 +1,7 @@
-crimp_image*     result;
-crimp_image*     imageA;
-crimp_image*     imageB;
+crimp_image* result;
 int px, py, lx, ly, oxa, oya, oxb, oyb;
 int pxa, pya, pxb, pyb;
 crimp_geometry bb;
-
-crimp_input (imageAObj, imageA, @TYPE_A@);
-crimp_input (imageBObj, imageB, @TYPE_B@);
 
 /*
  * Compute union area of the two images to process.
@@ -62,8 +57,7 @@ for (py = 0, ly = bb.y, pya = bb.y - oya, pyb = bb.y - oyb;
 #undef BINOP
 #undef BINOP_POST
 
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
+return result;
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

@@ -1,0 +1,116 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt source support/synth.tcl
+
+kt local support crimp::core
+kt local testing crimp
+
+# -------------------------------------------------------------------------
+## Transform matrix inversion.
+## Testing C code here.
+## Must not use invalid image types, these cause abort by assertion!
+## This is what is behind the 'projective transforms' used by 'wrap projective'.
+# -------------------------------------------------------------------------
+
+test crimp-matrix-inverse-1.0 {transform matrix inversion, wrong\#args, not enough} -body {
+    crimp::matinv3x3_float
+} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_float mat"}
+
+test crimp-matrix-inverse-1.1 {transform matrix inversion, wrong\#args, too many} -body {
+    crimp::matinv3x3_float M toomuch
+} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_float mat"}
+
+# TODO: bad arguments - not 3x3 matrix, singular matrix (non-invertible).
+
+# -------------------------------------------------------------------------
+
+test crimp-matrix-inverse-2.0 {transform matrix inversion, float} -body {
+    astclf 1 [crimp::matinv3x3_float [mid]]
+} -result [iconst float 0 0 3 3 {
+     1.0 -0.0  0.0
+    -0.0  1.0 -0.0
+     0.0 -0.0  1.0
+}]
+
+test crimp-matrix-inverse-2.1 {transform matrix inversion, float} -body {
+    astclf 1 [crimp::matinv3x3_float [mtest]]
+} -result [iconst float 0 0 3 3 {
+     1.0 -0.0 -5.0
+    -0.0  1.0 -2.0
+     0.0 -0.0  1.0
+}]
+
+test crimp-matrix-inverse-2.2 {transform matrix inversion, float, inverse multiply to identity} -body {
+    astclf 2 [crimp::matmul3x3_float [crimp::matinv3x3_float [mtest]] [mtest]]
+} -result [iconst float 0 0 3 3 {
+    1.00 0.00 0.00
+    0.00 1.00 0.00
+    0.00 0.00 1.00
+}]
+
+test crimp-matrix-inverse-2.3 {transform matrix inversion, float, inverse multiply to identity} -body {
+    astclf 2 [crimp::matmul3x3_float [mtest] [crimp::matinv3x3_float [mtest]]]
+} -result [iconst float 0 0 3 3 {
+    1.00 0.00 0.00
+    0.00 1.00 0.00
+    0.00 0.00 1.00
+}]
+
+# -------------------------------------------------------------------------
+
+test crimp-matrix-inverse-3.0 {transform matrix inversion, wrong\#args, not enough} -body {
+    crimp::matinv3x3_double
+} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_double mat"}
+
+test crimp-matrix-inverse-3.1 {transform matrix inversion, wrong\#args, too many} -body {
+    crimp::matinv3x3_double M toomuch
+} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_double mat"}
+
+# TODO: bad arguments - not 3x3 matrix, singular matrix (non-invertible).
+
+# -------------------------------------------------------------------------
+
+test crimp-matrix-inverse-4.0 {transform matrix inversion, double} -body {
+    astclf 1 [crimp::matinv3x3_double [dmid]]
+} -result [iconst double 0 0 3 3 {
+     1.0 -0.0  0.0
+    -0.0  1.0 -0.0
+     0.0 -0.0  1.0
+}]
+
+test crimp-matrix-inverse-4.1 {transform matrix inversion, double} -body {
+    astclf 1 [crimp::matinv3x3_double [dmtest]]
+} -result [iconst double 0 0 3 3 {
+     1.0 -0.0 -5.0
+    -0.0  1.0 -2.0
+     0.0 -0.0  1.0
+}]
+
+test crimp-matrix-inverse-4.2 {transform matrix inversion, double, inverse multiply to identity} -body {
+    astclf 2 [crimp::matmul3x3_double [crimp::matinv3x3_double [dmtest]] [dmtest]]
+} -result [iconst double 0 0 3 3 {
+    1.00 0.00 0.00
+    0.00 1.00 0.00
+    0.00 0.00 1.00
+}]
+
+test crimp-matrix-inverse-4.3 {transform matrix inversion, double, inverse multiply to identity} -body {
+    astclf 2 [crimp::matmul3x3_double [dmtest] [crimp::matinv3x3_double [dmtest]]]
+} -result [iconst double 0 0 3 3 {
+    1.00 0.00 0.00
+    0.00 1.00 0.00
+    0.00 0.00 1.00
+}]
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

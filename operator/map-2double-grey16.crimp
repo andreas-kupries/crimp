@@ -1,39 +1,40 @@
-map_2double_grey16
-Tcl_Obj* inImageObj
-Tcl_Obj* mapObj
+crimp_primitive map_2double_grey16 {
+    image_double image
+    Tcl_Obj* mapObj
+} image {
+    /*
+     * Converter that applies a piecewise linear map from an input grey16 image
+     * to an output doubleing point image.
+     *
+     * Copyright (c) 2011 by Kevin B. Kenny.
+     *
+     * See the file "license.terms" for information on usage and redistribution of
+     * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+     */
 
-/*
- * Converter that applies a piecewise linear map from an input grey16 image
- * to an output doubleing point image.
- *
- * Copyright (c) 2011 by Kevin B. Kenny.
- *
- * See the file "license.terms" for information on usage and redistribution of
- * this file, and for a DISCLAIMER OF ALL WARRANTIES.
- */
+    #undef INTYPENAME
+    #undef INTYPE
+    #undef OUTTYPENAME
+    #undef OUTTYPE
 
-#undef INTYPENAME
-#undef INTYPE
-#undef OUTTYPENAME
-#undef OUTTYPE
+    #define INTYPENAME grey16
+    #define INTYPE unsigned short
+    #define OUTTYPENAME double
+    #define OUTTYPE double
 
-#define INTYPENAME grey16
-#define INTYPE unsigned short
-#define OUTTYPENAME double
-#define OUTTYPE double
+    #include "map_scalar.c"
 
-#include "map_scalar.c"
-
-#undef OUTTYPE
-#undef OUTTYPENAME
-#undef INTYPENAME
-#undef INTYPE
+    #undef OUTTYPE
+    #undef OUTTYPENAME
+    #undef INTYPENAME
+    #undef INTYPE
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

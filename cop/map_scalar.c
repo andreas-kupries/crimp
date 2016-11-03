@@ -34,27 +34,23 @@
 #define STRINGIZE2(NAME) #NAME
 #define STRINGIZE(NAME) STRINGIZE2(NAME)
 
-crimp_image* inImage;
 crimp_image* resultImage;
 
-crimp_input(inImageObj, inImage, INTYPENAME);
-
-resultImage = NEWNAME(OUTTYPENAME)(crimp_x (inImage), crimp_y (inImage),
-				   crimp_w (inImage), crimp_h (inImage));
+resultImage = NEWNAME(OUTTYPENAME)(crimp_x (image), crimp_y (image),
+				   crimp_w (image), crimp_h (image));
 
 if (MAPNAME(INTYPENAME,OUTTYPENAME)(interp,
 				    mapObj,
-				    (size_t) (crimp_w (inImage) * crimp_h (inImage)),
-		                    (const INTYPE*)inImage->pixel, 
+				    (size_t) (crimp_w (image) * crimp_h (image)),
+		                    (const INTYPE*)image->pixel, 
                                     (size_t) 1,
 				    (OUTTYPE*)resultImage->pixel, 
                                     (size_t) 1)
     != TCL_OK) {
-    return TCL_ERROR;
+    return NULL;
 }
 
-Tcl_SetObjResult(interp, crimp_new_image_obj(resultImage));
-return TCL_OK;
+return resultImage;
 
 #undef STRINGIZE
 #undef STRINGIZE2

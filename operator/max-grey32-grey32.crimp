@@ -1,16 +1,17 @@
-max_grey32_grey32
-Tcl_Obj* imageAObj
-Tcl_Obj* imageBObj
-
-#define BINOP(a,b) (MAX((a),(b)))
-#include "binop_grey32_grey32_grey32.c"
-#undef BINOP
+crimp_primitive max_grey32_grey32 {
+    image_grey32 imageA
+    image_grey32 imageB
+} image {
+    #define BINOP(a,b) (MAX((a),(b)))
+    #include "binop_grey32_grey32_grey32.c"
+    #undef BINOP
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

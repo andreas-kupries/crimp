@@ -1,0 +1,230 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt source support/synth.tcl
+
+kt local support crimp::core
+kt local testing crimp
+
+# -------------------------------------------------------------------------
+## Point operation, maximum at each point.
+# -------------------------------------------------------------------------
+
+test crimp-max-1.0 {image max, wrong\#args, not enough} -body {
+    crimp max
+} -returnCodes error -result {wrong # args: should be "crimp max a b"}
+
+test crimp-max-1.1 {image max, wrong\#args, too many} -body {
+    crimp max A B toomuch
+} -returnCodes error -result {wrong # args: should be "crimp max a b"}
+
+# -------------------------------------------------------------------------
+# MAX (arity 2, commutative)
+# Supported combinations (commutations not mentioned):
+#          | grey8 grey16 grey32 rgb rgba hsv float fpcomplex double
+# ---------+--------------------------------------------------------
+# grey8    | *
+# grey16   |       *
+# grey32   |              *
+# rgb      | *                   *
+# rgba     | *                   *   *
+# hsv      |
+# float    | *     *      *                    *
+# fpcomplex|
+# double   | *     *      *                                   *
+# ---------+--------------------------------------------------------
+#
+#  *--**-*-
+#  ------*-
+#  ------*-
+#  *--**---
+#  *--**---
+#  --------
+#  ***---*-
+#  --------
+#
+# fpcomplex, hsv - Not supported at all
+# grey8 works with most of the types.
+
+test crimp-max-2.0 {image max, grey8, self} -body {
+    crimp max [grey8] [grey8]
+} -result [grey8]
+
+# -------------------------------------------------------------------------
+# 16 combinations of t_cross with itself, 8 cardinal directions at 2 displacements each.
+
+foreach {n dx dy result} {
+    0  -2 -2 { -2 -2
+        1___7__
+        _2_9___
+        __3___7
+        _8_4_9_
+        6___5__
+        ___8_4_
+        __6___5}
+
+    1  -1 -1 { -1 -1
+        1___7_
+        _2_9_7
+        __3_9_
+        _8_4__
+        6_8_5_
+        _6___5}
+
+    2   1  1 { 0  0
+        1___7_
+        _2_9_7
+        __3_9_
+        _8_4__
+        6_8_5_
+        _6___5}
+
+    3   2  2 { 0  0
+        1___7__
+        _2_9___
+        __3___7
+        _8_4_9_
+        6___5__
+        ___8_4_
+        __6___5}
+
+    4  -2  2 { -2  0
+        __1___7
+        ___2_9_
+        1___7__
+        _2_9_4_
+        __6___5
+        _8_4___
+        6___5__}
+
+    5  -1  1 { -1  0
+        _1___7
+        1_2_9_
+        _2_9__
+        __8_4_
+        _8_4_5
+        6___5_}
+
+    6   1 -1 { 0 -1
+        _1___7
+        1_2_9_
+        _2_9__
+        __8_4_
+        _8_4_5
+        6___5_}
+
+    7   2 -2 { 0 -2
+        __1___7
+        ___2_9_
+        1___7__
+        _2_9_4_
+        __6___5
+        _8_4___
+        6___5__}
+
+    8   0  1 { 0  0
+        1___7
+        12_97
+        _239_
+        _834_
+        68_45
+        6___5}
+
+    9   0  2 { 0  0
+        1___7
+        _2_9_
+        1_3_7
+        _8_9_
+        6_3_5
+        _8_4_
+        6___5}
+
+    10  0 -2 { 0 -2
+        1___7
+        _2_9_
+        1_3_7
+        _8_9_
+        6_3_5
+        _8_4_
+        6___5}
+
+    11  0 -1 { 0 -1
+        1___7
+        12_97
+        _239_
+        _834_
+        68_45
+        6___5}
+
+    12  1  0 { 0  0
+        11__77
+        _2299_
+        __33__
+        _8844_
+        66__55}
+
+    13  2  0 { 0  0
+        1_1_7_7
+        _2_9_9_
+        __3_3__
+        _8_8_4_
+        6_6_5_5}
+
+    14 -2  0 { -2  0
+        1_1_7_7
+        _2_9_9_
+        __3_3__
+        _8_8_4_
+        6_6_5_5}
+
+    15 -1  0 { -1  0
+        11__77
+        _2299_
+        __33__
+        _8844_
+        66__55}
+} {
+    set result [gconst {*}$result]
+
+    test crimp-max-3.$n "image max, grey8, ($dx, $dy)" -setup {
+        set base  [g8 t_cross]
+        set other [crimp rplace $base $dx $dy]
+    } -body {
+        astcl [crimp max $base $other]
+    } -cleanup {
+        unset base other
+    } -result [iconst grey8 {*}$result]
+
+    test crimp-max-4.$n "image max, grey16, ($dx, $dy)" -setup {
+        set base  [g16 t_cross]
+        set other [crimp rplace $base $dx $dy]
+    } -body {
+        astcl [crimp max $base $other]
+    } -cleanup {
+        unset base other
+    } -result [iconst grey16 {*}$result]
+
+    test crimp-max-5.$n "image max, grey32, ($dx, $dy)" -setup {
+        set base  [g32 t_cross]
+        set other [crimp rplace $base $dx $dy]
+    } -body {
+        astcl [crimp max $base $other]
+    } -cleanup {
+        unset base other
+    } -result [iconst grey32 {*}$result]
+}
+
+# -------------------------------------------------------------------------
+## Handling of input location and geometry: Union of inputs.
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

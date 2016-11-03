@@ -1,42 +1,42 @@
-read::bmp
-Tcl_Obj* bmpdata
+crimp_primitive read::bmp {
+    Tcl_Obj* bmpdata
+} image {
+    #include "bmp.h"
 
-#include "bmp.h"
+    /*
+     * Reader for images in BMP format (Window's BitMap Image File).
+     * See http://en.wikipedia.org/wiki/BMP_file_format
+     * Original code derived from TkImg bmp/bmp.c, modified to suit (no Tk!).
+     */
 
-/*
- * Reader for images in BMP format (Window's BitMap Image File).
- * See http://en.wikipedia.org/wiki/BMP_file_format
- * Original code derived from TkImg bmp/bmp.c, modified to suit (no Tk!).
- */
+    crimp_buffer   buf;
+    bmp_info       bmp;
+    crimp_image*   result;
 
-crimp_buffer   buf;
-bmp_info       bmp;
-crimp_image*   result;
+    /*
+     * Check input, i.e. verify structure and extract dimensions
+     */
 
-/*
- * Check input, i.e. verify structure and extract dimensions
- */
+    crimp_buf_init (&buf, bmpdata);
+    if (!bmp_read_header (interp, &buf, &bmp)) {
+        return NULL;
+    }
 
-crimp_buf_init (&buf, bmpdata);
-if (!bmp_read_header (interp, &buf, &bmp)) {
-    return TCL_ERROR;
+    result = crimp_new_rgb (bmp.w, bmp.h);
+
+    if (!bmp_read_pixels (&bmp, result)) {
+        Tcl_SetResult (interp, "Bad BMP image (Pixel decode failure)", TCL_STATIC);
+        return NULL;
+    }
+
+    return result;
 }
-
-result = crimp_new_rgb (bmp.w, bmp.h);
-
-if (!bmp_read_pixels (&bmp, result)) {
-    Tcl_SetResult (interp, "Bad BMP image (Pixel decode failure)", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

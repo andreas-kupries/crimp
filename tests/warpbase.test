@@ -1,0 +1,213 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt source support/synth.tcl
+
+kt local support crimp::core
+kt local testing crimp
+
+# -------------------------------------------------------------------------
+## Geometry manipulation. Warp basics (points, geometries).
+## TODO: shear transform
+# -------------------------------------------------------------------------
+
+test crimp-warp-base-0.0 {image warp, wrong\#args} -body {
+    crimp warp
+} -returnCodes error -result {wrong # args: should be "crimp warp subcommand ?argument ...?"}
+
+test crimp-warp-base-0.1 {image warp, invalid method} -body {
+    crimp warp BOGUS
+} -returnCodes error -result {unknown or ambiguous subcommand "BOGUS": must be box, field, point, or projective}
+
+# -------------------------------------------------------------------------
+
+test crimp-warp-point-1.0 {image warp point, wrong\#args, not enough} -body {
+    crimp warp point
+} -returnCodes error -result {wrong # args: should be "crimp warp point transform ..."}
+
+test crimp-warp-point-1.1 {image warp point, invalid transform} -body {
+    crimp warp point T
+} -returnCodes error -result {expected projective transform but got "T"}
+
+test crimp-warp-point-1.2 {image warp point, invalid point} -body {
+    crimp warp point [crimp transform reflect line {2 4} {4 0}] X
+} -returnCodes error -result {wrong # args: should be "crimp::warp_point forward x y"}
+
+test crimp-warp-point-1.3 {image warp point, invalid point} -body {
+    crimp warp point [crimp transform reflect line {2 4} {4 0}] {X 1}
+} -returnCodes error -result {expected floating-point number but got "X"}
+
+test crimp-warp-point-1.4 {image warp point, invalid point} -body {
+    crimp warp point [crimp transform reflect line {2 4} {4 0}] {1 Y}
+} -returnCodes error -result {expected floating-point number but got "Y"}
+
+# -------------------------------------------------------------------------
+## Simple point transforms. See ptransform.test also.
+
+apply {{} {
+    set n 0
+
+    foreach {p pi pm pr ps pt pro pmo pq} {
+        { 0  0} { 0  0} { 6.4  3.2} {-0.8284  2     } { 0  0} { 2  3} { 0       0     } { 0  0} {0 0}
+        {10  0} {10  0} { 0.4 -4.8} { 6.2426 -5.0711} {20  0} {12  3} { 7.0711 -7.0711} { 0 10} {-3.636363 1.818181}
+        { 0 10} { 0 10} {-1.6  9.2} { 6.2426  9.0711} { 0 30} { 2 13} { 7.0711  7.0711} {10  0} {20 -40}
+        {10 10} {10 10} {-7.6  1.2} {13.3137  2     } {20 30} {12 13} {14.1421  0     } {10 10} {-1.395348 -1.395348}
+    } {
+        # input ident   reflect     rotate/(2,2)      scale   transl   rotate/origin    reflect/orig quad
+
+        test crimp-warp-point-2.0.$n "image warp point, identity" -setup {
+            set t [crimp transform identity]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pi
+
+        test crimp-warp-point-2.1.$n "image warp point, reflection" -setup {
+            set t [crimp transform reflect line {2 4} {4 0}]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pm
+
+        test crimp-warp-point-2.2.$n "image warp point, rotation" -setup {
+            set t [crimp transform rotate 45 {2 2}]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pr
+
+        test crimp-warp-point-2.3.$n "image warp point, scale" -setup {
+            set t [crimp transform scale 2 3]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $ps
+
+        test crimp-warp-point-2.4.$n "image warp point, translate" -setup {
+            set t [crimp transform translate 2 3]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pt
+
+        test crimp-warp-point-2.5.$n "image warp point, rotation origin" -setup {
+            set t [crimp transform rotate 45]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pro
+
+        test crimp-warp-point-2.6.$n "image warp point, reflection origin" -setup {
+            set t [crimp transform reflect line {10 10}]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pmo
+
+        test crimp-warp-point-2.7.$n "image warp point, quadrilateral" -setup {
+            set t [crimp transform quadrilateral \
+                       {{0 0} {0  1} {1 1} {1  0}} \
+                       {{0 0} {-1 2} {3 3} {4 -2}}]
+        } -body {
+            lindex [crimp warp point $t $p] 0
+        } -cleanup {
+            unset t
+        } -match 4digits -result $pq
+
+        incr n
+    }
+}}
+
+# -------------------------------------------------------------------------
+
+test crimp-warp-box-3.0 {image warp box, wrong\#args, not enough} -body {
+    crimp warp box
+} -returnCodes error -result {wrong # args: should be "crimp warp box transform geometry"}
+
+test crimp-warp-box-3.1 {image warp box, wrong\#args, not enough} -body {
+    crimp warp box T
+} -returnCodes error -result {wrong # args: should be "crimp warp box transform geometry"}
+
+test crimp-warp-box-3.2 {image warp box, wrong\#args, too many} -body {
+    crimp warp box T G toomuch
+} -returnCodes error -result {wrong # args: should be "crimp warp box transform geometry"}
+
+test crimp-warp-box-3.3 {image warp box, invalid transform} -body {
+    crimp warp box T G
+} -returnCodes error -result {expected projective transform but got "T"}
+
+test crimp-warp-box-3.4 {image warp box, invalid box} -body {
+    crimp warp box [crimp transform reflect line {2 4} {4 0}] G
+} -returnCodes error -result {wrong # args: should be "crimp::warp_box forward x y w h"}
+
+test crimp-warp-box-3.5 {image warp box, invalid box} -body {
+    crimp warp box [crimp transform reflect line {2 4} {4 0}] {X 1 5 5}
+} -returnCodes error -result {expected integer but got "X"}
+
+test crimp-warp-box-3.6 {image warp box, invalid box} -body {
+    crimp warp box [crimp transform reflect line {2 4} {4 0}] {1 Y 5 5}
+} -returnCodes error -result {expected integer but got "Y"}
+
+test crimp-warp-box-3.7 {image warp box, invalid box} -body {
+    crimp warp box [crimp transform reflect line {2 4} {4 0}] {1 1 W 5}
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-warp-box-3.8 {image warp box, invalid box} -body {
+    crimp warp box [crimp transform reflect line {2 4} {4 0}] {1 1 5 H}
+} -returnCodes error -result {expected integer but got "H"}
+
+# -------------------------------------------------------------------------
+## Geometry transforms. Result is a new geometry minimally enclosing
+## the warped geometry.
+
+apply {{} {
+    set geometry { 0   0 11 11}
+
+    foreach {n result transform} {
+        0 {{ 0   0 11 11} { 0      0}      {10       0}      {10       10}     { 0     10}}      {identity}
+        1 {{-8  -5 16 16} { 6.4    3.2}    { 0.4    -4.8}    {-7.6     1.2}    {-1.6    9.2}}    {reflect line {2 4} {4 0}}
+        2 {{-1  -6 16 17} {-0.8284 1.9999} { 6.2426 -5.0710} {13.3137  2}      { 6.2426 9.0710}} {rotate 45 {2 2}}
+        3 {{ 0   0 21 31} { 0      0}      {20       0}      {20      30}      { 0     30}}      {scale 2 3}
+        4 {{ 2   3 11 11} { 2      3}      {12       3}      {12      13}      { 2     13}}      {translate 2 3}
+        5 {{ 0  -8 16 17} { 0      0}      { 7.0711 -7.0711} {14.1421  0}      { 7.0711 7.0711}} {rotate 45}
+        6 {{ 0   0 11 11} { 0      0}      { 0      10}      {10      10}      {10      0}}      {reflect line {10 10}}
+        7 {{-4 -41 26 44} { 0      0}      {-3.6364  1.8182} {-1.3953 -1.3954} {20    -40}}      {quadrilateral
+            {{0 0} { 0 1} {1 1} {1  0}}
+            {{0 0} {-1 2} {3 3} {4 -2}}}
+    } {
+        test crimp-warp-box-4.$n "image warp box, $transform" -setup {
+            set t [crimp transform {*}$transform]
+            lassign $geometry x y w h
+            incr w -1
+            incr h -1
+            # geometry (x y w h) => 4 points.
+            set a [p $x $y]
+            set b [p+x  $a $w]
+            set c [p+xy $a $w $h]
+            set d [p+y  $a $h]
+        } -body {
+            list {*}[crimp warp box $t $geometry] {*}[concat {*}[crimp warp point $t $a $b $c $d]]
+        } -cleanup {
+            unset t a b c d x y w h
+        } -match 4digits -result [concat {*}$result]
+    }
+}}
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

@@ -1,54 +1,52 @@
-expand_rgba_replicate
-Tcl_Obj* imageObj
-int ww
-int hn
-int we
-int hs
+crimp_primitive expand_rgba_replicate {
+    image_rgba image
+    int ww
+    int hn
+    int we
+    int hs
+} image {
+    /*
+     * Border expansion by extending the edges, i.e. replicating the border
+     * pixels.
+     */
 
-/*
- * Border expansion by extending the edges, i.e. replicating the border
- * pixels.
- */
+    /*
+     * This is the simple definition. Might be better to generate macros
+     * specialized to each quadrant. Except, even they have to perform modulo
+     * arithmetic, as the border may be larger than image's width or height,
+     * causing multiple wrapping.
+     */
 
-crimp_image* image;
-crimp_input (imageObj, image, rgba);
+    #define FILL(xo,yo) {					\
+	    int xi = xo - ww;				\
+	    int yi = yo - hn;				\
+	    if      (xi < 0)         { xi = 0;            } \
+	    else if (xi >= crimp_w (image)) { xi = (crimp_w (image)-1); } \
+							    \
+	    if      (yi < 0)         { yi = 0;            } \
+	    else if (yi >= crimp_h (image)) { yi = (crimp_h (image)-1); } \
+							    \
+	    R (result, xo, yo) = R (image, xi, yi);		\
+	    G (result, xo, yo) = G (image, xi, yi);		\
+	    B (result, xo, yo) = B (image, xi, yi);		\
+	    A (result, xo, yo) = A (image, xi, yi);		\
+        }
 
-/*
- * This is the simple definition. Might be better to generate macros
- * specialized to each quadrant. Except, even they have to perform modulo
- * arithmetic, as the border may be larger than image's width or height,
- * causing multiple wrapping.
- */
+    #define COPY(xo,yo,xi,yi) {			\
+	    R (result, xo, yo) = R (image, xi, yi); \
+	    G (result, xo, yo) = G (image, xi, yi); \
+	    B (result, xo, yo) = B (image, xi, yi); \
+	    A (result, xo, yo) = A (image, xi, yi); \
+        }
 
-#define FILL(xo,yo) {					\
-	int xi = xo - ww;				\
-	int yi = yo - hn;				\
-	if      (xi < 0)         { xi = 0;            } \
-	else if (xi >= crimp_w (image)) { xi = (crimp_w (image)-1); } \
-							\
-	if      (yi < 0)         { yi = 0;            } \
-	else if (yi >= crimp_h (image)) { yi = (crimp_h (image)-1); } \
-							\
-	R (result, xo, yo) = R (image, xi, yi);		\
-	G (result, xo, yo) = G (image, xi, yi);		\
-	B (result, xo, yo) = B (image, xi, yi);		\
-	A (result, xo, yo) = A (image, xi, yi);		\
-    }
-
-#define COPY(xo,yo,xi,yi) {			\
-	R (result, xo, yo) = R (image, xi, yi); \
-	G (result, xo, yo) = G (image, xi, yi); \
-	B (result, xo, yo) = B (image, xi, yi); \
-	A (result, xo, yo) = A (image, xi, yi); \
-    }
-
-#include <expand_op.c>
+    #include <expand_op.c>
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

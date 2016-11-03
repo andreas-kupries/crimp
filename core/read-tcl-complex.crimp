@@ -1,0 +1,84 @@
+crimp_primitive read::Tcl_fpcomplex {
+    Tcl_Obj* pixels
+} image {
+    /*
+     * Create an FPCOMPLEX image from a list of lists of 2-tuples of fp-numbers in the
+     * range [0..255]. This is, in essence, a read command, just using core Tcl
+     * values instead of a Tk photo as input.
+     *
+     * Using this command should be easier than trying to work with 'list' and
+     * 'binary'. This way the result even already has the proper intrep.
+     */
+    
+    Tcl_Obj** rowv;
+    Tcl_Obj** colv;
+    Tcl_Obj** pixv;
+    crimp_image*     result;
+    int              x, y, z, w, h, rowc, colc, pixc;
+    double           value;
+    
+    /*
+     * Check input, i.e. verify structure and extract dimensions
+     */
+    
+    if (Tcl_ListObjGetElements(interp, pixels, &rowc, &rowv) != TCL_OK) {
+        return NULL;
+    }
+    h = rowc;
+    w = 0;
+    for (y = 0; y < h; y++) {
+        if (Tcl_ListObjGetElements(interp, rowv [y], &colc, &colv) != TCL_OK) {
+	    return NULL;
+        }
+        if (colc > w) {
+	    w = colc;
+        }
+        for (x = 0; x < colc; x++) {
+	    if (Tcl_ListObjGetElements(interp, colv [x], &pixc, &pixv) != TCL_OK) {
+		return NULL;
+	    }
+	    pixc = MIN (pixc, 2);
+	    for (z = 0; z < pixc; z++) {
+		if (Tcl_GetDoubleFromObj(interp, pixv [z], &value) != TCL_OK) {
+		    return NULL;
+		}
+	    }
+        }
+    }
+    
+    result = crimp_new_fpcomplex (w, h);
+    
+    for (y = 0; y < h; y++) {
+        Tcl_ListObjGetElements(interp, rowv [y], &colc, &colv);
+    
+        for (x = 0; x < colc; x++) {
+	    Tcl_ListObjGetElements(interp, colv [x], &pixc, &pixv);
+
+	    /* Ignore data beyond the 2 RE/IM channels */
+	    pixc = MIN (pixc, 2);
+	    for (z=0; z < pixc; z++) {
+	        Tcl_GetDoubleFromObj(interp, pixv [z], &value);
+		CHF (result, z, x, y) = value;
+	    }
+	    /* Fill missing RE/IM channels with BLACK */
+	    for ( ; z < 2; z++) {
+		CHF (result, z, x, y) = BLACK;
+	    }
+        }
+        for (; x < w; x++) {
+	    RE (result, x, y) = BLACK;
+	    IM (result, x, y) = BLACK;
+        }
+    }
+
+    return result;
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

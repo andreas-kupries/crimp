@@ -1,46 +1,44 @@
-expand_grey16_wrap
-Tcl_Obj* imageObj
-int ww
-int hn
-int we
-int hs
+crimp_primitive expand_grey16_wrap {
+    image_grey16 image
+    int ww
+    int hn
+    int we
+    int hs
+} image {
+    /*
+     * Border expansion by toroidal wrapping, also called cyclic expansion.
+     */
 
-/*
- * Border expansion by toroidal wrapping, also called cyclic expansion.
- */
+    /*
+     * This is the simple definition. Might be better to generate macros
+     * specialized to each quadrant. Except, even they have to perform modulo
+     * arithmetic, as the border may be larger than image's width or height,
+     * causing multiple wrapping.
+     */
 
-crimp_image* image;
-crimp_input (imageObj, image, grey16);
+    #define FILL(xo,yo) {				\
+	    int xi = xo - ww;			\
+	    int yi = yo - hn;			\
+	    while (xi < 0) { xi += crimp_w (image); }	\
+	    while (yi < 0) { yi += crimp_h (image); }	\
+	    xi %= crimp_w (image);				\
+	    yi %= crimp_h (image);				\
+						    \
+	    GREY16 (result, xo, yo) = GREY16 (image, xi, yi); \
+        }
 
-/*
- * This is the simple definition. Might be better to generate macros
- * specialized to each quadrant. Except, even they have to perform modulo
- * arithmetic, as the border may be larger than image's width or height,
- * causing multiple wrapping.
- */
+    #define COPY(xo,yo,xi,yi) {			\
+	    GREY16 (result, xo, yo) = GREY16 (image, xi, yi); \
+        }
 
-#define FILL(xo,yo) {				\
-	int xi = xo - ww;			\
-	int yi = yo - hn;			\
-	while (xi < 0) { xi += crimp_w (image); }	\
-	while (yi < 0) { yi += crimp_h (image); }	\
-	xi %= crimp_w (image);				\
-	yi %= crimp_h (image);				\
-						\
-	GREY16 (result, xo, yo) = GREY16 (image, xi, yi); \
-    }
-
-#define COPY(xo,yo,xi,yi) {			\
-	GREY16 (result, xo, yo) = GREY16 (image, xi, yi); \
-    }
-
-#include <expand_op.c>
+    #include <expand_op.c>
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

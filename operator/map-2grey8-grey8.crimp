@@ -1,0 +1,39 @@
+crimp_primitive map_2grey8_grey8 {
+    image_grey8 image
+    Tcl_Obj* mapObj
+} image {
+    /*
+     * Converter that applies a piecewise linear map from an input grey8 image
+     * to an output grey8 image.
+     *
+     * Copyright (c) 2011 by Kevin B. Kenny.
+     *
+     * See the file "license.terms" for information on usage and redistribution of
+     * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+     */
+
+    #undef INTYPENAME
+    #undef INTYPE
+    #undef OUTTYPENAME
+    #undef OUTTYPE
+
+    #define INTYPENAME grey8
+    #define INTYPE unsigned char
+    #define OUTTYPENAME grey8
+    #define OUTTYPE unsigned char
+
+    #include "map_scalar.c"
+
+    #undef OTYPE
+    #undef OUTTYPENAME
+    #undef INTYPENAME
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

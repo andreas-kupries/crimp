@@ -1,57 +1,54 @@
-downsample_rgba
-Tcl_Obj* imageObj
-int      factor
+crimp_primitive downsample_rgba {
+    image_obj_rgba image
+    int      factor
+} object0 {
+    /*
+     * The input image is downsampled by storing only every 'factor' pixel into
+     * the result. Note that this method of shrinking an image causes image
+     * frequencies above the nyquist threshold of the result to be aliased into
+     * the range.
+     *
+     * The input image has to be convolved with a low-pass filter first, to avoid
+     * such artefacts. The integrated combination of such a filter with
+     * downsampling is called 'decimation'. This is but one step in the generation
+     * of image pyramids.
+     */
 
-/*
- * The input image is downsampled by storing only every 'factor' pixel into
- * the result. Note that this method of shrinking an image causes image
- * frequencies above the nyquist threshold of the result to be aliased into
- * the range.
- *
- * The input image has to be convolved with a low-pass filter first, to avoid
- * such artefacts. The integrated combination of such a filter with
- * downsampling is called 'decimation'. This is but one step in the generation
- * of image pyramids.
- */
+    crimp_image* result;
+    int          xo, yo, xi, yi;
 
-crimp_image* image;
-crimp_image* result;
-int          xo, yo, xi, yi;
-
-crimp_input (imageObj, image, rgba);
-if (factor < 1) {
-    Tcl_SetResult(interp, "bad sampling factor, expected integer > 0", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-if (factor == 1) {
-    Tcl_SetObjResult(interp, imageObj);
-    return TCL_OK;
-}
-
-result = crimp_new_at (image->itype,
-		       crimp_x (image), crimp_y (image),
-		       crimp_w (image)/factor, crimp_h (image)/factor);
-
-for (yo = 0, yi = 0; yo < crimp_h (result); yo++, yi += factor) {
-    for (xo = 0, xi = 0; xo < crimp_w (result); xo++, xi += factor) {
-
-	R (result, xo, yo) = R (image, xi, yi);
-	G (result, xo, yo) = G (image, xi, yi);
-	B (result, xo, yo) = B (image, xi, yi);
-	A (result, xo, yo) = A (image, xi, yi);
+    if (factor < 1) {
+        Tcl_SetResult(interp, "bad sampling factor, expected integer > 0", TCL_STATIC);
+        return NULL;
     }
+
+    if (factor == 1) {
+        return image.o;
+    }
+
+    result = crimp_new_at (image.i->itype,
+		           crimp_x (image.i), crimp_y (image.i),
+		           crimp_w (image.i)/factor, crimp_h (image.i)/factor);
+
+    for (yo = 0, yi = 0; yo < crimp_h (result); yo++, yi += factor) {
+        for (xo = 0, xi = 0; xo < crimp_w (result); xo++, xi += factor) {
+
+	    R (result, xo, yo) = R (image.i, xi, yi);
+	    G (result, xo, yo) = G (image.i, xi, yi);
+	    B (result, xo, yo) = B (image.i, xi, yi);
+	    A (result, xo, yo) = A (image.i, xi, yi);
+        }
+    }
+
+    return crimp_new_image_obj(result);
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

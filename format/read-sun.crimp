@@ -1,0 +1,39 @@
+crimp_primitive read::sun {
+    Tcl_Obj* sundata
+} image {
+    #include "sun.h"
+
+    /*
+     * Reader for images in SUN raster format
+     * See http://www.fileformat.info/format/sunraster/egff.htm
+     */
+
+    crimp_buffer   buf;
+    sun_info       sun;
+    crimp_image*   result;
+
+    /*
+     * Check input, i.e. verify structure and extract dimensions
+     */
+
+    crimp_buf_init (&buf, sundata);
+    if (!sun_read_header (interp, &buf, &sun)) {
+        return NULL;
+    }
+
+    if (!sun_read_pixels (&sun, &result)) {
+        Tcl_SetResult (interp, "Bad SUN raster image (Pixel decode failure)", TCL_STATIC);
+        return NULL;
+    }
+
+    return result;
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

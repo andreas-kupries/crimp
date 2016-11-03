@@ -1,0 +1,20 @@
+crimp_primitive cut_float {
+    image_float image
+    int x
+    int y
+    int w
+    int h
+} image {
+    #define UNOP(a) (a)
+    #include "unop_float.c"
+    #undef UNOP
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

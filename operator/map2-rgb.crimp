@@ -1,93 +1,84 @@
-map2_rgb
-Tcl_Obj* imageObj
-Tcl_Obj* redMapImageObj
-Tcl_Obj* greenMapImageObj
-Tcl_Obj* blueMapImageObj
-int redControlChannel
-int greenControlChannel
-int blueControlChannel
+crimp_primitive map2_rgb {
+    image_rgb image
+    image_grey8 redMap
+    image_grey8 greenMap
+    image_grey8 blueMap
+    int redControlChannel
+    int greenControlChannel
+    int blueControlChannel
+} image {
+    /*
+     * This operation is a generalized per-pixel transformation, mapping pixel
+     * values to other pixel values in a completely arbitrary way. In contrast to
+     * the map_* family of primitives here the mapping for one channel is
+     * controlled by the data in a second channel. I.e. instead of a 256x1 table
+     * we have 256 of these, in a single 256x256 map, with one channel selecting
+     * the map to use for the other. Effects possible with this are hue-dependent
+     * changes to saturation or value, value dependent color-shifts, etc.
+     *
+     * Important: For the sake of convenience the map is not provided as a (Tcl)
+     * list (of values), or array, but as an _image_ itself, a 256x256 (WxH)
+     * grey8. We have constructors for such images (read-tcl primitive).
+     */
 
-/*
- * This operation is a generalized per-pixel transformation, mapping pixel
- * values to other pixel values in a completely arbitrary way. In contrast to
- * the map_* family of primitives here the mapping for one channel is
- * controlled by the data in a second channel. I.e. instead of a 256x1 table
- * we have 256 of these, in a single 256x256 map, with one channel selecting
- * the map to use for the other. Effects possible with this are hue-dependent
- * changes to saturation or value, value dependent color-shifts, etc.
- *
- * Important: For the sake of convenience the map is not provided as a (Tcl)
- * list (of values), or array, but as an _image_ itself, a 256x256 (WxH)
- * grey8. We have constructors for such images (read-tcl primitive).
- */
+    crimp_image*     result;
+    int              x, y;
 
-crimp_image*     result;
-crimp_image*     image;
-crimp_image*     redMap;
-crimp_image*     greenMap;
-crimp_image*     blueMap;
-int              x, y;
-
-crimp_input (imageObj,         image,    rgb);
-crimp_input (redMapImageObj,   redMap,   grey8);
-crimp_input (greenMapImageObj, greenMap, grey8);
-crimp_input (blueMapImageObj,  blueMap,  grey8);
-
-if (!crimp_require_dim (redMap, 256, 256)) {
-    Tcl_SetResult(interp, "bad image dimension for red map, expected 256x256", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-if (!crimp_require_dim (greenMap, 256, 256)) {
-    Tcl_SetResult(interp, "bad image dimension for green map, expected 256x256", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-if (!crimp_require_dim (blueMap, 256, 256)) {
-    Tcl_SetResult(interp, "bad image dimension for blue map, expected 256x256", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-if (!CRIMP_RANGEOK (redControlChannel,2)) {
-    Tcl_SetResult(interp, "bad control for red map, expected index in (0...2)", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-if (!CRIMP_RANGEOK (greenControlChannel,2)) {
-    Tcl_SetResult(interp, "bad control for green map, expected index in (0...2)", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-if (!CRIMP_RANGEOK (blueControlChannel,2)) {
-    Tcl_SetResult(interp, "bad control for blue map, expected index in (0...2)", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-result = crimp_new_like (image);
-
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-
-	/*
-	 * Run the pixel value of the input image through the map to
-	 * produce the value for the output.
-	 */
-
-      R (result, x, y) = GREY8 (redMap,   R (image, x, y), CH (image, redControlChannel,   x, y));
-      G (result, x, y) = GREY8 (greenMap, G (image, x, y), CH (image, greenControlChannel, x, y));
-      B (result, x, y) = GREY8 (blueMap,  B (image, x, y), CH (image, blueControlChannel,  x, y));
+    if (!crimp_require_dim (redMap, 256, 256)) {
+        Tcl_SetResult(interp, "bad image dimension for red map, expected 256x256", TCL_STATIC);
+        return NULL;
     }
+
+    if (!crimp_require_dim (greenMap, 256, 256)) {
+        Tcl_SetResult(interp, "bad image dimension for green map, expected 256x256", TCL_STATIC);
+        return NULL;
+    }
+
+    if (!crimp_require_dim (blueMap, 256, 256)) {
+        Tcl_SetResult(interp, "bad image dimension for blue map, expected 256x256", TCL_STATIC);
+        return NULL;
+    }
+
+    if (!CRIMP_RANGEOK (redControlChannel,2)) {
+        Tcl_SetResult(interp, "bad control for red map, expected index in (0...2)", TCL_STATIC);
+        return NULL;
+    }
+
+    if (!CRIMP_RANGEOK (greenControlChannel,2)) {
+        Tcl_SetResult(interp, "bad control for green map, expected index in (0...2)", TCL_STATIC);
+        return NULL;
+    }
+
+    if (!CRIMP_RANGEOK (blueControlChannel,2)) {
+        Tcl_SetResult(interp, "bad control for blue map, expected index in (0...2)", TCL_STATIC);
+        return NULL;
+    }
+
+    result = crimp_new_like (image);
+
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
+
+	    /*
+	     * Run the pixel value of the input image through the map to
+	     * produce the value for the output.
+	     */
+
+          R (result, x, y) = GREY8 (redMap,   R (image, x, y), CH (image, redControlChannel,   x, y));
+          G (result, x, y) = GREY8 (greenMap, G (image, x, y), CH (image, greenControlChannel, x, y));
+          B (result, x, y) = GREY8 (blueMap,  B (image, x, y), CH (image, blueControlChannel,  x, y));
+        }
+    }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

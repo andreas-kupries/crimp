@@ -1,23 +1,24 @@
-screen_rgb_grey8
-Tcl_Obj* imageAObj
-Tcl_Obj* imageBObj
+crimp_primitive screen_rgb_grey8 {
+    image_rgb imageA
+    image_grey8 imageB
+} image {
+    /*
+     * Pixel- and channel-wise 1-(1-A)*(1-B) combination of two images. The images
+     * have to have equal dimensions. This could be done at Tcl level using a
+     * combination of 'multiply' and 'invert'. Doing it in C on the other hand
+     * avoids the three temporary images of that implementation.
+     */
 
-/*
- * Pixel- and channel-wise 1-(1-A)*(1-B) combination of two images. The images
- * have to have equal dimensions. This could be done at Tcl level using a
- * combination of 'multiply' and 'invert'. Doing it in C on the other hand
- * avoids the three temporary images of that implementation.
- */
-
-#define BINOP(a,b) (255 - (((255-(a))*(255-(b)))/255))
-#include "binop_rgb_grey8_rgb.c"
-#undef BINOP
+    #define BINOP(a,b) (255 - (((255-(a))*(255-(b)))/255))
+    #include "binop_rgb_grey8_rgb.c"
+    #undef BINOP
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

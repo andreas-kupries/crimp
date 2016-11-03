@@ -1,104 +1,101 @@
-histogram
-Tcl_Obj* imageObj
+crimp_primitive histogram {
+    image image
+} object0 {
+    /*
+     * This operation is a general histogram generator
+     */
 
-/*
- * This operation is a general histogram generator
- */
+    int              x, y, c, i, count, maxv, largegrey;
+    int*             histogram;
+    Tcl_Obj*         d; /* dict of histograms, indexed by channel name */
+    Tcl_Obj*         h; /* histogram dict, indexed by pixel value */
+    Tcl_Obj*         k; /* channel name as Tcl_Obj, for the main dict */
 
-crimp_image*     image;
-int              x, y, c, i, count, maxv, largegrey;
-int*             histogram;
-Tcl_Obj*         d; /* dict of histograms, indexed by channel name */
-Tcl_Obj*         h; /* histogram dict, indexed by pixel value */
-Tcl_Obj*         k; /* channel name as Tcl_Obj, for the main dict */
+    /* TODO: See if we can offload these into argument checks */
+    CRIMP_ASSERT_NOTIMGTYPE(image,grey32);
+    CRIMP_ASSERT_NOTIMGTYPE(image,float);
+    /*
+     * Actually NOT any. The code below is not able to handle grey32, as images
+     * with these types can have 4G possible values, for which we cannot allocate
+     * a full counter array.
+     *
+     * XXX This needs fixing. Use of a hashtable to allocate only pixel values
+     * actually seen. Will still run into trouble for extreme images which do
+     * contain all the possible values.
+     */
 
-crimp_input_any (imageObj, image);
-CRIMP_ASSERT_NOTIMGTYPE(image,grey32);
-CRIMP_ASSERT_NOTIMGTYPE(image,float);
-/*
- * Actually NOT any. The code below is not able to handle grey32, as images
- * with these types can have 4G possible values, for which we cannot allocate
- * a full counter array.
- *
- * XXX This needs fixing. Use of a hashtable to allocate only pixel values
- * actually seen. Will still run into trouble for extreme images which do
- * contain all the possible values.
- */
-
-largegrey = image->itype == crimp_imagetype_find ("crimp::image::grey16");
-if (largegrey) {
-    maxv = 65536;
-} else {
-    maxv = 256;
-}
-
-histogram = CRIMP_ALLOC_ARRAY (maxv * image->itype->channels, int);
-memset (histogram, '\0', maxv * image->itype->channels * sizeof (int));
-
-/*
- * Count the pixel values.
- */
-
-#define BUCKET(c,v) histogram [((c) * maxv + (v))]
-
-if (largegrey) {
-    for (y = 0; y < crimp_h (image); y++) {
-	for (x = 0; x < crimp_w (image); x++) {
-	    BUCKET (0, GREY16 (image, x, y)) ++;
-	}
+    largegrey = image->itype == crimp_imagetype_find ("crimp::image::grey16");
+    if (largegrey) {
+        maxv = 65536;
+    } else {
+        maxv = 256;
     }
-} else {
-    for (y = 0; y < crimp_h (image); y++) {
-	for (x = 0; x < crimp_w (image); x++) {
-	    for (c = 0; c < image->itype->channels; c++) {
-		BUCKET (c, CH (image, c, x, y)) ++;
+
+    histogram = CRIMP_ALLOC_ARRAY (maxv * image->itype->channels, int);
+    memset (histogram, '\0', maxv * image->itype->channels * sizeof (int));
+
+    /*
+     * Count the pixel values.
+     */
+
+    #define BUCKET(c,v) histogram [((c) * maxv + (v))]
+
+    if (largegrey) {
+        for (y = 0; y < crimp_h (image); y++) {
+	    for (x = 0; x < crimp_w (image); x++) {
+	        BUCKET (0, GREY16 (image, x, y)) ++;
 	    }
-	}
-    }
-}
-
-/*
- * Convert the data into a dictionary to return.
- *
- * XXX: For the very large histograms of grey32 (4GB possible values) it would
- * be sensible to suppress the entries for all pixel values which are not
- * used, i.e. have a count of zero.
- */
-
-d = Tcl_NewDictObj ();
-
-for (c = 0; c < image->itype->channels; c++) {
-
-    k = Tcl_NewStringObj (image->itype->cname [c],-1);
-    h = Tcl_NewDictObj ();
-
-    for (i = 0; i < maxv; i++) {
-	count = BUCKET (c, i);
-
-	/*
-	 * XXX future optimization: keep a hash table of the Int objects, and
-	 * share them as much a is possible.
-	 */
-
-	Tcl_DictObjPut (interp, h,
-			Tcl_NewIntObj (i),
-			Tcl_NewIntObj (count));
+        }
+    } else {
+        for (y = 0; y < crimp_h (image); y++) {
+	    for (x = 0; x < crimp_w (image); x++) {
+	        for (c = 0; c < image->itype->channels; c++) {
+		    BUCKET (c, CH (image, c, x, y)) ++;
+	        }
+	    }
+        }
     }
 
-    Tcl_DictObjPut (interp, d, k, h);
+    /*
+     * Convert the data into a dictionary to return.
+     *
+     * XXX: For the very large histograms of grey32 (4GB possible values) it would
+     * be sensible to suppress the entries for all pixel values which are not
+     * used, i.e. have a count of zero.
+     */
+
+    d = Tcl_NewDictObj ();
+
+    for (c = 0; c < image->itype->channels; c++) {
+
+        k = Tcl_NewStringObj (image->itype->cname [c],-1);
+        h = Tcl_NewDictObj ();
+
+        for (i = 0; i < maxv; i++) {
+	    count = BUCKET (c, i);
+
+	    /*
+	     * XXX future optimization: keep a hash table of the Int objects, and
+	     * share them as much a is possible.
+	     */
+
+	    Tcl_DictObjPut (interp, h,
+			    Tcl_NewIntObj (i),
+			    Tcl_NewIntObj (count));
+        }
+
+        Tcl_DictObjPut (interp, d, k, h);
+    }
+
+    ckfree ((char*) histogram);
+    return d;
 }
-
-ckfree ((char*) histogram);
-
-Tcl_SetObjResult(interp, d);
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

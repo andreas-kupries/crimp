@@ -1,11 +1,8 @@
 /* x, y, w, h - Parameters of the output image. Provided by caller */
 
 crimp_image*     result;
-crimp_image*     image;
 
 int px, py, lx, ly, ox, oy, pxi, pyi;
-
-crimp_input (imageObj, image, rgba);
 
 /*
  * Get the area of the input image to process.
@@ -60,8 +57,7 @@ for (py = 0, ly = y, pyi = y - oy;
     }
 }
 
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
+return result;
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
 /*

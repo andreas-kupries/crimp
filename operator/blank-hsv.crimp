@@ -1,38 +1,38 @@
-blank_hsv
-int w
-int h
-int hue
-int sat
-int val
+crimp_primitive blank_hsv {
+    int w
+    int h
+    int hue
+    int sat
+    int val
+} image {
+    /*
+     * Create a blank hsv image (all pixels have the specified color (hsv value)).
+     */
 
-/*
- * Create a blank hsv image (all pixels have the specified color (hsv value)).
- */
+    crimp_image*     result;
+    int              x, y;
 
-crimp_image*     result;
-int              x, y;
+    result = crimp_new_hsv (w, h);
 
-result = crimp_new_hsv (w, h);
-
-if (w && h) {
-  for (y = 0; y < h; y++) {
-    for (x = 0; x < w; x++) {
-      H (result, x, y) = hue;
-      S (result, x, y) = sat;
-      V (result, x, y) = val;
+    if (w && h) {
+      for (y = 0; y < h; y++) {
+        for (x = 0; x < w; x++) {
+          H (result, x, y) = hue;
+          S (result, x, y) = sat;
+          V (result, x, y) = val;
+        }
+      }
     }
-  }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

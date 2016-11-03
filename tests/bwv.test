@@ -1,19 +1,12 @@
-# add.test -*- tcl -*-
-# -------------------------------------------------------------------------
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
 
-source [file join \
-            [file dirname [file join [pwd] [info script]]] \
-            testutilities.tcl]
+kt check Tcl     8.5
+kt check tcltest 2
 
-testsNeedTcl     8.5
-testsNeedTcltest 2
-
-support {
-    useC [mainPath _test/lib]/crimp_core* crimp::core no
-}
-testing {
-    useC [mainPath _test/lib]/crimp* crimp no
-}
+kt local support crimp::core
+kt local testing crimp
 
 # -------------------------------------------------------------------------
 
@@ -37,10 +30,10 @@ test crimp-bwvertical-1.0 {Black/White Checker Board} -body {
 
 test crimp-bwvertical-1.1 {Black/White Checker Board, wrong#args, too many} -body {
     crimp::black_white_vertical X
-} -returnCodes error -result {wrong # args: should be "crimp::black_white_vertical "}
+} -returnCodes error -result {wrong # args: should be "crimp::black_white_vertical"}
 
 # -------------------------------------------------------------------------
-testsuiteCleanup
+cleanupTests
 
 # Local variables:
 # mode: tcl

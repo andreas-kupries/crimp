@@ -1,44 +1,44 @@
-read::sgi
-Tcl_Obj* sgidata
+crimp_primitive read::sgi {
+    Tcl_Obj* sgidata
+} image {
+    #include "sgi.h"
 
-#include "sgi.h"
+    /*
+     * Reader for images in SGI raster format
+     * References
+     *     ftp://ftp.sgi.com/graphics/SGIIMAGESPEC
+     *     http://en.wikipedia.org/wiki/Silicon_Graphics_Image
+     */
 
-/*
- * Reader for images in SGI raster format
- * References
- *     ftp://ftp.sgi.com/graphics/SGIIMAGESPEC
- *     http://en.wikipedia.org/wiki/Silicon_Graphics_Image
- */
+    crimp_buffer   buf;
+    sgi_info       sgi;
+    crimp_image*   result;
 
-crimp_buffer   buf;
-sgi_info       sgi;
-crimp_image*   result;
+    /*
+     * Check input, i.e. verify structure and extract dimensions
+     */
 
-/*
- * Check input, i.e. verify structure and extract dimensions
- */
+    crimp_buf_init (&buf, sgidata);
+    if (!sgi_read_header (interp, &buf, &sgi)) {
+        goto error;
+    }
 
-crimp_buf_init (&buf, sgidata);
-if (!sgi_read_header (interp, &buf, &sgi)) {
-    goto error;
+    if (!sgi_read_pixels (&sgi, &result)) {
+        Tcl_SetResult (interp, "Bad SGI raster image (Pixel decode failure)", TCL_STATIC);
+     error:
+        if (sgi.ostart)  { ckfree ((char*) sgi.ostart); }
+        if (sgi.olength) { ckfree ((char*) sgi.olength); }
+        return NULL;
+    }
+
+    return result;
 }
-
-if (!sgi_read_pixels (&sgi, &result)) {
-    Tcl_SetResult (interp, "Bad SGI raster image (Pixel decode failure)", TCL_STATIC);
- error:
-    if (sgi.ostart)  { ckfree ((char*) sgi.ostart); }
-    if (sgi.olength) { ckfree ((char*) sgi.olength); }
-    return TCL_ERROR;
-}
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

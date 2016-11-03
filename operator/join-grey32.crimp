@@ -1,57 +1,47 @@
-join_2grey32
-Tcl_Obj* mmsbImageObj
-Tcl_Obj* lmsbImageObj
-Tcl_Obj* mlsbImageObj
-Tcl_Obj* llsbImageObj
+crimp_primitive join_2grey32 {
+    image_grey8 mmsb
+    image_grey8 lmsb
+    image_grey8 mlsb
+    image_grey8 llsb
+} image {
+    crimp_image*     result;
+    int              x, y;
 
-crimp_image*     result;
-crimp_image*     mmsb;
-crimp_image*     lmsb;
-crimp_image*     mlsb;
-crimp_image*     llsb;
-int              x, y;
-
-crimp_input (mmsbImageObj, mmsb, grey8);
-crimp_input (lmsbImageObj, lmsb, grey8);
-crimp_input (mlsbImageObj, mlsb, grey8);
-crimp_input (llsbImageObj, llsb, grey8);
-
-if (!crimp_eq_dim (mmsb, lmsb) ||
-    !crimp_eq_dim (lmsb, mlsb) ||
-    !crimp_eq_dim (mlsb, llsb)) {
-    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-result = crimp_new_grey32_at (crimp_x (mmsb), crimp_y (mmsb),
-			      crimp_w (mmsb), crimp_h (mmsb));
-
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-
-	/*
-	 * Assembling the bytes of a pixel from the associated input images.
-	 */
-
-	int value = 
-	    GREY8  (llsb, x, y)        |
-	    (GREY8 (mlsb, x, y) <<  8) |
-	    (GREY8 (lmsb, x, y) << 16) |
-	    (GREY8 (mmsb, x, y) << 24);
-
-	GREY32 (result, x, y) = value;
+    if (!crimp_eq_dim (mmsb, lmsb) ||
+        !crimp_eq_dim (lmsb, mlsb) ||
+        !crimp_eq_dim (mlsb, llsb)) {
+        Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+        return NULL;
     }
+
+    result = crimp_new_grey32_at (crimp_x (mmsb), crimp_y (mmsb),
+			          crimp_w (mmsb), crimp_h (mmsb));
+
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
+
+	    /*
+	     * Assembling the bytes of a pixel from the associated input images.
+	     */
+
+	    int value = 
+	        GREY8  (llsb, x, y)        |
+	        (GREY8 (mlsb, x, y) <<  8) |
+	        (GREY8 (lmsb, x, y) << 16) |
+	        (GREY8 (mmsb, x, y) << 24);
+
+	    GREY32 (result, x, y) = value;
+        }
+    }
+
+    return result;
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

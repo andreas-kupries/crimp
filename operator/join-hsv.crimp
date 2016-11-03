@@ -1,50 +1,42 @@
-join_2hsv
-Tcl_Obj* hueImageObj
-Tcl_Obj* satImageObj
-Tcl_Obj* valImageObj
+crimp_primitive join_2hsv {
+    image_grey8 hue
+    image_grey8 sat
+    image_grey8 val
+} image {
+    crimp_image*     result;
+    int              x, y;
 
-crimp_image*     result;
-crimp_image*     hue;
-crimp_image*     sat;
-crimp_image*     val;
-int              x, y;
-
-crimp_input (hueImageObj, hue, grey8);
-crimp_input (satImageObj, sat, grey8);
-crimp_input (valImageObj, val, grey8);
-
-if (!crimp_eq_dim (hue, sat) ||
-    !crimp_eq_dim (hue, val)) {
-    Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-result = crimp_new_hsv_at (crimp_x (hue), crimp_y (hue),
-			   crimp_w (hue), crimp_h (hue));
-
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-
-	/*
-	 * Assembling the pixels of each color channel from the associated
-	 * input images.
-	 */
-
-	H (result, x, y) = GREY8 (hue, x, y);
-	S (result, x, y) = GREY8 (sat, x, y);
-	V (result, x, y) = GREY8 (val, x, y);
+    if (!crimp_eq_dim (hue, sat) ||
+        !crimp_eq_dim (hue, val)) {
+        Tcl_SetResult(interp, "image dimensions do not match", TCL_STATIC);
+        return NULL;
     }
+
+    result = crimp_new_hsv_at (crimp_x (hue), crimp_y (hue),
+			       crimp_w (hue), crimp_h (hue));
+
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
+
+	    /*
+	     * Assembling the pixels of each color channel from the associated
+	     * input images.
+	     */
+
+	    H (result, x, y) = GREY8 (hue, x, y);
+	    S (result, x, y) = GREY8 (sat, x, y);
+	    V (result, x, y) = GREY8 (val, x, y);
+        }
+    }
+
+    return result;
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -94,8 +94,8 @@ crimp_la_multiply_matrix_3x3 (crimp_image* a, crimp_image* b)
 
     CRIMP_ASSERT_IMGTYPE (a, float);
     CRIMP_ASSERT_IMGTYPE (b, float);
-    CRIMP_ASSERT (crimp_require_dim(a, 3,3),"Unable to multiply matrices, 3x3 expected");
-    CRIMP_ASSERT (crimp_require_dim(b, 3,3),"Unable to multiply matrices, 3x3 expected");
+    CRIMP_ASSERT (crimp_require_dim(a, 3, 3),"Unable to multiply matrices, 3x3 expected");
+    CRIMP_ASSERT (crimp_require_dim(b, 3, 3),"Unable to multiply matrices, 3x3 expected");
 
     result = crimp_new_float (3, 3);
 

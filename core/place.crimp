@@ -1,24 +1,18 @@
-place
-Tcl_Obj* imageObj
-int x
-int y
-
-crimp_image* image;
-
-crimp_input_any (imageObj, image);
-
-image = crimp_dup (image);
-crimp_place (image, x, y);
-
-Tcl_SetObjResult (interp, crimp_new_image_obj(image));
-return TCL_OK;
-
+crimp_primitive place {
+    image image
+    int   x
+    int   y
+} image {
+    image = crimp_dup (image);
+    crimp_place (image, x, y);
+    return image;
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

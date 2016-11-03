@@ -1,21 +1,22 @@
-difference_rgba_rgb
-Tcl_Obj* imageAObj
-Tcl_Obj* imageBObj
+crimp_primitive difference_rgba_rgb {
+    image_rgba imageA
+    image_rgb imageB
+} image {
+    /*
+     * Pixel- and channel-wise absolute difference of two images. The images have
+     * to have equal dimensions.
+     */
 
-/*
- * Pixel- and channel-wise absolute difference of two images. The images have
- * to have equal dimensions.
- */
-
-#define BINOP(a,b) (abs((a) - (b)))
-#include "binop_rgba_rgb_rgba.c"
-#undef BINOP
+    #define BINOP(a,b) (abs((a) - (b)))
+    #include "binop_rgba_rgb_rgba.c"
+    #undef BINOP
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

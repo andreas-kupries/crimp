@@ -1,19 +1,17 @@
-# -*- tcl -*-
-# -------------------------------------------------------------------------
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
 
-source [file join \
-            [file dirname [file join [pwd] [info script]]] \
-            testutilities.tcl]
+kt check Tcl     8.5
+kt check tcltest 2
 
-testsNeedTcl     8.5
-testsNeedTcltest 2
+kt source support/synth.tcl
 
-support { useLocalFile synth.tcl }
-support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
-testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+kt local support crimp::core
+kt local testing crimp
 
 # -------------------------------------------------------------------------
-## Creating of various types of blank images.
+## Create various types of blank images.
 ##
 ## XXX NOTE XXX This may be something for crimp::core instead of crimp.
 # -------------------------------------------------------------------------
@@ -616,7 +614,7 @@ test crimp-blank-9.17 {Blank images, fpcomplex, coordinates} -body {
 } -result {0 0}
 
 # -------------------------------------------------------------------------
-testsuiteCleanup
+cleanupTests
 
 # Local variables:
 # mode: tcl

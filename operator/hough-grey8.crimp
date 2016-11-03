@@ -1,121 +1,119 @@
-hough_grey8
-Tcl_Obj* imageObj
-int emptyBucketColor
+crimp_primitive hough_grey8 {
+    image_grey8 image
+    int emptyBucketColor
+} image {
+    crimp_image* result;
+    int          rh, rw, rho, theta;
 
-crimp_image* image;
-crimp_image* result;
-int          rh, rw, rho, theta;
 
-crimp_input (imageObj, image, grey8);
+    /*
+     * Destination size. 360 degrees, and 0.5sqrt(w^2+h^2) slope.
+     *
+     * FUTURE: Allow x/y factors as parameters, to select more or less buckets,
+     * i.e. higher or lower precision.
+     */
 
-/*
- * Destination size. 360 degrees, and 0.5sqrt(w^2+h^2) slope.
- *
- * FUTURE: Allow x/y factors as parameters, to select more or less buckets,
- * i.e. higher or lower precision.
- */
+    rw = 360;
+    rh = hypot (crimp_w (image), crimp_h (image))/2;
 
-rw = 360;
-rh = hypot (crimp_w (image), crimp_h (image))/2;
+    /*
+     * Allocate and initialize the buckets.
+     */
 
-/*
- * Allocate and initialize the buckets.
- */
+    result = crimp_new_float (rw, rh);
 
-result = crimp_new_float (rw, rh);
+    /*
+     * Scan the image. For every pixel > 0 we sweep the result in the sinusoid
+     * representing the parameters of all lines which can go through it,
+     * incrementing the associated buckets.
+     *
+     * An alternate formulation is to scan the buckets and sweep the input along
+     * the line it represents, computing the average greylevel, and saving this in
+     * the bucket.
+     *
+     * The code below uses the alternate formulation, with nearest neighbour
+     * interpolation when sampling the input. This alternate phrasing makes things
+     * easier, for (1) there is no need for a separate initialization step, and
+     * (2) we avoid the need to decide which pixels to count as on a line which is
+     * required by the regular implementation (See the 'pixel > 0' condition!). On
+     * the other hand, this phrasing needs a color representing empty buckets, the
+     * background color of the image, the color not used by pixels on a line.
+     */
 
-/*
- * Scan the image. For every pixel > 0 we sweep the result in the sinusoid
- * representing the parameters of all lines which can go through it,
- * incrementing the associated buckets.
- *
- * An alternate formulation is to scan the buckets and sweep the input along
- * the line it represents, computing the average greylevel, and saving this in
- * the bucket.
- *
- * The code below uses the alternate formulation, with nearest neighbour
- * interpolation when sampling the input. This alternate phrasing makes things
- * easier, for (1) there is no need for a separate initialization step, and
- * (2) we avoid the need to decide which pixels to count as on a line which is
- * required by the regular implementation (See the 'pixel > 0' condition!). On
- * the other hand, this phrasing needs a color representing empty buckets, the
- * background color of the image, the color not used by pixels on a line.
- */
+    for (rho = 0; rho < rh; rho++) {
+        for (theta = 0; theta < rw; theta++) {
+	    /* 0.017 = pi/180 */
+	    float co = cos (theta * 0.017453292519943295769236907684886);
+	    float si = sin (theta * 0.017453292519943295769236907684886);
+	    int sum, total, xi, yi, x, y;
+	    float xf, yf;
 
-for (rho = 0; rho < rh; rho++) {
-    for (theta = 0; theta < rw; theta++) {
-	/* 0.017 = pi/180 */
-	float co = cos (theta * 0.017453292519943295769236907684886);
-	float si = sin (theta * 0.017453292519943295769236907684886);
-	int sum, total, xi, yi, x, y;
-	float xf, yf;
+	    sum = total = 0;
 
-	sum = total = 0;
+	    if ((theta < 45) ||
+	        (theta > 315) ||
+	        ((theta > 135) && (theta < 225))) {
+	        /*
+	         * In these 4 octants iterate over y
+	         */
 
-	if ((theta < 45) ||
-	    (theta > 315) ||
-	    ((theta > 135) && (theta < 225))) {
-	    /*
-	     * In these 4 octants iterate over y
-	     */
+	        for (y = 0; y < crimp_h (image); y++) {
+		    xf = crimp_w (image)/2 + (rho - (crimp_h (image)/2 - y)*si)/co;
 
-	    for (y = 0; y < crimp_h (image); y++) {
-		xf = crimp_w (image)/2 + (rho - (crimp_h (image)/2 - y)*si)/co;
+		    xi = xf;
+		    if ((xf - xi) >= 0.5) xi++;
 
-		xi = xf;
-		if ((xf - xi) >= 0.5) xi++;
+		    if ((xi < 0) || (xi >= crimp_w (image))) continue;
 
-		if ((xi < 0) || (xi >= crimp_w (image))) continue;
+		    total++;
+		    sum += GREY8 (image, xi, y);
+	        }
 
-		total++;
-		sum += GREY8 (image, xi, y);
+	    } else {
+	        /*
+	         * In the remaining octants iterate over x.
+	         */
+
+	        for (x = 0; x < crimp_w (image); x++) {
+		    yf = crimp_h (image)/2 - (rho - (x - crimp_w (image)/2)*co)/si;
+
+		    yi = yf;
+		    if ((yf - yi) >= 0.5) yi++;
+
+		    if ((yi < 0) || (yi >= crimp_h (image))) continue;
+
+		    total++;
+		    sum += GREY8 (image, x, yi);
+	        }
 	    }
 
-	} else {
 	    /*
-	     * In the remaining octants iterate over x.
+	     * Convert to the average and save. The specified default color for
+	     * empty buckets is used if we were unable to seep a proper line
+	     * across the input. It should match the background color of the
+	     * input, with the actual lines we are lookinging for deviating from that
+	     * color. For black lines this is usually WHITE. This is this
+	     * algorithm's complement to the regular algorithm's need to decide if
+	     * a pixel belongs to a line or not.
 	     */
 
-	    for (x = 0; x < crimp_w (image); x++) {
-		yf = crimp_h (image)/2 - (rho - (x - crimp_w (image)/2)*co)/si;
-
-		yi = yf;
-		if ((yf - yi) >= 0.5) yi++;
-
-		if ((yi < 0) || (yi >= crimp_h (image))) continue;
-
-		total++;
-		sum += GREY8 (image, x, yi);
+	    if (total) {
+	        FLOATP (result, theta, rho) = ((float)sum)/total;
+	    } else {
+	        FLOATP (result, theta, rho) = emptyBucketColor;
 	    }
-	}
-
-	/*
-	 * Convert to the average and save. The specified default color for
-	 * empty buckets is used if we were unable to seep a proper line
-	 * across the input. It should match the background color of the
-	 * input, with the actual lines we are looking for deviating from that
-	 * color. For black lines this is usually WHITE. This is this
-	 * algorithm's complement to the regular algorithm's need to decide if
-	 * a pixel belongs to a line or not.
-	 */
-
-	if (total) {
-	    FLOATP (result, theta, rho) = ((float)sum)/total;
-	} else {
-	    FLOATP (result, theta, rho) = emptyBucketColor;
-	}
+        }
     }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

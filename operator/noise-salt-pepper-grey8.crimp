@@ -1,57 +1,55 @@
-noise_salt_pepper_grey8
-Tcl_Obj* imageObj
-double threshold
+crimp_primitive noise_salt_pepper_grey8 {
+    image_grey8 image
+    double threshold
+} image {
+    /*
+     * Adding Salt/Pepper-style noise (*) to the image, using a a threshold
+     * 'value'.
+     *
+     * 0             <= random < 1/2 threshold => Black Pepper
+     * 1/2 threshold <= random < threshold     => White Salt
+     * else                                    => No change.
+     *
+     * (*) Salt/Pepper == white/black pixels replacing the actual image pixel.
+     */
 
-/*
- * Adding Salt/Pepper-style noise (*) to the image, using a a threshold
- * 'value'.
- *
- * 0             <= random < 1/2 threshold => Black Pepper
- * 1/2 threshold <= random < threshold     => White Salt
- * else                                    => No change.
- *
- * (*) Salt/Pepper == white/black pixels replacing the actual image pixel.
- */
+    crimp_image* result;
+    int          x, y;
+    double       half = threshold / 2.;
+    double       randval;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y;
-double       half = threshold / 2.;
-double       randval;
 
-crimp_input (imageObj, image, grey8);
+    result = crimp_new_like (image);
 
-result = crimp_new_like (image);
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
+	    randval = RAND_FLOAT();
 
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-	randval = RAND_FLOAT();
-
-	if (randval < 0) {
-	    goto keep;
-	}
-	if (randval < half) {
-	    GREY8 (result, x, y) = BLACK;
-	    continue;
-	}
-        if (randval < threshold) {
-	    GREY8 (result, x, y) = WHITE;
-	    continue;
-	}
-    keep:
-	GREY8 (result, x, y) = GREY8 (image, x, y);
+	    if (randval < 0) {
+	        goto keep;
+	    }
+	    if (randval < half) {
+	        GREY8 (result, x, y) = BLACK;
+	        continue;
+	    }
+            if (randval < threshold) {
+	        GREY8 (result, x, y) = WHITE;
+	        continue;
+	    }
+        keep:
+	    GREY8 (result, x, y) = GREY8 (image, x, y);
+        }
     }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

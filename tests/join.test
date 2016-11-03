@@ -1,16 +1,14 @@
-# -*- tcl -*-
-# -------------------------------------------------------------------------
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
 
-source [file join \
-            [file dirname [file join [pwd] [info script]]] \
-            testutilities.tcl]
+kt check Tcl     8.5
+kt check tcltest 2
 
-testsNeedTcl     8.5
-testsNeedTcltest 2
+kt source support/synth.tcl
 
-support { useLocalFile synth.tcl }
-support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
-testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+kt local support crimp::core
+kt local testing crimp
 
 # -------------------------------------------------------------------------
 ## (pseudo-)Channel manipulation, joining
@@ -32,15 +30,15 @@ test crimp-join-1.1 {image joining, invalid method} -body {
 
 test crimp-join-2.0 {image joining, wrong\#args, grey16, not enough} -body {
     crimp join 2grey16
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey16 msbImageObj lsbImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey16 msb lsb"}
 
 test crimp-join-2.1 {image joining, wrong\#args, grey16, not enough} -body {
     crimp join 2grey16 MSB
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey16 msbImageObj lsbImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey16 msb lsb"}
 
 test crimp-join-2.2 {image joining, wrong\#args, grey16, too many} -body {
     crimp join 2grey16 MSB LSB toomuch
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey16 msbImageObj lsbImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey16 msb lsb"}
 
 test crimp-join-2.3 {image joining, grey16} -body {
     crimp join 2grey16 \
@@ -70,23 +68,23 @@ test crimp-join-2.6 {image joining, grey16, location handling, pass first, ignor
 
 test crimp-join-3.0 {image joining, wrong\#args, grey32, not enough} -body {
     crimp join 2grey32
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsbImageObj lmsbImageObj mlsbImageObj llsbImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsb lmsb mlsb llsb"}
 
 test crimp-join-3.1 {image joining, wrong\#args, grey32, not enough} -body {
     crimp join 2grey32 MMSB
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsbImageObj lmsbImageObj mlsbImageObj llsbImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsb lmsb mlsb llsb"}
 
 test crimp-join-3.2 {image joining, wrong\#args, grey32, not enough} -body {
     crimp join 2grey32 MMSB LMSB
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsbImageObj lmsbImageObj mlsbImageObj llsbImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsb lmsb mlsb llsb"}
 
 test crimp-join-3.3 {image joining, wrong\#args, grey32, not enough} -body {
     crimp join 2grey32 MMSB LMSB MLSB
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsbImageObj lmsbImageObj mlsbImageObj llsbImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsb lmsb mlsb llsb"}
 
 test crimp-join-3.4 {image joining, wrong\#args, grey32, too many} -body {
     crimp join 2grey32 MMSB LMSB MLSB LLSB toomuch
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsbImageObj lmsbImageObj mlsbImageObj llsbImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2grey32 mmsb lmsb mlsb llsb"}
 
 test crimp-join-3.5 {image joining, grey32} -body {
     crimp join 2grey32 \
@@ -124,19 +122,19 @@ test crimp-join-3.8 {image joining, grey32, location handling, pass first, ignor
 
 test crimp-join-4.0 {image joining, wrong\#args, rgb, not enough} -body {
     crimp join 2rgb
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgb redImageObj greenImageObj blueImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgb red green blue"}
 
 test crimp-join-4.1 {image joining, wrong\#args, rgb, not enough} -body {
     crimp join 2rgb R
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgb redImageObj greenImageObj blueImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgb red green blue"}
 
 test crimp-join-4.2 {image joining, wrong\#args, rgb, not enough} -body {
     crimp join 2rgb R G
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgb redImageObj greenImageObj blueImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgb red green blue"}
 
 test crimp-join-4.3 {image joining, wrong\#args, rgb, too many} -body {
     crimp join 2rgb R G B toomuch
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgb redImageObj greenImageObj blueImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgb red green blue"}
 
 test crimp-join-4.4 {image joining, rgb} -body {
     crimp join 2rgb \
@@ -170,23 +168,23 @@ test crimp-join-4.7 {image joining, rgb, location handling, pass first, ignore o
 
 test crimp-join-5.0 {image joining, wrong\#args, rgba, not enough} -body {
     crimp join 2rgba
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba redImageObj greenImageObj blueImageObj alphaImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba red green blue alpha"}
 
 test crimp-join-5.1 {image joining, wrong\#args, rgba, not enough} -body {
     crimp join 2rgba R
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba redImageObj greenImageObj blueImageObj alphaImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba red green blue alpha"}
 
 test crimp-join-5.2 {image joining, wrong\#args, rgba, not enough} -body {
     crimp join 2rgba R G
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba redImageObj greenImageObj blueImageObj alphaImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba red green blue alpha"}
 
 test crimp-join-5.3 {image joining, wrong\#args, rgba, too many} -body {
     crimp join 2rgba R G B
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba redImageObj greenImageObj blueImageObj alphaImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba red green blue alpha"}
 
 test crimp-join-5.4 {image joining, wrong\#args, rgba, too many} -body {
     crimp join 2rgba R G B A toomuch
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba redImageObj greenImageObj blueImageObj alphaImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2rgba red green blue alpha"}
 
 test crimp-join-5.5 {image joining, rgba} -body {
     crimp join 2rgba \
@@ -224,19 +222,19 @@ test crimp-join-5.8 {image joining, rgba, location handling, pass first, ignore 
 
 test crimp-join-6.0 {image joining, wrong\#args, hsv, not enough} -body {
     crimp join 2hsv
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2hsv hueImageObj satImageObj valImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2hsv hue sat val"}
 
 test crimp-join-6.1 {image joining, wrong\#args, hsv, not enough} -body {
     crimp join 2hsv H
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2hsv hueImageObj satImageObj valImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2hsv hue sat val"}
 
 test crimp-join-6.2 {image joining, wrong\#args, hsv, not enough} -body {
     crimp join 2hsv H S
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2hsv hueImageObj satImageObj valImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2hsv hue sat val"}
 
 test crimp-join-6.3 {image joining, wrong\#args, hsv, too many} -body {
     crimp join 2hsv H S V toomuch
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2hsv hueImageObj satImageObj valImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2hsv hue sat val"}
 
 test crimp-join-6.4 {image joining, hsv} -body {
     crimp join 2hsv \
@@ -270,15 +268,15 @@ test crimp-join-6.7 {image joining, hsv, location handling, pass first, ignore o
 
 test crimp-join-7.0 {image joining, wrong\#args, fpcomplex, not enough} -body {
     crimp join 2complex
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2complex realImageObj imaginaryImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2complex real imaginary"}
 
 test crimp-join-7.1 {image joining, wrong\#args, fpcomplex, not enough} -body {
     crimp join 2complex R
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2complex realImageObj imaginaryImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2complex real imaginary"}
 
 test crimp-join-7.3 {image joining, wrong\#args, fpcomplex, too many} -body {
     crimp join 2complex R I toomuch
-} -returnCodes error -result {wrong # args: should be "::crimp::join_2complex realImageObj imaginaryImageObj"}
+} -returnCodes error -result {wrong # args: should be "::crimp::join_2complex real imaginary"}
 
 test crimp-join-7.4 {image joining, fpcomplex} -body {
     crimp join 2complex \
@@ -305,7 +303,7 @@ test crimp-join-7.7 {image joining, fpcomplex, location handling, pass first, ig
 } -result {1 2}
 
 # -------------------------------------------------------------------------
-testsuiteCleanup
+cleanupTests
 
 # Local variables:
 # mode: tcl

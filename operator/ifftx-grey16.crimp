@@ -1,55 +1,53 @@
-ifftx_grey16
-Tcl_Obj* imageObj
+crimp_primitive ifftx_grey16 {
+    image_grey16 image
+} image {
+    crimp_image* result;
+    int          x, y;
+    integer      n;
+    real*        workspace;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y;
-integer      n;
-real*        workspace;
 
-crimp_input (imageObj, image, grey16);
+    result = crimp_new_float_at (crimp_x (image), crimp_y (image),
+			         crimp_w (image), crimp_h (image));
 
-result = crimp_new_float_at (crimp_x (image), crimp_y (image),
-			     crimp_w (image), crimp_h (image));
+    n = crimp_w (image);
+    workspace = CRIMP_ALLOC_ARRAY (2*crimp_w (image)+15, real);
+    rffti_ (&n, workspace);
 
-n = crimp_w (image);
-workspace = CRIMP_ALLOC_ARRAY (2*crimp_w (image)+15, real);
-rffti_ (&n, workspace);
+    for (y = 0; y < crimp_h (image); y++) {
+        /*
+         * Inverse FFT on horizontal scan lines.  We copy each line to the result
+         * and then run the iFFT on it in place.  The copying is done with a loop,
+         * as we have to cast the greyscale values into proper floats.
+         */
 
-for (y = 0; y < crimp_h (image); y++) {
-    /*
-     * Inverse FFT on horizontal scan lines.  We copy each line to the result
-     * and then run the iFFT on it in place.  The copying is done with a loop,
-     * as we have to cast the greyscale values into proper floats.
-     */
+        for (x = 0; x < crimp_w (image); x++) {
+	    FLOATP (result, x, y) = GREY16 (image,  x, y);
+        }
 
-    for (x = 0; x < crimp_w (image); x++) {
-	FLOATP (result, x, y) = GREY16 (image,  x, y);
+        rfftb_ (&n, &FLOATP (result, 0, y), workspace);
+
+        /*
+         * Note that we have to divide the result elements by N. This is because
+         * the FFT routines do not normalize their results.
+         */
+
+        for (x = 0; x < crimp_w (image); x++) {
+	    FLOATP (result, x, y) /= n;
+        }
     }
 
-    rfftb_ (&n, &FLOATP (result, 0, y), workspace);
+    ckfree ((char*) workspace);
 
-    /*
-     * Note that we have to divide the result elements by N. This is because
-     * the FFT routines do not normalize their results.
-     */
+    return result;
 
-    for (x = 0; x < crimp_w (image); x++) {
-	FLOATP (result, x, y) /= n;
-    }
 }
-
-ckfree ((char*) workspace);
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

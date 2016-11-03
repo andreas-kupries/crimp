@@ -1,77 +1,75 @@
-expand_rgba_extend
-Tcl_Obj* imageObj
-int ww
-int hn
-int we
-int hs
+crimp_primitive expand_rgba_extend {
+    image_rgba image
+    int ww
+    int hn
+    int we
+    int hs
+} image {
+    /*
+     * Border expansion by subtracting mirrored pixels from the edge pixel, making
+     * this a combination of mirror and replicate.
+     */
 
-/*
- * Border expansion by subtracting mirrored pixels from the edge pixel, making
- * this a combination of mirror and replicate.
- */
+    /*
+     * This is the simple definition. Might be better to generate macros
+     * specialized to each quadrant. Except, even they have to perform modulo
+     * arithmetic, as the border may be larger than image's width or height,
+     * causing multiple wrapping.
+     *
+     * NOTE: The replicate part can be optimized for the eight outer quadrants.
+     */
 
-crimp_image* image;
-crimp_input (imageObj, image, rgba);
+    #define FILL(xo,yo) {						   \
+	    int xb = xo - ww;					   \
+	    int yb = yo - hn;					   \
+	    int xi = xb;						   \
+	    int yi = yb;						   \
+	    int tr, tg, tb, ta;					   \
+								       \
+	    if      (xb < 0)         { xb = 0;            }		   \
+	    else if (xb >= crimp_w (image)) { xb = (crimp_w (image)-1); }		   \
+								       \
+	    if      (yb < 0)         { yb = 0;            }		   \
+	    else if (yb >= crimp_h (image)) { yb = (crimp_h (image)-1); }		   \
+								       \
+	    while (1) {						   \
+	        if      (xi < 0)         { xi = 0              - xi; } \
+	        else if (xi >= crimp_w (image)) { xi = 2*(crimp_w (image)-1) - xi; } \
+	        else break;						   \
+	    }							   \
+								       \
+	    while (1) {						   \
+	        if      (yi < 0)         { yi = 0              - yi; } \
+	        else if (yi >= crimp_h (image)) { yi = 2*(crimp_h (image)-1) - yi; } \
+	        else break;						   \
+	    }							   \
+								       \
+	    tr = R (image, xi, yi) - R (image, xb, yb);		   \
+	    tg = G (image, xi, yi) - G (image, xb, yb);		   \
+	    tb = B (image, xi, yi) - B (image, xb, yb);		   \
+	    ta = A (image, xi, yi) - A (image, xb, yb);		   \
+								       \
+	    R (result, xo, yo) = CLAMP (0, tr, 255);		   \
+	    G (result, xo, yo) = CLAMP (0, tg, 255);		   \
+	    B (result, xo, yo) = CLAMP (0, tb, 255);		   \
+	    A (result, xo, yo) = CLAMP (0, ta, 255);		   \
+        }
 
-/*
- * This is the simple definition. Might be better to generate macros
- * specialized to each quadrant. Except, even they have to perform modulo
- * arithmetic, as the border may be larger than image's width or height,
- * causing multiple wrapping.
- *
- * NOTE: The replicate part can be optimized for the eight outer quadrants.
- */
+    #define COPY(xo,yo,xi,yi) {			\
+	    R (result, xo, yo) = R (image, xi, yi); \
+	    G (result, xo, yo) = G (image, xi, yi); \
+	    B (result, xo, yo) = B (image, xi, yi); \
+	    A (result, xo, yo) = A (image, xi, yi); \
+        }
 
-#define FILL(xo,yo) {						   \
-	int xb = xo - ww;					   \
-	int yb = yo - hn;					   \
-	int xi = xb;						   \
-	int yi = yb;						   \
-	int tr, tg, tb, ta;					   \
-								   \
-	if      (xb < 0)         { xb = 0;            }		   \
-	else if (xb >= crimp_w (image)) { xb = (crimp_w (image)-1); }		   \
-								   \
-	if      (yb < 0)         { yb = 0;            }		   \
-	else if (yb >= crimp_h (image)) { yb = (crimp_h (image)-1); }		   \
-								   \
-	while (1) {						   \
-	    if      (xi < 0)         { xi = 0              - xi; } \
-	    else if (xi >= crimp_w (image)) { xi = 2*(crimp_w (image)-1) - xi; } \
-	    else break;						   \
-	}							   \
-								   \
-	while (1) {						   \
-	    if      (yi < 0)         { yi = 0              - yi; } \
-	    else if (yi >= crimp_h (image)) { yi = 2*(crimp_h (image)-1) - yi; } \
-	    else break;						   \
-	}							   \
-								   \
-	tr = R (image, xi, yi) - R (image, xb, yb);		   \
-	tg = G (image, xi, yi) - G (image, xb, yb);		   \
-	tb = B (image, xi, yi) - B (image, xb, yb);		   \
-	ta = A (image, xi, yi) - A (image, xb, yb);		   \
-								   \
-	R (result, xo, yo) = CLAMP (0, tr, 255);		   \
-	G (result, xo, yo) = CLAMP (0, tg, 255);		   \
-	B (result, xo, yo) = CLAMP (0, tb, 255);		   \
-	A (result, xo, yo) = CLAMP (0, ta, 255);		   \
-    }
-
-#define COPY(xo,yo,xi,yi) {			\
-	R (result, xo, yo) = R (image, xi, yi); \
-	G (result, xo, yo) = G (image, xi, yi); \
-	B (result, xo, yo) = B (image, xi, yi); \
-	A (result, xo, yo) = A (image, xi, yi); \
-    }
-
-#include <expand_op.c>
+    #include <expand_op.c>
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -1,19 +1,20 @@
-cut_grey32
-Tcl_Obj* imageObj
-int x
-int y
-int w
-int h
-
-#define UNOP(a) (a)
-#include "unop_grey32.c"
-#undef UNOP
+crimp_primitive cut_grey32 {
+    image_grey32 image
+    int x
+    int y
+    int w
+    int h
+} image {
+    #define UNOP(a) (a)
+    #include "unop_grey32.c"
+    #undef UNOP
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

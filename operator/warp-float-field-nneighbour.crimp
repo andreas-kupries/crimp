@@ -1,62 +1,56 @@
-warp_float_field_nneighbour
-Tcl_Obj* imageObj
-Tcl_Obj* xvecObj
-Tcl_Obj* yvecObj
+crimp_primitive warp_float_field_nneighbour {
+    image_float image
+    image_float xvector
+    image_float yvector
+} image {
+    /*
+     * Warp image using the given vector field.
+     */
 
-/*
- * Warp image using the given vector field.
- */
+    crimp_image* result;
+    int x, y;
+    double xf, yf;
 
-crimp_image* image;
-crimp_image* xvector;
-crimp_image* yvector;
-crimp_image* result;
-int x, y;
-double xf, yf;
 
-crimp_input (imageObj, image,   float);
-crimp_input (xvecObj,  xvector, float);
-crimp_input (yvecObj,  yvector, float);
-
-if (!crimp_eq_dim (xvector, yvector)) {
-    Tcl_SetResult(interp, "Unable to warp, expected equally-sized coordinate fields", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-/*
- * Create result and scan through it, sampling the input under the guidance of
- * the coordinate fields.
- */
-
-result = crimp_new_at (image->itype, crimp_x (xvector), crimp_y (xvector), crimp_w (xvector), crimp_h (xvector));
-
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-	int xi, yi, outside;
-
-	xf = FLOATP (xvector, x, y);
-	yf = FLOATP (yvector, x, y);
-
-	xi = xf;
-	yi = yf;
-	if ((xf - xi) >= 0.5) xi++;
-	if ((yf - yi) >= 0.5) yi++;
-
-	outside = (xi < 0) || (xi >= crimp_w (image)) || (yi < 0) || (yi >= crimp_h (image));
-
-	FLOATP (result, x, y) = outside ? BLACK : FLOATP (image, xi, yi);
+    if (!crimp_eq_dim (xvector, yvector)) {
+        Tcl_SetResult(interp, "Unable to warp, expected equally-sized coordinate fields", TCL_STATIC);
+        return NULL;
     }
+
+    /*
+     * Create result and scan through it, sampling the input under the guidance of
+     * the coordinate fields.
+     */
+
+    result = crimp_new_at (image->itype, crimp_x (xvector), crimp_y (xvector), crimp_w (xvector), crimp_h (xvector));
+
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
+	    int xi, yi, outside;
+
+	    xf = FLOATP (xvector, x, y);
+	    yf = FLOATP (yvector, x, y);
+
+	    xi = xf;
+	    yi = yf;
+	    if ((xf - xi) >= 0.5) xi++;
+	    if ((yf - yi) >= 0.5) yi++;
+
+	    outside = (xi < 0) || (xi >= crimp_w (image)) || (yi < 0) || (yi >= crimp_h (image));
+
+	    FLOATP (result, x, y) = outside ? BLACK : FLOATP (image, xi, yi);
+        }
+    }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -1,7 +1,7 @@
 # -*- tcl -*-
 # CRIMP, BMP	Reader for the BMP image file format.
 #
-# (c) 2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
+# (c) 2011-2016 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
 #
 # Redeveloped after reading the TkImg BMP reader/writer implementation.
 # Copyright (c) 1997-2003 Jan Nijtmans    <nijtmans@users.sourceforge.net>
@@ -18,16 +18,6 @@ package require critcl       3
 if {![critcl::compiling]} {
     error "Unable to build CRIMP::BMP, no proper compiler found."
 }
-
-# # ## ### ##### ######## #############
-## Get the local support code. We source it directly because this is
-## only needed for building the package, in any mode, and not during
-## the runtime. Thus not added to the 'tsources'.
-
-critcl::owns support.tcl
-::apply {{here} {
-    source $here/support.tcl
-}} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
 ## Administrivia
@@ -65,18 +55,28 @@ critcl::tsources policy_bmp.tcl
 critcl::api import crimp::core 0.2
 
 # # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+#
+## This is shared between the various packages.
+
+critcl::owns   support.tcl
+critcl::source support.tcl
+
+# # ## ### ##### ######## #############
 ## Main C section.
 
 critcl::ccode {}
 
-critcl::csources format/bmp.c
-critcl::cheaders format/bmp.h
+critcl::csources format/c/bmp.c
+critcl::cheaders format/c/bmp.h
 
 # # ## ### ##### ######## #############
 ## Pull in the BMP-specific pieces. These are fit under the read/write namespaces.
 
-critcl::owns        format/*bmp*.crimp
-crimp_source_cproc {format/*bmp*.crimp}
+critcl::owns format/*bmp*.crimp
+crimp_source format/*bmp*.crimp
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

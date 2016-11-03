@@ -1,16 +1,14 @@
-# -*- tcl -*-
-# -------------------------------------------------------------------------
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
 
-source [file join \
-            [file dirname [file join [pwd] [info script]]] \
-            testutilities.tcl]
+kt check Tcl     8.5
+kt check tcltest 2
 
-testsNeedTcl     8.5
-testsNeedTcltest 2
+kt source support/synth.tcl
 
-support { useLocalFile synth.tcl }
-support { useC [mainPath _test/lib]/crimp_core* crimp::core no }
-testing { useC [mainPath _test/lib]/crimp*      crimp       no }
+kt local support crimp::core
+kt local testing crimp
 
 # -------------------------------------------------------------------------
 ## Processing of summed area tables, aka integral images.
@@ -22,15 +20,15 @@ testing { useC [mainPath _test/lib]/crimp*      crimp       no }
 
 test crimp-regionsum-1.0 {region_sum images, wrong\#args, not enough} -body {
     crimp region_sum
-} -returnCodes error -result {wrong # args: should be "crimp region_sum imageObj radius"}
+} -returnCodes error -result {wrong # args: should be "crimp region_sum image radius"}
 
 test crimp-regionsum-1.1 {region_sum images, wrong\#args, not enough} -body {
     crimp region_sum IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp region_sum imageObj radius"}
+} -returnCodes error -result {wrong # args: should be "crimp region_sum image radius"}
 
 test crimp-regionsum-1.2 {region_sum images, wrong\#args, too many} -body {
     crimp region_sum IMAGE RADIUS toomuch
-} -returnCodes error -result {wrong # args: should be "crimp region_sum imageObj radius"}
+} -returnCodes error -result {wrong # args: should be "crimp region_sum image radius"}
 
 test crimp-regionsum-1.3 {region_sum images, bogus image type} -body {
     crimp region_sum BOGUS 1
@@ -92,7 +90,7 @@ test crimp-regionsum-3.2 {region_sum images, float, large radius} -constraints K
 }]]
 
 # -------------------------------------------------------------------------
-testsuiteCleanup
+cleanupTests
 
 # Local variables:
 # mode: tcl

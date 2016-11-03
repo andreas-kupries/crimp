@@ -1,32 +1,28 @@
 crimp_primitive C::meta_set {
-    Tcl_Obj* imageObj
+    image_obj image
     Tcl_Obj* metaObj
 } object0 {
     /*
      * Create argument type providing both obj and image.
      */
-
-    crimp_image* image;
-    crimp_input_any (imageObj, image);
     
     /*
      * Nothing to do if the assignment doesn't change anything.
      */
     
-    if (metaObj == image->meta) {
-        return imageObj;
+    if (metaObj == image.i->meta) {
+        return image.o;
     }
     
     /*
      * For a non-shared image we can replace in-place, avoiding a memory copy.
      */
     
-    if (!Tcl_IsShared(imageObj)) {
+    if (!Tcl_IsShared(image.o)) {
         Tcl_IncrRefCount (metaObj);
-        Tcl_DecrRefCount (image->meta);
-        image->meta = metaObj;
-    
-	return imageObj;
+        Tcl_DecrRefCount (image.i->meta);
+        image.i->meta = metaObj;
+    	return image.o;
     }
     
     /*
@@ -34,8 +30,8 @@ crimp_primitive C::meta_set {
      * identical.
      */
     
-    return crimp_new_image_obj (crimp_newm (image->itype,
-					    crimp_w(image), crimp_h(image),
+    return crimp_new_image_obj (crimp_newm (image.i->itype,
+					    crimp_w(image.i), crimp_h(image.i),
 					    metaObj));
 }
 

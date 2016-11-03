@@ -1,85 +1,83 @@
-trace_hysteresis
-Tcl_Obj* imageObj
-double lowT
-double highT
+crimp_primitive trace_hysteresis {
+    image_float image
+    double lowT
+    double highT
+} image {
+    /*
+     * Hysteresis-based tracing of magnitude ridges. Only ridges starting higher
+     * than highT are followed, until they sink below lowT, or join another ridge
+     * already traced , whichever comes first.
+     */
 
-/*
- * Hysteresis-based tracing of magnitude ridges. Only ridges starting higher
- * than highT are followed, until they sink below lowT, or join another ridge
- * already traced , whichever comes first.
- */
+    crimp_image* result;
+    int          x, y;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y;
 
-crimp_input (imageObj, image, float);
+    result = crimp_new_grey8_at (crimp_x (image), crimp_y (image),
+			         crimp_w (image), crimp_h (image));
 
-result = crimp_new_grey8_at (crimp_x (image), crimp_y (image),
-			     crimp_w (image), crimp_h (image));
+    /*
+     * Fill with black
+     */
 
-/*
- * Fill with black
- */
-
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-	GREY8(result, x, y) = BLACK;
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
+	    GREY8(result, x, y) = BLACK;
+        }
     }
-}
 
-/*
- * Look for high-threshold ridges, then follow these until they sink below
- * suitability
- */
+    /*
+     * Loimage for high-threshold ridges, then follow these until they sink below
+     * suitability
+     */
 
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-	if (!GREY8 (result, x, y)  && FLOATP(image, x,y) >= highT) {
-	    /*
-	     * Found a good candidate. We now follow neighbours until they are
-	     * insignificant or joining a ridge already traced out.
-	     */
-	    int xi, x0, x2, x1 = x;
-	    int yi, y0, y2, y1 = y;
-	    do {
-	    next:
-		GREY8(result, x1, y1) = WHITE;
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
+	    if (!GREY8 (result, x, y)  && FLOATP(image, x,y) >= highT) {
+	        /*
+	         * Found a good candidate. We now follow neighbours until they are
+	         * insignificant or joining a ridge already traced out.
+	         */
+	        int xi, x0, x2, x1 = x;
+	        int yi, y0, y2, y1 = y;
+	        do {
+	        next:
+		    GREY8(result, x1, y1) = WHITE;
 
-		x0 = (x1 == 0)             ? x1 : x1 - 1;
-		x2 = (x1 == (crimp_w (result)-1)) ? x1 : x1 + 1;
-		y0 = (y1 == 0)             ? y1 : y1 - 1;
-		y2 = (y1 == (crimp_h (result)-1)) ? y1 : y1 + 1;
+		    x0 = (x1 == 0)             ? x1 : x1 - 1;
+		    x2 = (x1 == (crimp_w (result)-1)) ? x1 : x1 + 1;
+		    y0 = (y1 == 0)             ? y1 : y1 - 1;
+		    y2 = (y1 == (crimp_h (result)-1)) ? y1 : y1 + 1;
 
-		for (yi = y0; yi <= y2; yi++) {
-		    for (xi = x0; xi <= x2; xi++) {
-			if ((yi != y1 || xi != x1) &&
-			    !GREY8 (result, xi, yi) &&
-			    FLOATP (image, xi, yi) >= lowT) {
-			    /*
-			     * Tail call the loop with the current sweeper
-			     * location as the new spot to check and follow.
-			     */
-			    x1 = xi;
-			    y1 = yi;
-			    goto next;
-			}
+		    for (yi = y0; yi <= y2; yi++) {
+		        for (xi = x0; xi <= x2; xi++) {
+			    if ((yi != y1 || xi != x1) &&
+			        !GREY8 (result, xi, yi) &&
+			        FLOATP (image, xi, yi) >= lowT) {
+			        /*
+			         * Tail call the loop with the current sweeper
+			         * location as the new spot to check and follow.
+			         */
+			        x1 = xi;
+			        y1 = yi;
+			        goto next;
+			    }
+		        }
 		    }
-		}
-	    } while (0);
-	}
+	        } while (0);
+	    }
+        }
     }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

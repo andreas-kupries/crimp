@@ -1,37 +1,33 @@
-thresholdg_inside
-Tcl_Obj* imageObj
-double min
-double max
+crimp_primitive thresholdg_inside {
+    image_float image
+    double min
+    double max
+} image {
+    crimp_image* result;
+    int          x, y;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y;
+    result = crimp_new_like (image);
 
-crimp_input (imageObj,     image,     float);
+    for (y = 0; y < crimp_h (image); y++) {
+        for (x = 0; x < crimp_w (image); x++) {
 
-result = crimp_new_like (image);
-
-for (y = 0; y < crimp_h (image); y++) {
-    for (x = 0; x < crimp_w (image); x++) {
-
-	FLOATP (result, x, y) = 
-	    (min <= FLOATP (image, x, y)) &&
-	    (FLOATP (image, x, y) <= max)
-	    ? 1.0
-	    : 0.0
-	    ;
+	    FLOATP (result, x, y) = 
+	        (min <= FLOATP (image, x, y)) &&
+	        (FLOATP (image, x, y) <= max)
+	        ? 1.0
+	        : 0.0
+	        ;
+        }
     }
+
+    return result;
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -1,0 +1,36 @@
+# - -- --- ----- -------- -------------
+critcl::csources   c/image_type.c
+critcl::api header c/image_type.h
+
+# - -- --- ----- -------- -------------
+#  API :: Core. Manage a mapping of types to names.
+
+critcl::api function {const crimp_imagetype*} crimp_imagetype_find {
+    {const char*} name
+}
+
+critcl::api function void crimp_imagetype_def {
+    {const crimp_imagetype*} imagetype
+}
+
+# - -- --- ----- -------- -------------
+# API :: Tcl. Manage Tcl_Obj's of image types.
+
+critcl::api function Tcl_Obj* crimp_new_imagetype_obj {
+    {const crimp_imagetype*} imagetype
+}
+
+critcl::api function int crimp_get_imagetype_from_obj {
+    Tcl_Interp*       interp
+    Tcl_Obj*          imagetypeObj
+    crimp_imagetype** imagetype
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

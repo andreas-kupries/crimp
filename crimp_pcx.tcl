@@ -1,7 +1,7 @@
 # -*- tcl -*-
 # CRIMP, PCX	Reader for the PCX image file format.
 #
-# (c) 2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
+# (c) 2011-2016 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
 #
 
 # # ## ### ##### ######## #############
@@ -14,16 +14,6 @@ package require critcl       3
 if {![critcl::compiling]} {
     error "Unable to build CRIMP::PCX, no proper compiler found."
 }
-
-# # ## ### ##### ######## #############
-## Get the local support code. We source it directly because this is
-## only needed for building the package, in any mode, and not during
-## the runtime. Thus not added to the 'tsources'.
-
-critcl::owns support.tcl
-::apply {{here} {
-    source $here/support.tcl
-}} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
 ## Administrivia
@@ -61,18 +51,28 @@ critcl::tsources policy_pcx.tcl
 critcl::api import crimp::core 0.2
 
 # # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+#
+## This is shared between the various packages.
+
+critcl::owns   support.tcl
+critcl::source support.tcl
+
+# # ## ### ##### ######## #############
 ## Main C section.
 
 critcl::ccode {}
 
-critcl::csources format/pcx.c
-critcl::cheaders format/pcx.h
+critcl::csources format/c/pcx.c
+critcl::cheaders format/c/pcx.h
 
 # # ## ### ##### ######## #############
 ## Pull in the PCX-specific pieces. These are fit under the read/write namespaces.
 
-critcl::owns        format/*pcx*.crimp
-crimp_source_cproc {format/*pcx*.crimp}
+critcl::owns format/*pcx*.crimp
+crimp_source format/*pcx*.crimp
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

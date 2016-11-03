@@ -1,92 +1,90 @@
-stats_float
-Tcl_Obj* imageObj
+crimp_primitive stats_float {
+    image_float image
+} object0 {
+    Tcl_Obj* result;
+    Tcl_Obj* cdata;
+    Tcl_Obj* lv [2];
 
-crimp_image* image;
-Tcl_Obj* result;
-Tcl_Obj* cdata;
-Tcl_Obj* lv [2];
+    size_t n;
+    int x, y, w, h;
+    double min, max, var, stddev, mean, middle, sum, sumsq;
+    int maxx, minx, maxy, miny;
 
-size_t n;
-int x, y, w, h;
-double min, max, var, stddev, mean, middle, sum, sumsq;
-int maxx, minx, maxy, miny;
 
-crimp_input (imageObj, image, float);
+    w = crimp_w (image);
+    h = crimp_h (image);
+    n = crimp_image_area (image);
 
-w = crimp_w (image);
-h = crimp_h (image);
-n = crimp_image_area (image);
+    /* 
+     * Scan image
+     */
 
-/* 
- * Scan image
- */
+    sum = sumsq = 0;
+    min = max = FLOATP (image, 0, 0);
+    minx = miny = maxx = maxy = 0;
 
-sum = sumsq = 0;
-min = max = FLOATP (image, 0, 0);
-minx = miny = maxx = maxy = 0;
+    for (y = 0; y < h; y++) {
+        for (x = 0; x < w; x++) {
+	    double val = FLOATP (image, x, y);
 
-for (y = 0; y < h; y++) {
-    for (x = 0; x < w; x++) {
-	double val = FLOATP (image, x, y);
+	    sum   += val;
+	    sumsq += val*val;
 
-	sum   += val;
-	sumsq += val*val;
-
-	if (val < min) {
-	    min = val;
-	    minx = x;
-	    miny = y;
-	}
-	if (val > max) {
-	    max = val;
-	    maxx = x;
-	    maxy = y;
-	}
+	    if (val < min) {
+	        min = val;
+	        minx = x;
+	        miny = y;
+	    }
+	    if (val > max) {
+	        max = val;
+	        maxx = x;
+	        maxy = y;
+	    }
+        }
     }
+
+    mean   = sum / n;
+    middle = (min + max)/2;
+    var    = sumsq/n - mean*mean;
+    stddev = sqrt (var);
+
+    /*
+     * Fill the dictonary.
+     * NOTES:
+     * (1) No histogram, we currently have no efficient way of computing that for floats.
+     * (2) No median either, as this is based on the histogram.
+     *
+     * FUTURE: Some way of sharing the string Tcl_Obj* for the fixed keys.
+     */
+
+    cdata = Tcl_NewDictObj ();
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min",      -1), Tcl_NewDoubleObj (min));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max",      -1), Tcl_NewDoubleObj (max));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("mean",     -1), Tcl_NewDoubleObj (mean));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("middle",   -1), Tcl_NewDoubleObj (middle));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("variance", -1), Tcl_NewDoubleObj (var));
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("stddev",   -1), Tcl_NewDoubleObj (stddev));
+
+    lv[0] = Tcl_NewIntObj (maxx);
+    lv[1] = Tcl_NewIntObj (maxy);
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max@",   -1), Tcl_NewListObj (2, lv));
+
+    lv[0] = Tcl_NewIntObj (minx);
+    lv[1] = Tcl_NewIntObj (miny);
+    Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min@",   -1), Tcl_NewListObj (2, lv));
+
+    result = Tcl_NewDictObj ();
+    Tcl_DictObjPut (NULL, result, Tcl_NewStringObj (image->itype->cname[0],-1), cdata);
+
+    return result;
+
 }
-
-mean   = sum / n;
-middle = (min + max)/2;
-var    = sumsq/n - mean*mean;
-stddev = sqrt (var);
-
-/*
- * Fill the dictonary.
- * NOTES:
- * (1) No histogram, we currently have no efficient way of computing that for floats.
- * (2) No median either, as this is based on the histogram.
- *
- * FUTURE: Some way of sharing the string Tcl_Obj* for the fixed keys.
- */
-
-cdata = Tcl_NewDictObj ();
-Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min",      -1), Tcl_NewDoubleObj (min));
-Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max",      -1), Tcl_NewDoubleObj (max));
-Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("mean",     -1), Tcl_NewDoubleObj (mean));
-Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("middle",   -1), Tcl_NewDoubleObj (middle));
-Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("variance", -1), Tcl_NewDoubleObj (var));
-Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("stddev",   -1), Tcl_NewDoubleObj (stddev));
-
-lv[0] = Tcl_NewIntObj (maxx);
-lv[1] = Tcl_NewIntObj (maxy);
-Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("max@",   -1), Tcl_NewListObj (2, lv));
-
-lv[0] = Tcl_NewIntObj (minx);
-lv[1] = Tcl_NewIntObj (miny);
-Tcl_DictObjPut (NULL, cdata, Tcl_NewStringObj ("min@",   -1), Tcl_NewListObj (2, lv));
-
-result = Tcl_NewDictObj ();
-Tcl_DictObjPut (NULL, result, Tcl_NewStringObj (image->itype->cname[0],-1), cdata);
-
-Tcl_SetObjResult (interp, result);
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

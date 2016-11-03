@@ -1,0 +1,38 @@
+crimp_primitive black_white_vertical {
+} image {
+    /*
+     * Generate a fixed size checker/chess board image.
+     */
+
+    crimp_image* result;
+    int          x, y;
+
+    result = crimp_new_grey8 (256, 256);
+
+    for (y = 0; y < 256; y++) {
+        for (x = 0; x < 256; x++) {
+            if(((x % 32) <  16) &&
+	       ((y % 32) >= 16)) {
+	        GREY8 (result, x, y) = BLACK;
+
+	    } else if (((x % 32) >= 16) &&
+		       ((y % 32) <  16)) {
+	        GREY8 (result, x, y) = BLACK;
+
+	    } else {
+	        GREY8 (result, x, y) = WHITE;
+	    }
+        }
+    }
+
+    return result;
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

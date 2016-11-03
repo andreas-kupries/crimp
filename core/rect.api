@@ -1,0 +1,20 @@
+# - -- --- ----- -------- -------------
+critcl::csources   c/rect.c
+critcl::api header c/rect.h
+
+# - -- --- ----- -------- -------------
+# API :: Core. Basic geometry/bbox/rectangle operation
+critcl::api function void crimp_rect_union {
+    {const crimp_geometry*} a
+    {const crimp_geometry*} b
+    {crimp_geometry*}       result
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -1,50 +1,42 @@
-write::Tk_rgb
-char* photo Tcl_Obj* imageObj
+crimp_primitive write::Tk_rgb {
+    photo     photo
+    image_rgb image
+} ok {
+    Tk_PhotoImageBlock pib;
 
-Tk_PhotoHandle     handle = Tk_FindPhoto(interp, photo);
-Tk_PhotoImageBlock pib;
-crimp_image*       image;
+    /*
+     * Fill the Tk image block to match our structure.
+     */
 
-if (!handle) {
-    Tcl_ResetResult (interp);
-    Tcl_AppendResult(interp, "image \"", photo, "\" doesn't exist", NULL);
-    return TCL_ERROR;
+    pib.pixelPtr  = image->pixel;
+    pib.width     = crimp_w (image);
+    pib.height    = crimp_h (image);
+    pib.pixelSize = 3;
+    pib.pitch     = 3 * pib.width;
+    pib.offset[0] = 0;
+    pib.offset[1] = 1;
+    pib.offset[2] = 2;
+    pib.offset[3] = 0;
+
+    /*
+     * ... and push into the destination tk photo
+     */
+
+    if (Tk_PhotoSetSize (interp, photo, pib.width, pib.height) != TCL_OK ||
+        Tk_PhotoPutBlock(interp, photo, &pib, 0, 0, pib.width, pib.height,
+                         TK_PHOTO_COMPOSITE_SET) != TCL_OK) {
+        return TCL_ERROR;
+    }
+
+    return TCL_OK;
+
 }
-
-crimp_input (imageObj, image, rgb);
-
-/*
- * Fill the Tk image block to match our structure.
- */
-
-pib.pixelPtr  = image->pixel;
-pib.width     = crimp_w (image);
-pib.height    = crimp_h (image);
-pib.pixelSize = 3;
-pib.pitch     = 3 * pib.width;
-pib.offset[0] = 0;
-pib.offset[1] = 1;
-pib.offset[2] = 2;
-pib.offset[3] = 0;
-
-/*
- * ... and push into the destination tk photo
- */
-
-if (Tk_PhotoSetSize (interp, handle, pib.width, pib.height) != TCL_OK ||
-    Tk_PhotoPutBlock(interp, handle, &pib, 0, 0, pib.width, pib.height,
-                     TK_PHOTO_COMPOSITE_SET) != TCL_OK) {
-    return TCL_ERROR;
-}
-
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

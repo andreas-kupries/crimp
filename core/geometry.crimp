@@ -1,0 +1,21 @@
+crimp_primitive geometry {
+    image image
+} object0 {
+    Tcl_Obj* list [4];
+
+    list [0] = Tcl_NewIntObj (crimp_x (image));
+    list [1] = Tcl_NewIntObj (crimp_y (image));
+    list [2] = Tcl_NewIntObj (crimp_w (image));
+    list [3] = Tcl_NewIntObj (crimp_h (image));
+
+    return Tcl_NewListObj (4, list);
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

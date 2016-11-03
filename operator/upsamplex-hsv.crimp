@@ -1,61 +1,58 @@
-upsamplex_hsv
-Tcl_Obj* imageObj
-int      factor
+crimp_primitive upsamplex_hsv {
+    image_obj_hsv image
+    int      factor
+} object0 {
+    /*
+     * The input image is upsampled in the x direction by inserting 'factor-1'
+     * 0-pixels after every pixel of the input. Note that this method of expanding
+     * an image introduces copies of the input to appear at higher frequencies.
+     *
+     * The output image has to be convolved with a low-pass filter after expansion
+     * to avoid such artefacts. The integrated combination of upsampling and such
+     * a filter is called 'interpolation'. This is but one step in the generation
+     * of difference image pyramids.
+     */
 
-/*
- * The input image is upsampled in the x direction by inserting 'factor-1'
- * 0-pixels after every pixel of the input. Note that this method of expanding
- * an image introduces copies of the input to appear at higher frequencies.
- *
- * The output image has to be convolved with a low-pass filter after expansion
- * to avoid such artefacts. The integrated combination of upsampling and such
- * a filter is called 'interpolation'. This is but one step in the generation
- * of difference image pyramids.
- */
+    crimp_image* result;
+    int          xo, y, xi, dx;
 
-crimp_image* image;
-crimp_image* result;
-int          xo, y, xi, dx;
-
-crimp_input (imageObj, image, hsv);
-if (factor < 1) {
-    Tcl_SetResult(interp, "bad sampling factor, expected integer > 0", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-if (factor == 1) {
-    Tcl_SetObjResult(interp, imageObj);
-    return TCL_OK;
-}
-
-result = crimp_new_at (image->itype, crimp_x (image), crimp_y (image), crimp_w (image)*factor, crimp_h (image));
-
-for (y = 0; y < crimp_h (image); y ++) {
-    for (xo = 0, xi = 0; xi < crimp_w (image); xo += factor, xi ++) {
-
-	/* Copy the pixel */
-	H (result, xo, y) = H (image, xi, y);
-	S (result, xo, y) = S (image, xi, y);
-	V (result, xo, y) = V (image, xi, y);
-
-	/* And insert factor black (0) pixels after */
-	for (dx = 1; dx < factor; dx++) {
-	    H (result, xo + dx, y) = BLACK;
-	    S (result, xo + dx, y) = BLACK;
-	    V (result, xo + dx, y) = BLACK;
-	}
+    if (factor < 1) {
+        Tcl_SetResult(interp, "bad sampling factor, expected integer > 0", TCL_STATIC);
+        return NULL;
     }
+
+    if (factor == 1) {
+        return image.o;
+    }
+
+    result = crimp_new_at (image.i->itype, crimp_x (image.i), crimp_y (image.i), crimp_w (image.i)*factor, crimp_h (image.i));
+
+    for (y = 0; y < crimp_h (image.i); y ++) {
+        for (xo = 0, xi = 0; xi < crimp_w (image.i); xo += factor, xi ++) {
+
+	    /* Copy the pixel */
+	    H (result, xo, y) = H (image.i, xi, y);
+	    S (result, xo, y) = S (image.i, xi, y);
+	    V (result, xo, y) = V (image.i, xi, y);
+
+	    /* And insert factor black (0) pixels after */
+	    for (dx = 1; dx < factor; dx++) {
+	        H (result, xo + dx, y) = BLACK;
+	        S (result, xo + dx, y) = BLACK;
+	        V (result, xo + dx, y) = BLACK;
+	    }
+        }
+    }
+
+    return crimp_new_image_obj(result);
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

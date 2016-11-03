@@ -1,37 +1,35 @@
-expand_fpcomplex_const
-Tcl_Obj* imageObj
-int ww
-int hn
-int we
-int hs
-float re
-float im
+crimp_primitive expand_fpcomplex_const {
+    image_fpcomplex image
+    int ww
+    int hn
+    int we
+    int hs
+    float re
+    float im
+} image {
 
+    /*
+     * Border expansion by constant pixel value.
+     */
 
-/*
- * Border expansion by constant pixel value.
- */
+    #define FILL(xo,yo) {		  \
+	    RE (result, xo, yo) = re; \
+	    IM (result, xo, yo) = im; \
+        }
 
-crimp_image* image;
-crimp_input (imageObj, image, fpcomplex);
+    #define COPY(xo,yo,xi,yi) {			\
+	    RE (result, xo, yo) = RE (image, xi, yi); \
+	    IM (result, xo, yo) = IM (image, xi, yi); \
+        }
 
-#define FILL(xo,yo) {		  \
-	RE (result, xo, yo) = re; \
-	IM (result, xo, yo) = im; \
-    }
-
-#define COPY(xo,yo,xi,yi) {			\
-	RE (result, xo, yo) = RE (image, xi, yi); \
-	IM (result, xo, yo) = IM (image, xi, yi); \
-    }
-
-#include <expand_op.c>
+    #include <expand_op.c>
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

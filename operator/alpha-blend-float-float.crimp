@@ -1,0 +1,87 @@
+crimp_primitive alpha_blend_float_float {
+    image_obj_float imageF
+    image_obj_float imageB
+    float alpha
+} object0 {
+    /*
+     * Alpha-based blending of two images, foreground, and background, controlled
+     * by a scalar (and extern) alpha factor.
+     *
+     * alpha is Opacity
+     * 255 <=> Fully opaque      <=> imageF
+     * 0   <=> Fully transparent <=> imageB
+     *
+     * => OUT = F*alpha + B*(1-alpha)
+     */
+
+    crimp_image*     result;
+    int ralpha, px, py, oxf, oyf, oxb, oyb;
+    crimp_geometry bb;
+
+    if (alpha == 255) {
+        return imageF.o;
+    } else if (alpha == 0) {
+        return imageB.o;
+    }
+
+    /*
+     * True alpha mixture.
+     */
+
+    ralpha = 255 - alpha;
+
+    crimp_rect_union (&imageF.i->geo, &imageB.i->geo, &bb);
+
+    result = crimp_new_float_at (bb.x, bb.y, bb.w, bb.h);
+    oxf = crimp_x (imageF.i);
+    oyf = crimp_y (imageF.i);
+    oxb = crimp_x (imageB.i);
+    oyb = crimp_y (imageB.i);
+
+    /*
+     * px, py are physical coordinates in the result, starting from 0.
+     * The associated logical coordinates in the 2D plane are
+     *  lx = px + x(result)
+     *  lx = py + y(result)
+     * And when we are inside an input its physical coordinates, from the logical are
+     *  px = lx - x(input)
+     *  py = ly - y(input)
+     */
+
+    #define MIX(fore,back) ((((fore)*alpha) + ((back)*ralpha))/255)
+
+    for (py = 0; py < bb.h; py++) {
+        for (px = 0; px < bb.w; px++) {
+
+            int lx = px + bb.x;
+            int ly = py + bb.y;
+
+	    int inf = crimp_inside (imageF.i, lx, ly);
+	    int inb = crimp_inside (imageB.i, lx, ly);
+
+	    /*
+	     * The result depends on where we are relative to both input.
+	     * Inside of each input we take the respective value of the
+	     * pixel. Outside of an input we take BLACK as the value
+	     * instead, and TRANSPARENT for the ALPHA.
+	     */
+
+	    float fore = inf ? FLOATP (imageF.i, lx - oxf, ly - oyf) : BLACK;
+	    float back = inb ? FLOATP (imageB.i, lx - oxb, ly - oyb) : BLACK;
+
+	    FLOATP (result, px, py) = MIX (fore, back);
+        }
+    }
+
+    return crimp_new_image_obj(result);
+    #undef MIX
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

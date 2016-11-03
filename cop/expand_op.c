@@ -11,7 +11,7 @@
 
     if ((ww < 0) || (hn < 0) || (we < 0) || (hs < 0)) {
 	Tcl_SetResult(interp, "bad image border size, expected non-negative values", TCL_STATIC);
-	return TCL_ERROR;
+	return NULL;
     }
 
     result = crimp_new_at (image->itype, 
@@ -168,8 +168,7 @@
 	}
     }
 
-    Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-    return TCL_OK;
+    return result;
 
 #undef COPY
 #undef FILL

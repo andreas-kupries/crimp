@@ -1,63 +1,63 @@
-psychedelia
-int width int height int frames
+crimp_primitive psychedelia {
+    int width int height int frames
+} image {
+    static float prev[4][3], next[4][3];
+    static int   frame;
+    static float tweaks[3] = {33, 35, 37};
+    crimp_image* result;
+    int          yi, xi, c;
+    float        t, y, x;
 
-static float prev[4][3], next[4][3];
-static int   frame;
-static float tweaks[3] = {33, 35, 37};
-crimp_image* result;
-int          yi, xi, c;
-float        t, y, x;
+    result = crimp_new_rgba (width, height);
 
-result = crimp_new_rgba (width, height);
-
-if (frame % frames == 0) {
-    int i, c;
-    if (frame == 0) {
+    if (frame % frames == 0) {
+        int i, c;
+        if (frame == 0) {
+            for (i = 0; i < 4; ++i) {
+                for (c = 0; c < 3; ++c) {
+                    next[i][c] = rand() / (float)RAND_MAX;
+                }
+            }
+        }
         for (i = 0; i < 4; ++i) {
             for (c = 0; c < 3; ++c) {
+                prev[i][c] = next[i][c];
                 next[i][c] = rand() / (float)RAND_MAX;
             }
         }
     }
-    for (i = 0; i < 4; ++i) {
-        for (c = 0; c < 3; ++c) {
-            prev[i][c] = next[i][c];
-            next[i][c] = rand() / (float)RAND_MAX;
+
+    t = (cosf((frame % frames) / (float)frames * M_PI) + 1) / 2;
+    for (yi = 0, y = 0; yi < height; ++yi, y += 1. / height) {
+        for (xi = 0, x = 0; xi < width; ++xi, x += 1. / width) {
+            float i, v[3];
+            for (c = 0; c < 3; ++c) {
+                v[c] = cosf(frame / tweaks[c] + (
+                    (prev[0][c] * t + next[0][c] * (1 - t)) * (1 - y) * (1 - x)
+                  + (prev[1][c] * t + next[1][c] * (1 - t)) * (1 - y) * (    x)
+                  + (prev[2][c] * t + next[2][c] * (1 - t)) * (    y) * (1 - x)
+                  + (prev[3][c] * t + next[3][c] * (1 - t)) * (    y) * (    x)
+                ) * 7 * M_PI);
+            }
+            i = (cosf((v[0] + v[1] + v[2] + frame / 17.) * M_PI) + 1) / 2;
+
+	    R (result, xi, yi) = CLAMP(0, v[0] * i * 255, 255);
+	    G (result, xi, yi) = CLAMP(0, v[1] * i * 255, 255);
+	    B (result, xi, yi) = CLAMP(0, v[2] * i * 255, 255);
+	    A (result, xi, yi) = OPAQUE;
         }
     }
+
+    frame ++;
+
+    return result;
 }
-
-t = (cosf((frame % frames) / (float)frames * M_PI) + 1) / 2;
-for (yi = 0, y = 0; yi < height; ++yi, y += 1. / height) {
-    for (xi = 0, x = 0; xi < width; ++xi, x += 1. / width) {
-        float i, v[3];
-        for (c = 0; c < 3; ++c) {
-            v[c] = cosf(frame / tweaks[c] + (
-                (prev[0][c] * t + next[0][c] * (1 - t)) * (1 - y) * (1 - x)
-              + (prev[1][c] * t + next[1][c] * (1 - t)) * (1 - y) * (    x)
-              + (prev[2][c] * t + next[2][c] * (1 - t)) * (    y) * (1 - x)
-              + (prev[3][c] * t + next[3][c] * (1 - t)) * (    y) * (    x)
-            ) * 7 * M_PI);
-        }
-        i = (cosf((v[0] + v[1] + v[2] + frame / 17.) * M_PI) + 1) / 2;
-
-	R (result, xi, yi) = CLAMP(0, v[0] * i * 255, 255);
-	G (result, xi, yi) = CLAMP(0, v[1] * i * 255, 255);
-	B (result, xi, yi) = CLAMP(0, v[2] * i * 255, 255);
-	A (result, xi, yi) = OPAQUE;
-    }
-}
-
-frame ++;
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

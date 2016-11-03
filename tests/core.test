@@ -1,0 +1,851 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt local testing crimp::core
+
+
+#testing {    useC [mainPath _test/lib]/crimp_core* crimp::core no}
+
+proc empty {}     { crimp read tcl grey8 {} }
+proc emeta {dict} { crimp meta create [empty] {*}$dict }
+
+# -------------------------------------------------------------------------
+## Core manipulation: Conversion between images and Tcl data structures.
+## Note: If these do not work all other tests won't either, as they
+## all require some way of creating inputs and inspecting results.
+
+test crimp-core-1.0 {Basic conversion from Tcl and back, integer} -body {
+    set image [crimp read tcl grey8 {{1 2} {3 4}}]
+    crimp write 2string tcl $image
+} -cleanup {
+    unset image
+} -result {{1 2} {3 4}}
+
+test crimp-core-1.1 {Basic conversion from Tcl and back, floating point} -body {
+    set image [crimp read tcl float {{1 2} {3 4}}]
+    crimp write 2string tcl $image
+} -cleanup {
+    unset image
+} -result {{1.0 2.0} {3.0 4.0}}
+
+test crimp-core-1.2 {Basic conversion from Tcl and back, empty image} -body {
+    set image [crimp read tcl grey8 {}]
+    crimp write 2string tcl $image
+} -cleanup {
+    unset image
+} -result {}
+
+test crimp-core-1.3 {Basic conversion from Tcl and back, empty image, single-row} -body {
+    set image [crimp read tcl grey8 {{}}]
+    crimp write 2string tcl $image
+} -cleanup {
+    unset image
+} -result {}
+
+# -------------------------------------------------------------------------
+## Testing the core accessors: Geometry, type and channel information (names)
+
+foreach {accessor result} {
+    geometry   {0 0 2 2}
+    at         {0 0}
+    dimensions {2 2}
+    x          0
+    y          0
+    width      2
+    height     2
+    type       crimp::image::grey8
+    channels   luma
+} {
+    test crimp-core-${accessor}-1.0 "Accessors: $accessor, wrong\#args, not enough" -body {
+        crimp $accessor
+    } -returnCodes error -result "wrong \# args: should be \"crimp $accessor image\""
+
+    test crimp-core-${accessor}-1.1 "Accessors: $accessor, wrong\#args, too many" -body {
+        crimp $accessor IMAGE toomuch
+    } -returnCodes error -result "wrong \# args: should be \"crimp $accessor image\""
+
+    test crimp-core-${accessor}-1.2 "Accessors: $accessor" -setup {
+        set image [crimp read tcl grey8 {{1 2} {3 4}}]
+    } -body {
+        crimp $accessor $image
+    } -cleanup {
+        unset image
+    } -result $result
+}
+
+# -------------------------------------------------------------------------
+## Testing the core accessors: Raw pixels (ByteArray)
+
+test crimp-core-pixel-1.0 "Accessors: pixel, wrong\#args, not enough" -body {
+    crimp pixel
+} -returnCodes error -result "wrong \# args: should be \"crimp pixel image\""
+
+test crimp-core-pixel-1.1 "Accessors: pixel, wrong\#args, too many" -body {
+    crimp pixel IMAGE toomuch
+} -returnCodes error -result "wrong \# args: should be \"crimp pixel image\""
+
+test crimp-core-pixel-1.2 "Accessors: pixel" -setup {
+    set image [crimp read tcl grey8 {{1 2} {3 4}}]
+} -body {
+    list [binary scan [crimp pixel $image] H* image] $image
+} -cleanup {
+    unset image
+} -result {1 01020304}
+
+# -------------------------------------------------------------------------
+## Core image types, i.e. types the core can create ...
+
+## TODO : Create image values bogus in various ways,
+##        check their rejection by the intrep conversion.
+## TODO : Tests for the error conditions (legal range of input values, non-lists).
+
+foreach {n itype channels} {
+    0 grey8     {luma}
+    1 grey16    {luma}
+    2 grey32    {luma}
+    3 float     {value}
+    4 fpcomplex {real imaginary}
+    5 rgb       {red green blue}
+    6 rgba      {red green blue alpha}
+    7 hsv       {hue saturation value}
+} {
+    test crimp-core-type-2.$n {Accessors: type} -setup {
+        set image [crimp read tcl $itype {{1 2} {3 4}}]
+    } -body {
+        crimp type $image
+    } -cleanup {
+        unset image
+    } -result crimp::image::$itype
+
+    test crimp-core-channels-2.$n {Accessors: channel names} -setup {
+        set image [crimp read tcl $itype {{1 2} {3 4}}]
+    } -body {
+        crimp channels $image
+    } -cleanup {
+        unset image
+    } -result $channels
+}
+
+# -------------------------------------------------------------------------
+## Testing the core accessors: Low level access to the image meta data.
+
+test crimp-core-meta-1.0 {Accessor, meta_get, wrong\#args, not enough} -body {
+    crimp::C::meta_get
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_get image"}
+
+test crimp-core-meta-1.1 {Accessor, meta_get, wrong\#args, too many} -body {
+    crimp::C::meta_get IMAGE toomuch
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_get image"}
+
+test crimp-core-meta-1.2 {Accessor, meta_get, default} -setup {
+    set image [empty]
+} -body {
+    crimp::C::meta_get $image
+} -cleanup {
+    unset image
+} -result {}
+
+test crimp-core-meta-2.0 {Accessor, meta_set, wrong\#args, not enough} -body {
+    crimp::C::meta_set
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set image metaObj"}
+
+test crimp-core-meta-2.1 {Accessor, meta_set, wrong\#args, not enough} -body {
+    crimp::C::meta_set IMAGE
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set image metaObj"}
+
+test crimp-core-meta-2.2 {Accessor, meta_set, wrong\#args, too many} -body {
+    crimp::C::meta_set IMAGE VALUE toomuch
+} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set image metaObj"}
+
+test crimp-core-meta-2.3 {Accessor, meta_set + meta_get} -setup {
+    set image [empty]
+} -body {
+    crimp::C::meta_get [crimp::C::meta_set $image META]
+} -cleanup {
+    unset image
+} -result META
+
+# -------------------------------------------------------------------------
+## Testing the core accessors: High level access to the image meta data.
+## Dictionary methods -- Sub set of the tests from the Tcl core, snarfed.
+
+test crimp-meta-1.0 {Accessor: meta command basic syntax} -returnCodes error -body {
+    crimp meta
+} -result {wrong # args: should be "crimp meta cmd image ..."}
+
+test crimp-meta-1.1 {Accessor: meta command basic syntax} -returnCodes error -body {
+    crimp meta CMD
+} -result {wrong # args: should be "crimp meta cmd image ..."}
+
+test crimp-meta-1.2 {Accessor: meta command basic syntax} -returnCodes error -body {
+    crimp meta ? IMAGE
+} -match glob -result {Unknown method "?", expected one of append, create, exists, filter, for, get, incr, info, keys, lappend, merge, remove, replace, set, size, unset, or values}
+
+
+test crimp-meta-2.0 {Accessor: meta create command, wrong#args} -returnCodes error -body {
+    crimp meta create [empty] a
+} -result {wrong # args: should be "dict create ?key value ...?"}
+
+test crimp-meta-2.1 {Accessor: meta create command, wrong#args} -returnCodes error -body {
+    crimp meta create [empty] a b c
+} -result {wrong # args: should be "dict create ?key value ...?"}
+
+test crimp-meta-2.2 {Accessor: meta create command} -body {
+    crimp meta create [empty]
+} -result {crimp::image::grey8 0 0 0 0 {} {}}
+
+test crimp-meta-2.3 {Accessor: meta create command} -body {
+    crimp meta create [empty] a b
+} -result {crimp::image::grey8 0 0 0 0 {a b} {}}
+
+test crimp-meta-3.1 {Accessor: meta get command} {
+    crimp meta get [emeta {a b}] a
+} b
+
+test crimp-meta-3.2 {Accessor: meta get command} {
+    crimp meta get [emeta {a b c d}] a
+} b
+
+test crimp-meta-3.3 {Accessor: meta get command} {
+    crimp meta get [emeta {a b c d}] c
+} d
+
+test crimp-meta-3.4 {Accessor: meta get command} -returnCodes error -body {
+    crimp meta get [emeta {a b c d}] b
+} -result {key "b" not known in dictionary}
+
+test crimp-meta-3.5 {Accessor: meta get command} {
+    crimp meta get [emeta {a b}]
+} {a b}
+
+
+test crimp-meta-4.1 {Accessor: meta replace command} {
+    crimp meta get [crimp meta replace [emeta {a b c d}]]
+} {a b c d}
+
+test crimp-meta-4.2 {Accessor: meta replace command} {
+    crimp meta get [crimp meta replace [emeta {a b c d}] e f]
+} {a b c d e f}
+
+test crimp-meta-4.3 {Accessor: meta replace command} {
+    crimp meta get [crimp meta replace [emeta {a b c d}] c f]
+} {a b c f}
+
+test crimp-meta-4.4 {Accessor: meta replace command} {
+    crimp meta get [crimp meta replace [emeta {a b c d}] c x a y]
+} {a y c x}
+
+
+test crimp-meta-5.1 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}] a]
+} {c d}
+
+test crimp-meta-5.2 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}] c]
+} {a b}
+
+test crimp-meta-5.3 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}] a c]
+} {}
+
+test crimp-meta-5.4 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}] c a]
+} {}
+
+test crimp-meta-5.5 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b c d}]]
+} {a b c d}
+
+test crimp-meta-5.6 {Accessor: meta remove command} {
+    crimp meta get [crimp meta remove [emeta {a b}] c]
+} {a b}
+
+
+test crimp-meta-6.1 {Accessor: meta keys command} {
+    crimp meta keys [emeta {a b}]
+} a
+
+test crimp-meta-6.2 {Accessor: meta keys command} {
+    crimp meta keys [emeta {c d}]
+} c
+
+test crimp-meta-6.3 {Accessor: meta keys command} {
+    lsort [crimp meta keys [emeta {a b c d}]]
+} {a c}
+
+test crimp-meta-6.4 {Accessor: meta keys command} {
+    crimp meta keys [emeta {a b c d}] a
+} a
+
+test crimp-meta-6.5 {Accessor: meta keys command} {
+    crimp meta keys [emeta {a b c d}] c
+} c
+
+test crimp-meta-6.6 {Accessor: meta keys command} {
+    crimp meta keys [emeta {a b c d}] e
+} {}
+
+test crimp-meta-6.7 {Accessor: meta keys command} {
+    lsort [crimp meta keys [emeta {a b c d ca da}] c*]
+} {c ca}
+
+test crimp-meta-6.8 {Accessor: meta keys command} -returnCodes error -body {
+    crimp meta keys [empty] a b
+} -result {wrong # args: should be "dict keys dictionary ?pattern?"}
+
+
+test crimp-meta-7.1 {Accessor: meta values command} {
+    crimp meta values [emeta {a b}]
+} b
+
+test crimp-meta-7.2 {Accessor: meta values command} {
+    crimp meta values [emeta {c d}]
+} d
+
+test crimp-meta-7.3 {Accessor: meta values command} {
+    lsort [crimp meta values [emeta {a b c d}]]
+} {b d}
+
+test crimp-meta-7.4 {Accessor: meta values command} {
+    crimp meta values [emeta {a b c d}] b
+} b
+
+test crimp-meta-7.5 {Accessor: meta values command} {
+    crimp meta values [emeta {a b c d}] d
+} d
+
+test crimp-meta-7.6 {Accessor: meta values command} {
+    crimp meta values [emeta {a b c d}] e
+} {}
+
+test crimp-meta-7.7 {Accessor: meta values command} {
+    lsort [crimp meta values [emeta {a b c d ca da}] d*]
+} {d da}
+
+test crimp-meta-7.8 {Accessor: meta values command} -returnCodes error -body {
+    crimp meta values [empty] a b
+} -result {wrong # args: should be "dict values dictionary ?pattern?"}
+
+
+test crimp-meta-8.1 {Accessor: meta size command} {
+    crimp meta size [empty]
+} 0
+
+test crimp-meta-8.2 {Accessor: meta size command} {
+    crimp meta size [emeta {a b}]
+} 1
+
+test crimp-meta-8.3 {Accessor: meta size command} {
+    crimp meta size [emeta {a b c d}]
+} 2
+
+test crimp-meta-8.4 {Accessor: meta size command} -returnCodes error -body {
+    crimp meta size [empty] x
+} -result {wrong # args: should be "dict size dictionary"}
+
+
+test crimp-meta-9.1 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a b}] a
+} 1
+
+test crimp-meta-9.2 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a b}] b
+} 0
+
+test crimp-meta-9.3 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a {b c}}] a b
+} 1
+
+test crimp-meta-9.4 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a {b c}}] a c
+} 0
+
+test crimp-meta-9.5 {Accessor: meta exists command} {
+    crimp meta exists [emeta {a {b c}}] b c
+} 0
+
+test crimp-meta-9.6 {Accessor: meta exists command} -returnCodes error -body {
+    crimp meta exists [empty]
+} -result {wrong # args: should be "dict exists dictionary key ?key ...?"}
+
+
+test crimp-meta-10.1 {Accessor: meta info command} -body {
+    # Actual string returned by this command is undefined; it is
+    # intended for human consumption and not for use by scripts.
+    crimp meta info [empty]
+} -match glob -result *
+
+test crimp-meta-10.2 {Accessor: meta info command} -returnCodes error -body {
+    dict info
+} -result {wrong # args: should be "dict info dictionary"}
+
+test crimp-meta-10.3 {Accessor: meta info command} -returnCodes error -body {
+    crimp meta info [empty] x
+} -result {wrong # args: should be "dict info dictionary"}
+
+
+test crimp-meta-11.7 {Accessor: meta incr command: unknown values} -body {
+    set image [crimp meta create [empty] a 0 b [expr {1+2}] c [expr {wide(0x80000000)+1}]]
+    crimp meta get [crimp meta incr $image d]
+} -cleanup {
+    unset image
+} -result {a 0 b 3 c 2147483649 d 1}
+
+test crimp-meta-11.8 {Accessor: meta incr command} -body {
+    set image [emeta {a 1}]
+    crimp meta get [crimp meta incr $image a 2]
+} -cleanup {
+    unset image
+} -result {a 3}
+
+test crimp-meta-11.9 {Accessor: meta incr command} -returnCodes error -body {
+    set image [emeta {a dummy}]
+    crimp meta get [crimp meta incr $image a]
+} -cleanup {
+    unset image
+} -result {expected integer but got "dummy"}
+
+
+test crimp-meta-12.1 {Accessor: meta lappend command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta lappend $image a]
+} -cleanup {
+    unset image
+} -result {a a}
+
+test crimp-meta-12.2 {Accessor: meta lappend command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta lappend $image a b]
+} -cleanup {
+    unset image
+} -result {a {a b}}
+
+test crimp-meta-12.3 {Accessor: meta lappend command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta lappend $image a b c]
+} -cleanup {
+    unset image
+} -result {a {a b c}}
+
+
+test crimp-meta-13.1 {Accessor: meta append command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta append $image a]
+} -cleanup {
+    unset image
+} -result {a a}
+
+test crimp-meta-13.2 {Accessor: meta append command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta append $image a b]
+} -cleanup {
+    unset image
+} -result {a ab}
+
+test crimp-meta-13.3 {Accessor: meta append command} -body {
+    set image [emeta {a a}]
+    crimp meta get [crimp meta append $image a b c]
+} -cleanup {
+    unset image
+} -result {a abc}
+
+
+test crimp-meta-14.1 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty]
+} -result {wrong # args: should be "dict for {keyVar valueVar} dictionary script"}
+
+test crimp-meta-14.2 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty] x
+} -result {wrong # args: should be "dict for {keyVar valueVar} dictionary script"}
+
+test crimp-meta-14.3 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty] x x x
+} -result {wrong # args: should be "dict for {keyVar valueVar} dictionary script"}
+
+test crimp-meta-14.4 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty] x x
+} -result {must have exactly two variable names}
+
+test crimp-meta-14.5 {Accessor: meta for command: syntax} -returnCodes error -body {
+    crimp meta for [empty] {x x x} x
+} -result {must have exactly two variable names}
+
+test crimp-meta-14.6 {Accessor: meta for command} -body {
+    # This test confirms that [dict keys], [dict values] and [dict for]
+    # all traverse a dictionary in the same order.
+    set image [emeta {a A b B c C}]
+    set keys {}
+    set values {}
+    crimp meta for $image {k v} {
+	lappend keys $k
+	lappend values $v
+    }
+    set result [expr {
+	$keys eq [crimp meta keys $image] && $values eq [crimp meta values $image]
+    }]
+    expr {$result ? "YES" : [list "NO" $image $keys $values]}
+} -cleanup {
+    unset result keys values k v image
+} -result YES
+
+
+test crimp-meta-15.1 {Accessor: meta set command} -body {
+    crimp meta get [crimp meta set [empty] a x]
+} -result {a x}
+
+test crimp-meta-15.2 {Accessor: meta set command} -body {
+    crimp meta get [crimp meta set [emeta {a {}}] a b x]
+} -result {a {b x}}
+
+test crimp-meta-15.3 {Accessor: meta set command} -body {
+    crimp meta get [crimp meta set [emeta {a {b {}}}] a b c x]
+} -result {a {b {c x}}}
+
+test crimp-meta-15.4 {Accessor: meta set command: syntax} -returnCodes error -body {
+    crimp meta set [empty]
+} -result {wrong # args: should be "dict set varName key ?key ...? value"}
+
+test crimp-meta-15.5 {Accessor: meta set command: syntax} -returnCodes error -body {
+    crimp meta set [empty] a
+} -result {wrong # args: should be "dict set varName key ?key ...? value"}
+
+
+test crimp-meta-16.1 {Accessor: meta unset command} -body {
+    crimp meta get [crimp meta unset [emeta {a b c d}] a]
+} -result {c d}
+
+test crimp-meta-16.2 {Accessor: meta unset command} -body {
+    crimp meta get [crimp meta unset [emeta {a b c d}] c]
+} -result {a b}
+
+test crimp-meta-16.3 {Accessor: meta unset command} -body {
+    crimp meta get [crimp meta unset [emeta {a b}] c]
+} -result {a b}
+
+test crimp-meta-16.4 {Accessor: meta unset command} -returnCodes error -body {
+    crimp meta unset [empty]
+} -result {wrong # args: should be "dict unset varName key ?key ...?"}
+
+
+test crimp-meta-17.1 {Accessor: meta filter command: key} -body {
+    crimp meta filter [emeta {a1 a a2 b b1 c b2 d foo bar bar foo}] key a2
+} -result {a2 b}
+
+test crimp-meta-17.2 {Accessor: meta filter command: key} -body {
+    dict size [crimp meta filter [emeta {a1 a a2 b b1 c b2 d foo bar bar foo}] key *]
+} -result 6
+
+test crimp-meta-17.3 {Accessor: meta filter command: key} -body {
+    crimp meta filter [emeta {a1 a a2 b b1 c b2 d foo bar bar foo}] key ???
+} -result {foo bar bar foo}
+
+
+
+test crimp-meta-20.1 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [empty]]
+} {}
+
+test crimp-meta-20.2 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [emeta {a b c d e f}]]
+} {a b c d e f}
+
+test crimp-meta-20.3 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [emeta {a b c d}] {e f g h}]
+} {a b c d e f g h}
+
+test crimp-meta-20.4 {Accessor: meta merge command} -body {
+    crimp meta get [crimp meta merge [emeta {a b c d}] {e f g h i}]
+} -result {missing value to go with key} -returnCodes error
+
+test crimp-meta-20.5 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [emeta {a b c d e f}] {e x g h}]
+} {a b c d e x g h}
+
+test crimp-meta-20.6 {Accessor: meta merge command} {
+    crimp meta get [crimp meta merge [emeta {a b c d e f}] {a x 1 2 3 4} {a - 1 -}]
+} {a - c d e f 1 - 3 4}
+
+# -------------------------------------------------------------------------
+## Testing the core accessors: Placement.
+
+test crimp-core-place-1.0 "Accessors: place, wrong\#args, not enough" -body {
+    crimp place
+} -returnCodes error -result "wrong \# args: should be \"crimp place image x y\""
+
+test crimp-core-place-1.1 "Accessors: place, wrong\#args, not enough" -body {
+    crimp place IMAGE
+} -returnCodes error -result "wrong \# args: should be \"crimp place image x y\""
+
+test crimp-core-place-1.2 "Accessors: place, wrong\#args, not enough" -body {
+    crimp place IMAGE x
+} -returnCodes error -result "wrong \# args: should be \"crimp place image x y\""
+
+test crimp-core-place-1.3 "Accessors: place, wrong\#args, too many" -body {
+    crimp place IMAGE x y toomuch
+} -returnCodes error -result "wrong \# args: should be \"crimp place image x y\""
+
+test crimp-core-place-1.4 "Accessors: place" -setup {
+    set image [crimp read tcl grey8 {{1 2} {3 4}}]
+} -body {
+    crimp at [crimp place $image -2 5]
+} -cleanup {
+    unset image
+} -result {-2 5}
+
+# -------------------------------------------------------------------------
+
+test crimp-core-bbox2-1.0 {bbox2, wrong#args, not enough} -body {
+    crimp bbox2
+} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+
+test crimp-core-bbox2-1.1 {bbox2, wrong#args, not enough} -body {
+    crimp bbox2 ax
+} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+
+test crimp-core-bbox2-1.2 {bbox2, wrong#args, not enough} -body {
+    crimp bbox2 ax ay
+} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+
+test crimp-core-bbox2-1.3 {bbox2, wrong#args, not enough} -body {
+    crimp bbox2 ax ay aw
+} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+
+test crimp-core-bbox2-1.4 {bbox2, wrong#args, not enough} -body {
+    crimp bbox2 ax ay aw ah
+} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+
+test crimp-core-bbox2-1.5 {bbox2, wrong#args, not enough} -body {
+    crimp bbox2 ax ay aw ah bx
+} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+
+test crimp-core-bbox2-1.6 {bbox2, wrong#args, not enough} -body {
+    crimp bbox2 ax ay aw ah bx by
+} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+
+test crimp-core-bbox2-1.7 {bbox2, wrong#args, not enough} -body {
+    crimp bbox2 ax ay aw ah bx by bw
+} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+
+test crimp-core-bbox2-1.8 {bbox2, wrong#args, too many} -body {
+    crimp bbox2 ax ay aw ah bx by bw bh toomuch
+} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+
+set bboxexamples {
+    0 {0 0 0 0} {0 0 0 0} {0 0 0 0}
+    1 {0 0 0 0} {1 1 0 0} {0 0 1 1}
+    2 {0 0 2 2} {1 1 2 2} {0 0 3 3}
+    3 {0 0 2 2} {1 -1 2 2} {0 -1 3 3}
+    4 {0 0 2 2} {-1 1 2 2} {-1 0 3 3}
+    5 {0 0 5 5} {1 1 3 3} {0 0 5 5}
+    6 {0 0 5 5} {-1 1 3 3} {-1 0 6 5}
+    7 {0 0 5 5} {3 1 3 3} {0 0 6 5}
+    6 {0 0 5 5} {-1 1 7 3} {-1 0 7 5}
+}
+
+foreach {n a b r} $bboxexamples {
+    test crimp-core-bbox2-2.$n {bbox2} -body {
+        crimp bbox2 {*}$a {*}$b
+    } -result $r
+
+    test crimp-core-bbox2-3.$n {bbox2} -body {
+        crimp bbox2 {*}$b {*}$a
+    } -result $r
+}
+
+# -------------------------------------------------------------------------
+
+test crimp-core-bbox-1.0 {bbox, wrong#args, not enough} -body {
+    crimp bbox
+} -returnCodes error -result {wrong # args: should be "crimp bbox head ..."}
+
+test crimp-core-bbox-1.0 {bbox, wrong#args, not enough} -body {
+    crimp bbox
+} -returnCodes error -result {wrong # args: should be "crimp bbox head ..."}
+
+foreach {n a b r} $bboxexamples {
+    lassign $a x y w h
+    set imagea [crimp place \
+                    [crimp read tcl grey8 \
+                         [expr { $w
+                                 ? [lrepeat $h [lrepeat $w 0]]
+                                 : {}
+                             }]] $x $y]
+    
+    lassign $b x y w h
+    set imageb [crimp place \
+                    [crimp read tcl grey8 \
+                         [expr { $w
+                                 ? [lrepeat $h [lrepeat $w 0]]
+                                 : {}
+                             }]] $x $y]
+    unset x y w h
+
+    test crimp-core-bbox-2.$n {bbox} -body {
+        crimp bbox $imagea $imageb
+    } -result $r
+
+    test crimp-core-bbox-3.$n {bbox} -body {
+        crimp bbox $imageb $imagea
+    } -result $r
+
+    unset imagea imageb
+}
+
+# -------------------------------------------------------------------------
+## Writing of various image types to tcl format, all possible types of
+## destinations.
+
+foreach {n itype data result} {
+    0 grey8     {{1 2} {3 4}} {{1 2} {3 4}}
+    1 grey16    {{1 2} {3 4}} {{1 2} {3 4}}
+    2 grey32    {{1 2} {3 4}} {{1 2} {3 4}}
+    3 float     {{1 2} {3 4}} {{1.0 2.0} {3.0 4.0}}
+    4 fpcomplex {{1 2} {3 4}} {{{1.0 0.0} {2.0 0.0}} {{3.0 0.0} {4.0 0.0}}}
+    5 rgb       {{{1 2 3} {4 5 6}} {{7 8} {10 11 12}}} {{{1 2 3} {4 5 6}} {{7 8 0} {10 11 12}}}
+    6 rgba      {{{1 2 3} {4 5 6 7 8}} {{7 8}}} {{{1 2 3 0} {4 5 6 7}} {{7 8 0 0} {0 0 0 0}}}
+    7 hsv       {{{1 2 3} {4 5 6}} {{7 8} {10 11 12}}} {{{1 2 3} {4 5 6}} {{7 8 0} {10 11 12}}}
+
+    10 grey8     {} {}
+    11 grey16    {} {}
+    12 grey32    {} {}
+    13 float     {} {}
+    14 fpcomplex {} {}
+    15 rgb       {} {}
+    16 rgba      {} {}
+    17 hsv       {} {}
+} {
+    test crimp-core-write-${itype}-1.0 "write tcl, $itype 2string" -setup {
+        set image [crimp read tcl $itype $data]
+    } -body {
+        crimp write 2string tcl $image
+    } -cleanup {
+        unset image
+    } -result $result
+
+    test crimp-core-write-${itype}-1.1 "write tcl, $itype 2chan" -setup {
+        set temp [tempPath CHAN]
+        set image [crimp read tcl $itype $data]
+    } -body {
+        set c [open $temp w]
+        crimp write 2chan tcl $c $image
+        close $c
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+        unset image
+    } -result $result
+
+    test crimp-core-write-${itype}-1.2 "write tcl, $itype 2file" -setup {
+        set temp [tempPath CHAN]
+        set image [crimp read tcl $itype $data]
+    } -body {
+        crimp write 2file tcl $temp $image
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+        unset image
+    } -result $result
+}
+
+# Generate various types of empty images, infinitely thin vertically,
+# or horizontally.
+foreach {n itype} {
+    grey8
+    grey16
+    grey32
+    float
+    fpcomplex
+    rgb
+    rgba
+    hsv
+} {
+    test crimp-core-write-${itype}-2.0 "write tcl, $itype 2string, empty" -body {
+        crimp write 2string tcl [list crimp::image::$itype 0 0 0 0 {} {}]
+    } -result {}
+
+    test crimp-core-write-${itype}-3.0 "write tcl, $itype 2string, no rows" -body {
+        crimp write 2string tcl [list crimp::image::$itype 0 0 3 0 {} {}]
+    } -result {}
+
+    test crimp-core-write-${itype}-4.0 "write tcl, $itype 2string, no columns" -body {
+        crimp write 2string tcl [list crimp::image::$itype 0 0 0 3 {} {}]
+    } -result {}
+
+    test crimp-core-write-${itype}-2.1 "write tcl, $itype 2chan, empty" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        set c [open $temp w]
+        crimp write 2chan tcl $c [list crimp::image::$itype 0 0 0 0 {} {}]
+        close $c
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-3.1 "write tcl, $itype 2chan, no rows" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        set c [open $temp w]
+        crimp write 2chan tcl $c [list crimp::image::$itype 0 0 3 0 {} {}]
+        close $c
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-4.1 "write tcl, $itype 2chan, no columns" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        set c [open $temp w]
+        crimp write 2chan tcl $c [list crimp::image::$itype 0 0 0 3 {} {}]
+        close $c
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-2.2 "write tcl, $itype 2file, empty" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        crimp write 2file tcl $temp [list crimp::image::$itype 0 0 0 0 {} {}]
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-3.2 "write tcl, $itype 2file, no rows" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        crimp write 2file tcl $temp [list crimp::image::$itype 0 0 3 0 {} {}]
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+
+    test crimp-core-write-${itype}-4.2 "write tcl, $itype 2file, no columns" -setup {
+        set temp [tempPath CHAN]
+    } -body {
+        crimp write 2file tcl $temp [list crimp::image::$itype 0 0 0 3 {} {}]
+        viewFile $temp
+    } -cleanup {
+        file delete $temp
+    } -result {}
+}
+
+# -------------------------------------------------------------------------
+
+rename emeta {}
+rename empty {}
+unset bboxexamples
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

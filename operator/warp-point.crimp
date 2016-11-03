@@ -1,36 +1,32 @@
-warp_point
-Tcl_Obj* forwardObj
-double x
-double y
+crimp_primitive warp_point {
+    image_float forward
+    double x
+    double y
+} object0 {
+    /*
+     * Warp the 2D-point using the specified transform.
+     */
 
-/*
- * Warp the 2D-point using the specified transform.
- */
+    Tcl_Obj* list [2];
 
-crimp_image* forward;
-Tcl_Obj* list [2];
+    if (!crimp_require_dim (forward, 3, 3)) {
+	Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+	return NULL;
+    }
 
-crimp_input (forwardObj, forward, float);
+    crimp_geo_warp_point (forward, &x, &y);
 
-if (!crimp_require_dim (forward, 3, 3)) {
-    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
-    return TCL_ERROR;
+    list [0] = Tcl_NewDoubleObj (x);
+    list [1] = Tcl_NewDoubleObj (y);
+
+    return Tcl_NewListObj (2, list);
 }
-
-crimp_geo_warp_point (forward, &x, &y);
-
-list [0] = Tcl_NewDoubleObj (x);
-list [1] = Tcl_NewDoubleObj (y);
-
-Tcl_SetObjResult (interp, Tcl_NewListObj (2, list));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

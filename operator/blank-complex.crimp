@@ -1,36 +1,36 @@
-blank_fpcomplex
-int w
-int h
-float re
-float im
+crimp_primitive blank_fpcomplex {
+    int w
+    int h
+    float re
+    float im
+} image {
+    /*
+     * Create a blank complex-valued image (all pixels have the specified re and im values).
+     */
 
-/*
- * Create a blank complex-valued image (all pixels have the specified re and im values).
- */
+    crimp_image*     result;
+    int              x, y;
 
-crimp_image*     result;
-int              x, y;
+    result = crimp_new_fpcomplex (w, h);
 
-result = crimp_new_fpcomplex (w, h);
-
-if (w && h) {
-    for (y = 0; y < h; y++) {
-	for (x = 0; x < w; x++) {
-	    RE (result, x, y) = re;
-	    IM (result, x, y) = im;
-	}
+    if (w && h) {
+        for (y = 0; y < h; y++) {
+	    for (x = 0; x < w; x++) {
+	        RE (result, x, y) = re;
+	        IM (result, x, y) = im;
+	    }
+        }
     }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

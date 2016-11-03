@@ -1,0 +1,65 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt source support/synth.tcl
+
+kt local support crimp::core
+kt local testing crimp
+
+# -------------------------------------------------------------------------
+## Point operation, maximum at each point.
+# -------------------------------------------------------------------------
+
+test crimp-max-1.0 {image max, wrong\#args, not enough} -body {
+    crimp max
+} -returnCodes error -result {wrong # args: should be "crimp max a b"}
+
+test crimp-max-1.1 {image max, wrong\#args, too many} -body {
+    crimp max A B toomuch
+} -returnCodes error -result {wrong # args: should be "crimp max a b"}
+
+# -------------------------------------------------------------------------
+# MAX (arity 2, commutative)
+# Supported combinations (commutations not mentioned):
+#          | grey8 grey16 grey32 rgb rgba hsv float fpcomplex
+# ---------+--------------------------------------------------
+# grey8    | *
+# grey16   |
+# grey32   |
+# rgb      | *                   *
+# rgba     | *                   *   *
+# hsv      |
+# float    | *     *      *                    *
+# fpcomplex|
+# ---------+--------------------------------------------------
+#
+#  *--**-*-
+#  ------*-
+#  ------*-
+#  *--**---
+#  *--**---
+#  --------
+#  ***---*-
+#  --------
+#
+# fpcomplex, hsv - Not supported at all
+# grey8 works with most of the types.
+
+test crimp-max-2.0 {image max, grey8, self} -body {
+    crimp max [grey8] [grey8]
+} -result [grey8]
+
+# -------------------------------------------------------------------------
+## Handling of input location and geometry: Union of inputs.
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

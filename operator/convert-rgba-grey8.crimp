@@ -1,43 +1,41 @@
-convert_2grey8_rgba
-Tcl_Obj* imageObj
+crimp_primitive convert_2grey8_rgba {
+    image_rgba image
+} image {
+    crimp_image* result;
+    int          x, y;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y;
 
-crimp_input (imageObj, image, rgba);
+    result = crimp_new_grey8_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
 
-result = crimp_new_grey8_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
+    for (y = 0; y < crimp_h (image); y++) {
+        for (x = 0; x < crimp_w (image); x++) {
 
-for (y = 0; y < crimp_h (image); y++) {
-    for (x = 0; x < crimp_w (image); x++) {
+	    /*
+	     * This conversion to a grey scale is based on the ITU-R 601-2 luma
+	     * transform computing the "luminosity" of each pixel.
+	     *
+	     * Note: The factors for R, G, and B add up to 1000, which means that
+	     * after the scaling division the result is in the range 0..255
+	     * without requiring clamping.
+	     */
 
-	/*
-	 * This conversion to a grey scale is based on the ITU-R 601-2 luma
-	 * transform computing the "luminosity" of each pixel.
-	 *
-	 * Note: The factors for R, G, and B add up to 1000, which means that
-	 * after the scaling division the result is in the range 0..255
-	 * without requiring clamping.
-	 */
+	    GREY8 (result, x, y) = 
+	      (299 * R (image, x, y) +
+	       587 * G (image, x, y) +
+	       114 * B (image, x, y))/1000;
 
-	GREY8 (result, x, y) = 
-	  (299 * R (image, x, y) +
-	   587 * G (image, x, y) +
-	   114 * B (image, x, y))/1000;
-
+        }
     }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

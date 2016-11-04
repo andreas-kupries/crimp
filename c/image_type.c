@@ -39,6 +39,13 @@ static Tcl_ObjType ImageTypeType = {
     ImageTypeFromAny
 };
 
+static const char* rgba_cname      [] = {"red", "green", "blue", "alpha"};
+static const char* hsv_cname       [] = {"hue", "saturation", "value"};
+static const char* grey_cname      [] = {"luma"};
+static const char* bw_cname        [] = {"bw"};
+static const char* fp_cname        [] = {"value"};
+static const char* fpcomplex_cname [] = {"real", "imaginary"};
+
 
 /*
  * Definitions :: Initialization
@@ -51,31 +58,24 @@ crimp_imagetype_init (void)
      * Standard image types.
      */
 
-    static const char*     rgba_cname [] = {"red", "green", "blue", "alpha"};
-    static crimp_imagetype rgba = { "crimp::image::rgba", 4, 4, &rgba_cname };
+#define F sizeof(float)
+#define D sizeof(double)
+#define C (2*F)
 
-    static const char*     rgb_cname [] =  {"red", "green", "blue"};
-    static crimp_imagetype rgb = { "crimp::image::rgb", 3, 3, &rgb_cname };
+    static crimp_imagetype rgba      = {"crimp::image::rgba",      4, 4, rgba_cname };
+    static crimp_imagetype rgb       = {"crimp::image::rgb",       3, 3, rgba_cname };
+    static crimp_imagetype hsv       = {"crimp::image::hsv",       3, 3, hsv_cname };
+    static crimp_imagetype grey8     = {"crimp::image::grey8",     1, 1, grey_cname };
+    static crimp_imagetype grey16    = {"crimp::image::grey16",    2, 1, grey_cname };
+    static crimp_imagetype grey32    = {"crimp::image::grey32",    4, 1, grey_cname };
+    static crimp_imagetype bw        = {"crimp::image::bw",        1, 1, bw_cname };
+    static crimp_imagetype fp        = {"crimp::image::float",     F, 1, fp_cname };
+    static crimp_imagetype dp        = {"crimp::image::double",    D, 1, fp_cname };
+    static crimp_imagetype fpcomplex = {"crimp::image::fpcomplex", C, 2, fpcomplex_cname };
 
-    static const char*     hsv_cname [] = {"hue", "saturation", "value"};
-    static crimp_imagetype hsv = { "crimp::image::hsv", 3, 3, &hsv_cname };
-
-    static const char*     grey_cname [] = {"luma"};
-    static crimp_imagetype grey8  = { "crimp::image::grey8",  1, 1, &grey_cname };
-    static crimp_imagetype grey16 = { "crimp::image::grey16", 2, 1, &grey_cname };
-    static crimp_imagetype grey32 = { "crimp::image::grey32", 4, 1, &grey_cname };
-
-    static const char*     bw_cname [] = {"bw"};
-    static crimp_imagetype bw = { "crimp::image::bw", 1, 1, &bw_cname };
-
-    static const char*     fp_cname [] = {"value"};
-    static crimp_imagetype fp = { "crimp::image::float", sizeof(float), 1, &fp_cname };
-
-    static const char*     dp_cname [] = {"value"};
-    static crimp_imagetype dp = { "crimp::image::double", sizeof(double), 1, &dp_cname };
-
-    static const char*     fpcomplex_cname [] = {"real", "imaginary"};
-    static crimp_imagetype fpcomplex = { "crimp::image::fpcomplex", 2*sizeof(float), 2, &fpcomplex_cname };
+#undef D
+#undef F
+#undef C
 
     static initialized = 0;
 

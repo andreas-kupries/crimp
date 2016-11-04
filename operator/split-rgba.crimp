@@ -1,55 +1,52 @@
-split_rgba
-Tcl_Obj* imageObj
+crimp_primitive split_rgba {
+    image_rgba image
+} object0 {
+    Tcl_Obj*         list[4];
+    const crimp_imagetype* grey = crimp_imagetype_find ("crimp::image::grey8");
+    crimp_image*     red;
+    crimp_image*     green;
+    crimp_image*     blue;
+    crimp_image*     alpha;
+    int              x, y;
 
-Tcl_Obj*         list[4];
-const crimp_imagetype* grey = crimp_imagetype_find ("crimp::image::grey8");
-crimp_image*     image;
-crimp_image*     red;
-crimp_image*     green;
-crimp_image*     blue;
-crimp_image*     alpha;
-int              x, y;
 
-crimp_input (imageObj, image, rgba);
+    red   = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			        crimp_w (image), crimp_h (image));
+    green = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			        crimp_w (image), crimp_h (image));
+    blue  = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			        crimp_w (image), crimp_h (image));
+    alpha = crimp_new_at (grey, crimp_x (image), crimp_y (image),
+			        crimp_w (image), crimp_h (image));
 
-red   = crimp_new_at (grey, crimp_x (image), crimp_y (image),
-			    crimp_w (image), crimp_h (image));
-green = crimp_new_at (grey, crimp_x (image), crimp_y (image),
-			    crimp_w (image), crimp_h (image));
-blue  = crimp_new_at (grey, crimp_x (image), crimp_y (image),
-			    crimp_w (image), crimp_h (image));
-alpha = crimp_new_at (grey, crimp_x (image), crimp_y (image),
-			    crimp_w (image), crimp_h (image));
+    for (y = 0; y < crimp_h (image); y++) {
+        for (x = 0; x < crimp_w (image); x++) {
 
-for (y = 0; y < crimp_h (image); y++) {
-    for (x = 0; x < crimp_w (image); x++) {
+	    /*
+	     * Placing the pixels of each color channel (and alpha) into
+	     * their own images.
+	     */
 
-	/*
-	 * Placing the pixels of each color channel (and alpha) into
-	 * their own images.
-	 */
-
-	GREY8 (red,   x, y) = R (image, x, y);
-	GREY8 (green, x, y) = G (image, x, y);
-	GREY8 (blue,  x, y) = B (image, x, y);
-	GREY8 (alpha, x, y) = A (image, x, y);
+	    GREY8 (red,   x, y) = R (image, x, y);
+	    GREY8 (green, x, y) = G (image, x, y);
+	    GREY8 (blue,  x, y) = B (image, x, y);
+	    GREY8 (alpha, x, y) = A (image, x, y);
+        }
     }
+
+    list [0] = crimp_new_image_obj (red);
+    list [1] = crimp_new_image_obj (green);
+    list [2] = crimp_new_image_obj (blue);
+    list [3] = crimp_new_image_obj (alpha);
+
+    return Tcl_NewListObj (4, list);
 }
-
-list [0] = crimp_new_image_obj (red);
-list [1] = crimp_new_image_obj (green);
-list [2] = crimp_new_image_obj (blue);
-list [3] = crimp_new_image_obj (alpha);
-
-Tcl_SetObjResult(interp, Tcl_NewListObj (4, list));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

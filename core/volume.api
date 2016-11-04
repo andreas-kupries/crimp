@@ -1,0 +1,57 @@
+# - -- --- ----- -------- -------------
+critcl::csources   c/volume.c
+critcl::api header c/volume.h
+
+# - -- --- ----- -------- -------------
+# API :: Core. Volume lifecycle management.
+
+critcl::api function crimp_volume* crimp_vnew_at {
+    {const crimp_imagetype*} type
+    int x
+    int y
+    int z
+    int w
+    int h
+    int d
+}
+
+critcl::api function crimp_volume* crimp_vnewm_at {
+    {const crimp_imagetype*} type
+    int x
+    int y
+    int z
+    int w
+    int h
+    int d
+    Tcl_Obj* meta
+}
+
+critcl::api function crimp_volume* crimp_vdup {
+    crimp_volume* volume
+}
+
+critcl::api function void crimp_vdel {
+    crimp_volume* volume
+}
+
+# - -- --- ----- -------- -------------
+#  API :: Tcl. Manage Tcl_Obj's of volumes
+
+critcl::api function Tcl_Obj* crimp_new_volume_obj {
+    crimp_volume* volume
+}
+
+critcl::api function int crimp_get_volume_from_obj {
+    Tcl_Interp*    interp
+    Tcl_Obj*       volumeObj
+    crimp_volume** volume
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

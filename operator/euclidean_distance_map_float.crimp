@@ -1,41 +1,36 @@
-euclidean_distance_map_float
-Tcl_Obj* imageObj
+crimp_primitive euclidean_distance_map_float {
+    image_float image
+} image {
+    /*
+     * Given an indicator function (very large value in background areas,
+     * zero in foreground areas), computes the Euclidean distance from each
+     * background pixel to a foreground pixel.
+     *
+     * Copyright (c) 2011 by Kevin B. Kenny.
+     *
+     * See the file "license.terms" for information on usage and redistribution of
+     * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+     */
 
-/*
- * Given an indicator function (very large value in background areas,
- * zero in foreground areas), computes the Euclidean distance from each
- * background pixel to a foreground pixel.
- *
- * Copyright (c) 2011 by Kevin B. Kenny.
- *
- * See the file "license.terms" for information on usage and redistribution of
- * this file, and for a DISCLAIMER OF ALL WARRANTIES.
- */
+    crimp_image* result;		/* Resulting label image */
 
-crimp_image* image;		/* Image to segment */
-crimp_image* result;		/* Resulting label image */
+    /* Make the distance map */
 
-/* Process input */
+    result = crimp_new_float_at (crimp_x (image), crimp_y (image),
+			         crimp_w (image), crimp_h (image));
+    EuclideanDistanceMap2D(crimp_h (image), crimp_w (image), (float*) image->pixel,
+		           (float*)result->pixel);
 
-crimp_input(imageObj, image, float);
+    /* Return segmented image to caller */
 
-/* Make the distance map */
-
-result = crimp_new_float_at (crimp_x (image), crimp_y (image),
-			     crimp_w (image), crimp_h (image));
-EuclideanDistanceMap2D(crimp_h (image), crimp_w (image), (float*) image->pixel,
-		       (float*)result->pixel);
-
-/* Return segmented image to caller */
-
-Tcl_SetObjResult(interp, crimp_new_image_obj(result));
-return TCL_OK;
+    return result;
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -1,36 +1,32 @@
-write::Str_tcl_double
-Tcl_Obj* imageObj
+crimp_primitive write::Str_tcl_double {
+    image_double image
+} object0 {
+    Tcl_Obj*           res;
+    Tcl_Obj*           line;
+    int x, y;
 
-Tcl_Obj*           res;
-Tcl_Obj*           line;
-crimp_image*       image;
-int x, y;
+    res = Tcl_NewListObj (0, NULL);
 
-crimp_input (imageObj, image, double);
+    if (crimp_h(image) && crimp_w(image)) {
+        for (y = 0; y < crimp_h(image); y++) {
+	    line = Tcl_NewListObj (0, NULL);
 
-res = Tcl_NewListObj (0, NULL);
-
-if (crimp_h(image) && crimp_w(image)) {
-    for (y = 0; y < crimp_h(image); y++) {
-	line = Tcl_NewListObj (0, NULL);
-
-	for (x = 0; x < crimp_w(image); x++) {
-	    Tcl_ListObjAppendElement (interp, line,
-				      Tcl_NewDoubleObj (DOUBLEP (image, x, y)));
-	}
-	Tcl_ListObjAppendElement (interp, res, line);
+	    for (x = 0; x < crimp_w(image); x++) {
+	        Tcl_ListObjAppendElement (interp, line,
+				          Tcl_NewDoubleObj (DOUBLEP (image, x, y)));
+	    }
+	    Tcl_ListObjAppendElement (interp, res, line);
+        }
     }
+
+    return res;
 }
-
-Tcl_SetObjResult(interp, res);
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -1,65 +1,59 @@
-color_combine
-Tcl_Obj* imageObj
-Tcl_Obj* combineMatrixObj
+crimp_primitive color_combine {
+    image       image
+    image_float combine
+} image {
+    /*
+     * Taking a color image in either RGB(A) and HSV it combines the color channels
+     * by feeding the channels of each pixel through the specified vector. One
+     * application of this is conversion to grey scale in various ways.
+     */
 
-/*
- * Taking a color image in either RGB(A) and HSV it combines the color channels
- * by feeding the channels of each pixel through the specified vector. One
- * application of this is conversion to grey scale in various ways.
- */
+    crimp_image* result;
+    int x, y;
+    double wr, wg, wb;
 
-crimp_image* image;
-crimp_image* combine;
-crimp_image* result;
-int x, y;
-double wr, wg, wb;
+    /*
+     * Ensure that the input is of type RGB(A) or HSV
+     */
 
-/*
- * Ensure that the input is of type RGB(A) or HSV
- */
+    CRIMP_ASSERT_NOTIMGTYPE (image, float);
+    CRIMP_ASSERT_NOTIMGTYPE (image, grey8);
+    CRIMP_ASSERT_NOTIMGTYPE (image, grey16);
+    CRIMP_ASSERT_NOTIMGTYPE (image, grey32);
 
-crimp_input_any (imageObj, image);
-CRIMP_ASSERT_NOTIMGTYPE (image, float);
-CRIMP_ASSERT_NOTIMGTYPE (image, grey8);
-CRIMP_ASSERT_NOTIMGTYPE (image, grey16);
-CRIMP_ASSERT_NOTIMGTYPE (image, grey32);
-
-crimp_input (combineMatrixObj, combine, float);
-
-if (!crimp_require_dim (combine, 3, 1)) {
-    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x1", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-wr = FLOATP (combine, 0, 0);
-wg = FLOATP (combine, 1, 0);
-wb = FLOATP (combine, 2, 0);
-
-result = crimp_new_grey8_at (crimp_x (image), crimp_y (image),
-			     crimp_w (image), crimp_h (image));
-
-for (y = 0; y < crimp_h (result); y++) {
-    for (x = 0; x < crimp_w (result); x++) {
-
-	double r = CH (image, 0, x, y);
-	double g = CH (image, 1, x, y);
-	double b = CH (image, 2, x, y);
-
-	double c = r*wr + g*wg + b*wb;
-
-	GREY8 (result, x, y) = CLAMP (0, (int) c, 255);
+    if (!crimp_require_dim (combine, 3, 1)) {
+        Tcl_SetResult(interp, "bad matrix dimensions, expected 3x1", TCL_STATIC);
+        return NULL;
     }
+
+    wr = FLOATP (combine, 0, 0);
+    wg = FLOATP (combine, 1, 0);
+    wb = FLOATP (combine, 2, 0);
+
+    result = crimp_new_grey8_at (crimp_x (image), crimp_y (image),
+			         crimp_w (image), crimp_h (image));
+
+    for (y = 0; y < crimp_h (result); y++) {
+        for (x = 0; x < crimp_w (result); x++) {
+
+	    double r = CH (image, 0, x, y);
+	    double g = CH (image, 1, x, y);
+	    double b = CH (image, 2, x, y);
+
+	    double c = r*wr + g*wg + b*wb;
+
+	    GREY8 (result, x, y) = CLAMP (0, (int) c, 255);
+        }
+    }
+
+    return result;
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

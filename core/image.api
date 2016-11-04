@@ -1,0 +1,53 @@
+# - -- --- ----- -------- -------------
+critcl::csources   c/image.c
+critcl::api header c/image.h
+
+# - -- --- ----- -------- -------------
+# API :: Core. Image lifecycle management.
+
+critcl::api function crimp_image* crimp_new_at {
+    {const crimp_imagetype*} type
+    int x
+    int y
+    int w
+    int h
+}
+
+critcl::api function crimp_image* crimp_newm_at {
+    {const crimp_imagetype*} type
+    int x
+    int y
+    int w
+    int h
+    Tcl_Obj* meta
+}
+
+critcl::api function crimp_image* crimp_dup  {
+    crimp_image* image
+}
+
+critcl::api function void crimp_del {
+    crimp_image* image
+}
+
+# - -- --- ----- -------- -------------
+#  API :: Tcl. Manage Tcl_Obj's of images.
+
+critcl::api function Tcl_Obj* crimp_new_image_obj {
+    crimp_image* image
+}
+
+critcl::api function int crimp_get_image_from_obj {
+    Tcl_Interp*   interp
+    Tcl_Obj*      imageObj
+    crimp_image** image
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

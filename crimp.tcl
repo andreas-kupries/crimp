@@ -2,7 +2,7 @@
 # CRIMP == C Runtime Image Manipulation Package
 #
 # (c) 2010      Andrew M. Goth  http://wiki.tcl.tk/andy%20goth
-# (c) 2010-2011 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
+# (c) 2010-2016 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
 #
 
 # # ## ### ##### ######## #############
@@ -18,16 +18,6 @@ critcl::buildrequirement {
 if {![critcl::compiling]} {
     error "Unable to build CRIMP, no proper compiler found."
 }
-
-# # ## ### ##### ######## #############
-## Get the local support code. We source it directly because this is
-## only needed for building the package, in any mode, and not during
-## the runtime. Thus not added to the 'tsources'.
-
-critcl::owns support.tcl
-::apply {{here} {
-    source $here/support.tcl
-}} [file dirname [file normalize [info script]]]
 
 # # ## ### ##### ######## #############
 ## Administrivia
@@ -48,9 +38,11 @@ critcl::description {
     the various other crimp packages, like "crimp::ppm", etc.
 }
 
-# subjects ... Try to find a way of getting these from the .crimp
+# Subjects ... Try to find a way of getting these from the .crimp
 # files, put the burden of maintaining the information local to the
 # algorithms.
+#
+# XXX: Make this part of the "crimp_primitive" command ?!
 
 # # ## ### ##### ######## #############
 ## Implementation.
@@ -133,6 +125,16 @@ critcl::tsources policy.tcl
 critcl::api import crimp::core 0.2
 
 # # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+#
+## This is shared between the various packages.
+
+critcl::owns   support.tcl
+critcl::source support.tcl
+
+# # ## ### ##### ######## #############
 ## Main C section.
 
 critcl::ccode {
@@ -190,8 +192,8 @@ if {[critcl::util::checkfun lrint]} {
 ## Pull in the processing primitives.
 ## We ignore the Tk dependent pieces.
 
-critcl::owns        operator/*.crimp
-crimp_source_cproc {operator/*.crimp}
+critcl::owns operator/*.crimp
+crimp_source operator/*.crimp
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

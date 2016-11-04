@@ -1,11 +1,8 @@
 /* x, y, w, h - Parameters of the output image. Provided by caller */
 
 crimp_image*     result;
-crimp_image*     image;
 
 int px, py, lx, ly, ox, oy, pxi, pyi;
-
-crimp_input (imageObj, image, double);
 
 /*
  * Get the area of the input image to process.

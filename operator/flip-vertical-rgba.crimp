@@ -1,34 +1,32 @@
-flip_vertical_rgba
-Tcl_Obj* imageObj
+crimp_primitive flip_vertical_rgba {
+    image_rgba image
+} image {
+    crimp_image* result;
+    int          x, y;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y;
 
-crimp_input (imageObj, image, rgba);
+    result = crimp_new_like (image);
 
-result = crimp_new_like (image);
+    for (y = 0; y < crimp_h (image); y++) {
+        for (x = 0; x < crimp_w (image); x++) {
 
-for (y = 0; y < crimp_h (image); y++) {
-    for (x = 0; x < crimp_w (image); x++) {
+	    R (result, x, y) = R (image, x, crimp_h (image) - y - 1);
+	    G (result, x, y) = G (image, x, crimp_h (image) - y - 1);
+	    B (result, x, y) = B (image, x, crimp_h (image) - y - 1);
+	    A (result, x, y) = A (image, x, crimp_h (image) - y - 1);
 
-	R (result, x, y) = R (image, x, crimp_h (image) - y - 1);
-	G (result, x, y) = G (image, x, crimp_h (image) - y - 1);
-	B (result, x, y) = B (image, x, crimp_h (image) - y - 1);
-	A (result, x, y) = A (image, x, crimp_h (image) - y - 1);
-
+        }
     }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

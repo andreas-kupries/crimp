@@ -1,23 +1,24 @@
-add_double_grey16
-Tcl_Obj* imageAObj
-Tcl_Obj* imageBObj
-int scale
-int offset
+crimp_primitive add_double_grey16 {
+    image_double imageA
+    image_grey16 imageB
+    int scale
+    int offset
+} image {
+    /*
+     * Pixel- and channel-wise scaled and biased addition of two images. The
+     * images have to have equal dimensions.
+     */
 
-/*
- * Pixel- and channel-wise scaled and biased addition of two images. The
- * images have to have equal dimensions.
- */
-
-#define BINOP(a,b) ((((a) + (b)) / scale) + offset)
-#include "binop_double_grey16_double.c"
-#undef BINOP
+    #define BINOP(a,b) ((((a) + (b)) / scale) + offset)
+    #include "binop_double_grey16_double.c"
+    #undef BINOP
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

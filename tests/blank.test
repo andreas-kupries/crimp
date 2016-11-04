@@ -1,0 +1,622 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt source support/synth.tcl
+
+kt local support crimp::core
+kt local testing crimp
+
+# -------------------------------------------------------------------------
+## Create various types of blank images.
+##
+## XXX NOTE XXX This may be something for crimp::core instead of crimp.
+# -------------------------------------------------------------------------
+
+test crimp-blank-1.0 {Blank images, wrong\#args, not enough} -body {
+    crimp blank
+} -returnCodes error -result {wrong # args: should be "crimp blank type w h ..."}
+
+test crimp-blank-1.1 {Blank images, wrong\#args, not enough} -body {
+    crimp blank TYPE
+} -returnCodes error -result {wrong # args: should be "crimp blank type w h ..."}
+
+test crimp-blank-1.2 {Blank images, wrong\#args, not enough} -body {
+    crimp blank TYPE W
+} -returnCodes error -result {wrong # args: should be "crimp blank type w h ..."}
+
+test crimp-blank-1.3 {Blank images, bogus image type} -body {
+    crimp blank BOGUS W H
+} -returnCodes error -result {Unable to create blank images of type "BOGUS"}
+
+# -------------------------------------------------------------------------
+
+test crimp-blank-2.0 {Blank images, grey8, wrong\#args, not enough} -body {
+    crimp blank grey8 W H
+} -returnCodes error -result {wrong # args: should be "blank_grey8 w h value"}
+
+test crimp-blank-2.1 {Blank images, grey8, wrong\#args, too many} -body {
+    crimp blank grey8 W H VALUE toomuch
+} -returnCodes error -result {wrong # args: should be "blank_grey8 w h value"}
+
+test crimp-blank-2.2 {Blank images, grey8, bogus dimensions} -body {
+    crimp blank grey8 W H VALUE
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-blank-2.3 {Blank images, grey8, bogus dimensions} -body {
+    crimp blank grey8 3 H VALUE
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-2.4 {Blank images, grey8, bogus pixel value} -body {
+    crimp blank grey8 3 4 VALUE
+} -returnCodes error -result {expected integer but got "VALUE"}
+
+test crimp-blank-2.5 {Blank images, grey8} -body {
+    crimp write 2string tcl [crimp blank grey8 3 4 0]
+} -result [lrepeat 4 [lrepeat 3 0]]
+
+test crimp-blank-2.6 {Blank images, grey8} -body {
+    crimp write 2string tcl [crimp blank grey8 3 4 255]
+} -result [lrepeat 4 [lrepeat 3 255]]
+
+test crimp-blank-2.7 {Blank images, grey8} -body {
+    crimp write 2string tcl [crimp blank grey8 3 4 128]
+} -result [lrepeat 4 [lrepeat 3 128]]
+
+test crimp-blank-2.8 {Blank images, grey8, wrap around} -body {
+    crimp write 2string tcl [crimp blank grey8 3 4 256]
+} -result [lrepeat 4 [lrepeat 3 0]]
+
+test crimp-blank-2.9 {Blank images, grey8, wrap around} -body {
+    crimp write 2string tcl [crimp blank grey8 3 4 -1]
+} -result [lrepeat 4 [lrepeat 3 255]]
+
+test crimp-blank-2.10 {Blank images, grey8, empty} -body {
+    crimp write 2string tcl [crimp blank grey8 0 0 0]
+} -result {}
+
+test crimp-blank-2.11 {Blank images, grey8, empty} -body {
+    crimp write 2string tcl [crimp blank grey8 3 0 0]
+} -result {}
+
+test crimp-blank-2.12 {Blank images, grey8, empty} -body {
+    crimp write 2string tcl [crimp blank grey8 0 4 0]
+} -result {}
+
+test crimp-blank-2.13 {Blank images, grey8, bad dimensions} -body {
+    crimp blank grey8 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-2.14 {Blank images, grey8, bad dimensions} -body {
+    crimp blank grey8 -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-2.15 {Blank images, grey8, bad dimensions} -body {
+    crimp blank grey8 -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-2.16 {Blank images, grey8, coordinates} -body {
+    crimp at [crimp blank grey8 3 0 0]
+} -result {0 0}
+
+# -------------------------------------------------------------------------
+
+test crimp-blank-3.0 {Blank images, grey16, wrong\#args, not enough} -body {
+    crimp blank grey16 W H
+} -returnCodes error -result {wrong # args: should be "blank_grey16 w h value"}
+
+test crimp-blank-3.1 {Blank images, grey16, wrong\#args, too many} -body {
+    crimp blank grey16 W H VALUE toomuch
+} -returnCodes error -result {wrong # args: should be "blank_grey16 w h value"}
+
+test crimp-blank-3.2 {Blank images, grey16, bogus dimensions} -body {
+    crimp blank grey16 W H VALUE
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-blank-3.3 {Blank images, grey16, bogus dimensions} -body {
+    crimp blank grey16 3 H VALUE
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-3.4 {Blank images, grey16, bogus pixel value} -body {
+    crimp blank grey16 3 4 VALUE
+} -returnCodes error -result {expected integer but got "VALUE"}
+
+test crimp-blank-3.5 {Blank images, grey16} -body {
+    crimp write 2string tcl [crimp blank grey16 3 4 0]
+} -result [lrepeat 4 [lrepeat 3 0]]
+
+test crimp-blank-3.6 {Blank images, grey16} -body {
+    crimp write 2string tcl [crimp blank grey16 3 4 65535]
+} -result [lrepeat 4 [lrepeat 3 65535]]
+
+test crimp-blank-3.7 {Blank images, grey16} -body {
+    crimp write 2string tcl [crimp blank grey16 3 4 32767]
+} -result [lrepeat 4 [lrepeat 3 32767]]
+
+test crimp-blank-3.8 {Blank images, grey16, wrap around} -body {
+    crimp write 2string tcl [crimp blank grey16 3 4 65536]
+} -result [lrepeat 4 [lrepeat 3 0]]
+
+test crimp-blank-3.9 {Blank images, grey16, wrap around} -body {
+    crimp write 2string tcl [crimp blank grey16 3 4 -1]
+} -result [lrepeat 4 [lrepeat 3 65535]]
+
+test crimp-blank-3.10 {Blank images, grey16, empty} -body {
+    crimp write 2string tcl [crimp blank grey16 0 0 0]
+} -result {}
+
+test crimp-blank-3.11 {Blank images, grey16, empty} -body {
+    crimp write 2string tcl [crimp blank grey16 3 0 0]
+} -result {}
+
+test crimp-blank-3.12 {Blank images, grey16, empty} -body {
+    crimp write 2string tcl [crimp blank grey16 0 4 0]
+} -result {}
+
+test crimp-blank-3.13 {Blank images, grey16, bad dimensions} -body {
+    crimp blank grey16 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-3.14 {Blank images, grey16, bad dimensions} -body {
+    crimp blank grey16 -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-3.15 {Blank images, grey16, bad dimensions} -body {
+    crimp blank grey16 -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-3.16 {Blank images, grey16, coordinates} -body {
+    crimp at [crimp blank grey16 3 0 0]
+} -result {0 0}
+
+# -------------------------------------------------------------------------
+
+test crimp-blank-4.0 {Blank images, grey32, wrong\#args, not enough} -body {
+    crimp blank grey32 W H
+} -returnCodes error -result {wrong # args: should be "blank_grey32 w h value"}
+
+test crimp-blank-4.1 {Blank images, grey32, wrong\#args, too many} -body {
+    crimp blank grey32 W H VALUE toomuch
+} -returnCodes error -result {wrong # args: should be "blank_grey32 w h value"}
+
+test crimp-blank-4.2 {Blank images, grey32, bogus dimensions} -body {
+    crimp blank grey32 W H VALUE
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-blank-4.3 {Blank images, grey32, bogus dimensions} -body {
+    crimp blank grey32 3 H VALUE
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-4.4 {Blank images, grey32, bogus pixel value} -body {
+    crimp blank grey32 3 4 VALUE
+} -returnCodes error -result {expected integer but got "VALUE"}
+
+test crimp-blank-4.5 {Blank images, grey32} -body {
+    crimp write 2string tcl [crimp blank grey32 3 4 0]
+} -result [lrepeat 4 [lrepeat 3 0]]
+
+test crimp-blank-4.6 {Blank images, grey32} -body {
+    crimp write 2string tcl [crimp blank grey32 3 4 4294967295]
+} -result [lrepeat 4 [lrepeat 3 4294967295]]
+
+test crimp-blank-4.7 {Blank images, grey32} -body {
+    crimp write 2string tcl [crimp blank grey32 3 4 2147483648]
+} -result [lrepeat 4 [lrepeat 3 2147483648]]
+
+test crimp-blank-4.8 {Blank images, grey32, wrap around} -body {
+    crimp write 2string tcl [crimp blank grey32 3 4 4294967296]
+} -result [lrepeat 4 [lrepeat 3 0]] \
+    -constraints {KnownBug Overflow Internal}
+
+test crimp-blank-4.9 {Blank images, grey32, wrap around} -body {
+    crimp write 2string tcl [crimp blank grey32 3 4 -1]
+} -result [lrepeat 4 [lrepeat 3 4294967295]]
+
+test crimp-blank-4.10 {Blank images, grey32, empty} -body {
+    crimp write 2string tcl [crimp blank grey32 0 0 0]
+} -result {}
+
+test crimp-blank-4.11 {Blank images, grey32, empty} -body {
+    crimp write 2string tcl [crimp blank grey32 3 0 0]
+} -result {}
+
+test crimp-blank-4.12 {Blank images, grey32, empty} -body {
+    crimp write 2string tcl [crimp blank grey32 0 4 0]
+} -result {}
+
+test crimp-blank-4.13 {Blank images, grey32, bad dimensions} -body {
+    crimp blank grey32 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-4.14 {Blank images, grey32, bad dimensions} -body {
+    crimp blank grey32 -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-4.15 {Blank images, grey32, bad dimensions} -body {
+    crimp blank grey32 -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-4.16 {Blank images, grey32, coordinates} -body {
+    crimp at [crimp blank grey32 3 0 0]
+} -result {0 0}
+
+# -------------------------------------------------------------------------
+
+test crimp-blank-5.0 {Blank images, float, wrong\#args, not enough} -body {
+    crimp blank float W H
+} -returnCodes error -result {wrong # args: should be "blank_float w h value"}
+
+test crimp-blank-5.1 {Blank images, float, wrong\#args, too many} -body {
+    crimp blank float W H VALUE toomuch
+} -returnCodes error -result {wrong # args: should be "blank_float w h value"}
+
+test crimp-blank-5.2 {Blank images, float, bogus dimensions} -body {
+    crimp blank float W H VALUE
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-blank-5.3 {Blank images, float, bogus dimensions} -body {
+    crimp blank float 3 H VALUE
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-5.4 {Blank images, float, bogus pixel value} -body {
+    crimp blank float 3 4 VALUE
+} -returnCodes error -result {expected floating-point number but got "VALUE"}
+
+test crimp-blank-5.5 {Blank images, float} -body {
+    crimp write 2string tcl [crimp blank float 3 4 0]
+} -result [lrepeat 4 [lrepeat 3 0.0]]
+
+test crimp-blank-5.6 {Blank images, float} -body {
+    crimp write 2string tcl [crimp blank float 3 4 1]
+} -result [lrepeat 4 [lrepeat 3 1.0]]
+
+test crimp-blank-5.7 {Blank images, float} -body {
+    crimp write 2string tcl [crimp blank float 3 4 -1]
+} -result [lrepeat 4 [lrepeat 3 -1.0]]
+
+test crimp-blank-5.8 {Blank images, float} -body {
+    crimp write 2string tcl [crimp blank float 3 4 0.5]
+} -result [lrepeat 4 [lrepeat 3 0.5]]
+
+test crimp-blank-5.9 {Blank images, float} -body {
+    F %.2f [crimp write 2string tcl [crimp blank float 3 4 0.33]]
+} -result [lrepeat 4 [lrepeat 3 0.33]]
+
+test crimp-blank-5.10 {Blank images, float, empty} -body {
+    crimp write 2string tcl [crimp blank float 0 0 0]
+} -result {}
+
+test crimp-blank-5.11 {Blank images, float, empty} -body {
+    crimp write 2string tcl [crimp blank float 3 0 0]
+} -result {}
+
+test crimp-blank-5.12 {Blank images, float, empty} -body {
+    crimp write 2string tcl [crimp blank float 0 4 0]
+} -result {}
+
+test crimp-blank-5.13 {Blank images, float, bad dimensions} -body {
+    crimp blank float 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-5.14 {Blank images, float, bad dimensions} -body {
+    crimp blank float -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-5.15 {Blank images, float, bad dimensions} -body {
+    crimp blank float -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-5.16 {Blank images, float, coordinates} -body {
+    crimp at [crimp blank float 3 0 0]
+} -result {0 0}
+
+# -------------------------------------------------------------------------
+
+test crimp-blank-6.0 {Blank images, rgb, wrong\#args, not enough} -body {
+    crimp blank rgb W H
+} -returnCodes error -result {wrong # args: should be "blank_rgb w h r g b"}
+
+test crimp-blank-6.1 {Blank images, rgb, wrong\#args, too many} -body {
+    crimp blank rgb W H R G B toomuch
+} -returnCodes error -result {wrong # args: should be "blank_rgb w h r g b"}
+
+test crimp-blank-6.2 {Blank images, rgb, bogus dimensions} -body {
+    crimp blank rgb W H R G B
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-blank-6.3 {Blank images, rgb, bogus dimensions} -body {
+    crimp blank rgb 3 H R G B
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-6.4 {Blank images, rgb, bogus dimensions} -body {
+    crimp blank rgb 3 4 R G B
+} -returnCodes error -result {expected integer but got "R"}
+
+test crimp-blank-6.5 {Blank images, rgb, bogus pixel values} -body {
+    crimp blank rgb 3 4 5 G B
+} -returnCodes error -result {expected integer but got "G"}
+
+test crimp-blank-6.6 {Blank images, rgb, bogus pixel values} -body {
+    crimp blank rgb 3 4 5 6 B
+} -returnCodes error -result {expected integer but got "B"}
+
+test crimp-blank-6.7 {Blank images, rgb} -body {
+    crimp write 2string tcl [crimp blank rgb 3 4 0 1 2]
+} -result [lrepeat 4 [lrepeat 3 {0 1 2}]]
+
+test crimp-blank-6.8 {Blank images, rgb, auto-fill} -body {
+    crimp write 2string tcl [crimp blank rgb 3 4 255]
+} -result [lrepeat 4 [lrepeat 3 {255 0 0}]]
+
+test crimp-blank-6.9 {Blank images, rgb, wrap around} -body {
+    crimp write 2string tcl [crimp blank rgb 3 4 256 257 258]
+} -result [lrepeat 4 [lrepeat 3 {0 1 2}]]
+
+test crimp-blank-6.10 {Blank images, rgb, wrap around} -body {
+    crimp write 2string tcl [crimp blank rgb 3 4 -1 -2 -3]
+} -result [lrepeat 4 [lrepeat 3 {255 254 253}]]
+
+test crimp-blank-6.11 {Blank images, rgb, empty} -body {
+    crimp write 2string tcl [crimp blank rgb 0 0 0]
+} -result {}
+
+test crimp-blank-6.12 {Blank images, rgb, empty} -body {
+    crimp write 2string tcl [crimp blank rgb 3 0 0]
+} -result {}
+
+test crimp-blank-6.13 {Blank images, rgb, empty} -body {
+    crimp write 2string tcl [crimp blank rgb 0 4 0]
+} -result {}
+
+test crimp-blank-6.14 {Blank images, rgb, bad dimensions} -body {
+    crimp blank rgb 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-6.15 {Blank images, rgb, bad dimensions} -body {
+    crimp blank rgb -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-6.16 {Blank images, rgb, bad dimensions} -body {
+    crimp blank rgb -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-6.17 {Blank images, rgb, coordinates} -body {
+    crimp at [crimp blank rgb 3 0 0]
+} -result {0 0}
+
+# -------------------------------------------------------------------------
+
+test crimp-blank-7.0 {Blank images, rgba, wrong\#args, not enough} -body {
+    crimp blank rgba W H
+} -returnCodes error -result {wrong # args: should be "blank_rgba w h r g b a"}
+
+test crimp-blank-7.1 {Blank images, rgba, wrong\#args, too many} -body {
+    crimp blank rgba W H R G B A toomuch
+} -returnCodes error -result {wrong # args: should be "blank_rgba w h r g b a"}
+
+test crimp-blank-7.2 {Blank images, rgba, bogus dimensions} -body {
+    crimp blank rgba W H R G B A
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-blank-7.3 {Blank images, rgba, bogus dimensions} -body {
+    crimp blank rgba 3 H R G B A
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-7.4 {Blank images, rgba, bogus pixel values} -body {
+    crimp blank rgba 3 4 R G B A
+} -returnCodes error -result {expected integer but got "R"}
+
+test crimp-blank-7.5 {Blank images, rgba, bogus pixel values} -body {
+    crimp blank rgba 3 4 5 G B A
+} -returnCodes error -result {expected integer but got "G"}
+
+test crimp-blank-7.6 {Blank images, rgba, bogus pixel values} -body {
+    crimp blank rgba 3 4 5 6 B A
+} -returnCodes error -result {expected integer but got "B"}
+
+test crimp-blank-7.7 {Blank images, rgba, bogus pixel values} -body {
+    crimp blank rgba 3 4 5 6 7 A
+} -returnCodes error -result {expected integer but got "A"}
+
+test crimp-blank-7.8 {Blank images, rgba} -body {
+    crimp write 2string tcl [crimp blank rgba 3 4 0 1 2 3]
+} -result [lrepeat 4 [lrepeat 3 {0 1 2 3}]]
+
+test crimp-blank-7.9 {Blank images, rgba, auto-fill} -body {
+    crimp write 2string tcl [crimp blank rgba 3 4 255]
+} -result [lrepeat 4 [lrepeat 3 {255 0 0 0}]]
+
+test crimp-blank-7.10 {Blank images, rgba, wrap around} -body {
+    crimp write 2string tcl [crimp blank rgba 3 4 256 257 258]
+} -result [lrepeat 4 [lrepeat 3 {0 1 2 0}]]
+
+test crimp-blank-7.11 {Blank images, rgba, wrap around} -body {
+    crimp write 2string tcl [crimp blank rgba 3 4 -1 -2 -3 -4]
+} -result [lrepeat 4 [lrepeat 3 {255 254 253 252}]]
+
+test crimp-blank-7.12 {Blank images, rgba, empty} -body {
+    crimp write 2string tcl [crimp blank rgba 0 0 0]
+} -result {}
+
+test crimp-blank-7.13 {Blank images, rgba, empty} -body {
+    crimp write 2string tcl [crimp blank rgba 3 0 0]
+} -result {}
+
+test crimp-blank-7.14 {Blank images, rgba, empty} -body {
+    crimp write 2string tcl [crimp blank rgba 0 4 0]
+} -result {}
+
+test crimp-blank-7.15 {Blank images, rgba, bad dimensions} -body {
+    crimp blank rgba 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-7.15 {Blank images, rgba, bad dimensions} -body {
+    crimp blank rgba -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-7.16 {Blank images, rgba, bad dimensions} -body {
+    crimp blank rgba -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-7.17 {Blank images, rgba, coordinates} -body {
+    crimp at [crimp blank rgba 3 0 0]
+} -result {0 0}
+
+# -------------------------------------------------------------------------
+
+test crimp-blank-8.0 {Blank images, hsv, wrong\#args, not enough} -body {
+    crimp blank hsv W H
+} -returnCodes error -result {wrong # args: should be "blank_hsv w h hue sat val"}
+
+test crimp-blank-8.1 {Blank images, hsv, wrong\#args, too many} -body {
+    crimp blank hsv W H H S V toomuch
+} -returnCodes error -result {wrong # args: should be "blank_hsv w h hue sat val"}
+
+test crimp-blank-8.2 {Blank images, hsv, bogus dimensions} -body {
+    crimp blank hsv W H H S V
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-blank-8.3 {Blank images, hsv, bogus dimensions} -body {
+    crimp blank hsv 3 H H S V
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-8.4 {Blank images, hsv, bogus pixel values} -body {
+    crimp blank hsv 3 4 H S V
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-8.5 {Blank images, hsv, bogus pixel values} -body {
+    crimp blank hsv 3 4 5 S V
+} -returnCodes error -result {expected integer but got "S"}
+
+test crimp-blank-8.6 {Blank images, hsv, bogus pixel values} -body {
+    crimp blank hsv 3 4 5 6 V
+} -returnCodes error -result {expected integer but got "V"}
+
+test crimp-blank-8.7 {Blank images, hsv} -body {
+    crimp write 2string tcl [crimp blank hsv 3 4 0 1 2]
+} -result [lrepeat 4 [lrepeat 3 {0 1 2}]]
+
+test crimp-blank-8.8 {Blank images, hsv, auto-fill} -body {
+    crimp write 2string tcl [crimp blank hsv 3 4 255]
+} -result [lrepeat 4 [lrepeat 3 {255 0 0}]]
+
+test crimp-blank-8.9 {Blank images, hsv, wrap around} -body {
+    crimp write 2string tcl [crimp blank hsv 3 4 256 257 258]
+} -result [lrepeat 4 [lrepeat 3 {0 1 2}]]
+
+test crimp-blank-8.10 {Blank images, hsv, wrap around} -body {
+    crimp write 2string tcl [crimp blank hsv 3 4 -1 -2 -3]
+} -result [lrepeat 4 [lrepeat 3 {255 254 253}]]
+
+test crimp-blank-8.11 {Blank images, hsv, empty} -body {
+    crimp write 2string tcl [crimp blank hsv 0 0 0]
+} -result {}
+
+test crimp-blank-8.12 {Blank images, hsv, empty} -body {
+    crimp write 2string tcl [crimp blank hsv 3 0 0]
+} -result {}
+
+test crimp-blank-8.13 {Blank images, hsv, empty} -body {
+    crimp write 2string tcl [crimp blank hsv 0 4 0]
+} -result {}
+
+test crimp-blank-8.14 {Blank images, hsv, bad dimensions} -body {
+    crimp blank hsv 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-8.15 {Blank images, hsv, bad dimensions} -body {
+    crimp blank hsv -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-8.16 {Blank images, hsv, bad dimensions} -body {
+    crimp blank hsv -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-8.17 {Blank images, hsv, coordinates} -body {
+    crimp at [crimp blank hsv 3 0 0]
+} -result {0 0}
+
+# -------------------------------------------------------------------------
+
+test crimp-blank-9.0 {Blank images, fpcomplex, wrong\#args, not enough} -body {
+    crimp blank fpcomplex W H
+} -returnCodes error -result {wrong # args: should be "blank_fpcomplex w h re im"}
+
+test crimp-blank-9.1 {Blank images, fpcomplex, wrong\#args, too many} -body {
+    crimp blank fpcomplex W H RE IM toomuch
+} -returnCodes error -result {wrong # args: should be "blank_fpcomplex w h re im"}
+
+test crimp-blank-9.2 {Blank images, fpcomplex, bogus dimensions} -body {
+    crimp blank fpcomplex W H RE IM
+} -returnCodes error -result {expected integer but got "W"}
+
+test crimp-blank-9.3 {Blank images, fpcomplex, bogus dimensions} -body {
+    crimp blank fpcomplex 3 H RE IM
+} -returnCodes error -result {expected integer but got "H"}
+
+test crimp-blank-9.4 {Blank images, fpcomplex, bogus pixel value} -body {
+    crimp blank fpcomplex 3 4 RE IM
+} -returnCodes error -result {expected floating-point number but got "RE"}
+
+test crimp-blank-9.5 {Blank images, fpcomplex, bogus pixel value} -body {
+    crimp blank fpcomplex 3 4 1 IM
+} -returnCodes error -result {expected floating-point number but got "IM"}
+
+test crimp-blank-9.6 {Blank images, fpcomplex} -body {
+    crimp write 2string tcl [crimp blank fpcomplex 3 4 0]
+} -result [lrepeat 4 [lrepeat 3 {0.0 0.0}]]
+
+test crimp-blank-9.7 {Blank images, fpcomplex} -body {
+    crimp write 2string tcl [crimp blank fpcomplex 3 4 1 2]
+} -result [lrepeat 4 [lrepeat 3 {1.0 2.0}]]
+
+test crimp-blank-9.8 {Blank images, fpcomplex} -body {
+    crimp write 2string tcl [crimp blank fpcomplex 3 4 -1 -2]
+} -result [lrepeat 4 [lrepeat 3 {-1.0 -2.0}]]
+
+test crimp-blank-9.9 {Blank images, fpcomplex} -body {
+    crimp write 2string tcl [crimp blank fpcomplex 3 4 0.5 1]
+} -result [lrepeat 4 [lrepeat 3 {0.5 1.0}]]
+
+test crimp-blank-9.10 {Blank images, fpcomplex} -body {
+    F %.2f [crimp write 2string tcl [crimp blank fpcomplex 3 4 0.33]]
+} -result [lrepeat 4 [lrepeat 3 {0.33 0.00}]]
+
+test crimp-blank-9.11 {Blank images, fpcomplex, empty} -body {
+    crimp write 2string tcl [crimp blank fpcomplex 0 0 0]
+} -result {}
+
+test crimp-blank-9.12 {Blank images, fpcomplex, empty} -body {
+    crimp write 2string tcl [crimp blank fpcomplex 3 0 0]
+} -result {}
+
+test crimp-blank-9.13 {Blank images, fpcomplex, empty} -body {
+    crimp write 2string tcl [crimp blank fpcomplex 0 4 0]
+} -result {}
+
+test crimp-blank-9.14 {Blank images, fpcomplex, bad dimensions} -body {
+    crimp blank fpcomplex 1 -1 0
+} -returnCodes error -result {Illegal height, expected positive integer, got "-1"}
+
+test crimp-blank-9.15 {Blank images, fpcomplex, bad dimensions} -body {
+    crimp blank fpcomplex -1 1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-9.16 {Blank images, fpcomplex, bad dimensions} -body {
+    crimp blank fpcomplex -1 -1 0
+} -returnCodes error -result {Illegal width, expected positive integer, got "-1"}
+
+test crimp-blank-9.17 {Blank images, fpcomplex, coordinates} -body {
+    crimp at [crimp blank fpcomplex 3 0 0]
+} -result {0 0}
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

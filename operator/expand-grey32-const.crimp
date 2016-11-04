@@ -1,0 +1,31 @@
+crimp_primitive expand_grey32_const {
+    image_grey32 image
+    int ww
+    int hn
+    int we
+    int hs
+    int value
+} image {
+    /*
+     * Border expansion by constant pixel value.
+     */
+
+    #define FILL(xo,yo) {			\
+	    GREY32 (result, xo, yo) = value; \
+        }
+
+    #define COPY(xo,yo,xi,yi) {				\
+	    GREY32 (result, xo, yo) = GREY32 (image, xi, yi); \
+        }
+
+    #include <expand_op.c>
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

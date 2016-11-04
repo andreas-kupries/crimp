@@ -743,11 +743,14 @@ proc ::crimp::threshold::local {image args} {
 
     set multi 0
     switch -glob -- $itype/$mtype {
-	fpcomplex/fpcomplex - rgba/rgba - rgb/rgb - hsv/hsv {
+	fpcomplex/fpcomplex -
+	rgba/rgba           -
+	rgb/rgb             -
+	hsv/hsv {
 	    # Nothing to do. Handled later by the generic branch.
 	}
 	fpcomplex/float -
-	fpcomplex/grey8 - {
+	fpcomplex/grey8 {
 	    if {[llength $args]} {
 		while {[llength $args] < 2} {
 		    lappend args [lindex $args end]
@@ -758,8 +761,10 @@ proc ::crimp::threshold::local {image args} {
 	    }
 	    set multi 1
 	}
-	hsv/float - rgb/float -
-	hsv/grey8 - rgb/grey8 {
+	hsv/float -
+	rgb/float -
+	hsv/grey8 -
+	rgb/grey8 {
 	    if {[llength $args]} {
 		while {[llength $args] < 3} {
 		    lappend args [lindex $args end]
@@ -782,7 +787,10 @@ proc ::crimp::threshold::local {image args} {
 	    }
 	    set multi 1
 	}
-	fpcomplex/* - rgba/* - rgb/* - hsv/* {
+	fpcomplex/* -
+	rgba/*      -
+	rgb/*       -
+	hsv/*       {
 	    return -code error "Unable to locally threshold images of type \"$itype\" with maps of type \"$mtype\""
 	}
     }
@@ -2780,77 +2788,6 @@ proc ::crimp::transform::shear {sx sy} {
 		$sx 1   0]
 }
 
-namespace eval ::crimp::transform::reflect {
-    namespace export line x y line
-    namespace ensemble create
-
-    namespace import ::crimp::transform::affine
-    namespace import ::crimp::transform::chain
-    namespace import ::crimp::transform::translate
-
-    namespace import ::tcl::mathfunc::*
-    namespace import ::tcl::mathop::*
-}
-
-proc ::crimp::transform::reflect::line {a {b {}}} {
-    ::crimp::transform::CheckPoint $a
-    lassign $a ax ay
-
-    if {[llength [info level 0]] == 3} {
-	::crimp::transform::CheckPoint $b
-	lassign $b bx by
-
-	# Reflect along the line through the 2 points A and B. This is
-	# done by translating A to the origin, reflecting through B-A
-	# (which is ga line through the origin and can be done by the
-	# simpler case below), and lastly translating everything back
-	# by -A.
-
-	return [chain \
-		    [translate [- $ax] [- $ay]] \
-		    [line [list [- $bx $ax] [- $by $ay]]] \
-		    [translate $ax $ay]]
-    }
-
-    # Reflect along the line A through the origin.
-
-    # While this could be handled as a chain of
-    # (a) rotation through the origin to map the line to either x- or y-axis
-    # (b) reflection along the chosen axis,
-    # (c) and rotation back to the chosen line.
-    # here we use the direct approach instead, as described at
-    #     http://en.wikipedia.org/wiki/Transformation_matrix
-
-    math::constants::constants eps
-
-    set d [expr {$ax*$ax + $ay*$ay}]
-    if {$d <= $eps} {
-	return -code error "Expected non-null vector, got ($ax, $ay)"
-    }
-
-    set a [expr {($ax*$ax - $ay*$ay)/double($d)}]
-    set b [expr {(2*$ax*$ay)        /double($d)}]
-    set c [expr {($ay*$ay - $ax*$ax)/double($d)}]
-
-    return [affine \
-		$a $b 0 \
-		$b $c 0]
-}
-
-proc ::crimp::transform::reflect::x {} {
-    # Reflect along the x-axis.
-    return [affine \
-		-1 0 0 \
-		 0 1 0]
-}
-
-proc ::crimp::transform::reflect::y {} {
-    # Reflect along the y-axis
-    return [affine \
-		1  0 0 \
-		0 -1 0]
-}
-
 proc ::crimp::transform::rotate {theta {p {0 0}}} {
     variable degtorad
     ::crimp::CheckDouble $theta
@@ -2937,6 +2874,77 @@ proc ::crimp::transform::chain {t args} {
     # gets the transforms applied in order t1, t2, ...
 
     return [MAKE $res]
+}
+
+namespace eval ::crimp::transform::reflect {
+    namespace export line x y line
+    namespace ensemble create
+
+    namespace import ::crimp::transform::affine
+    namespace import ::crimp::transform::chain
+    namespace import ::crimp::transform::translate
+
+    namespace import ::tcl::mathfunc::*
+    namespace import ::tcl::mathop::*
+}
+
+proc ::crimp::transform::reflect::line {a {b {}}} {
+    ::crimp::transform::CheckPoint $a
+    lassign $a ax ay
+
+    if {[llength [info level 0]] == 3} {
+	::crimp::transform::CheckPoint $b
+	lassign $b bx by
+
+	# Reflect along the line through the 2 points A and B. This is
+	# done by translating A to the origin, reflecting through B-A
+	# (which is ga line through the origin and can be done by the
+	# simpler case below), and lastly translating everything back
+	# by -A.
+
+	return [chain \
+		    [translate [- $ax] [- $ay]] \
+		    [line [list [- $bx $ax] [- $by $ay]]] \
+		    [translate $ax $ay]]
+    }
+
+    # Reflect along the line A through the origin.
+
+    # While this could be handled as a chain of
+    # (a) rotation through the origin to map the line to either x- or y-axis
+    # (b) reflection along the chosen axis,
+    # (c) and rotation back to the chosen line.
+    # here we use the direct approach instead, as described at
+    #     http://en.wikipedia.org/wiki/Transformation_matrix
+
+    math::constants::constants eps
+
+    set d [expr {$ax*$ax + $ay*$ay}]
+    if {$d <= $eps} {
+	return -code error "Expected non-null vector, got ($ax, $ay)"
+    }
+
+    set a [expr {($ax*$ax - $ay*$ay)/double($d)}]
+    set b [expr {(2*$ax*$ay)        /double($d)}]
+    set c [expr {($ay*$ay - $ax*$ax)/double($d)}]
+
+    return [affine \
+		$a $b 0 \
+		$b $c 0]
+}
+
+proc ::crimp::transform::reflect::x {} {
+    # Reflect along the x-axis.
+    return [affine \
+		-1 0 0 \
+		 0 1 0]
+}
+
+proc ::crimp::transform::reflect::y {} {
+    # Reflect along the y-axis
+    return [affine \
+		1  0 0 \
+		0 -1 0]
 }
 
 proc ::crimp::transform::invert {a} {

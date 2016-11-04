@@ -1,29 +1,27 @@
-interpolate::trilinear
-double a
-double b
-double c
-double d
-double e
-double f
-double g
-double h
-double xf
-double yf
-double zf
-
-double r = crimp_interpolate_trilinear (a, b, c, d,
+crimp_primitive interpolate::trilinear {
+    double a
+    double b
+    double c
+    double d
+    double e
+    double f
+    double g
+    double h
+    double xf
+    double yf
+    double zf
+} double {
+    /* TODO: See if we can support a syntax which simply assigns the function */
+    return crimp_interpolate_trilinear (a, b, c, d,
 					e, f, g, h,
 					xf, yf, zf);
-
-Tcl_SetObjResult (interp, Tcl_NewDoubleObj (r));
-return TCL_OK;
-
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

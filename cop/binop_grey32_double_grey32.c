@@ -1,12 +1,7 @@
 crimp_image*     result;
-crimp_image*     imageA;
-crimp_image*     imageB;
 int px, py, lx, ly, oxa, oya, oxb, oyb;
 int pxa, pya, pxb, pyb;
 crimp_geometry bb;
-
-crimp_input (imageAObj, imageA, grey32);
-crimp_input (imageBObj, imageB, double);
 
 /*
  * Compute union area of the two images to process.

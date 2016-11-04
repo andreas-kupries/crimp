@@ -1,0 +1,41 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2011-2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt local support crimp::core
+kt local testing crimp
+
+# -------------------------------------------------------------------------
+
+test crimp-bwvertical-1.0 {Black/White Checker Board} -body {
+    set image [crimp::black_white_vertical]
+    crimp write 2string tcl $image
+} -cleanup {
+    unset image
+} -result [::apply {{} {
+    set b [lrepeat 16 0]
+    set w [lrepeat 16 255]
+
+    set bw [list {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w]
+    set wb [list {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b {*}$w {*}$b]
+
+    set bw [lrepeat 16 $bw]
+    set wb [lrepeat 16 $wb]
+
+    return [list {*}$wb {*}$bw {*}$wb {*}$bw {*}$wb {*}$bw {*}$wb {*}$bw {*}$wb {*}$bw {*}$wb {*}$bw {*}$wb {*}$bw {*}$wb {*}$bw]
+}}]
+
+test crimp-bwvertical-1.1 {Black/White Checker Board, wrong#args, too many} -body {
+    crimp::black_white_vertical X
+} -returnCodes error -result {wrong # args: should be "crimp::black_white_vertical"}
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

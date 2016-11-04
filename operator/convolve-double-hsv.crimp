@@ -1,74 +1,68 @@
-convolve_double_hsv
-Tcl_Obj* imageObj
-Tcl_Obj* kernelImageObj
-int scale
-int offset
+crimp_primitive convolve_double_hsv {
+    image_hsv image
+    image_double kernel
+    int scale
+    int offset
+} image {
+    /*
+     * Generic convolution operator. The kernel to convolve with is specified as a
+     * doubleing-point image together with a scaling factor. This way we do not
+     * need a separate matrix Tcl_ObjType.
+     *
+     * This convolver should be used only for small kernels, as it uses direct
+     * convolution. For larger kernels it is planned to provide an FFT based
+     * convolver.
+     */
 
-/*
- * Generic convolution operator. The kernel to convolve with is specified as a
- * doubleing-point image together with a scaling factor. This way we do not
- * need a separate matrix Tcl_ObjType.
- *
- * This convolver should be used only for small kernels, as it uses direct
- * convolution. For larger kernels it is planned to provide an FFT based
- * convolver.
- */
+    crimp_image*     result;
+    int              xo, yo, xi, yi, xk, yk, dx, dy, kw, kh;
 
-crimp_image*     result;
-crimp_image*     image;
-crimp_image*     kernel;
-int              xo, yo, xi, yi, xk, yk, dx, dy, kw, kh;
-
-crimp_input (imageObj,         image,    hsv);
-crimp_input (kernelImageObj,   kernel,   double);
-
-if (((crimp_w (kernel) % 2) == 0) ||
-    ((crimp_h (kernel) % 2) == 0)) {
-    Tcl_SetResult(interp, "bad kernel dimensions, expected odd size", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-kw = crimp_w (kernel)/2;
-kh = crimp_h (kernel)/2;
-
-result = crimp_new_at (image->itype, crimp_x (image) + kw, crimp_y (image) + kh, crimp_w (image) - 2*kw, crimp_h (image) - 2*kh);
-
-for (yo = 0, yi = kh; yo < crimp_h (result); yo++, yi++) {
-    for (xo = 0, xi = kw; xo < crimp_w (result); xo++, xi++) {
-
-	/*
-	 * We convolve all channels with the same kernel, but otherwise
-	 * identically
-	 */
-
-	double sumh = 0; int isumh;
-	double sums = 0; int isums;
-	double sumv = 0; int isumv;
-
-	for (yk = 0, dy = -kh; yk < crimp_h (kernel); yk++, dy++) {
-	    for (xk = 0, dx = -kw; xk < crimp_w (kernel); xk++, dx++) {
-
-		sumh += DOUBLEP (kernel, xk, yk) * H (image, xi-dx, yi-dy);
-		sums += DOUBLEP (kernel, xk, yk) * S (image, xi-dx, yi-dy);
-		sumv += DOUBLEP (kernel, xk, yk) * V (image, xi-dx, yi-dy);
-	    }
-	}
-
-	sumh /= scale; sumh += offset; isumh = sumh; H (result, xo, yo) = CLAMP (0, isumh, 255);
-	sums /= scale; sums += offset; isums = sums; S (result, xo, yo) = CLAMP (0, isums, 255);
-	sumv /= scale; sumv += offset; isumv = sumv; V (result, xo, yo) = CLAMP (0, isumv, 255);
+    if (((crimp_w (kernel) % 2) == 0) ||
+        ((crimp_h (kernel) % 2) == 0)) {
+        Tcl_SetResult(interp, "bad kernel dimensions, expected odd size", TCL_STATIC);
+        return NULL;
     }
+
+    kw = crimp_w (kernel)/2;
+    kh = crimp_h (kernel)/2;
+
+    result = crimp_new_at (image->itype, crimp_x (image) + kw, crimp_y (image) + kh, crimp_w (image) - 2*kw, crimp_h (image) - 2*kh);
+
+    for (yo = 0, yi = kh; yo < crimp_h (result); yo++, yi++) {
+        for (xo = 0, xi = kw; xo < crimp_w (result); xo++, xi++) {
+
+	    /*
+	     * We convolve all channels with the same kernel, but otherwise
+	     * identically
+	     */
+
+	    double sumh = 0; int isumh;
+	    double sums = 0; int isums;
+	    double sumv = 0; int isumv;
+
+	    for (yk = 0, dy = -kh; yk < crimp_h (kernel); yk++, dy++) {
+	        for (xk = 0, dx = -kw; xk < crimp_w (kernel); xk++, dx++) {
+
+		    sumh += DOUBLEP (kernel, xk, yk) * H (image, xi-dx, yi-dy);
+		    sums += DOUBLEP (kernel, xk, yk) * S (image, xi-dx, yi-dy);
+		    sumv += DOUBLEP (kernel, xk, yk) * V (image, xi-dx, yi-dy);
+	        }
+	    }
+
+	    sumh /= scale; sumh += offset; isumh = sumh; H (result, xo, yo) = CLAMP (0, isumh, 255);
+	    sums /= scale; sums += offset; isums = sums; S (result, xo, yo) = CLAMP (0, isums, 255);
+	    sumv /= scale; sumv += offset; isumv = sumv; V (result, xo, yo) = CLAMP (0, isumv, 255);
+        }
+    }
+
+    return result;
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

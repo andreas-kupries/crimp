@@ -1,292 +1,292 @@
-read::pgm
-Tcl_Obj* pgmdata
-
-/*
- * Reader for images in PGM format (Portable Grey Map).
- * See http://en.wikipedia.org/wiki/Netpbm_format
- * Original tcl code derived from http://wiki.tcl.tk/4530, rewritten to C.
- * Handles both raw and plain formats.
-*
- * Create a grey8 image from PGM data. Which is pretty much a list of
- * integers, with a bit of heading. The pixels can be coded in binary (bytes),
- * or ASCII decimal numbers. The header tells us which. The code here uses
- * direct string access and splits the data on its own, instead of using Tcl's
- * list functionality.
- */
-
-unsigned char* bytes;
-int            length;
-size_t npix;
-int state, lstate, israw, w, h, max, value;
-unsigned char* stop;
-unsigned char* at;
-unsigned char* dst;
-
-crimp_image*     result;
-
-/*
- * Check input, i.e. verify structure and extract dimensions
- */
-
-bytes = Tcl_GetByteArrayFromObj(pgmdata, &length);
-
-at   = bytes;
-stop = bytes + length;
-
-/*
- * State machine based parsing of the image header.
- */
-
-#define SKIP (-1) /* In a comment, skipping */
-#define GETP  (0) /* Expecting 'P' marker */
-#define GETT  (1) /* Expecting type code ('2' or '5') */
-#define SEP   (2) /* Expecting separator (spaces) */
-#define GETW  (3) /* Read image width */
-#define SEPW  (4) /* Expecting separator (spaces) */
-#define GETH  (5) /* Read image height */
-#define SEPH  (6) /* Expecting separator (spaces) */
-#define GETM  (7) /* Read image max value */
-#define SEPM  (8) /* Expecting separator (spaces) */
-#define STOP  (9) /* End of header */
-
-#define PGM_DIGIT(c) (('0' <= (c)) && ((c) <= '9'))
-#define PGM_SPACE(c) (((c) == ' ') || ((c) == '\n') || ((c) == '\r') || ((c) == '\t'))
-
-lstate = w = h = max = value = israw = 0;
-for (at = bytes, state = GETP; (at < stop) && (state != STOP); at ++) {
-
-    /*fprintf(stderr,"H [%4d] s%d '%c'\n",at-bytes,state,*at);fflush(stderr);*/
-
-    /* In a comment we skip ahead until the next linefeed */
-    if ((state == SKIP) && (*at == '\n')) {
-	state = lstate;
-	continue;
-    }
-    /* A comment can start anywhere, i.e. in the middle of a number. */
-    if (*at == '#') { 
-	lstate = state;
-	state = SKIP;
-	continue;
-    }
-    switch (state) {
-    case GETP:
-	if (*at == 'P') { state = GETT ; continue; }
-	/*fprintf(stderr,"bad mark\n");fflush(stderr);*/
-    notpgm:
-	Tcl_SetResult(interp, "Not a PGM image", TCL_STATIC);
-	return TCL_ERROR;
-	break;
-    case GETT:
-	if (*at == '2') {             state = SEP ; continue; }
-	if (*at == '5') { israw = 1 ; state = SEP ; continue; }
-	/*fprintf(stderr,"bad type\n");fflush(stderr);*/
-	goto notpgm;
-    case SEP:
-    case SEPW:
-    case SEPH:
-    case SEPM:
-	if (PGM_SPACE (*at)) continue;
-	/*fprintf(stderr,"\tnot space\n");fflush(stderr);*/
-	at --;
-	state ++; /* SEP -> GETW, SEPW -> GETH, SEPH -> GETM, SEPM -> STOP */
-	value = 0;
-	break;
-    case GETW:
-    case GETH:
-    case GETM:
-	if (PGM_SPACE (*at)) {
-	    switch (state) {
-	    case GETW: w   = value; value = 0; break;
-	    case GETH: h   = value; value = 0; break;
-	    case GETM: max = value; value = 0; break;
-	    }
-	    state ++ ; /* GETW -> SEPW, GETH -> SEPH, GETM -> SEPM */
-	    if (state == SEPM) {
-		/*
-		 * The max value has exactly ONE space after it (which we
-		 * found above), and the next byte is the beginning of the
-		 * pixel data, regardless of content. No comments, no
-		 * whitespace
-		 */
-		state = STOP;
-	    }
-	    continue;
-	}
-	if (PGM_DIGIT (*at)) {
-	    value = value*10 + (*at - '0');
-	    continue;
-	}
-	/*fprintf(stderr,"bad number\n");fflush(stderr);*/
-	goto notpgm;
-    }
-}
-
-if (state != STOP) {
-    /*fprintf(stderr,"bad state (end of header)\n");fflush(stderr);*/
-    goto notpgm;
-}
-
-/*fprintf(stderr,"raw=%d, w=%d, h=%d, max=%d\n", israw,w,h,max);fflush(stderr);*/
-
-/*
- * Here 'at' now points to the first byte of the pixel data, which are either,
- * depending on 'israw', bytes, or a series of decimal numbers separated by
- * single spaces. Here, in the raster, comments are NOT allowed anymore. We
- * can now allocate and initialize the result, and then parse/copy the pixel
- * data over into it. We can't do a memcpy even for the single-byte binary
- * data even so, because of the need to rescale the data by the 'max' value :/
- *
- * Right, not to forget, check the 'max' information first for its limits, and
- * in case of the raw sub-format it provides information about pixel width (1
- * versus 2 byte).
- */
-
-if (israw) {
-    if (max > 65536) {
-	Tcl_SetResult(interp, "Bad PGM image, max out of bounds.", TCL_STATIC);
-	return TCL_ERROR;
-    } else if (max > 256) {
-	israw ++; /* 2-byte mode, bigendian! */
-    }
-}
-
-result = crimp_new_grey8 (w, h);
-npix   = CRIMP_RECT_AREA (w, h);
-
-/*fprintf(stderr,"raw=%d, w=%d, h=%d, max=%d /%d\n", israw,w,h,max,npix);fflush(stderr);*/
-
-if (israw == 2) {
-
+crimp_primitive read::pgm {
+    Tcl_Obj* pgmdata
+} image {
     /*
-     * Binary pixel data, 2-byte, bigendian
+     * Reader for images in PGM format (Portable Grey Map).
+     * See http://en.wikipedia.org/wiki/Netpbm_format
+     * Original tcl code derived from http://wiki.tcl.tk/4530, rewritten to C.
+     * Handles both raw and plain formats.
+    *
+     * Create a grey8 image from PGM data. Which is pretty much a list of
+     * integers, with a bit of heading. The pixels can be coded in binary (bytes),
+     * or ASCII decimal numbers. The header tells us which. The code here uses
+     * direct string access and splits the data on its own, instead of using Tcl's
+     * list functionality.
      */
 
-#define MSB (0)
-#define LSB (1)
+    unsigned char* bytes;
+    int            length;
+    size_t npix;
+    int state, lstate, israw, w, h, max, value;
+    unsigned char* stop;
+    unsigned char* at;
+    unsigned char* dst;
 
-    value = 0;
-    for (state = MSB, dst = &(GREY8 (result,0,0)); (at < stop) && (npix > 1); at ++) {
-	switch (state) {
-	case MSB:
-	    value = *at;
-	    state = LSB;
+    crimp_image*     result;
+
+    /*
+     * Check input, i.e. verify structure and extract dimensions
+     */
+
+    bytes = Tcl_GetByteArrayFromObj(pgmdata, &length);
+
+    at   = bytes;
+    stop = bytes + length;
+
+    /*
+     * State machine based parsing of the image header.
+     */
+
+    #define SKIP (-1) /* In a comment, skipping */
+    #define GETP  (0) /* Expecting 'P' marker */
+    #define GETT  (1) /* Expecting type code ('2' or '5') */
+    #define SEP   (2) /* Expecting separator (spaces) */
+    #define GETW  (3) /* Read image width */
+    #define SEPW  (4) /* Expecting separator (spaces) */
+    #define GETH  (5) /* Read image height */
+    #define SEPH  (6) /* Expecting separator (spaces) */
+    #define GETM  (7) /* Read image max value */
+    #define SEPM  (8) /* Expecting separator (spaces) */
+    #define STOP  (9) /* End of header */
+
+    #define PGM_DIGIT(c) (('0' <= (c)) && ((c) <= '9'))
+    #define PGM_SPACE(c) (((c) == ' ') || ((c) == '\n') || ((c) == '\r') || ((c) == '\t'))
+
+    lstate = w = h = max = value = israw = 0;
+    for (at = bytes, state = GETP; (at < stop) && (state != STOP); at ++) {
+
+        /*fprintf(stderr,"H [%4d] s%d '%c'\n",at-bytes,state,*at);fflush(stderr);*/
+
+        /* In a comment we skip ahead until the next linefeed */
+        if ((state == SKIP) && (*at == '\n')) {
+	    state = lstate;
+	    continue;
+        }
+        /* A comment can start anywhere, i.e. in the middle of a number. */
+        if (*at == '#') { 
+	    lstate = state;
+	    state = SKIP;
+	    continue;
+        }
+        switch (state) {
+        case GETP:
+	    if (*at == 'P') { state = GETT ; continue; }
+	    /*fprintf(stderr,"bad mark\n");fflush(stderr);*/
+        notpgm:
+	    Tcl_SetResult(interp, "Not a PGM image", TCL_STATIC);
+	    return NULL;
 	    break;
-	case LSB:
-	    value = 256*value + *at;
-	    state = MSB;
+        case GETT:
+	    if (*at == '2') {             state = SEP ; continue; }
+	    if (*at == '5') { israw = 1 ; state = SEP ; continue; }
+	    /*fprintf(stderr,"bad type\n");fflush(stderr);*/
+	    goto notpgm;
+        case SEP:
+        case SEPW:
+        case SEPH:
+        case SEPM:
+	    if (PGM_SPACE (*at)) continue;
+	    /*fprintf(stderr,"\tnot space\n");fflush(stderr);*/
+	    at --;
+	    state ++; /* SEP -> GETW, SEPW -> GETH, SEPH -> GETM, SEPM -> STOP */
+	    value = 0;
+	    break;
+        case GETW:
+        case GETH:
+        case GETM:
+	    if (PGM_SPACE (*at)) {
+	        switch (state) {
+	        case GETW: w   = value; value = 0; break;
+	        case GETH: h   = value; value = 0; break;
+	        case GETM: max = value; value = 0; break;
+	        }
+	        state ++ ; /* GETW -> SEPW, GETH -> SEPH, GETM -> SEPM */
+	        if (state == SEPM) {
+		    /*
+		     * The max value has exactly ONE space after it (which we
+		     * found above), and the next byte is the beginning of the
+		     * pixel data, regardless of content. No comments, no
+		     * whitespace
+		     */
+		    state = STOP;
+	        }
+	        continue;
+	    }
+	    if (PGM_DIGIT (*at)) {
+	        value = value*10 + (*at - '0');
+	        continue;
+	    }
+	    /*fprintf(stderr,"bad number\n");fflush(stderr);*/
+	    goto notpgm;
+        }
+    }
 
+    if (state != STOP) {
+        /*fprintf(stderr,"bad state (end of header)\n");fflush(stderr);*/
+        goto notpgm;
+    }
+
+    /*fprintf(stderr,"raw=%d, w=%d, h=%d, max=%d\n", israw,w,h,max);fflush(stderr);*/
+
+    /*
+     * Here 'at' now points to the first byte of the pixel data, which are either,
+     * depending on 'israw', bytes, or a series of decimal numbers separated by
+     * single spaces. Here, in the raster, comments are NOT allowed anymore. We
+     * can now allocate and initialize the result, and then parse/copy the pixel
+     * data over into it. We can't do a memcpy even for the single-byte binary
+     * data even so, because of the need to rescale the data by the 'max' value :/
+     *
+     * Right, not to forget, check the 'max' information first for its limits, and
+     * in case of the raw sub-format it provides information about pixel width (1
+     * versus 2 byte).
+     */
+
+    if (israw) {
+        if (max > 65536) {
+	    Tcl_SetResult(interp, "Bad PGM image, max out of bounds.", TCL_STATIC);
+	    return NULL;
+        } else if (max > 256) {
+	    israw ++; /* 2-byte mode, bigendian! */
+        }
+    }
+
+    result = crimp_new_grey8 (w, h);
+    npix   = CRIMP_RECT_AREA (w, h);
+
+    /*fprintf(stderr,"raw=%d, w=%d, h=%d, max=%d /%d\n", israw,w,h,max,npix);fflush(stderr);*/
+
+    if (israw == 2) {
+
+        /*
+         * Binary pixel data, 2-byte, bigendian
+         */
+
+    #define MSB (0)
+    #define LSB (1)
+
+        value = 0;
+        for (state = MSB, dst = &(GREY8 (result,0,0)); (at < stop) && (npix > 1); at ++) {
+	    switch (state) {
+	    case MSB:
+	        value = *at;
+	        state = LSB;
+	        break;
+	    case LSB:
+	        value = 256*value + *at;
+	        state = MSB;
+
+	        *dst = value*255/max;
+
+	        dst++;
+	        npix --;
+	        break;
+	    }
+        }
+
+        if (state != MSB) {
+	    /*fprintf(stderr,"bad 2-byte pixel state\n");fflush(stderr);*/
+	    goto notpgm;
+        }
+
+    } else if (israw) {
+        /*
+         * Binary pixel data, 1-byte. Nearly a memcpy, if not for the re-scaling by 'max'.
+         */
+
+        for (dst = &(GREY8 (result,0,0)); (at < stop) && (npix > 0); at ++, dst++, npix--) {
+	    *dst = (*at)*255/max;
+        }
+    } else {
+        /*
+         * Text pixel data.
+         */
+
+        value = 0;
+        for (state = GETW, dst = &(GREY8 (result,0,0)); (at < stop) && (npix > 0); at ++) {
+	    /*fprintf(stderr,"P [%4d] s%d '%c' /%d\n",at-bytes,state,*at, npix);fflush(stderr);*/
+
+	    switch (state) {
+	    case SEP:
+	        if (PGM_SPACE (*at)) continue;
+	        at --;
+	        state ++; /* SEP -> GETW */
+	        value = 0;
+	        break;
+	    case GETW:
+	        if (PGM_SPACE (*at)) {
+		    state -- ; /* GETW -> SEP */
+
+		    *dst = value*255/max;
+		    value = 0;
+
+		    /*fprintf(stderr,"\tsaved %d (%d)\n", (int)*dst, npix);fflush(stderr);*/
+
+		    dst++;
+		    npix --;
+		    continue;
+	        }
+	        if (PGM_DIGIT (*at)) {
+		    value = value*10 + (*at - '0');
+		    continue;
+	        }
+	        /*fprintf(stderr,"bad number (pixel)\n");fflush(stderr);*/
+	        goto notpgm;
+	    }
+        }
+
+        if (npix && (state != GETW)) {
+	    /*fprintf(stderr,"bad state (end of pixels)\n");fflush(stderr);*/
+	    goto notpgm;
+        }
+
+        /*
+         * Complete the last pixel if it had no trailing space
+         */
+
+        if (npix) {
 	    *dst = value*255/max;
+	    value = 0;
 
 	    dst++;
 	    npix --;
-	    break;
-	}
+        }
     }
 
-    if (state != MSB) {
-	/*fprintf(stderr,"bad 2-byte pixel state\n");fflush(stderr);*/
-	goto notpgm;
-    }
-
-} else if (israw) {
-    /*
-     * Binary pixel data, 1-byte. Nearly a memcpy, if not for the re-scaling by 'max'.
-     */
-
-    for (dst = &(GREY8 (result,0,0)); (at < stop) && (npix > 0); at ++, dst++, npix--) {
-	*dst = (*at)*255/max;
-    }
-} else {
-    /*
-     * Text pixel data.
-     */
-
-    value = 0;
-    for (state = GETW, dst = &(GREY8 (result,0,0)); (at < stop) && (npix > 0); at ++) {
-	/*fprintf(stderr,"P [%4d] s%d '%c' /%d\n",at-bytes,state,*at, npix);fflush(stderr);*/
-
-	switch (state) {
-	case SEP:
-	    if (PGM_SPACE (*at)) continue;
-	    at --;
-	    state ++; /* SEP -> GETW */
-	    value = 0;
-	    break;
-	case GETW:
-	    if (PGM_SPACE (*at)) {
-		state -- ; /* GETW -> SEP */
-
-		*dst = value*255/max;
-		value = 0;
-
-		/*fprintf(stderr,"\tsaved %d (%d)\n", (int)*dst, npix);fflush(stderr);*/
-
-		dst++;
-		npix --;
-		continue;
-	    }
-	    if (PGM_DIGIT (*at)) {
-		value = value*10 + (*at - '0');
-		continue;
-	    }
-	    /*fprintf(stderr,"bad number (pixel)\n");fflush(stderr);*/
-	    goto notpgm;
-	}
-    }
-
-    if (npix && (state != GETW)) {
-	/*fprintf(stderr,"bad state (end of pixels)\n");fflush(stderr);*/
-	goto notpgm;
+    if (npix > 0) {
+        /*fprintf(stderr,"not enough pixels, %d left @%d\n", npix,at-bytes);fflush(stderr);*/
+        goto notpgm;
     }
 
     /*
-     * Complete the last pixel if it had no trailing space
+     * Note that (at < stop) is acceptable.  A PGM file may contain multiple
+     * images.  We are reading only the first.
      */
 
-    if (npix) {
-	*dst = value*255/max;
-	value = 0;
+    return result;
 
-	dst++;
-	npix --;
-    }
+    #undef SKIP
+    #undef GETP
+    #undef GETT
+    #undef SEP 
+    #undef GETW
+    #undef SEPW
+    #undef GETH
+    #undef SEPH
+    #undef GETM
+    #undef SEPM
+    #undef STOP
+    #undef MSB
+    #undef LSB
+    #undef PGM_DIGIT
+    #undef PGM_SPACE
+
 }
-
-if (npix > 0) {
-    /*fprintf(stderr,"not enough pixels, %d left @%d\n", npix,at-bytes);fflush(stderr);*/
-    goto notpgm;
-}
-
-/*
- * Note that (at < stop) is acceptable.  A PGM file may contain multiple
- * images.  We are reading only the first.
- */
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
-#undef SKIP
-#undef GETP
-#undef GETT
-#undef SEP 
-#undef GETW
-#undef SEPW
-#undef GETH
-#undef SEPH
-#undef GETM
-#undef SEPM
-#undef STOP
-#undef MSB
-#undef LSB
-#undef PGM_DIGIT
-#undef PGM_SPACE
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

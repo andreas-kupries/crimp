@@ -1,19 +1,20 @@
-cut_fpcomplex
-Tcl_Obj* imageObj
-int x
-int y
-int w
-int h
-
-#define UNOP(a) (a)
-#include "unop_fpcomplex.c"
-#undef UNOP
+crimp_primitive cut_fpcomplex {
+    image_fpcomplex image
+    int x
+    int y
+    int w
+    int h
+} image {
+    #define UNOP(a) (a)
+    #include "unop_fpcomplex.c"
+    #undef UNOP
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

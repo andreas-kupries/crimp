@@ -1,39 +1,40 @@
-map_2grey32_grey32
-Tcl_Obj* inImageObj
-Tcl_Obj* mapObj
+crimp_primitive map_2grey32_grey32 {
+    image_grey32 image
+    Tcl_Obj* mapObj
+} image {
+    /*
+     * Converter that applies a piecewise linear map from an input grey32 image
+     * to an output grey32 image.
+     *
+     * Copyright (c) 2011 by Kevin B. Kenny.
+     *
+     * See the file "license.terms" for information on usage and redistribution of
+     * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+     */
 
-/*
- * Converter that applies a piecewise linear map from an input grey32 image
- * to an output grey32 image.
- *
- * Copyright (c) 2011 by Kevin B. Kenny.
- *
- * See the file "license.terms" for information on usage and redistribution of
- * this file, and for a DISCLAIMER OF ALL WARRANTIES.
- */
+    #undef INTYPENAME
+    #undef INTYPE
+    #undef OUTTYPENAME
+    #undef OUTTYPE
 
-#undef INTYPENAME
-#undef INTYPE
-#undef OUTTYPENAME
-#undef OUTTYPE
+    #define INTYPENAME grey32
+    #define INTYPE unsigned int
+    #define OUTTYPENAME grey32
+    #define OUTTYPE unsigned int
 
-#define INTYPENAME grey32
-#define INTYPE unsigned int
-#define OUTTYPENAME grey32
-#define OUTTYPE unsigned int
+    #include "map_scalar.c"
 
-#include "map_scalar.c"
-
-#undef OUTTYPE
-#undef OUTTYPENAME
-#undef INTYPENAME
-#undef INTYPE
+    #undef OUTTYPE
+    #undef OUTTYPENAME
+    #undef INTYPENAME
+    #undef INTYPE
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -1,19 +1,14 @@
-y
-Tcl_Obj* imageObj
-
-crimp_image* image;
-
-crimp_input_any (imageObj, image);
-
-Tcl_SetObjResult (interp, Tcl_NewIntObj (crimp_y (image)));
-return TCL_OK;
-
+crimp_primitive y {
+    image image
+} int {
+    return crimp_y (image);
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

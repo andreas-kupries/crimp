@@ -1,16 +1,17 @@
-max_rgb_rgb
-Tcl_Obj* imageAObj
-Tcl_Obj* imageBObj
-
-#define BINOP(a,b) (MAX((a),(b)))
-#include "binop_rgb_rgb_rgb.c"
-#undef BINOP
+crimp_primitive max_rgb_rgb {
+    image_rgb imageA
+    image_rgb imageB
+} image {
+    #define BINOP(a,b) (MAX((a),(b)))
+    #include "binop_rgb_rgb_rgb.c"
+    #undef BINOP
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

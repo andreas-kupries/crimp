@@ -1,71 +1,69 @@
-expand_fpcomplex_extend
-Tcl_Obj* imageObj
-int ww
-int hn
-int we
-int hs
+crimp_primitive expand_fpcomplex_extend {
+    image_fpcomplex image
+    int ww
+    int hn
+    int we
+    int hs
+} image {
+    /*
+     * Border expansion by subtracting mirrored pixels from the edge pixel, making
+     * this a combination of mirror and replicate.
+     */
 
-/*
- * Border expansion by subtracting mirrored pixels from the edge pixel, making
- * this a combination of mirror and replicate.
- */
+    /*
+     * This is the simple definition. Might be better to generate macros
+     * specialized to each quadrant. Except, even they have to perform modulo
+     * arithmetic, as the border may be larger than image's width or height,
+     * causing multiple wrapping.
+     *
+     * NOTE: The replicate part can be optimized for the eight outer quadrants.
+     */
 
-crimp_image* image;
-crimp_input (imageObj, image, fpcomplex);
+    #define FILL(xo,yo) {						   \
+	    int xb = xo - ww;					   \
+	    int yb = yo - hn;					   \
+	    int xi = xb;						   \
+	    int yi = yb;						   \
+	    float tre, tim;						   \
+								       \
+	    if      (xb < 0)         { xb = 0;            }		   \
+	    else if (xb >= crimp_w (image)) { xb = (crimp_w (image)-1); }		   \
+								       \
+	    if      (yb < 0)         { yb = 0;            }		   \
+	    else if (yb >= crimp_h (image)) { yb = (crimp_h (image)-1); }		   \
+								       \
+	    while (1) {						   \
+	        if      (xi < 0)         { xi = 0              - xi; } \
+	        else if (xi >= crimp_w (image)) { xi = 2*(crimp_w (image)-1) - xi; } \
+	        else break;						   \
+	    }							   \
+								       \
+	    while (1) {						   \
+	        if      (yi < 0)         { yi = 0              - yi; } \
+	        else if (yi >= crimp_h (image)) { yi = 2*(crimp_h (image)-1) - yi; } \
+	        else break;						   \
+	    }							   \
+								       \
+	    tre = RE (image, xi, yi) - RE (image, xb, yb);		   \
+	    tim = IM (image, xi, yi) - IM (image, xb, yb);		   \
+								       \
+	    RE (result, xo, yo) = tre;		   \
+	    IM (result, xo, yo) = tim;		   \
+        }
 
-/*
- * This is the simple definition. Might be better to generate macros
- * specialized to each quadrant. Except, even they have to perform modulo
- * arithmetic, as the border may be larger than image's width or height,
- * causing multiple wrapping.
- *
- * NOTE: The replicate part can be optimized for the eight outer quadrants.
- */
+    #define COPY(xo,yo,xi,yi) {			\
+	    RE (result, xo, yo) = RE (image, xi, yi); \
+	    IM (result, xo, yo) = IM (image, xi, yi); \
+        }
 
-#define FILL(xo,yo) {						   \
-	int xb = xo - ww;					   \
-	int yb = yo - hn;					   \
-	int xi = xb;						   \
-	int yi = yb;						   \
-	float tre, tim;						   \
-								   \
-	if      (xb < 0)         { xb = 0;            }		   \
-	else if (xb >= crimp_w (image)) { xb = (crimp_w (image)-1); }		   \
-								   \
-	if      (yb < 0)         { yb = 0;            }		   \
-	else if (yb >= crimp_h (image)) { yb = (crimp_h (image)-1); }		   \
-								   \
-	while (1) {						   \
-	    if      (xi < 0)         { xi = 0              - xi; } \
-	    else if (xi >= crimp_w (image)) { xi = 2*(crimp_w (image)-1) - xi; } \
-	    else break;						   \
-	}							   \
-								   \
-	while (1) {						   \
-	    if      (yi < 0)         { yi = 0              - yi; } \
-	    else if (yi >= crimp_h (image)) { yi = 2*(crimp_h (image)-1) - yi; } \
-	    else break;						   \
-	}							   \
-								   \
-	tre = RE (image, xi, yi) - RE (image, xb, yb);		   \
-	tim = IM (image, xi, yi) - IM (image, xb, yb);		   \
-								   \
-	RE (result, xo, yo) = tre;		   \
-	IM (result, xo, yo) = tim;		   \
-    }
-
-#define COPY(xo,yo,xi,yi) {			\
-	RE (result, xo, yo) = RE (image, xi, yi); \
-	IM (result, xo, yo) = IM (image, xi, yi); \
-    }
-
-#include <expand_op.c>
+    #include <expand_op.c>
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

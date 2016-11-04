@@ -1,31 +1,27 @@
-flip_transverse_double
-Tcl_Obj* imageObj
+crimp_primitive flip_transverse_double {
+    image_double image
+} image {
+    crimp_image* result;
+    int          x, y;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y;
+    result = crimp_new_like_transpose (image);
 
-crimp_input (imageObj, image, double);
+    for (y = 0; y < crimp_w (image); y++) {
+        for (x = 0; x < crimp_h (image); x++) {
 
-result = crimp_new_like_transpose (image);
+	    DOUBLEP (result, x, y) = DOUBLEP (image, crimp_w (image) - y - 1, crimp_h (image) - x - 1);
 
-for (y = 0; y < crimp_w (image); y++) {
-    for (x = 0; x < crimp_h (image); x++) {
-
-	DOUBLEP (result, x, y) = DOUBLEP (image, crimp_w (image) - y - 1, crimp_h (image) - x - 1);
-
+        }
     }
+
+    return result;
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

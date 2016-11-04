@@ -1,36 +1,32 @@
-matinv3x3_double
-Tcl_Obj* matObj
+crimp_primitive matinv3x3_double {
+    image_double mat
+} image {
+    /*
+     * Invert a 3x3 double matrix A.
+     */
 
-/*
- * Invert a 3x3 double matrix A.
- */
+    crimp_image* result;
 
-crimp_image* mat;
-crimp_image* result;
+    if (!crimp_require_dim (mat, 3, 3)) {
+        Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+        return NULL;
+    }
 
-crimp_input (matObj, mat, double);
+    result = crimp_la_invert_matrix_3x3 (mat);
 
-if (!crimp_require_dim (mat, 3, 3)) {
-    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
-    return TCL_ERROR;
+    if (!result) {
+        Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);
+        return NULL;
+    }
+
+    return result;
 }
-
-result = crimp_la_invert_matrix_3x3 (mat);
-
-if (!result) {
-    Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

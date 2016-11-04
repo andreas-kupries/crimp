@@ -19,7 +19,7 @@ typedef struct crimp_imagetype {
     const char*  name;     /* Image type code     */
     int          size;     /* Pixel size in bytes */
     int          channels; /* Number of 'color' channels */
-    const char** cname;    /* Names of the color channels */
+    const char** cname;  /* Names of the color channels */
 } crimp_imagetype;
 
 

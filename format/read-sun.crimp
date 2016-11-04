@@ -1,39 +1,39 @@
-read::sun
-Tcl_Obj* sundata
+crimp_primitive read::sun {
+    Tcl_Obj* sundata
+} image {
+    #include "sun.h"
 
-#include "sun.h"
+    /*
+     * Reader for images in SUN raster format
+     * See http://www.fileformat.info/format/sunraster/egff.htm
+     */
 
-/*
- * Reader for images in SUN raster format
- * See http://www.fileformat.info/format/sunraster/egff.htm
- */
+    crimp_buffer   buf;
+    sun_info       sun;
+    crimp_image*   result;
 
-crimp_buffer   buf;
-sun_info       sun;
-crimp_image*   result;
+    /*
+     * Check input, i.e. verify structure and extract dimensions
+     */
 
-/*
- * Check input, i.e. verify structure and extract dimensions
- */
+    crimp_buf_init (&buf, sundata);
+    if (!sun_read_header (interp, &buf, &sun)) {
+        return NULL;
+    }
 
-crimp_buf_init (&buf, sundata);
-if (!sun_read_header (interp, &buf, &sun)) {
-    return TCL_ERROR;
+    if (!sun_read_pixels (&sun, &result)) {
+        Tcl_SetResult (interp, "Bad SUN raster image (Pixel decode failure)", TCL_STATIC);
+        return NULL;
+    }
+
+    return result;
 }
-
-if (!sun_read_pixels (&sun, &result)) {
-    Tcl_SetResult (interp, "Bad SUN raster image (Pixel decode failure)", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

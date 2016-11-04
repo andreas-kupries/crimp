@@ -17,16 +17,6 @@ if {![critcl::compiling]} {
 }
 
 # # ## ### ##### ######## #############
-## Get the local support code. We source it directly because this is
-## only needed for building the package, in any mode, and not during
-## the runtime. Thus not added to the 'tsources'.
-
-critcl::owns support.tcl
-::apply {{here} {
-    source $here/support.tcl
-}} [file dirname [file normalize [info script]]]
-
-# # ## ### ##### ######## #############
 ## Administrivia
 
 critcl::license \
@@ -70,6 +60,16 @@ critcl::tsources plot.tcl
 critcl::api import crimp::core 0.2
 
 # # ## ### ##### ######## #############
+## Get the local support code. We source it directly because this is
+## only needed for building the package, in any mode, and not during
+## the runtime. Thus not added to the 'tsources'.
+#
+## This is shared between the various packages.
+
+critcl::owns   support.tcl
+critcl::source support.tcl
+
+# # ## ### ##### ######## #############
 ## Main C section.
 
 critcl::ccode {
@@ -81,8 +81,8 @@ critcl::ccode {
 # # ## ### ##### ######## #############
 ## Pull in the Tk-specific pieces. These are fit under the read/write namespaces.
 
-critcl::owns        format/*tk*.crimp
-crimp_source_cproc {format/*tk*.crimp}
+critcl::owns format/*tk*.crimp
+crimp_source format/*tk*.crimp
 
 # # ## ### ##### ######## #############
 ## Make the C pieces ready. Immediate build of the binaries, no deferal.

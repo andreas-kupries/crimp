@@ -1,52 +1,49 @@
-crop_double
-Tcl_Obj* imageObj
-int ww
-int hn
-int we
-int hs
+crimp_primitive crop_double {
+    image_double image
+    int ww
+    int hn
+    int we
+    int hs
+} image {
+    /*
+     * Border cropping.
+     */
 
-/*
- * Border cropping.
- */
+    crimp_image* result;
+    int          xo, yo, xi, yi;
 
-crimp_image* image;
-crimp_image* result;
-int          xo, yo, xi, yi;
-
-crimp_input (imageObj, image, double);
-
-if ((ww < 0) || (hn < 0) || (we < 0) || (hs < 0)) {
-    Tcl_SetResult(interp, "bad image border size, expected non-negative values", TCL_STATIC);
-    return TCL_ERROR;
-} else if (((ww + we) > crimp_w (image)) || ((hn + hs) > crimp_h (image))) {
-    Tcl_SetResult(interp, "bad image border size, larger than image dimensions", TCL_STATIC);
-    return TCL_ERROR;
-}
-
-result = crimp_new_at (image->itype,
-		       crimp_x (image) + ww,
-		       crimp_y (image) + hn,
-		       crimp_w (image) - ww - we,
-		       crimp_h (image) - hn - hs);
-
-/*
- * Copy the un-cropped part of the input image.
- */
-
-for (yo = 0, yi = hn; yo < crimp_h (result); yo++, yi++) {
-    for (xo = 0, xi = ww; xo < crimp_w (result); xo++, xi++) {
-	DOUBLEP (result, xo, yo) = DOUBLEP (image, xi, yi);
+    if ((ww < 0) || (hn < 0) || (we < 0) || (hs < 0)) {
+        Tcl_SetResult(interp, "bad image border size, expected non-negative values", TCL_STATIC);
+        return NULL;
+    } else if (((ww + we) > crimp_w (image)) || ((hn + hs) > crimp_h (image))) {
+        Tcl_SetResult(interp, "bad image border size, larger than image dimensions", TCL_STATIC);
+        return NULL;
     }
-}
 
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
+    result = crimp_new_at (image->itype,
+		           crimp_x (image) + ww,
+		           crimp_y (image) + hn,
+		           crimp_w (image) - ww - we,
+		           crimp_h (image) - hn - hs);
+
+    /*
+     * Copy the un-cropped part of the input image.
+     */
+
+    for (yo = 0, yi = hn; yo < crimp_h (result); yo++, yi++) {
+        for (xo = 0, xi = ww; xo < crimp_w (result); xo++, xi++) {
+	    DOUBLEP (result, xo, yo) = DOUBLEP (image, xi, yi);
+        }
+    }
+
+    return result;
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -1,20 +1,21 @@
-atan2_grey8_grey16
-Tcl_Obj* imageAObj
-Tcl_Obj* imageBObj
+crimp_primitive atan2_grey8_grey16 {
+    image_grey8 imageA
+    image_grey16 imageB
+} image {
+    /*
+     * atan2() of all pixels of the two input images.
+     */
 
-/*
- * atan2() of all pixels of the two input images.
- */
-
-#define BINOP(x,y)    (atan2((x),(y) * 57.29577951308232087679))
-#define BINOP_POST(z) (((z) < 0) ? (360 + (z)) : (z))
-#include "binop_grey8_grey16_float.c"
+    #define BINOP(x,y)    (atan2((x),(y) * 57.29577951308232087679))
+    #define BINOP_POST(z) (((z) < 0) ? (360 + (z)) : (z))
+    #include "binop_grey8_grey16_float.c"
+}
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

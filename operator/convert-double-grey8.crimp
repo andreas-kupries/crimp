@@ -1,41 +1,37 @@
-convert_2grey8_double
-Tcl_Obj* imageObj
+crimp_primitive convert_2grey8_double {
+    image_double image
+} image {
+    /*
+     * This converter maps from double to grey8 using identity. Values outside of
+     * the destination range are clamped to the maximum and minimum values,
+     * respectively. I.e. saturated arithmetic is used.
+     *
+     * FUTURE: Either extend this converter to take semi-arbitrary mapping
+     * functions (concatenation of arbitrary polynomials), or make such
+     * transformations a separate primitive we can handle under the 'map'
+     * method.
+     */
 
-/*
- * This converter maps from double to grey8 using identity. Values outside of
- * the destination range are clamped to the maximum and minimum values,
- * respectively. I.e. saturated arithmetic is used.
- *
- * FUTURE: Either extend this converter to take semi-arbitrary mapping
- * functions (concatenation of arbitrary polynomials), or make such
- * transformations a separate primitive we can handle under the 'map'
- * method.
- */
+    crimp_image* result;
+    int          x, y;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y;
+    result = crimp_new_grey8_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
 
-crimp_input (imageObj, image, double);
-
-result = crimp_new_grey8_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
-
-for (y = 0; y < crimp_h (image); y++) {
-    for (x = 0; x < crimp_w (image); x++) {
-	double f =  DOUBLEP(image, x, y);
-	GREY8 (result, x, y) = CLAMPT (MINVAL, int, f, MAXVAL_GREY8);
+    for (y = 0; y < crimp_h (image); y++) {
+        for (x = 0; x < crimp_w (image); x++) {
+	    double f =  DOUBLEP(image, x, y);
+	    GREY8 (result, x, y) = CLAMPT (MINVAL, int, f, MAXVAL_GREY8);
+        }
     }
+
+    return result;
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

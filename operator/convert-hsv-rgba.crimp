@@ -1,38 +1,36 @@
-convert_2rgba_hsv
-Tcl_Obj* imageObj
+crimp_primitive convert_2rgba_hsv {
+    image_hsv image
+} image {
+    crimp_image* result;
+    int          x, y, r, g, b;
 
-crimp_image* image;
-crimp_image* result;
-int          x, y, r, g, b;
 
-crimp_input (imageObj, image, hsv);
+    result = crimp_new_rgba_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
 
-result = crimp_new_rgba_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
+    for (y = 0; y < crimp_h (image); y++) {
+        for (x = 0; x < crimp_w (image); x++) {
 
-for (y = 0; y < crimp_h (image); y++) {
-    for (x = 0; x < crimp_w (image); x++) {
+	    crimp_color_hsv_to_rgb (H (image, x, y),
+				    S (image, x, y),
+				    V (image, x, y),
+				    &r, &g, &b);
 
-	crimp_color_hsv_to_rgb (H (image, x, y),
-				S (image, x, y),
-				V (image, x, y),
-				&r, &g, &b);
-
-	R (result, x, y) = r;
-	G (result, x, y) = g;
-	B (result, x, y) = b;
-	A (result, x, y) = OPAQUE;
+	    R (result, x, y) = r;
+	    G (result, x, y) = g;
+	    B (result, x, y) = b;
+	    A (result, x, y) = OPAQUE;
+        }
     }
+
+    return result;
+
 }
-
-Tcl_SetObjResult(interp, crimp_new_image_obj (result));
-return TCL_OK;
-
 
-/* vim: set sts=4 sw=4 tw=80 et ft=c: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 4
- * fill-column: 78
- * End:
- */
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

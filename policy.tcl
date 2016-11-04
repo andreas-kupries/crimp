@@ -747,7 +747,7 @@ proc ::crimp::threshold::local {image args} {
 	    # Nothing to do. Handled later by the generic branch.
 	}
 	fpcomplex/float -
-	fpcomplex/grey8 - {
+	fpcomplex/grey8 {
 	    if {[llength $args]} {
 		while {[llength $args] < 2} {
 		    lappend args [lindex $args end]

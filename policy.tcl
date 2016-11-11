@@ -162,6 +162,7 @@ proc ::crimp::BORDER {imagetype spec} {
 		    }
 		}
 		float -
+		double -
 		grey32 -
 		grey16 -
 		grey8 {
@@ -2526,14 +2527,18 @@ proc ::crimp::matchgeo {image bbox} {
     # the image is fully contained in that box. We check this by
     # testing that the union of image and box is the box itself.
 
-    lassign $bbox                           x y w h
-    lassign [bbox2 [geometry $image] $bbox] a b c d
-
-    if {($x != $a) || ($y != $b) || ($w != c) || ($h != d)} {
-	return -code error "The is image not fully contained in the bounding box to match to."
-    }
-
+    lassign $bbox             x y w h
     lassign [geometry $image] ix iy iw ih
+
+    lassign [bbox2 \
+		 $ix $iy $iw $ih \
+		 $x $y $w $h] \
+	a b c d
+
+    if {($x != $a) || ($y != $b) || ($w != $c) || ($h != $d)} {
+	return -code error \
+	    "The image is not fully contained in the bounding box to match to."
+    }
 
     # Due to the 'contained' check above we can be sure of the
     # following contraints of image geometry to bounding box.
@@ -2546,16 +2551,15 @@ proc ::crimp::matchgeo {image bbox} {
     # This then provides us easily with the sizes of the various areas
     # by which to extend the image to match that bounding box.
 
-    set w [expr {$ix - $x}]
-    set e [expr {$x+$w-$ix-$iw}]
-    set n [expr {$iy - $y}]
-    set s [expr {$y+$h-$iy-$ih}]
+    set wb [expr {$ix - $x}]
+    set eb [expr {$x+$w-$ix-$iw}]
+    set nb [expr {$iy - $y}]
+    set sb [expr {$y+$h-$iy-$ih}]
 
-    return [expand const $image $w $n $e $s 0]
+    return [expand const $image $wb $nb $eb $sb 0]
 }
 
 proc ::crimp::matchsize {image1 image2} {
-
     lassign [dimensions $image1] w1 h1
     lassign [dimensions $image2] w2 h2
 

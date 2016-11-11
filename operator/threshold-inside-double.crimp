@@ -1,5 +1,5 @@
-crimp_primitive thresholdg_inside {
-    image_float image
+crimp_primitive thresholdg_inside_double {
+    image_double image
     double min
     double max
 } image {
@@ -11,9 +11,9 @@ crimp_primitive thresholdg_inside {
     for (y = 0; y < crimp_h (image); y++) {
         for (x = 0; x < crimp_w (image); x++) {
 
-	    FLOATP (result, x, y) = 
-	        (min <= FLOATP (image, x, y)) &&
-	        (FLOATP (image, x, y) <= max)
+	    DOUBLEP (result, x, y) = 
+	        (min <= DOUBLEP (image, x, y)) &&
+	        (DOUBLEP (image, x, y) <= max)
 	        ? 1.0
 	        : 0.0
 	        ;

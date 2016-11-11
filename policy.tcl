@@ -623,32 +623,44 @@ namespace eval ::crimp::threshold {
 # TODO :: introspect the threshold ensemble !
 
 proc ::crimp::threshold::global::below {image n} {
-    if {[::crimp::TypeOf $image] eq "float"} {
-	return [crimp::thresholdg_below $image $n]
+    set type [::crimp::TypeOf $image]
+    if {$type eq "float"} {
+	return [crimp::thresholdg_below_float $image $n]
+    } elseif {$type eq "double"} {
+	return [crimp::thresholdg_below_double $image $n]
     } else {
 	return [::crimp::remap $image [::crimp::map threshold below $n]]
     }
 }
 
 proc ::crimp::threshold::global::above {image n} {
-    if {[::crimp::TypeOf $image] eq "float"} {
-	return [crimp::thresholdg_above $image $n]
+    set type [::crimp::TypeOf $image]
+    if {$type eq "float"} {
+	return [crimp::thresholdg_above_float $image $n]
+    } elseif {$type eq "double"} {
+	return [crimp::thresholdg_above_double $image $n]
     } else {
 	return [::crimp::remap $image [::crimp::map threshold above $n]]
     }
 }
 
 proc ::crimp::threshold::global::inside {image min max} {
-    if {[::crimp::TypeOf $image] eq "float"} {
-	return [crimp::thresholdg_inside $image $min $max]
+    set type [::crimp::TypeOf $image]
+    if {$type eq "float"} {
+	return [crimp::thresholdg_inside_float $image $min $max]
+    } elseif {$type eq "double"} {
+	return [crimp::thresholdg_inside_double $image $min $max]
     } else {
 	return [::crimp::remap $image [::crimp::map threshold inside $min $max]]
     }
 }
 
 proc ::crimp::threshold::global::outside {image min max} {
-    if {[::crimp::TypeOf $image] eq "float"} {
-	return [crimp::thresholdg_outside $image $min $max]
+    set type [::crimp::TypeOf $image]
+    if {$type eq "float"} {
+	return [crimp::thresholdg_outside_float $image $min $max]
+    } elseif {$type eq "double"} {
+	return [crimp::thresholdg_outside_double $image $min $max]
     } else {
 	return [::crimp::remap $image [::crimp::map threshold outside $min $max]]
     }
@@ -658,8 +670,12 @@ proc ::crimp::threshold::global::otsu {image} {
     set maps {}
     set stat [::crimp::statistics::otsu [::crimp::statistics::basic $image]]
 
-    if {[::crimp::TypeOf $image] eq "float"} {
-	return [crimp::thresholdg_above $image \
+    set type [::crimp::TypeOf $image]
+    if {$type eq "float"} {
+	return [crimp::thresholdg_above_float $image \
+		    [dict get $stat channel value otsu]]
+    } elseif {$type eq "double"} {
+	return [crimp::thresholdg_above_double $image \
 		    [dict get $stat channel value otsu]]
     } else {
 	foreach c [dict get $stat channels] {
@@ -674,8 +690,12 @@ proc ::crimp::threshold::global::otsu {image} {
 proc ::crimp::threshold::global::middle {image} {
     set maps {}
     set stat [::crimp::statistics::basic $image]
-    if {[::crimp::TypeOf $image] eq "float"} {
-	return [crimp::thresholdg_above $image \
+    set type [::crimp::TypeOf $image]
+    if {$type eq "float"} {
+	return [crimp::thresholdg_above_float $image \
+		    [dict get $stat channel value middle]]
+    } elseif {$type eq "double"} {
+	return [crimp::thresholdg_above_double $image \
 		    [dict get $stat channel value middle]]
     } else {
 	foreach c [dict get $stat channels] {
@@ -690,8 +710,12 @@ proc ::crimp::threshold::global::middle {image} {
 proc ::crimp::threshold::global::mean {image} {
     set maps {}
     set stat [::crimp::statistics::basic $image]
-    if {[::crimp::TypeOf $image] eq "float"} {
-	return [crimp::thresholdg_above $image \
+    set type [::crimp::TypeOf $image]
+    if {$type eq "float"} {
+	return [crimp::thresholdg_above_float $image \
+		    [dict get $stat channel value mean]]
+    } elseif {$type eq "double"} {
+	return [crimp::thresholdg_above_double $image \
 		    [dict get $stat channel value mean]]
     } else {
 	foreach c [dict get $stat channels] {
@@ -706,8 +730,12 @@ proc ::crimp::threshold::global::mean {image} {
 proc ::crimp::threshold::global::median {image} {
     set maps {}
     set stat [::crimp::statistics::basic $image]
-    if {[::crimp::TypeOf $image] eq "float"} {
-	return [crimp::thresholdg_above $image \
+    set type [::crimp::TypeOf $image]
+    if {$type eq "float"} {
+	return [crimp::thresholdg_above_float $image \
+		    [dict get $stat channel value median]]
+    } elseif {$type eq "double"} {
+	return [crimp::thresholdg_above_double $image \
 		    [dict get $stat channel value median]]
     } else {
 	foreach c [dict get $stat channels] {

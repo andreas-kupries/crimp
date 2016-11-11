@@ -139,22 +139,20 @@ critcl::source support.tcl
 # # ## ### ##### ######## #############
 ## Main C section.
 
-critcl::ccode {
-    #include <math.h>
-    #include <stdlib.h>
-    #include <string.h>
-    #include <util.h>
-    #include <ahe.h>
-    #include <rank.h>
-    #include <linearalgebra.h>
-    #include <geometry.h>
-    #include <color.h>
-    #include <gauss.h>
-    #include <labelcc.h>
-    #include <linearmaps.h>
-    #include <fftpack.h>
-    #include <euclidmap.h>
-}
+critcl::include math.h
+critcl::include stdlib.h
+critcl::include string.h
+critcl::include util.h
+critcl::include ahe.h
+critcl::include rank.h
+critcl::include linearalgebra.h
+critcl::include geometry.h
+critcl::include color.h
+critcl::include gauss.h
+critcl::include labelcc.h
+critcl::include linearmaps.h
+critcl::include fftpack.h
+critcl::include euclidmap.h
 
 # # ## ### ##### ######## #############
 ## Define a compatibility implementation of lrint() on systems which do

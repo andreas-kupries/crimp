@@ -519,6 +519,7 @@ decode_grey8_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 #endif
 	}
     }
+    return 1;
 }
 
 static int

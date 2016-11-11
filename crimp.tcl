@@ -152,6 +152,8 @@ critcl::ccode {
     #include <gauss.h>
     #include <labelcc.h>
     #include <linearmaps.h>
+    #include <fftpack.h>
+    #include <euclidmap.h>
 }
 
 # # ## ### ##### ######## #############

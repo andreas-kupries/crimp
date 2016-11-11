@@ -20,8 +20,15 @@ crimp_primitive noise_gaussian_grey32 {
         for (x = 0; x < crimp_w (result); x++) {
 	    double ran = sqrt ((-2.0f ) * log(RAND_FLOAT())) * sin (2 * M_PI * RAND_FLOAT());
 	    double pix = maxval * ((GREY32 (image, x, y) / maxval) + (sqrt(variance) * ran) + mean);
-
+#if CRIMP_INT_SIZE == 4
+	    /*
+	     * With int == int32_t the value is necessarily within the
+	     * range, making the clamping superfluous.
+	     */
+	    GREY32 (result, x, y) = (int) pix;
+#else
 	    GREY32 (result, x, y) = CLAMP (0, (int) pix, MAXVAL_GREY32);
+#endif
         }
     }
 

@@ -14,7 +14,6 @@ crimp_primitive read::Tcl_grey32 {
     Tcl_Obj** colv;
     crimp_image*     result;
     int              x, y, w, h, rowc, colc, value;
-    /* XXX: BUGFIX? Use WideInt for value */
     
     /*
      * Check input, i.e. verify structure and extract dimensions
@@ -36,12 +35,19 @@ crimp_primitive read::Tcl_grey32 {
 	    if (Tcl_GetIntFromObj(interp, colv [x], &value) != TCL_OK) {
 		return NULL;
 	    }
+#if CRIMP_INT_SIZE == 4
+	    /*
+	     * With int == int32_t the value is necessarily within the
+	     * range, making the check below superfluous.
+	     */
+#else
 	    if ((value < 0) || (value > MAXVAL_GREY32)) {
 		Tcl_SetResult(interp,
 			      "integer out of range 0.." MAXVAL_STR_GREY32,
 			      TCL_STATIC);
 		return NULL;
 	    }
+#endif
         }
     }
     

@@ -14,31 +14,31 @@ kt local testing crimp::core
 
 test crimp-core-math-2linear-1.0 {interpolate bilinear, wrong args, not enough} -body {
     crimp interpolate bilinear
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bilinear a b c d xf yf"}
+} -returnCodes error -result [wa crimp interpolate bilinear a b c d xf yf]
 
 test crimp-core-math-2linear-1.1 {interpolate bilinear, wrong args, not enough} -body {
     crimp interpolate bilinear A
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bilinear a b c d xf yf"}
+} -returnCodes error -result [wa crimp interpolate bilinear a b c d xf yf]
 
 test crimp-core-math-2linear-1.2 {interpolate bilinear, wrong args, not enough} -body {
     crimp interpolate bilinear A B
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bilinear a b c d xf yf"}
+} -returnCodes error -result [wa crimp interpolate bilinear a b c d xf yf]
 
 test crimp-core-math-2linear-1.3 {interpolate bilinear, wrong args, not enough} -body {
     crimp interpolate bilinear A B C
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bilinear a b c d xf yf"}
+} -returnCodes error -result [wa crimp interpolate bilinear a b c d xf yf]
 
 test crimp-core-math-2linear-1.4 {interpolate bilinear, wrong args, not enough} -body {
     crimp interpolate bilinear A B C D
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bilinear a b c d xf yf"}
+} -returnCodes error -result [wa crimp interpolate bilinear a b c d xf yf]
 
 test crimp-core-math-2linear-1.5 {interpolate bilinear, wrong args, not enough} -body {
     crimp interpolate bilinear A B C D XF
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bilinear a b c d xf yf"}
+} -returnCodes error -result [wa crimp interpolate bilinear a b c d xf yf]
 
 test crimp-core-math-2linear-1.6 {interpolate bilinear, wrong args, too many} -body {
     crimp interpolate bilinear A B C D XF YF XXX
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bilinear a b c d xf yf"}
+} -returnCodes error -result [wa crimp interpolate bilinear a b c d xf yf]
 
 # -------------------------------------------------------------------------
 ## Fixed functionality

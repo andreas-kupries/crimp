@@ -17,7 +17,7 @@ kt local testing crimp
 
 test crimp-montage-1.0 {image montage, wrong\#args, not enough} -body {
     crimp montage
-} -returnCodes error -result {wrong # args: should be "crimp montage subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp montage subcommand ?argument ...?]
 
 test crimp-montage-1.1 {image montage, invalid method} -body {
     crimp montage BOGUS IMAGE
@@ -41,7 +41,7 @@ test crimp-montage-1.1 {image montage, invalid method} -body {
 
 test crimp-montage-2.0 {image montage horizontal, wrong\#args, not enough} -body {
     crimp montage horizontal
-} -returnCodes error -result {wrong # args: should be "crimp montage horizontal ?-border B? ?-align A? image ?image...?"}
+} -returnCodes error -result [wa crimp montage horizontal ?-border B? ?-align A? image ?image...?]
 
 test crimp-montage-2.1 {image montage horizontal, wrong\#args, invalid arguments} -body {
     crimp montage horizontal BOGUS
@@ -137,7 +137,7 @@ test crimp-montage-3.0.7 "image montage horizontal, fpcomplex, simple" -body {
 
 test crimp-montage-4.0 {image montage vertical, wrong\#args, not enough} -body {
     crimp montage vertical
-} -returnCodes error -result {wrong # args: should be "crimp montage vertical ?-border B? ?-align A? image ?image...?"}
+} -returnCodes error -result [wa crimp montage vertical ?-border B? ?-align A? image ?image...?]
 
 test crimp-montage-4.1 {image montage vertical, wrong\#args, invalid arguments} -body {
     crimp montage vertical BOGUS

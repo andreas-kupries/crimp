@@ -785,4 +785,29 @@ proc dictsort {dict} {
 }
 
 # # ## ### ##### ######## ############# #####################
+## wrong-args error message, core version dependent.
+
+if {[package vsatisfies [package present Tcl] 8.6]} {
+    proc wa-transform {words} {
+	#set words [join $words { }]
+	regsub {\.\.\.$}                       $words {?arg ...?} words
+	regsub {\?argument \.\.\.\?$}          $words {?arg ...?} words
+	if {[regexp {^dict for } $words]} {
+	    regsub {keyVar valueVar} $words {keyVarName valueVarName} words
+	}
+	regsub {^dict set varName}             $words {dict set dictVarName} words
+	regsub {^dict unset varName}           $words {dict unset dictVarName} words
+	return $words
+    }
+} else {
+    proc wa-transform {words} {
+	return $words
+    }
+}
+
+proc wa {args} {
+    return "wrong # args: should be \"[wa-transform $args]\""
+}
+
+# # ## ### ##### ######## ############# #####################
 return

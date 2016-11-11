@@ -25,7 +25,7 @@ kt local testing crimp
 
 test crimp-table-1.0 {image tables, wrong\#args, not enough} -body {
     crimp table
-} -returnCodes error -result {wrong # args: should be "crimp table subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp table subcommand ?argument ...?]
 
 test crimp-table-1.1 {image tables, invalid method} -body {
     crimp table BOGUS
@@ -35,7 +35,7 @@ test crimp-table-1.1 {image tables, invalid method} -body {
 
 test crimp-table-2.0 {image tables, eval, wrong\#args, not enough} -body {
     crimp table eval
-} -returnCodes error -result {wrong # args: should be "crimp table eval subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp table eval subcommand ?argument ...?]
 
 test crimp-table-2.1 {image tables, eval, invalid method} -body {
     crimp table eval BOGUS
@@ -45,11 +45,11 @@ test crimp-table-2.1 {image tables, eval, invalid method} -body {
 
 test crimp-table-3.0 {image tables, eval wrap, wrong\#args, not enough} -body {
     crimp table eval wrap
-} -returnCodes error -result {wrong # args: should be "crimp table eval wrap cmdprefix"}
+} -returnCodes error -result [wa crimp table eval wrap cmdprefix]
 
 test crimp-table-3.1 {image tables, eval wrap, wrong\#args, too many} -body {
     crimp table eval wrap CMD bogus
-} -returnCodes error -result {wrong # args: should be "crimp table eval wrap cmdprefix"}
+} -returnCodes error -result [wa crimp table eval wrap cmdprefix]
 
 test crimp-table-3.2 {image tables, eval wrap} -body {
     list [crimp table eval wrap {apply {{x} {
@@ -73,11 +73,11 @@ test crimp-table-3.2 {image tables, eval wrap} -body {
 
 test crimp-table-4.0 {image tables, eval clamp, wrong\#args, not enough} -body {
     crimp table eval clamp
-} -returnCodes error -result {wrong # args: should be "crimp table eval clamp cmdprefix"}
+} -returnCodes error -result [wa crimp table eval clamp cmdprefix]
 
 test crimp-table-4.1 {image tables, eval clamp, wrong\#args, too many} -body {
     crimp table eval clamp CMD bogus
-} -returnCodes error -result {wrong # args: should be "crimp table eval clamp cmdprefix"}
+} -returnCodes error -result [wa crimp table eval clamp cmdprefix]
 
 test crimp-table-4.2 {image tables, eval clamp} -body {
     list [crimp table eval clamp {apply {{x} {
@@ -101,15 +101,15 @@ test crimp-table-4.2 {image tables, eval clamp} -body {
 
 test crimp-table-5.0 {image tables, compose, wrong\#args, not enough} -body {
     crimp table compose
-} -returnCodes error -result {wrong # args: should be "crimp table compose f g"}
+} -returnCodes error -result [wa crimp table compose f g]
 
 test crimp-table-5.1 {image tables, compose, wrong\#args, not enough} -body {
     crimp table compose F
-} -returnCodes error -result {wrong # args: should be "crimp table compose f g"}
+} -returnCodes error -result [wa crimp table compose f g]
 
 test crimp-table-5.2 {image tables, compose, wrong\#args, too many} -body {
     crimp table compose F G bogus
-} -returnCodes error -result {wrong # args: should be "crimp table compose f g"}
+} -returnCodes error -result [wa crimp table compose f g]
 
 test crimp-table-5.3 {image tables, compose} -body {
     crimp table compose \
@@ -127,7 +127,7 @@ test crimp-table-5.3 {image tables, compose} -body {
 
 test crimp-table-6.0 {image tables, identity, wrong\#args, too many} -body {
     crimp table identity BOGUS
-} -returnCodes error -result {wrong # args: should be "crimp table identity"}
+} -returnCodes error -result [wa crimp table identity]
 
 test crimp-table-6.1 {image tables, identity} -body {
     crimp table identity
@@ -137,7 +137,7 @@ test crimp-table-6.1 {image tables, identity} -body {
 
 test crimp-table-7.0 {image tables, invers, wrong\#args, too many} -body {
     crimp table invers BOGUS
-} -returnCodes error -result {wrong # args: should be "crimp table invers"}
+} -returnCodes error -result [wa crimp table invers]
 
 test crimp-table-7.1 {image tables, invers} -body {
     crimp table invers
@@ -147,11 +147,11 @@ test crimp-table-7.1 {image tables, invers} -body {
 
 test crimp-table-8.0 {image tables, solarize, wrong\#args, not enough} -body {
     crimp table solarize
-} -returnCodes error -result {wrong # args: should be "crimp table solarize n"}
+} -returnCodes error -result [wa crimp table solarize n]
 
 test crimp-table-8.1 {image tables, solarize, wrong\#args, too many} -body {
     crimp table solarize N bogus
-} -returnCodes error -result {wrong # args: should be "crimp table solarize n"}
+} -returnCodes error -result [wa crimp table solarize n]
 
 test crimp-table-8.2 {image tables, solarize} -body {
     crimp table solarize 0
@@ -185,11 +185,11 @@ test crimp-table-8.8 {image tables, solarize} -body {
 
 test crimp-table-9.0 {image tables, gamma, wrong\#args, not enough} -body {
     crimp table gamma
-} -returnCodes error -result {wrong # args: should be "crimp table gamma y"}
+} -returnCodes error -result [wa crimp table gamma y]
 
 test crimp-table-9.1 {image tables, gamma, wrong\#args, too many} -body {
     crimp table gamma Y bogus
-} -returnCodes error -result {wrong # args: should be "crimp table gamma y"}
+} -returnCodes error -result [wa crimp table gamma y]
 
 test crimp-table-9.2 {image tables, gamma} -body {
     crimp table gamma 0
@@ -217,11 +217,11 @@ test crimp-table-9.5 {image tables, gamma} -body {
 
 test crimp-table-10.0 {image tables, degamma, wrong\#args, too many} -body {
     crimp table degamma
-} -returnCodes error -result {wrong # args: should be "crimp table degamma y"}
+} -returnCodes error -result [wa crimp table degamma y]
 
 test crimp-table-10.1 {image tables, degamma, wrong\#args, too many} -body {
     crimp table degamma Y bogus
-} -returnCodes error -result {wrong # args: should be "crimp table degamma y"}
+} -returnCodes error -result [wa crimp table degamma y]
 
 test crimp-table-10.2 {image tables, degamma} -body {
     crimp table degamma 0
@@ -251,7 +251,7 @@ test crimp-table-10.5 {image tables, degamma} -body {
 
 test crimp-table-11.0 {image tables, sqrt, wrong\#args, too many} -body {
     crimp table sqrt MAX bogus
-} -returnCodes error -result {wrong # args: should be "crimp table sqrt ?max?"}
+} -returnCodes error -result [wa crimp table sqrt ?max?]
 
 test crimp-table-11.1 {image tables, sqrt} -body {
     crimp table sqrt 0
@@ -287,7 +287,7 @@ test crimp-table-11.6 {image tables, sqrt} -body {
 
 test crimp-table-12.0 {image tables, log, wrong\#args, too many} -body {
     crimp table log MAX bogus
-} -returnCodes error -result {wrong # args: should be "crimp table log ?max?"}
+} -returnCodes error -result [wa crimp table log ?max?]
 
 test crimp-table-12.1 {image tables, log} -body {
     crimp table log 0
@@ -323,7 +323,7 @@ test crimp-table-12.6 {image tables, log} -body {
 
 test crimp-table-13.0 {image tables, linear, wrong\#args, not enough} -body {
     crimp table linear
-} -returnCodes error -result {wrong # args: should be "crimp table linear subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp table linear subcommand ?argument ...?]
 
 test crimp-table-13.1 {image tables, linear, invalid method} -body {
     crimp table linear BOGUS
@@ -333,15 +333,15 @@ test crimp-table-13.1 {image tables, linear, invalid method} -body {
 
 test crimp-table-14.0 {image tables, linear wrap, wrong\#args, not enough} -body {
     crimp table linear wrap
-} -returnCodes error -result {wrong # args: should be "crimp table linear wrap gain offset"}
+} -returnCodes error -result [wa crimp table linear wrap gain offset]
 
 test crimp-table-14.1 {image tables, linear wrap, wrong\#args, not enough} -body {
     crimp table linear wrap GAIN
-} -returnCodes error -result {wrong # args: should be "crimp table linear wrap gain offset"}
+} -returnCodes error -result [wa crimp table linear wrap gain offset]
 
 test crimp-table-14.2 {image tables, linear wrap, wrong\#args, too many} -body {
     crimp table linear wrap GAIN OFFSET bogus
-} -returnCodes error -result {wrong # args: should be "crimp table linear wrap gain offset"}
+} -returnCodes error -result [wa crimp table linear wrap gain offset]
 
 # Compare to the 'linear clamp' next (table-15.x).
 
@@ -379,15 +379,15 @@ test crimp-table-14.8 {image tables, linear wrap} -body {
 
 test crimp-table-15.0 {image tables, linear clamp, wrong\#args, not enough} -body {
     crimp table linear clamp
-} -returnCodes error -result {wrong # args: should be "crimp table linear clamp gain offset"}
+} -returnCodes error -result [wa crimp table linear clamp gain offset]
 
 test crimp-table-15.1 {image tables, linear clamp, wrong\#args, not enough} -body {
     crimp table linear clamp GAIN
-} -returnCodes error -result {wrong # args: should be "crimp table linear clamp gain offset"}
+} -returnCodes error -result [wa crimp table linear clamp gain offset]
 
 test crimp-table-15.2 {image tables, linear clamp, wrong\#args, too many} -body {
     crimp table linear clamp GAIN OFFSET bogus
-} -returnCodes error -result {wrong # args: should be "crimp table linear clamp gain offset"}
+} -returnCodes error -result [wa crimp table linear clamp gain offset]
 
 # Compare to the 'linear clamp' previous (table-14.x).
 
@@ -425,15 +425,15 @@ test crimp-table-15.8 {image tables, linear clamp} -body {
 
 test crimp-table-16.0 {image tables, stretch, wrong\#args, not enough} -body {
     crimp table stretch
-} -returnCodes error -result {wrong # args: should be "crimp table stretch min max"}
+} -returnCodes error -result [wa crimp table stretch min max]
 
 test crimp-table-16.1 {image tables, stretch, wrong\#args, not enough} -body {
     crimp table stretch MIN
-} -returnCodes error -result {wrong # args: should be "crimp table stretch min max"}
+} -returnCodes error -result [wa crimp table stretch min max]
 
 test crimp-table-16.2 {image tables, stretch, wrong\#args, too many} -body {
     crimp table stretch MIN MAX bogus
-} -returnCodes error -result {wrong # args: should be "crimp table stretch min max"}
+} -returnCodes error -result [wa crimp table stretch min max]
 
 test crimp-table-16.3 {image tables, stretch} -body {
     crimp table stretch 0 255
@@ -468,7 +468,7 @@ test crimp-table-16.9 {image tables, stretch} -body {
 
 test crimp-table-17.0 {image tables, threshold, wrong\#args, too many} -body {
     crimp table threshold
-} -returnCodes error -result {wrong # args: should be "crimp table threshold subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp table threshold subcommand ?argument ...?]
 
 test crimp-table-17.1 {image tables, threshold, invalid method} -body {
     crimp table threshold BOGUS
@@ -478,11 +478,11 @@ test crimp-table-17.1 {image tables, threshold, invalid method} -body {
 
 test crimp-table-18.0 {image tables, threshold above, wrong\#args, not enough} -body {
     crimp table threshold above
-} -returnCodes error -result {wrong # args: should be "crimp table threshold above threshold"}
+} -returnCodes error -result [wa crimp table threshold above threshold]
 
 test crimp-table-18.1 {image tables, threshold above, wrong\#args, too many} -body {
     crimp table threshold above T bogus
-} -returnCodes error -result {wrong # args: should be "crimp table threshold above threshold"}
+} -returnCodes error -result [wa crimp table threshold above threshold]
 
 test crimp-table-18.2 {image tables, threshold above} -body {
     crimp table threshold above -1
@@ -512,11 +512,11 @@ test crimp-table-18.7 {image tables, threshold above} -body {
 
 test crimp-table-19.0 {image tables, threshold below, wrong\#args, not enough} -body {
     crimp table threshold below
-} -returnCodes error -result {wrong # args: should be "crimp table threshold below threshold"}
+} -returnCodes error -result [wa crimp table threshold below threshold]
 
 test crimp-table-19.1 {image tables, threshold below, wrong\#args, too many} -body {
     crimp table threshold below T bogus
-} -returnCodes error -result {wrong # args: should be "crimp table threshold below threshold"}
+} -returnCodes error -result [wa crimp table threshold below threshold]
 
 test crimp-table-19.2 {image tables, threshold below} -body {
     crimp table threshold below -1
@@ -546,15 +546,15 @@ test crimp-table-19.7 {image tables, threshold below} -body {
 
 test crimp-table-20.0 {image tables, threshold inside, wrong\#args, not enough} -body {
     crimp table threshold inside
-} -returnCodes error -result {wrong # args: should be "crimp table threshold inside min max"}
+} -returnCodes error -result [wa crimp table threshold inside min max]
 
 test crimp-table-20.1 {image tables, threshold inside, wrong\#args, not enough} -body {
     crimp table threshold inside MIN
-} -returnCodes error -result {wrong # args: should be "crimp table threshold inside min max"}
+} -returnCodes error -result [wa crimp table threshold inside min max]
 
 test crimp-table-20.2 {image tables, threshold inside, wrong\#args, too many} -body {
     crimp table threshold inside MIN MAX bogus
-} -returnCodes error -result {wrong # args: should be "crimp table threshold inside min max"}
+} -returnCodes error -result [wa crimp table threshold inside min max]
 
 test crimp-table-20.3 {image tables, threshold inside} -body {
     crimp table threshold inside -1 255
@@ -584,15 +584,15 @@ test crimp-table-20.8 {image tables, threshold inside} -body {
 
 test crimp-table-21.0 {image tables, threshold outside, wrong\#args, not enough} -body {
     crimp table threshold outside
-} -returnCodes error -result {wrong # args: should be "crimp table threshold outside min max"}
+} -returnCodes error -result [wa crimp table threshold outside min max]
 
 test crimp-table-21.1 {image tables, threshold outside, wrong\#args, not enough} -body {
     crimp table threshold outside MIN
-} -returnCodes error -result {wrong # args: should be "crimp table threshold outside min max"}
+} -returnCodes error -result [wa crimp table threshold outside min max]
 
 test crimp-table-21.2 {image tables, threshold outside, wrong\#args, too many} -body {
     crimp table threshold outside MIN MAX bogus
-} -returnCodes error -result {wrong # args: should be "crimp table threshold outside min max"}
+} -returnCodes error -result [wa crimp table threshold outside min max]
 
 test crimp-table-21.3 {image tables, threshold outside} -body {
     crimp table threshold outside -1 255
@@ -622,11 +622,11 @@ test crimp-table-21.8 {image tables, threshold outside} -body {
 
 test crimp-table-22.0 {image tables, gauss, wrong\#args, not enough} -body {
     crimp table gauss
-} -returnCodes error -result {wrong # args: should be "crimp table gauss sigma"}
+} -returnCodes error -result [wa crimp table gauss sigma]
 
 test crimp-table-22.1 {image tables, gauss, wrong\#args, too many} -body {
     crimp table gauss SIGMA bogus
-} -returnCodes error -result {wrong # args: should be "crimp table gauss sigma"}
+} -returnCodes error -result [wa crimp table gauss sigma]
 
 test crimp-table-22.2 {image tables, gauss} -body {
     crimp table gauss 0.1
@@ -652,7 +652,7 @@ test crimp-table-22.5 {image tables, gauss} -body {
 
 test crimp-table-23.0 {image tables, fgauss, wrong\#args, not enough} -body {
     crimp table fgauss
-} -returnCodes error -result {wrong # args: should be "crimp table fgauss subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp table fgauss subcommand ?argument ...?]
 
 test crimp-table-23.1 {image tables, fgauss, invalid method} -body {
     crimp table fgauss BOGUS
@@ -662,11 +662,11 @@ test crimp-table-23.1 {image tables, fgauss, invalid method} -body {
 
 test crimp-table-24.0 {image tables, fgauss discrete, wrong\#args, not enough} -body {
     crimp table fgauss discrete
-} -returnCodes error -result {wrong # args: should be "crimp table fgauss discrete sigma ?r?"}
+} -returnCodes error -result [wa crimp table fgauss discrete sigma ?r?]
 
 test crimp-table-24.1 {image tables, fgauss discrete, wrong\#args, too many} -body {
     crimp table fgauss discrete SIGMA R bogus
-} -returnCodes error -result {wrong # args: should be "crimp table fgauss discrete sigma ?r?"}
+} -returnCodes error -result [wa crimp table fgauss discrete sigma ?r?]
 
 test crimp-table-24.2 {image tables, fgauss discrete} -body {
     lmap {format %.2f} [crimp table fgauss discrete 0.1]
@@ -688,11 +688,11 @@ test crimp-table-24.5 {image tables, fgauss discrete} -body {
 
 test crimp-table-25.0 {image tables, fgauss sampled, wrong\#args, not enough} -body {
     crimp table fgauss sampled
-} -returnCodes error -result {wrong # args: should be "crimp table fgauss sampled sigma ?r?"}
+} -returnCodes error -result [wa crimp table fgauss sampled sigma ?r?]
 
 test crimp-table-25.1 {image tables, fgauss sampled, wrong\#args, too many} -body {
     crimp table fgauss sampled SIGMA R bogus
-} -returnCodes error -result {wrong # args: should be "crimp table fgauss sampled sigma ?r?"}
+} -returnCodes error -result [wa crimp table fgauss sampled sigma ?r?]
 
 test crimp-table-25.2 {image tables, fgauss sampled} -body {
     lmap {format %.2f} [crimp table fgauss sampled 0.1]
@@ -714,7 +714,7 @@ test crimp-table-25.5 {image tables, fgauss sampled} -body {
 
 test crimp-table-26.0 {image tables, quantize, wrong\#args, not enough} -body {
     crimp table quantize
-} -returnCodes error -result {wrong # args: should be "crimp table quantize subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp table quantize subcommand ?argument ...?]
 
 test crimp-table-26.1 {image tables, quantize, invalid method} -body {
     crimp table quantize BOGUS
@@ -724,19 +724,19 @@ test crimp-table-26.1 {image tables, quantize, invalid method} -body {
 
 test crimp-table-27.0 {image tables, quantize histogram, wrong\#args, not enough} -body {
     crimp table quantize histogram
-} -returnCodes error -result {wrong # args: should be "crimp table quantize histogram n p h"}
+} -returnCodes error -result [wa crimp table quantize histogram n p h]
 
 test crimp-table-27.1 {image tables, quantize histogram, wrong\#args, not enough} -body {
     crimp table quantize histogram N
-} -returnCodes error -result {wrong # args: should be "crimp table quantize histogram n p h"}
+} -returnCodes error -result [wa crimp table quantize histogram n p h]
 
 test crimp-table-27.2 {image tables, quantize histogram, wrong\#args, not enough} -body {
     crimp table quantize histogram N P
-} -returnCodes error -result {wrong # args: should be "crimp table quantize histogram n p h"}
+} -returnCodes error -result [wa crimp table quantize histogram n p h]
 
 test crimp-table-27.3 {image tables, quantize histogram, wrong\#args, too many} -body {
     crimp table quantize histogram N P H bogus
-} -returnCodes error -result {wrong # args: should be "crimp table quantize histogram n p h"}
+} -returnCodes error -result [wa crimp table quantize histogram n p h]
 
 test crimp-table-27.4 {image tables, quantize histogram, invalid number of colors} -body {
     crimp table quantize histogram 1 P H

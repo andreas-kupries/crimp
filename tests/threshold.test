@@ -18,7 +18,7 @@ kt local testing crimp
 
 test crimp-threshold-1.0 {image thresholding, wrong\#args, not enough} -body {
     crimp threshold
-} -returnCodes error -result {wrong # args: should be "crimp threshold subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp threshold subcommand ?argument ...?]
 
 test crimp-threshold-1.1 {image thresholding, invalid method} -body {
     crimp threshold BOGUS
@@ -48,15 +48,15 @@ test crimp-threshold-1.2 {image thresholding, invalid method} -body {
 
 test crimp-threshold-2.0 {image thresholding, global, below, wrong\#args, not enough} -body {
     crimp threshold global below
-} -returnCodes error -result {wrong # args: should be "crimp threshold global below image n"}
+} -returnCodes error -result [wa crimp threshold global below image n]
 
 test crimp-threshold-2.1 {image thresholding, global, below, wrong\#args, not enough} -body {
     crimp threshold global below IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp threshold global below image n"}
+} -returnCodes error -result [wa crimp threshold global below image n]
 
 test crimp-threshold-2.2 {image thresholding, global, below, wrong\#args, too many} -body {
     crimp threshold global below IMAGE THRESHOLD toomuch
-} -returnCodes error -result {wrong # args: should be "crimp threshold global below image n"}
+} -returnCodes error -result [wa crimp threshold global below image n]
 
 test crimp-threshold-2.3.0 {image thresholding, global, below, grey8} -body {
     bw [crimp write 2string tcl [crimp threshold global below [grey8] 0]]
@@ -307,15 +307,15 @@ test crimp-threshold-2.7.6 {image thresholding, global, below, float} -body {
 
 test crimp-threshold-3.0 {image thresholding, global, above, wrong\#args, not enough} -body {
     crimp threshold global above
-} -returnCodes error -result {wrong # args: should be "crimp threshold global above image n"}
+} -returnCodes error -result [wa crimp threshold global above image n]
 
 test crimp-threshold-3.1 {image thresholding, global, above, wrong\#args, not enough} -body {
     crimp threshold global above IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp threshold global above image n"}
+} -returnCodes error -result [wa crimp threshold global above image n]
 
 test crimp-threshold-3.2 {image thresholding, global, above, wrong\#args, too many} -body {
     crimp threshold global above IMAGE THRESHOLD toomuch
-} -returnCodes error -result {wrong # args: should be "crimp threshold global above image n"}
+} -returnCodes error -result [wa crimp threshold global above image n]
 
 test crimp-threshold-3.3.0 {image thresholding, global, above, grey8} -body {
     bw [crimp write 2string tcl [crimp threshold global above [grey8] 0]]
@@ -566,19 +566,19 @@ test crimp-threshold-3.7.6 {image thresholding, global, above, float} -body {
 
 test crimp-threshold-4.0 {image thresholding, global, inside, wrong\#args, not enough} -body {
     crimp threshold global inside
-} -returnCodes error -result {wrong # args: should be "crimp threshold global inside image min max"}
+} -returnCodes error -result [wa crimp threshold global inside image min max]
 
 test crimp-threshold-4.1 {image thresholding, global, inside, wrong\#args, not enough} -body {
     crimp threshold global inside IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp threshold global inside image min max"}
+} -returnCodes error -result [wa crimp threshold global inside image min max]
 
 test crimp-threshold-4.2 {image thresholding, global, inside, wrong\#args, not enough} -body {
     crimp threshold global inside IMAGE MIN
-} -returnCodes error -result {wrong # args: should be "crimp threshold global inside image min max"}
+} -returnCodes error -result [wa crimp threshold global inside image min max]
 
 test crimp-threshold-4.3 {image thresholding, global, inside, wrong\#args, too many} -body {
     crimp threshold global inside IMAGE MIN MAX toomuch
-} -returnCodes error -result {wrong # args: should be "crimp threshold global inside image min max"}
+} -returnCodes error -result [wa crimp threshold global inside image min max]
 
 # Note: For a first set the 'inside' tests use pixel ranges which emulate 'below'.
 
@@ -831,19 +831,19 @@ test crimp-threshold-4.8.6 {image thresholding, global, inside, float} -body {
 
 test crimp-threshold-5.0 {image thresholding, global, outside, wrong\#args, not enough} -body {
     crimp threshold global outside
-} -returnCodes error -result {wrong # args: should be "crimp threshold global outside image min max"}
+} -returnCodes error -result [wa crimp threshold global outside image min max]
 
 test crimp-threshold-5.1 {image thresholding, global, outside, wrong\#args, not enough} -body {
     crimp threshold global outside IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp threshold global outside image min max"}
+} -returnCodes error -result [wa crimp threshold global outside image min max]
 
 test crimp-threshold-5.2 {image thresholding, global, outside, wrong\#args, not enough} -body {
     crimp threshold global outside IMAGE MIN
-} -returnCodes error -result {wrong # args: should be "crimp threshold global outside image min max"}
+} -returnCodes error -result [wa crimp threshold global outside image min max]
 
 test crimp-threshold-5.3 {image thresholding, global, outside, wrong\#args, too many} -body {
     crimp threshold global outside IMAGE MIN MAX toomuch
-} -returnCodes error -result {wrong # args: should be "crimp threshold global outside image min max"}
+} -returnCodes error -result [wa crimp threshold global outside image min max]
 
 # Note: For a first set the 'outside' tests use pixel ranges which emulate 'above'.
 
@@ -1096,11 +1096,11 @@ test crimp-threshold-5.8.6 {image thresholding, global, outside, float} -body {
 
 test crimp-threshold-6.0 {image thresholding, global, otsu, wrong\#args, not enough} -body {
     crimp threshold global otsu
-} -returnCodes error -result {wrong # args: should be "crimp threshold global otsu image"}
+} -returnCodes error -result [wa crimp threshold global otsu image]
 
 test crimp-threshold-6.1 {image thresholding, global, otsu, wrong\#args, too many} -body {
     crimp threshold global otsu IMAGE toomuch
-} -returnCodes error -result {wrong # args: should be "crimp threshold global otsu image"}
+} -returnCodes error -result [wa crimp threshold global otsu image]
 
 test crimp-threshold-6.2 {image thresholding, global, otsu, grey8} -body {
     apply {{image} {
@@ -1180,11 +1180,11 @@ test crimp-threshold-6.6 {image thresholding, global, otsu, float} -body {
 
 test crimp-threshold-7.0 {image thresholding, global, middle, wrong\#args, not enough} -body {
     crimp threshold global middle
-} -returnCodes error -result {wrong # args: should be "crimp threshold global middle image"}
+} -returnCodes error -result [wa crimp threshold global middle image]
 
 test crimp-threshold-7.1 {image thresholding, global, middle, wrong\#args, too many} -body {
     crimp threshold global middle IMAGE toomuch
-} -returnCodes error -result {wrong # args: should be "crimp threshold global middle image"}
+} -returnCodes error -result [wa crimp threshold global middle image]
 
 test crimp-threshold-7.2 {image thresholding, global, middle, grey8} -body {
     apply {{image} {
@@ -1268,11 +1268,11 @@ test crimp-threshold-7.6 {image thresholding, global, middle, float} -body {
 
 test crimp-threshold-8.0 {image thresholding, global, mean, wrong\#args, not enough} -body {
     crimp threshold global mean
-} -returnCodes error -result {wrong # args: should be "crimp threshold global mean image"}
+} -returnCodes error -result [wa crimp threshold global mean image]
 
 test crimp-threshold-8.1 {image thresholding, global, mean, wrong\#args, too many} -body {
     crimp threshold global mean IMAGE toomuch
-} -returnCodes error -result {wrong # args: should be "crimp threshold global mean image"}
+} -returnCodes error -result [wa crimp threshold global mean image]
 
 test crimp-threshold-8.2 {image thresholding, global, mean, grey8} -body {
     apply {{image} {
@@ -1356,11 +1356,11 @@ test crimp-threshold-8.6 {image thresholding, global, mean, float} -body {
 
 test crimp-threshold-9.0 {image thresholding, global, median, wrong\#args, not enough} -body {
     crimp threshold global median
-} -returnCodes error -result {wrong # args: should be "crimp threshold global median image"}
+} -returnCodes error -result [wa crimp threshold global median image]
 
 test crimp-threshold-9.1 {image thresholding, global, median, wrong\#args, too many} -body {
     crimp threshold global median IMAGE toomuch
-} -returnCodes error -result {wrong # args: should be "crimp threshold global median image"}
+} -returnCodes error -result [wa crimp threshold global median image]
 
 test crimp-threshold-9.2 {image thresholding, global, median, grey8} -body {
     apply {{image} {

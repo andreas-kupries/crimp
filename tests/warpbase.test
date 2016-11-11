@@ -17,7 +17,7 @@ kt local testing crimp
 
 test crimp-warp-base-0.0 {image warp, wrong\#args} -body {
     crimp warp
-} -returnCodes error -result {wrong # args: should be "crimp warp subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp warp subcommand ?argument ...?]
 
 test crimp-warp-base-0.1 {image warp, invalid method} -body {
     crimp warp BOGUS
@@ -27,7 +27,7 @@ test crimp-warp-base-0.1 {image warp, invalid method} -body {
 
 test crimp-warp-point-1.0 {image warp point, wrong\#args, not enough} -body {
     crimp warp point
-} -returnCodes error -result {wrong # args: should be "crimp warp point transform ..."}
+} -returnCodes error -result [wa crimp warp point transform ...]
 
 test crimp-warp-point-1.1 {image warp point, invalid transform} -body {
     crimp warp point T
@@ -35,7 +35,7 @@ test crimp-warp-point-1.1 {image warp point, invalid transform} -body {
 
 test crimp-warp-point-1.2 {image warp point, invalid point} -body {
     crimp warp point [crimp transform reflect line {2 4} {4 0}] X
-} -returnCodes error -result {wrong # args: should be "crimp::warp_point forward x y"}
+} -returnCodes error -result [wa crimp::warp_point forward x y]
 
 test crimp-warp-point-1.3 {image warp point, invalid point} -body {
     crimp warp point [crimp transform reflect line {2 4} {4 0}] {X 1}
@@ -133,15 +133,15 @@ apply {{} {
 
 test crimp-warp-box-3.0 {image warp box, wrong\#args, not enough} -body {
     crimp warp box
-} -returnCodes error -result {wrong # args: should be "crimp warp box transform geometry"}
+} -returnCodes error -result [wa crimp warp box transform geometry]
 
 test crimp-warp-box-3.1 {image warp box, wrong\#args, not enough} -body {
     crimp warp box T
-} -returnCodes error -result {wrong # args: should be "crimp warp box transform geometry"}
+} -returnCodes error -result [wa crimp warp box transform geometry]
 
 test crimp-warp-box-3.2 {image warp box, wrong\#args, too many} -body {
     crimp warp box T G toomuch
-} -returnCodes error -result {wrong # args: should be "crimp warp box transform geometry"}
+} -returnCodes error -result [wa crimp warp box transform geometry]
 
 test crimp-warp-box-3.3 {image warp box, invalid transform} -body {
     crimp warp box T G
@@ -149,7 +149,7 @@ test crimp-warp-box-3.3 {image warp box, invalid transform} -body {
 
 test crimp-warp-box-3.4 {image warp box, invalid box} -body {
     crimp warp box [crimp transform reflect line {2 4} {4 0}] G
-} -returnCodes error -result {wrong # args: should be "crimp::warp_box forward x y w h"}
+} -returnCodes error -result [wa crimp::warp_box forward x y w h]
 
 test crimp-warp-box-3.5 {image warp box, invalid box} -body {
     crimp warp box [crimp transform reflect line {2 4} {4 0}] {X 1 5 5}

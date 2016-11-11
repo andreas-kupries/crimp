@@ -20,15 +20,15 @@ kt local testing crimp
 
 test crimp-regionsum-1.0 {region_sum images, wrong\#args, not enough} -body {
     crimp region_sum
-} -returnCodes error -result {wrong # args: should be "crimp region_sum image radius"}
+} -returnCodes error -result [wa crimp region_sum image radius]
 
 test crimp-regionsum-1.1 {region_sum images, wrong\#args, not enough} -body {
     crimp region_sum IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp region_sum image radius"}
+} -returnCodes error -result [wa crimp region_sum image radius]
 
 test crimp-regionsum-1.2 {region_sum images, wrong\#args, too many} -body {
     crimp region_sum IMAGE RADIUS toomuch
-} -returnCodes error -result {wrong # args: should be "crimp region_sum image radius"}
+} -returnCodes error -result [wa crimp region_sum image radius]
 
 test crimp-regionsum-1.3 {region_sum images, bogus image type} -body {
     crimp region_sum BOGUS 1

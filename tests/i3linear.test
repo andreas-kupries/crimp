@@ -14,51 +14,51 @@ kt local testing crimp::core
 
 test crimp-core-math-3linear-1.0 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.1 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.2 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A B
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.3 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A B C
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.4 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A B C D
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.5 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A B C D E
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.6 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A B C D E F
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.7 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A B C D E F G
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.8 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A B C D E F G H
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.9 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A B C D E F G H XF
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.10 {interpolate trilinear, wrong args, not enough} -body {
     crimp interpolate trilinear A B C D E F G H XF YF
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 test crimp-core-math-3linear-1.11 {interpolate trilinear, wrong args, too many} -body {
     crimp interpolate trilinear A B C D E F G H XF YF ZF XXX
-} -returnCodes error -result {wrong # args: should be "crimp interpolate trilinear a b c d e f g h xf yf zf"}
+} -returnCodes error -result [wa crimp interpolate trilinear a b c d e f g h xf yf zf]
 
 # -------------------------------------------------------------------------
 ## Fixed functionality

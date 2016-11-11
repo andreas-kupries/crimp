@@ -18,7 +18,7 @@ kt local testing crimp
 
 test crimp-flip-1.0 {image flip, wrong\#args, not enough} -body {
     crimp flip
-} -returnCodes error -result {wrong # args: should be "crimp flip subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp flip subcommand ?argument ...?]
 
 test crimp-flip-1.1 {image flip, invalid method} -body {
     crimp flip BOGUS
@@ -28,11 +28,11 @@ test crimp-flip-1.1 {image flip, invalid method} -body {
 
 test crimp-flip-2.0 {image flip horizontal, wrong\#args, not enough} -body {
     crimp flip horizontal
-} -returnCodes error -result {wrong # args: should be "crimp flip horizontal image"}
+} -returnCodes error -result [wa crimp flip horizontal image]
 
 test crimp-flip-2.1 {image flip horizontal, wrong\#args, too many} -body {
     crimp flip horizontal I toomuch
-} -returnCodes error -result {wrong # args: should be "crimp flip horizontal image"}
+} -returnCodes error -result [wa crimp flip horizontal image]
 
 set n 2
 foreach itype [types] {
@@ -49,11 +49,11 @@ foreach itype [types] {
 
 test crimp-flip-3.0 {image flip vertical, wrong\#args, not enough} -body {
     crimp flip vertical
-} -returnCodes error -result {wrong # args: should be "crimp flip vertical image"}
+} -returnCodes error -result [wa crimp flip vertical image]
 
 test crimp-flip-3.1 {image flip vertical, wrong\#args, too many} -body {
     crimp flip vertical I toomuch
-} -returnCodes error -result {wrong # args: should be "crimp flip vertical image"}
+} -returnCodes error -result [wa crimp flip vertical image]
 
 set n 2
 foreach itype [types] {
@@ -70,11 +70,11 @@ foreach itype [types] {
 
 test crimp-flip-4.0 {image flip transpose, wrong\#args, not enough} -body {
     crimp flip transpose
-} -returnCodes error -result {wrong # args: should be "crimp flip transpose image"}
+} -returnCodes error -result [wa crimp flip transpose image]
 
 test crimp-flip-4.1 {image flip transpose, wrong\#args, too many} -body {
     crimp flip transpose I toomuch
-} -returnCodes error -result {wrong # args: should be "crimp flip transpose image"}
+} -returnCodes error -result [wa crimp flip transpose image]
 
 set n 2
 foreach itype [types] {
@@ -88,11 +88,11 @@ foreach itype [types] {
 
 test crimp-flip-5.0 {image flip transverse, wrong\#args, not enough} -body {
     crimp flip transverse
-} -returnCodes error -result {wrong # args: should be "crimp flip transverse image"}
+} -returnCodes error -result [wa crimp flip transverse image]
 
 test crimp-flip-5.1 {image flip transverse, wrong\#args, too many} -body {
     crimp flip transverse I toomuch
-} -returnCodes error -result {wrong # args: should be "crimp flip transverse image"}
+} -returnCodes error -result [wa crimp flip transverse image]
 
 set n 2
 foreach itype [types] {

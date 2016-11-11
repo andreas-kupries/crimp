@@ -19,12 +19,12 @@ kt local testing crimp
 test crimp-split-1.0 {image splitting, wrong\#args, not enough} -body {
     crimp split
 } -cleanup {
-} -returnCodes error -result {wrong # args: should be "crimp split image"}
+} -returnCodes error -result [wa crimp split image]
 
 test crimp-split-1.1 {image splitting, wrong\#args, too many} -body {
     crimp split IMAGE toomuch
 } -cleanup {
-} -returnCodes error -result {wrong # args: should be "crimp split image"}
+} -returnCodes error -result [wa crimp split image]
 
 # -------------------------------------------------------------------------
 

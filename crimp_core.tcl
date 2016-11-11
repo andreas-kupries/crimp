@@ -78,15 +78,15 @@ critcl::source support.tcl
 # # ## ### ##### ######## #############
 ## Main C section.
 
+crimp_stdint_h
+
 critcl::cinit {
     crimp_imagetype_init ();
 } {
     extern void crimp_imagetype_init (void); /* c/image_type.c */
 }
 
-critcl::ccode {
-    #include <cutil.h>
-}
+critcl::include cutil.h
 
 # # ## ### ##### ######## #############
 ## Implement the core primitives.

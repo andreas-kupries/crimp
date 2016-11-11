@@ -67,6 +67,7 @@ foreach {accessor result} {
     height     2
     type       crimp::image::grey8
     channels   luma
+    size       4
 } {
     test crimp-core-${accessor}-1.0 "Accessors: $accessor, wrong\#args, not enough" -body {
         crimp $accessor

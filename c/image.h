@@ -139,6 +139,7 @@ typedef struct crimp_image {
 #define crimp_y(image) ((image)->geo.y)
 #define crimp_w(image) ((image)->geo.w)
 #define crimp_h(image) ((image)->geo.h)
+#define crimp_c(image) ((image)->itype->channels)
 
 /*
  * Convenience macros for the creation of images with predefined image types.

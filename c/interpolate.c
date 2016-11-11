@@ -19,7 +19,6 @@
  *      http://www.paulinternet.nl/?page=bicubic
  */
 
-
 double
 crimp_interpolate_linear (double a, double b,
 			  double frac)
@@ -166,6 +165,33 @@ crimp_interpolate_bicubic (double a, double b, double c, double d,
 	(a20 + a21 * yfrac + a22 * y2 + a23 * y3) * x2    +
 	(a30 + a31 * yfrac + a32 * y2 + a33 * y3) * x3;
 #endif
+}
+
+/*
+ * Coordinate operation, find nearest grid point.
+ */
+
+int
+crimp_nearest (double x)
+{
+    int xn = x;
+    if (x > 0) {
+	if ((x-xn) > 0.5) xn++;
+    } else {
+	if ((xn-x) > 0.5) xn--;
+    }
+    return xn;
+}
+
+void
+crimp_interval (double x, int* low, int* up, double* frac)
+{
+    int xn  = x;
+    int pos = x > 0;
+
+    *low  = pos ? xn : xn - 1;
+    *up   = pos ? xn + 1 : xn;
+    *frac = x - (*low);
 }
 
 

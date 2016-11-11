@@ -2,7 +2,7 @@
 #define CRIMP_INTERPOLATE_H
 /*
  * CRIMP :: Interpolation Declarations, and API.
- * (C) 2014.
+ * (C) 2014-2016.
  */
 
 #include <tcl.h>
@@ -46,8 +46,8 @@ extern double crimp_interpolate_bicubic (double a, double b, double c, double d,
  * 1 c -- d
  *
  * - Trilinear:
- *     e ---- f  xfrac in [0,1] is a point between (a,b)
- *   0/|    1/|  yfrac in [0,1] is a point between (a,c)
+ *   1 e ---- f  xfrac in [0,1] is a point between (a,b)
+ *    /|    1/|  yfrac in [0,1] is a point between (a,c)
  * 0 a ---- b |  zfrac in [0,1] is a point between (a,e)
  *   | g -- | h
  *   |/     |/ 
@@ -62,11 +62,18 @@ extern double crimp_interpolate_bicubic (double a, double b, double c, double d,
  * -1 a -- b -- c -- d  xfrac in [0,1] is a point between (f,g)
  *    |    |    |    |	yfrac in [0,1] is a point between (f,j)
  *  0 e -- f -- g -- h
- *    |    |    |    |  The area f-g-k-j is patch in which
- *  1 i -- j -- k -- l  we interpolate.
- *    |    |    |    |
+ *    |    |    |    |  The area f-g-k-j is the patch in which
+ *  1 i -- j -- k -- l  we interpolate, the points around it
+ *    |    |    |    |  provide larger context
  *  2 m -- n -- o -- p
  */
+
+/*
+ * API :: Coordinate operation - Find nearest, interval, ...
+ */
+
+extern int  crimp_nearest  (double x);
+extern void crimp_interval (double x, int* low, int* up, double* frac);
 
 
 /*

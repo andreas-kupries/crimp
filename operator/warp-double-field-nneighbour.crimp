@@ -30,10 +30,8 @@ crimp_primitive warp_double_field_nneighbour {
 	    xf = DOUBLEP (xvector, x, y);
 	    yf = DOUBLEP (yvector, x, y);
 
-	    xi = xf;
-	    yi = yf;
-	    if ((xf - xi) >= 0.5) xi++;
-	    if ((yf - yi) >= 0.5) yi++;
+	    xi = crimp_nearest (xf);
+	    yi = crimp_nearest (yf);
 
 	    outside = (xi < 0) || (xi >= crimp_w (image)) || (yi < 0) || (yi >= crimp_h (image));
 

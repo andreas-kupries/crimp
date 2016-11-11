@@ -60,9 +60,7 @@ crimp_primitive hough_grey8 {
 	        for (y = 0; y < crimp_h (image); y++) {
 		    xf = crimp_w (image)/2 + (rho - (crimp_h (image)/2 - y)*si)/co;
 
-		    xi = xf;
-		    if ((xf - xi) >= 0.5) xi++;
-
+		    xi = crimp_nearest (xf);
 		    if ((xi < 0) || (xi >= crimp_w (image))) continue;
 
 		    total++;
@@ -77,9 +75,7 @@ crimp_primitive hough_grey8 {
 	        for (x = 0; x < crimp_w (image); x++) {
 		    yf = crimp_h (image)/2 - (rho - (x - crimp_w (image)/2)*co)/si;
 
-		    yi = yf;
-		    if ((yf - yi) >= 0.5) yi++;
-
+		    yi = crimp_nearest (yf);
 		    if ((yi < 0) || (yi >= crimp_h (image))) continue;
 
 		    total++;

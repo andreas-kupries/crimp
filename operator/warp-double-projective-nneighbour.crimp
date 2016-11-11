@@ -46,10 +46,8 @@ crimp_primitive warp_double_projective_nneighbour {
 	     * boundaries of the input.
 	     */
 
-	    xi = xf;
-	    yi = yf;
-	    if ((xf - xi) >= 0.5) xi++;
-	    if ((yf - yi) >= 0.5) yi++;
+	    xi = crimp_nearest (xf);
+	    yi = crimp_nearest (yf);
 
 	    outside = (xi < 0) || (xi >= crimp_w (image)) || (yi < 0) || (yi >= crimp_h (image));
 

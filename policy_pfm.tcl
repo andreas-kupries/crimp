@@ -54,6 +54,45 @@ proc ::crimp::write::Chan_pfm-raw_float {chan image} {
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::write::Str_pfm-plain_double {image} {
+    # assert TypeOf (image) == double
+    set res "F2 [::crimp dimensions $image]"
+
+    binary scan [::crimp pixel $image] d* values
+    foreach v $values {
+	append res " " $v
+    }
+    return $res
+}
+
+proc ::crimp::write::Str_pfm-raw_double {image} {
+    # assert TypeOf (image) == double
+    # get doubles as strings, convert to float
+    binary scan [::crimp pixel $image] d* values
+    return "F5 [::crimp dimensions $image] [binary format f* $values]"
+}
+
+proc ::crimp::write::Chan_pfm-plain_double {chan image} {
+    # assert TypeOf (image) == double
+    puts -nonewline $chan "F2 [::crimp dimensions $image] "
+
+    binary scan [::crimp pixel $image] d* values
+    foreach v $values {
+	puts -nonewline $chan " $v"
+    }
+    return
+}
+
+proc ::crimp::write::Chan_pfm-raw_double {chan image} {
+    # assert TypeOf (image) == double
+    binary scan [::crimp pixel $image] d* values
+    puts -nonewline $chan "F5 [::crimp dimensions $image] "
+    puts -nonewline $chan [binary format f* $values]
+    return
+}
+
+# # ## ### ##### ######## #############
+
 proc ::crimp::writes_pfm-plain_fpcomplex {image} {
     # assert TypeOf (image) == fpcomplex
     set res "C2 [::crimp dimensions $image]"

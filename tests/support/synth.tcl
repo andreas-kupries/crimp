@@ -348,6 +348,16 @@ proc iota {n} {
     return $res
 }
 
+proc nearest {x} {
+    set xn [expr {int($x)}]
+    if {$x > 0} {
+	if {($x - $xn) >= 0.5} { incr xn }
+    } else {
+	if {($xn - $x) >= 0.5} { incr xn -1 }
+    }
+    return $xn
+}
+
 # # ## ### ##### ######## ############# #####################
 ## Check two lists of numbers for component-wise numeric equality
 ## (1) To within N digits after the decimal point.

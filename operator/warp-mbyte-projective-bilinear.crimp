@@ -1,5 +1,5 @@
 crimp_primitive warp_mbyte_projective_bilinear {
-    image image
+    image        image
     image_double forward
 } image {
     /*
@@ -41,7 +41,7 @@ crimp_primitive warp_mbyte_projective_bilinear {
 
     for (y = 0, yt = origy; y < crimp_h (result); y++, yt++) {
         for (x = 0, xt = origx; x < crimp_w (result); x++, xt++) {
-	    int ixw, iyw;
+	    int xl, yl, xu, yu;
 
 	    xf = xt;
 	    yf = yt;
@@ -54,32 +54,25 @@ crimp_primitive warp_mbyte_projective_bilinear {
 	     * (Ad 1) http://en.wikipedia.org/wiki/Bilinear_interpolation
 	     */
 
-            ixw = xf;
-            iyw = yf;
+	    crimp_interval (xf, &xl, &xu, &xf);
+	    crimp_interval (yf, &yl, &yu, &yf);
 
-            xf -= ixw;
-            yf -= iyw;
+#define OUT(i,x,y) (((x) < 0) || ((x) >= crimp_w (i)) || ((y) < 0) || ((y) >= crimp_h (i)))
 
-            for (c = 0; c < 4; ++c) {
-                float val = 0;
-	        int ix, iy;
-                for (iy = MAX(iyw, 0); iy < MIN(iyw + 2, crimp_h (image)); iy++) {
-                    yf = 1 - yf;
-                    for (ix = MAX(ixw, 0); ix < MIN(ixw + 2, crimp_w (image)); ix++) {
-                        xf = 1 - xf;
+            for (c = 0; c < crimp_c(image); ++c) {
+		double a = OUT(image, xl, yl) ? BLACK : CH (image, c, xl, yl);
+		double b = OUT(image, xu, yl) ? BLACK : CH (image, c, xu, yl);
+		double c = OUT(image, xl, yu) ? BLACK : CH (image, c, xl, yu);
+		double d = OUT(image, xu, yu) ? BLACK : CH (image, c, xu, yu);
 
-		        val += CH (image, c, ix, iy) * yf * xf;
-                    }
-                }
-
-	        CH (result, c, x, y) = val;
+		CH (result, c, x, y) = crimp_interpolate_bilinear (a, b, c, d,
+								   xf, yf);
             }
         }
     }
 
     crimp_del (backward);
     return result;
-
 }
 
 # - -- --- ----- -------- -------------

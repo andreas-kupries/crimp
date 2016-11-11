@@ -1,0 +1,59 @@
+# - -- --- ----- -------- -------------
+critcl::csources   c/interpolate.c
+critcl::api header c/interpolate.h
+
+# - -- --- ----- -------- -------------
+
+critcl::api function double crimp_interpolate_linear {
+    double a    double b
+    double xf
+}
+
+critcl::api function double crimp_interpolate_bilinear {
+    double a    double b
+    double c    double d
+    double xf
+    double yf
+}
+
+critcl::api function double crimp_interpolate_trilinear {
+    double a    double b    double c    double d
+    double e    double f    double g    double h
+    double xf
+    double yf
+    double zf
+}
+
+critcl::api function double crimp_interpolate_cubic {
+    double a    double b    double c    double d
+    double xf
+}
+
+critcl::api function double crimp_interpolate_bicubic {
+    double a    double b    double c    double d
+    double e    double f    double g    double h
+    double i    double j    double k    double l
+    double m    double n    double o    double p
+    double xf
+    double yf
+}
+
+critcl::api function int crimp_nearest {
+    double x
+}
+
+critcl::api function void crimp_interval {
+    double  x
+    int*    low
+    int*    up
+    double* frac
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

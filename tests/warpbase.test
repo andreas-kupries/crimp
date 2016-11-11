@@ -202,7 +202,114 @@ apply {{} {
             unset t a b c d x y w h
         } -match 4digits -result [concat {*}$result]
     }
+
+    set geometry {0 0 5 5}
+    foreach {n result transform} {
+        0 {{0 0 5 5} {0   0  } {4 0} {4   4  } {0   4  }}  {identity}
+        1 {{0 0 8 7} {6.4 3.2} {4 0} {0.8 2.4} {3.2 5.6}}  {reflect line {2 4} {4 0}}
+    } {
+        test crimp-warp-box-5.$n "image warp box, $transform" -setup {
+            set t [crimp transform {*}$transform]
+            lassign $geometry x y w h
+            incr w -1
+            incr h -1
+            # geometry (x y w h) => 4 points.
+            set a [p $x $y]
+            set b [p+x  $a $w]
+            set c [p+xy $a $w $h]
+            set d [p+y  $a $h]
+        } -body {
+            list {*}[crimp warp box $t $geometry] {*}[concat {*}[crimp warp point $t $a $b $c $d]]
+        } -cleanup {
+            unset t a b c d x y w h
+        } -match 4digits -result [concat {*}$result]
+    }
 }}
+
+# -------------------------------------------------------------------------
+## Scanning output image, finding input point via reverse transform.
+## See also <<crimp-warp-projective-${n}.0>> n=2
+## This does the same scan at the C level.
+
+test crimp-warp-point-3.0 "image scan, reflect line" -setup {
+    set fore [crimp transform reflect line {2 4} {4 0}]
+    set back [crimp transform invert $fore]
+    set scan {}
+    set img [t_grey8]
+} -body {
+    foreach y {0 1 2 3 4 5 6} {
+        foreach x {0 1 2 3 4 5 6 7} {
+            set p [list $x $y]
+            lassign [lindex [crimp warp point $back $p] 0] qx qy
+            # Add: NN (round)
+            set rx [nearest $qx]
+            set ry [nearest $qy]
+            set v [lindex $img $ry $rx]
+            if {$v eq {}} { set v 0}
+            lappend scan [list $x $y $qx $qy $rx $ry $v]
+        }
+    }
+    astclf 1 [crimp read tcl double $scan]
+} -cleanup {
+    unset back fore p x y scan qx qy img v
+} -result [iconst double 0 0 7 56 {
+    0.0 0.0  6.4  3.2  6.0  3.0  0.0
+    1.0 0.0  5.8  2.4  6.0  2.0  0.0
+    2.0 0.0  5.2  1.6  5.0  2.0  0.0
+    3.0 0.0  4.6  0.8  5.0  1.0  0.0
+    4.0 0.0  4.0  0.0  4.0  0.0  4.0
+    5.0 0.0  3.4 -0.8  3.0 -1.0  0.0
+    6.0 0.0  2.8 -1.6  3.0 -2.0  0.0
+    7.0 0.0  2.2 -2.4  2.0 -2.0  0.0
+    0.0 1.0  5.6  3.8  6.0  4.0  0.0
+    1.0 1.0  5.0  3.0  5.0  3.0  0.0
+    2.0 1.0  4.4  2.2  4.0  2.0 14.0
+    3.0 1.0  3.8  1.4  4.0  1.0  9.0
+    4.0 1.0  3.2  0.6  3.0  1.0  8.0
+    5.0 1.0  2.6 -0.2  3.0  0.0  3.0
+    6.0 1.0  2.0 -1.0  2.0 -1.0  0.0
+    7.0 1.0  1.4 -1.8  1.0 -2.0  0.0
+    0.0 2.0  4.8  4.4  5.0  4.0  0.0
+    1.0 2.0  4.2  3.6  4.0  4.0 24.0
+    2.0 2.0  3.6  2.8  4.0  3.0 19.0
+    3.0 2.0  3.0  2.0  3.0  2.0 13.0
+    4.0 2.0  2.4  1.2  2.0  1.0  7.0
+    5.0 2.0  1.8  0.4  2.0  0.0  2.0
+    6.0 2.0  1.2 -0.4  1.0  0.0  1.0
+    7.0 2.0  0.6 -1.2  1.0 -1.0  0.0
+    0.0 3.0  4.0  5.0  4.0  5.0  0.0
+    1.0 3.0  3.4  4.2  3.0  4.0 23.0
+    2.0 3.0  2.8  3.4  3.0  3.0 18.0
+    3.0 3.0  2.2  2.6  2.0  3.0 17.0
+    4.0 3.0  1.6  1.8  2.0  2.0 12.0
+    5.0 3.0  1.0  1.0  1.0  1.0  6.0
+    6.0 3.0  0.4  0.2  0.0  0.0  0.0
+    7.0 3.0 -0.2 -0.6  0.0 -1.0  0.0
+    0.0 4.0  3.2  5.6  3.0  6.0  0.0
+    1.0 4.0  2.6  4.8  3.0  5.0  0.0
+    2.0 4.0  2.0  4.0  2.0  4.0 22.0
+    3.0 4.0  1.4  3.2  1.0  3.0 16.0
+    4.0 4.0  0.8  2.4  1.0  2.0 11.0
+    5.0 4.0  0.2  1.6  0.0  2.0 10.0
+    6.0 4.0 -0.4  0.8  0.0  1.0  5.0
+    7.0 4.0 -1.0  0.0 -1.0  0.0  0.0
+    0.0 5.0  2.4  6.2  2.0  6.0  0.0
+    1.0 5.0  1.8  5.4  2.0  5.0  0.0
+    2.0 5.0  1.2  4.6  1.0  5.0  0.0
+    3.0 5.0  0.6  3.8  1.0  4.0 21.0
+    4.0 5.0  0.0  3.0  0.0  3.0 15.0
+    5.0 5.0 -0.6  2.2 -1.0  2.0  0.0
+    6.0 5.0 -1.2  1.4 -1.0  1.0  0.0
+    7.0 5.0 -1.8  0.6 -2.0  1.0  0.0
+    0.0 6.0  1.6  6.8  2.0  7.0  0.0
+    1.0 6.0  1.0  6.0  1.0  6.0  0.0
+    2.0 6.0  0.4  5.2  0.0  5.0  0.0
+    3.0 6.0 -0.2  4.4  0.0  4.0 20.0
+    4.0 6.0 -0.8  3.6 -1.0  4.0  0.0
+    5.0 6.0 -1.4  2.8 -1.0  3.0  0.0
+    6.0 6.0 -2.0  2.0 -2.0  2.0  0.0
+    7.0 6.0 -2.6  1.2 -3.0  1.0  0.0
+}]
 
 # -------------------------------------------------------------------------
 cleanupTests

@@ -105,6 +105,7 @@ crimp_la_invert_matrix_3x3 (crimp_image* matrix)
 	return crimp_la_invert_matrix_3x3_double (matrix);
     } else {
 	CRIMP_ASSERT (0, "expected image type " CRIMP_STR(float) ", or " CRIMP_STR(double));
+	return 0; /* We can't reach this, some compilers do not know that and complain */
     }
 }
 

@@ -52,12 +52,14 @@ critcl::tcl 8.5
 critcl::cflags -DIEEE_COMPLEX_DIVIDE
 
 # Algorithm sources and dependencies
-critcl::cheaders c/*.h cop/*.c
+critcl::cheaders c/*.h
+critcl::cheaders cop/*.c
 critcl::csources c/ahe.c
 critcl::csources c/cabs.c
 critcl::csources c/color.c
 critcl::csources c/euclidmap.c
-critcl::csources c/fir.c c/gauss.c
+critcl::csources c/fir.c
+critcl::csources c/gauss.c
 critcl::csources c/geometry.c
 critcl::csources c/iir_order2.c
 critcl::csources c/labelcc.c

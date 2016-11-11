@@ -77,7 +77,7 @@ crimp_imagetype_init (void)
 #undef F
 #undef C
 
-    static initialized = 0;
+    static int initialized = 0;
 
     if (initialized) return;
     initialized = 1;

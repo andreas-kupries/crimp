@@ -430,6 +430,7 @@ decode_rgbpacked (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 #endif
 	}
     }
+    return 1;
 }
 
 static int
@@ -473,8 +474,10 @@ decode_grey8 (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 #endif
 	}
     }
+    return 1;
 }
 
+static int
 decode_grey8_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 {
     int x, y, w, h;
@@ -702,6 +705,7 @@ decode_rgba (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 #endif
 	}
     }
+    return 1;
 }
 
 static int
@@ -768,6 +772,7 @@ decode_rgba_short (sgi_info* info, crimp_buffer* buf, crimp_image* dst)
 #endif
 	}
     }
+    return 1;
 }
 
 static int

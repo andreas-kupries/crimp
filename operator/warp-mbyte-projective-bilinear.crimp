@@ -13,7 +13,7 @@ crimp_primitive warp_mbyte_projective_bilinear {
 
     crimp_image* backward;
     crimp_image* result;
-    int x, y, xt, yt, origx, origy, c;
+    int x, y, xt, yt, origx, origy, chan;
     double xf, yf;
 
     CRIMP_ASSERT_NOTIMGTYPE (image, float);
@@ -59,14 +59,14 @@ crimp_primitive warp_mbyte_projective_bilinear {
 
 #define OUT(i,x,y) (((x) < 0) || ((x) >= crimp_w (i)) || ((y) < 0) || ((y) >= crimp_h (i)))
 
-            for (c = 0; c < crimp_c(image); ++c) {
-		double a = OUT(image, xl, yl) ? BLACK : CH (image, c, xl, yl);
-		double b = OUT(image, xu, yl) ? BLACK : CH (image, c, xu, yl);
-		double c = OUT(image, xl, yu) ? BLACK : CH (image, c, xl, yu);
-		double d = OUT(image, xu, yu) ? BLACK : CH (image, c, xu, yu);
+            for (chan = 0; chan < crimp_c(image); ++chan) {
+		double a = OUT(image, xl, yl) ? BLACK : CH (image, chan, xl, yl);
+		double b = OUT(image, xu, yl) ? BLACK : CH (image, chan, xu, yl);
+		double c = OUT(image, xl, yu) ? BLACK : CH (image, chan, xl, yu);
+		double d = OUT(image, xu, yu) ? BLACK : CH (image, chan, xu, yu);
 
-		CH (result, c, x, y) = crimp_interpolate_bilinear (a, b, c, d,
-								   xf, yf);
+		CH (result, chan, x, y) = crimp_interpolate_bilinear (a, b, c, d,
+								      xf, yf);
             }
         }
     }

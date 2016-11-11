@@ -17,6 +17,7 @@ def op_threshold_le {
 
 	proc showit {} {
 	    variable threshold
+	    log "threshold = $threshold"
 	    show $threshold
 	    return
 	}

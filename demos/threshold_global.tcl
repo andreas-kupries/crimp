@@ -10,18 +10,37 @@ def op_threshold_global {
 	}
 
 	proc average {} {
-	    show_image [crimp threshold global mean [base]]
+	    stat [base] mean
+	    show_image [crimp alpha opaque [crimp threshold global mean [base]]]
 	    return
 	}
 
 	proc median {} {
-	    show_image [crimp threshold global median [base]]
+	    stat [base] median
+	    show_image [crimp alpha opaque [crimp threshold global median [base]]]
 	    return
 	}
 
 	proc middle {} {
-	    show_image [crimp threshold global middle [base]]
+	    stat [base] middle
+	    show_image [crimp alpha opaque [crimp threshold global middle [base]]]
 	    return
+	}
+
+	proc otsu {} {
+	    stat [base] otsu
+	    show_image [crimp alpha opaque [crimp threshold global otsu [base]]]
+	    return
+	}
+
+	proc stat {image feature} {
+	    set stat [::crimp::statistics::basic $image]
+	    if {$feature eq "otsu"} {
+		set stat [::crimp::statistics::otsu $stat]
+	    }
+	    foreach c [dict get $stat channels] {
+		log "${feature}($c) = [dict get $stat channel $c $feature]"
+	    }
 	}
 
 	proc kmeans {} {
@@ -117,11 +136,6 @@ def op_threshold_global {
 		set centers $new
 		set lastmap $smap
 	    }
-	}
-
-	proc otsu {} {
-	    show_image [crimp threshold global otsu [base]]
-	    return
 	}
 
 	button .left.base   -text Base    -command ::DEMO::showbase

@@ -35,8 +35,8 @@ def effect_warp_quad_rgba {
 
 	proc P {label t p} {
 	    lassign $p x y
-	    set pm [crimp read tcl float [list [list $x 0 0] [list $y 0 0] {1 0 0}]]
-	    set d [crimp flip transpose [crimp crop [::crimp::matmul3x3_float $t $pm] 0 0 2 0]]
+	    set pm [crimp read tcl double [list [list $x 0 0] [list $y 0 0] {1 0 0}]]
+	    set d [crimp flip transpose [crimp crop [::crimp::matmul3x3_double $t $pm] 0 0 2 0]]
 
 	    lassign [lrange [crimp write 2string pfm-plain $d] 3 end] xd yd w
 	    set x [expr {$xd/double($w)}]

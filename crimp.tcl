@@ -190,6 +190,8 @@ if {[critcl::util::checkfun lrint]} {
     }
 }}
 
+crimp_stdint_h
+
 # # ## ### ##### ######## #############
 ## Pull in the processing primitives.
 ## We ignore the Tk dependent pieces.

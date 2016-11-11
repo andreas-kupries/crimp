@@ -4,6 +4,33 @@
 # (c) 2011-2016 Andreas Kupries http://wiki.tcl.tk/andreas%20kupries
 
 # # ## ### ##### ######## #############
+## Requirements
+
+critcl::buildrequirement {
+    package require critcl::util 1
+}
+
+# # ## ### ##### ######## #############
+## Configuration checks
+
+proc crimp_stdint_h {} {
+    # Check for the presence of the C99 header <stdint.h>.
+    # If we have it, we will use it. If not we will make do with
+    # compatibility definitions based on the more prevalent header
+    # <limits.h>
+
+    # This works because the package's C code is compiled after the
+    # .tcl has been fully processed, regardless of relative location.
+    # This enables us to dynamically create/modify a header file
+    # needed by the C code.
+
+    lappend paths /usr/include
+    lappend paths /usr/local/include
+    lappend paths compat
+    critcl::cheaders [critcl::util locate stdint.h $paths]/stdint.h
+}
+
+# # ## ### ##### ######## #############
 ## Operator definitions
 
 proc crimp_primitive {name args result body} {

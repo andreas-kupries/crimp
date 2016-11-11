@@ -16,11 +16,11 @@ kt local testing crimp
 
 test crimp-max-1.0 {image max, wrong\#args, not enough} -body {
     crimp max
-} -returnCodes error -result {wrong # args: should be "crimp max a b"}
+} -returnCodes error -result [wa crimp max a b]
 
 test crimp-max-1.1 {image max, wrong\#args, too many} -body {
     crimp max A B toomuch
-} -returnCodes error -result {wrong # args: should be "crimp max a b"}
+} -returnCodes error -result [wa crimp max a b]
 
 # -------------------------------------------------------------------------
 # MAX (arity 2, commutative)

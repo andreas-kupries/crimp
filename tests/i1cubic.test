@@ -14,27 +14,27 @@ kt local testing crimp::core
 
 test crimp-core-math-1cubic-1.0 {interpolate cubic, wrong args, not enough} -body {
     crimp interpolate cubic
-} -returnCodes error -result {wrong # args: should be "crimp interpolate cubic a b c d xf"}
+} -returnCodes error -result [wa crimp interpolate cubic a b c d xf]
 
 test crimp-core-math-1cubic-1.1 {interpolate cubic, wrong args, not enough} -body {
     crimp interpolate cubic A
-} -returnCodes error -result {wrong # args: should be "crimp interpolate cubic a b c d xf"}
+} -returnCodes error -result [wa crimp interpolate cubic a b c d xf]
 
 test crimp-core-math-1cubic-1.2 {interpolate cubic, wrong args, not enough} -body {
     crimp interpolate cubic A B
-} -returnCodes error -result {wrong # args: should be "crimp interpolate cubic a b c d xf"}
+} -returnCodes error -result [wa crimp interpolate cubic a b c d xf]
 
 test crimp-core-math-1cubic-1.3 {interpolate cubic, wrong args, not enough} -body {
     crimp interpolate cubic A B C
-} -returnCodes error -result {wrong # args: should be "crimp interpolate cubic a b c d xf"}
+} -returnCodes error -result [wa crimp interpolate cubic a b c d xf]
 
 test crimp-core-math-1cubic-1.4 {interpolate cubic, wrong args, not enough} -body {
     crimp interpolate cubic A B C D
-} -returnCodes error -result {wrong # args: should be "crimp interpolate cubic a b c d xf"}
+} -returnCodes error -result [wa crimp interpolate cubic a b c d xf]
 
 test crimp-core-math-1cubic-1.5 {interpolate cubic, wrong args, too many} -body {
     crimp interpolate cubic A B C D XF XXX
-} -returnCodes error -result {wrong # args: should be "crimp interpolate cubic a b c d xf"}
+} -returnCodes error -result [wa crimp interpolate cubic a b c d xf]
 
 # -------------------------------------------------------------------------
 ## Fixed functionality

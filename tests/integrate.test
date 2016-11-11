@@ -18,11 +18,11 @@ kt local testing crimp
 
 test crimp-integrate-1.0 {image integrate, wrong\#args, not enough} -body {
     crimp integrate
-} -returnCodes error -result {wrong # args: should be "crimp integrate image"}
+} -returnCodes error -result [wa crimp integrate image]
 
 test crimp-integrate-1.1 {image integrate, wrong\#args, too many} -body {
     crimp integrate I toomuch
-} -returnCodes error -result {wrong # args: should be "crimp integrate image"}
+} -returnCodes error -result [wa crimp integrate image]
 
 test crimp-integrate-1.2 {image integrate, invalid image} -body {
     crimp integrate I

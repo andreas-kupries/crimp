@@ -16,11 +16,11 @@ kt local testing crimp
 
 test crimp-min-1.0 {image min, wrong\#args, not enough} -body {
     crimp min
-} -returnCodes error -result {wrong # args: should be "crimp min a b"}
+} -returnCodes error -result [wa crimp min a b]
 
 test crimp-min-1.1 {image min, wrong\#args, too many} -body {
     crimp min A B toomuch
-} -returnCodes error -result {wrong # args: should be "crimp min a b"}
+} -returnCodes error -result [wa crimp min a b]
 
 # -------------------------------------------------------------------------
 # MIN (arity 2, commutative)

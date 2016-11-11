@@ -17,19 +17,19 @@ kt local testing crimp
 
 test crimp-warp-field-1.0 {image warp field, wrong\#args, not enough} -body {
     crimp warp field
-} -returnCodes error -result {wrong # args: should be "::crimp::warp::field image xvec yvec"}
+} -returnCodes error -result [wa ::crimp::warp::field image xvec yvec]
 
 test crimp-warp-field-1.1 {image warp field, wrong\#args, not enough} -body {
     crimp warp field IMAGE
-} -returnCodes error -result {wrong # args: should be "::crimp::warp::field image xvec yvec"}
+} -returnCodes error -result [wa ::crimp::warp::field image xvec yvec]
 
 test crimp-warp-field-1.2 {image warp field, wrong\#args, not enough} -body {
     crimp warp field IMAGE X
-} -returnCodes error -result {wrong # args: should be "::crimp::warp::field image xvec yvec"}
+} -returnCodes error -result [wa ::crimp::warp::field image xvec yvec]
 
 test crimp-warp-field-1.3 {image warp field, wrong\#args, too many} -body {
     crimp warp field IMAGE X Y toomuch
-} -returnCodes error -result {wrong # args: should be "::crimp::warp::field image xvec yvec"}
+} -returnCodes error -result [wa ::crimp::warp::field image xvec yvec]
 
 test crimp-warp-field-1.4 {image warp field, invalid arguments, bad option} -body {
     crimp warp field -bogus FOO

@@ -5,6 +5,8 @@
 kt check Tcl     8.5
 kt check tcltest 2
 
+kt source support/synth.tcl
+
 kt local support crimp::core
 kt local testing crimp
 
@@ -30,7 +32,7 @@ test crimp-bwvertical-1.0 {Black/White Checker Board} -body {
 
 test crimp-bwvertical-1.1 {Black/White Checker Board, wrong#args, too many} -body {
     crimp::black_white_vertical X
-} -returnCodes error -result {wrong # args: should be "crimp::black_white_vertical"}
+} -returnCodes error -result [wa crimp::black_white_vertical]
 
 # -------------------------------------------------------------------------
 cleanupTests

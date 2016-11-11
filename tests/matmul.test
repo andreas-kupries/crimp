@@ -19,15 +19,15 @@ kt local testing crimp
 
 test crimp-matrix-multiply-1.0 {transform matrix multiplication, wrong\#args, not enough} -body {
     crimp::matmul3x3_float
-} -returnCodes error -result {wrong # args: should be "crimp::matmul3x3_float matA matB"}
+} -returnCodes error -result [wa crimp::matmul3x3_float matA matB]
 
 test crimp-matrix-multiply-1.1 {transform matrix multiplication, wrong\#args, not enough} -body {
     crimp::matmul3x3_float A
-} -returnCodes error -result {wrong # args: should be "crimp::matmul3x3_float matA matB"}
+} -returnCodes error -result [wa crimp::matmul3x3_float matA matB]
 
 test crimp-matrix-multiply-1.2 {transform matrix multiplication, wrong\#args, too many} -body {
     crimp::matmul3x3_float A B toomuch
-} -returnCodes error -result {wrong # args: should be "crimp::matmul3x3_float matA matB"}
+} -returnCodes error -result [wa crimp::matmul3x3_float matA matB]
 
 # TODO: bad arguments - not 3x3 matrices
 
@@ -86,15 +86,15 @@ test crimp-matrix-multiply-2.5 {transform matrix multiplication, float} -body {
 
 test crimp-matrix-multiply-3.0 {transform matrix multiplication, wrong\#args, not enough} -body {
     crimp::matmul3x3_double
-} -returnCodes error -result {wrong # args: should be "crimp::matmul3x3_double matA matB"}
+} -returnCodes error -result [wa crimp::matmul3x3_double matA matB]
 
 test crimp-matrix-multiply-3.1 {transform matrix multiplication, wrong\#args, not enough} -body {
     crimp::matmul3x3_double A
-} -returnCodes error -result {wrong # args: should be "crimp::matmul3x3_double matA matB"}
+} -returnCodes error -result [wa crimp::matmul3x3_double matA matB]
 
 test crimp-matrix-multiply-3.2 {transform matrix multiplication, wrong\#args, too many} -body {
     crimp::matmul3x3_double A B toomuch
-} -returnCodes error -result {wrong # args: should be "crimp::matmul3x3_double matA matB"}
+} -returnCodes error -result [wa crimp::matmul3x3_double matA matB]
 
 # TODO: bad arguments - not 3x3 matrices
 

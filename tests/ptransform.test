@@ -19,7 +19,7 @@ kt local testing crimp
 
 test crimp-proj-transform-1.0 {projective transforms, wrong\#args, not enough} -body {
     crimp transform
-} -returnCodes error -result {wrong # args: should be "crimp transform subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp transform subcommand ?argument ...?]
 
 test crimp-proj-transform-1.1 {projective transforms, invalid method} -body {
     crimp transform BOGUS
@@ -29,39 +29,39 @@ test crimp-proj-transform-1.1 {projective transforms, invalid method} -body {
 
 test crimp-proj-transform-2.0 {projective transforms, raw projective, wrong\#args, not enough} -body {
     crimp transform projective
-} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+} -returnCodes error -result [wa crimp transform projective a b c d e f g h]
 
 test crimp-proj-transform-2.1 {projective transforms, raw projective, wrong\#args, not enough} -body {
     crimp transform projective A
-} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+} -returnCodes error -result [wa crimp transform projective a b c d e f g h]
 
 test crimp-proj-transform-2.2 {projective transforms, raw projective, wrong\#args, not enough} -body {
     crimp transform projective A B
-} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+} -returnCodes error -result [wa crimp transform projective a b c d e f g h]
 
 test crimp-proj-transform-2.3 {projective transforms, raw projective, wrong\#args, not enough} -body {
     crimp transform projective A B C
-} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+} -returnCodes error -result [wa crimp transform projective a b c d e f g h]
 
 test crimp-proj-transform-2.4 {projective transforms, raw projective, wrong\#args, not enough} -body {
     crimp transform projective A B C D
-} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+} -returnCodes error -result [wa crimp transform projective a b c d e f g h]
 
 test crimp-proj-transform-2.5 {projective transforms, raw projective, wrong\#args, not enough} -body {
     crimp transform projective A B C D E
-} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+} -returnCodes error -result [wa crimp transform projective a b c d e f g h]
 
 test crimp-proj-transform-2.6 {projective transforms, raw projective, wrong\#args, not enough} -body {
     crimp transform projective A B C D E F
-} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+} -returnCodes error -result [wa crimp transform projective a b c d e f g h]
 
 test crimp-proj-transform-2.7 {projective transforms, raw projective, wrong\#args, not enough} -body {
     crimp transform projective A B C D E F G
-} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+} -returnCodes error -result [wa crimp transform projective a b c d e f g h]
 
 test crimp-proj-transform-2.8 {projective transforms, raw projective, wrong\#args, too many} -body {
     crimp transform projective A B C D E F G H toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform projective a b c d e f g h"}
+} -returnCodes error -result [wa crimp transform projective a b c d e f g h]
 
 test crimp-proj-transform-2.9 {projective transforms, raw projective, invalid arguments} -body {
     crimp transform projective A B C D E F G H
@@ -112,31 +112,31 @@ test crimp-proj-transform-2.17 {projective transforms, raw projective} -body {
 
 test crimp-proj-transform-3.0 {projective transforms, raw affine, wrong\#args, not enough} -body {
     crimp transform affine
-} -returnCodes error -result {wrong # args: should be "crimp transform affine a b c d e f"}
+} -returnCodes error -result [wa crimp transform affine a b c d e f]
 
 test crimp-proj-transform-3.1 {projective transforms, raw affine, wrong\#args, not enough} -body {
     crimp transform affine A
-} -returnCodes error -result {wrong # args: should be "crimp transform affine a b c d e f"}
+} -returnCodes error -result [wa crimp transform affine a b c d e f]
 
 test crimp-proj-transform-3.2 {projective transforms, raw affine, wrong\#args, not enough} -body {
     crimp transform affine A B
-} -returnCodes error -result {wrong # args: should be "crimp transform affine a b c d e f"}
+} -returnCodes error -result [wa crimp transform affine a b c d e f]
 
 test crimp-proj-transform-3.3 {projective transforms, raw affine, wrong\#args, not enough} -body {
     crimp transform affine A B C
-} -returnCodes error -result {wrong # args: should be "crimp transform affine a b c d e f"}
+} -returnCodes error -result [wa crimp transform affine a b c d e f]
 
 test crimp-proj-transform-3.4 {projective transforms, raw affine, wrong\#args, not enough} -body {
     crimp transform affine A B C D
-} -returnCodes error -result {wrong # args: should be "crimp transform affine a b c d e f"}
+} -returnCodes error -result [wa crimp transform affine a b c d e f]
 
 test crimp-proj-transform-3.5 {projective transforms, raw affine, wrong\#args, not enough} -body {
     crimp transform affine A B C D E
-} -returnCodes error -result {wrong # args: should be "crimp transform affine a b c d e f"}
+} -returnCodes error -result [wa crimp transform affine a b c d e f]
 
 test crimp-proj-transform-3.6 {projective transforms, raw affine, wrong\#args, too many} -body {
     crimp transform affine A B C D E F toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform affine a b c d e f"}
+} -returnCodes error -result [wa crimp transform affine a b c d e f]
 
 test crimp-proj-transform-3.7 {projective transforms, raw affine, invalid arguments} -body {
     crimp transform affine A B C D E F
@@ -179,15 +179,15 @@ test crimp-proj-transform-3.13 {projective transforms, raw affine} -body {
 
 test crimp-proj-transform-4.0 {projective transforms, translate, wrong\#args, not enough} -body {
     crimp transform translate
-} -returnCodes error -result {wrong # args: should be "crimp transform translate dx dy"}
+} -returnCodes error -result [wa crimp transform translate dx dy]
 
 test crimp-proj-transform-4.1 {projective transforms, translate, wrong\#args, not enough} -body {
     crimp transform translate DX
-} -returnCodes error -result {wrong # args: should be "crimp transform translate dx dy"}
+} -returnCodes error -result [wa crimp transform translate dx dy]
 
 test crimp-proj-transform-4.2 {projective transforms, translate, wrong\#args, too many} -body {
     crimp transform translate DX DY toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform translate dx dy"}
+} -returnCodes error -result [wa crimp transform translate dx dy]
 
 test crimp-proj-transform-4.3 {projective transforms, translate, invalid arguments} -body {
     crimp transform translate DX DY
@@ -231,15 +231,15 @@ apply {{} {
 
 test crimp-proj-transform-5.0 {projective transforms, scale, wrong\#args, not enough} -body {
     crimp transform scale
-} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy ?p?"}
+} -returnCodes error -result [wa crimp transform scale sx sy ?p?]
 
 test crimp-proj-transform-5.1 {projective transforms, scale, wrong\#args, not enough} -body {
     crimp transform scale SX
-} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy ?p?"}
+} -returnCodes error -result [wa crimp transform scale sx sy ?p?]
 
 test crimp-proj-transform-5.2 {projective transforms, scale, wrong\#args, too many} -body {
     crimp transform scale SX SY P toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform scale sx sy ?p?"}
+} -returnCodes error -result [wa crimp transform scale sx sy ?p?]
 
 test crimp-proj-transform-5.3 {projective transforms, scale, invalid arguments} -body {
     crimp transform scale SX 1
@@ -333,15 +333,15 @@ apply {{} {
 
 test crimp-proj-transform-6.0 {projective transforms, shear, wrong\#args, not enough} -body {
     crimp transform shear
-} -returnCodes error -result {wrong # args: should be "crimp transform shear sx sy"}
+} -returnCodes error -result [wa crimp transform shear sx sy]
 
 test crimp-proj-transform-6.1 {projective transforms, shear, wrong\#args, not enough} -body {
     crimp transform shear SX
-} -returnCodes error -result {wrong # args: should be "crimp transform shear sx sy"}
+} -returnCodes error -result [wa crimp transform shear sx sy]
 
 test crimp-proj-transform-6.2 {projective transforms, shear, wrong\#args, too many} -body {
     crimp transform shear SX SY toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform shear sx sy"}
+} -returnCodes error -result [wa crimp transform shear sx sy]
 
 test crimp-proj-transform-6.3 {projective transforms, shear, invalid arguments} -body {
     crimp transform shear SX 0
@@ -404,7 +404,7 @@ apply {{} {
 
 test crimp-proj-transform-7.0 {projective transforms, reflect, wrong\#args, not enough} -body {
     crimp transform reflect
-} -returnCodes error -result {wrong # args: should be "crimp transform reflect subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp transform reflect subcommand ?argument ...?]
 
 test crimp-proj-transform-7.1 {projective transforms, invalid method} -body {
     crimp transform reflect BOGUS
@@ -414,11 +414,11 @@ test crimp-proj-transform-7.1 {projective transforms, invalid method} -body {
 
 test crimp-proj-transform-8.0 {projective transforms, reflect @ line, wrong\#args, not enough} -body {
     crimp transform reflect line
-} -returnCodes error -result {wrong # args: should be "crimp transform reflect line a ?b?"}
+} -returnCodes error -result [wa crimp transform reflect line a ?b?]
 
 test crimp-proj-transform-8.1 {projective transforms, reflect @ line, wrong\#args, too many} -body {
     crimp transform reflect line A B toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform reflect line a ?b?"}
+} -returnCodes error -result [wa crimp transform reflect line a ?b?]
 
 test crimp-proj-transform-8.2 {projective transforms, reflect @ line, wrong\#args, invalid arguments} -body {
     crimp transform reflect line A
@@ -538,7 +538,7 @@ apply {{} {
 
 test crimp-proj-transform-9.0 {projective transforms, reflect @ x-axis, wrong\#args, too many} -body {
     crimp transform reflect x TOOMUCH
-} -returnCodes error -result {wrong # args: should be "crimp transform reflect x"}
+} -returnCodes error -result [wa crimp transform reflect x]
 
 test crimp-proj-transform-9.1 {projective transforms, reflect @ x-axis} -body {
     decode_transform \
@@ -553,7 +553,7 @@ test crimp-proj-transform-9.1 {projective transforms, reflect @ x-axis} -body {
 
 test crimp-proj-transform-10.0 {projective transforms, reflect @ y-axis, wrong\#args, too many} -body {
     crimp transform reflect y TOOMUCH
-} -returnCodes error -result {wrong # args: should be "crimp transform reflect y"}
+} -returnCodes error -result [wa crimp transform reflect y]
 
 test crimp-proj-transform-10.1 {projective transforms, reflect @ y-axis} -body {
     decode_transform \
@@ -568,11 +568,11 @@ test crimp-proj-transform-10.1 {projective transforms, reflect @ y-axis} -body {
 
 test crimp-proj-transform-11.0 {projective transforms, rotate, wrong\#args, not enough} -body {
     crimp transform rotate
-} -returnCodes error -result {wrong # args: should be "crimp transform rotate theta ?p?"}
+} -returnCodes error -result [wa crimp transform rotate theta ?p?]
 
 test crimp-proj-transform-11.1 {projective transforms, rotate, wrong\#args, too many} -body {
     crimp transform rotate THETA P toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform rotate theta ?p?"}
+} -returnCodes error -result [wa crimp transform rotate theta ?p?]
 
 test crimp-proj-transform-11.2 {projective transforms, rotate, invalid arguments} -body {
     crimp transform rotate THETA P
@@ -689,15 +689,15 @@ apply {{} {
 
 test crimp-proj-transform-12.0 {projective transforms, quadrilateral, wrong\#args, not enough} -body {
     crimp transform quadrilateral
-} -returnCodes error -result {wrong # args: should be "crimp transform quadrilateral src dst"}
+} -returnCodes error -result [wa crimp transform quadrilateral src dst]
 
 test crimp-proj-transform-12.1 {projective transforms, quadrilateral, wrong\#args, not enough} -body {
     crimp transform quadrilateral SRC
-} -returnCodes error -result {wrong # args: should be "crimp transform quadrilateral src dst"}
+} -returnCodes error -result [wa crimp transform quadrilateral src dst]
 
 test crimp-proj-transform-12.2 {projective transforms, quadrilateral, wrong\#args, too many} -body {
     crimp transform quadrilateral SRC DST toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform quadrilateral src dst"}
+} -returnCodes error -result [wa crimp transform quadrilateral src dst]
 
 test crimp-proj-transform-12.3 {projective transforms, quadrilateral, invalid arguments} -body {
     crimp transform quadrilateral SRC DST
@@ -1036,7 +1036,7 @@ apply {{} {
 
 test crimp-proj-transform-13.0 {projective transforms, chain, wrong\#args, not enough} -body {
     crimp transform chain
-} -returnCodes error -result {wrong # args: should be "crimp transform chain t ..."}
+} -returnCodes error -result [wa crimp transform chain t ...]
 
 test crimp-proj-transform-13.1 {projective transforms, chain, invalid arguments} -body {
     crimp transform chain T
@@ -1111,11 +1111,11 @@ test crimp-proj-transform-13.7 {projective transforms, chain, translated rotatio
 
 test crimp-proj-transform-14.0 {projective transforms, invert, wrong\#args, not enough} -body {
     crimp transform invert
-} -returnCodes error -result {wrong # args: should be "crimp transform invert a"}
+} -returnCodes error -result [wa crimp transform invert a]
 
 test crimp-proj-transform-14.1 {projective transforms, invert, wrong\#args, too many} -body {
     crimp transform invert A toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform invert a"}
+} -returnCodes error -result [wa crimp transform invert a]
 
 test crimp-proj-transform-14.2 {projective transforms, invert, invalid arguments} -body {
     crimp transform invert A
@@ -1146,7 +1146,7 @@ test crimp-proj-transform-14.4 {projective transforms, invert, rotate} -body {
 
 test crimp-proj-transform-15.0 {projective transforms, identity, wrong\#args, too many} -body {
     crimp transform identity toomuch
-} -returnCodes error -result {wrong # args: should be "crimp transform identity"}
+} -returnCodes error -result [wa crimp transform identity]
 
 test crimp-proj-transform-15.1 {projective transforms, identity} -body {
     decode_transform \

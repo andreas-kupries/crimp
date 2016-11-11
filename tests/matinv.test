@@ -19,11 +19,11 @@ kt local testing crimp
 
 test crimp-matrix-inverse-1.0 {transform matrix inversion, wrong\#args, not enough} -body {
     crimp::matinv3x3_float
-} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_float mat"}
+} -returnCodes error -result [wa crimp::matinv3x3_float mat]
 
 test crimp-matrix-inverse-1.1 {transform matrix inversion, wrong\#args, too many} -body {
     crimp::matinv3x3_float M toomuch
-} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_float mat"}
+} -returnCodes error -result [wa crimp::matinv3x3_float mat]
 
 # TODO: bad arguments - not 3x3 matrix, singular matrix (non-invertible).
 
@@ -65,11 +65,11 @@ test crimp-matrix-inverse-2.3 {transform matrix inversion, float, inverse multip
 
 test crimp-matrix-inverse-3.0 {transform matrix inversion, wrong\#args, not enough} -body {
     crimp::matinv3x3_double
-} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_double mat"}
+} -returnCodes error -result [wa crimp::matinv3x3_double mat]
 
 test crimp-matrix-inverse-3.1 {transform matrix inversion, wrong\#args, too many} -body {
     crimp::matinv3x3_double M toomuch
-} -returnCodes error -result {wrong # args: should be "crimp::matinv3x3_double mat"}
+} -returnCodes error -result [wa crimp::matinv3x3_double mat]
 
 # TODO: bad arguments - not 3x3 matrix, singular matrix (non-invertible).
 

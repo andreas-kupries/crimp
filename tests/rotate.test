@@ -18,7 +18,7 @@ kt local testing crimp
 
 test crimp-rotate-1.0 {image rotate, wrong\#args, not enough} -body {
     crimp rotate
-} -returnCodes error -result {wrong # args: should be "crimp rotate subcommand ?argument ...?"}
+} -returnCodes error -result [wa crimp rotate subcommand ?argument ...?]
 
 test crimp-rotate-1.1 {image rotate, invalid method} -body {
     crimp rotate BOGUS
@@ -28,11 +28,11 @@ test crimp-rotate-1.1 {image rotate, invalid method} -body {
 
 test crimp-rotate-2.0 {image rotate ccw, wrong\#args, not enough} -body {
     crimp rotate ccw
-} -returnCodes error -result {wrong # args: should be "crimp rotate ccw image"}
+} -returnCodes error -result [wa crimp rotate ccw image]
 
 test crimp-rotate-2.1 {image rotate ccw, wrong\#args, too many} -body {
     crimp rotate ccw I toomuch
-} -returnCodes error -result {wrong # args: should be "crimp rotate ccw image"}
+} -returnCodes error -result [wa crimp rotate ccw image]
 
 set n 2
 foreach itype [types] {
@@ -49,11 +49,11 @@ foreach itype [types] {
 
 test crimp-rotate-3.0 {image rotate cw, wrong\#args, not enough} -body {
     crimp rotate cw
-} -returnCodes error -result {wrong # args: should be "crimp rotate cw image"}
+} -returnCodes error -result [wa crimp rotate cw image]
 
 test crimp-rotate-3.1 {image rotate cw, wrong\#args, too many} -body {
     crimp rotate cw I toomuch
-} -returnCodes error -result {wrong # args: should be "crimp rotate cw image"}
+} -returnCodes error -result [wa crimp rotate cw image]
 
 set n 2
 foreach itype [types] {
@@ -70,11 +70,11 @@ foreach itype [types] {
 
 test crimp-rotate-4.0 {image rotate half, wrong\#args, not enough} -body {
     crimp rotate half
-} -returnCodes error -result {wrong # args: should be "crimp rotate half image"}
+} -returnCodes error -result [wa crimp rotate half image]
 
 test crimp-rotate-4.1 {image rotate half, wrong\#args, too many} -body {
     crimp rotate half I toomuch
-} -returnCodes error -result {wrong # args: should be "crimp rotate half image"}
+} -returnCodes error -result [wa crimp rotate half image]
 
 set n 2
 foreach itype [types] {

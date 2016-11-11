@@ -17,27 +17,27 @@ kt local testing crimp
 
 test crimp-crop-1.0 {image crop, wrong\#args, not enough} -body {
     crimp crop
-} -returnCodes error -result {wrong # args: should be "crimp crop image ww hn we hs"}
+} -returnCodes error -result [wa crimp crop image ww hn we hs]
 
 test crimp-crop-1.0 {image crop, wrong\#args, not enough} -body {
     crimp crop IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp crop image ww hn we hs"}
+} -returnCodes error -result [wa crimp crop image ww hn we hs]
 
 test crimp-crop-1.1 {image crop, wrong\#args, not enough} -body {
     crimp crop IMAGE DX
-} -returnCodes error -result {wrong # args: should be "crimp crop image ww hn we hs"}
+} -returnCodes error -result [wa crimp crop image ww hn we hs]
 
 test crimp-crop-1.2 {image crop, wrong\#args, not enough} -body {
     crimp crop IMAGE DX DY
-} -returnCodes error -result {wrong # args: should be "crimp crop image ww hn we hs"}
+} -returnCodes error -result [wa crimp crop image ww hn we hs]
 
 test crimp-crop-1.3 {image crop, wrong\#args, not enough} -body {
     crimp crop IMAGE DX DY W
-} -returnCodes error -result {wrong # args: should be "crimp crop image ww hn we hs"}
+} -returnCodes error -result [wa crimp crop image ww hn we hs]
 
 test crimp-crop-1.4 {image crop, wrong\#args, too many} -body {
     crimp crop IMAGE WW HN WE HS toomuch
-} -returnCodes error -result {wrong # args: should be "crimp crop image ww hn we hs"}
+} -returnCodes error -result [wa crimp crop image ww hn we hs]
 
 test crimp-crop-1.5 {image crop, invalid args} -body {
     crimp crop IMAGE WW HN WE HS

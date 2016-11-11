@@ -16,27 +16,27 @@ kt local testing crimp
 
 test crimp-expand-1.0 {image expand, wrong\#args, not enough} -body {
     crimp expand
-} -returnCodes error -result {wrong # args: should be "crimp expand bordertype image ww hn we hs ..."}
+} -returnCodes error -result [wa crimp expand bordertype image ww hn we hs ...]
 
 test crimp-expand-1.1 {image expand, wrong\#args, not enough} -body {
     crimp expand BORDER
-} -returnCodes error -result {wrong # args: should be "crimp expand bordertype image ww hn we hs ..."}
+} -returnCodes error -result [wa crimp expand bordertype image ww hn we hs ...]
 
 test crimp-expand-1.2 {image expand, wrong\#args, not enough} -body {
     crimp expand BORDER IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp expand bordertype image ww hn we hs ..."}
+} -returnCodes error -result [wa crimp expand bordertype image ww hn we hs ...]
 
 test crimp-expand-1.3 {image expand, wrong\#args, not enough} -body {
     crimp expand BORDER IMAGE W
-} -returnCodes error -result {wrong # args: should be "crimp expand bordertype image ww hn we hs ..."}
+} -returnCodes error -result [wa crimp expand bordertype image ww hn we hs ...]
 
 test crimp-expand-1.4 {image expand, wrong\#args, not enough} -body {
     crimp expand BORDER IMAGE W N
-} -returnCodes error -result {wrong # args: should be "crimp expand bordertype image ww hn we hs ..."}
+} -returnCodes error -result [wa crimp expand bordertype image ww hn we hs ...]
 
 test crimp-expand-1.5 {image expand, wrong\#args, not enough} -body {
     crimp expand BORDER IMAGE W N E
-} -returnCodes error -result {wrong # args: should be "crimp expand bordertype image ww hn we hs ..."}
+} -returnCodes error -result [wa crimp expand bordertype image ww hn we hs ...]
 
 
 test crimp-expand-1.6 {image expand, invalid args} -body {

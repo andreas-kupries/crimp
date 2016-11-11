@@ -5,10 +5,9 @@
 kt check Tcl     8.5
 kt check tcltest 2
 
+kt source support/synth.tcl
+
 kt local testing crimp::core
-
-
-#testing {    useC [mainPath _test/lib]/crimp_core* crimp::core no}
 
 proc empty {}     { crimp read tcl grey8 {} }
 proc emeta {dict} { crimp meta create [empty] {*}$dict }
@@ -145,11 +144,11 @@ foreach {n itype channels} {
 
 test crimp-core-meta-1.0 {Accessor, meta_get, wrong\#args, not enough} -body {
     crimp::C::meta_get
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_get image"}
+} -returnCodes error -result [wa crimp::C::meta_get image]
 
 test crimp-core-meta-1.1 {Accessor, meta_get, wrong\#args, too many} -body {
     crimp::C::meta_get IMAGE toomuch
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_get image"}
+} -returnCodes error -result [wa crimp::C::meta_get image]
 
 test crimp-core-meta-1.2 {Accessor, meta_get, default} -setup {
     set image [empty]
@@ -161,15 +160,15 @@ test crimp-core-meta-1.2 {Accessor, meta_get, default} -setup {
 
 test crimp-core-meta-2.0 {Accessor, meta_set, wrong\#args, not enough} -body {
     crimp::C::meta_set
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set image metaObj"}
+} -returnCodes error -result [wa crimp::C::meta_set image metaObj]
 
 test crimp-core-meta-2.1 {Accessor, meta_set, wrong\#args, not enough} -body {
     crimp::C::meta_set IMAGE
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set image metaObj"}
+} -returnCodes error -result [wa crimp::C::meta_set image metaObj]
 
 test crimp-core-meta-2.2 {Accessor, meta_set, wrong\#args, too many} -body {
     crimp::C::meta_set IMAGE VALUE toomuch
-} -returnCodes error -result {wrong # args: should be "crimp::C::meta_set image metaObj"}
+} -returnCodes error -result [wa crimp::C::meta_set image metaObj]
 
 test crimp-core-meta-2.3 {Accessor, meta_set + meta_get} -setup {
     set image [empty]
@@ -185,11 +184,11 @@ test crimp-core-meta-2.3 {Accessor, meta_set + meta_get} -setup {
 
 test crimp-meta-1.0 {Accessor: meta command basic syntax} -returnCodes error -body {
     crimp meta
-} -result {wrong # args: should be "crimp meta cmd image ..."}
+} -result [wa crimp meta cmd image ...]
 
 test crimp-meta-1.1 {Accessor: meta command basic syntax} -returnCodes error -body {
     crimp meta CMD
-} -result {wrong # args: should be "crimp meta cmd image ..."}
+} -result [wa crimp meta cmd image ...]
 
 test crimp-meta-1.2 {Accessor: meta command basic syntax} -returnCodes error -body {
     crimp meta ? IMAGE
@@ -198,11 +197,11 @@ test crimp-meta-1.2 {Accessor: meta command basic syntax} -returnCodes error -bo
 
 test crimp-meta-2.0 {Accessor: meta create command, wrong#args} -returnCodes error -body {
     crimp meta create [empty] a
-} -result {wrong # args: should be "dict create ?key value ...?"}
+} -result [wa dict create ?key value ...?]
 
 test crimp-meta-2.1 {Accessor: meta create command, wrong#args} -returnCodes error -body {
     crimp meta create [empty] a b c
-} -result {wrong # args: should be "dict create ?key value ...?"}
+} -result [wa dict create ?key value ...?]
 
 test crimp-meta-2.2 {Accessor: meta create command} -body {
     crimp meta create [empty]
@@ -305,7 +304,7 @@ test crimp-meta-6.7 {Accessor: meta keys command} {
 
 test crimp-meta-6.8 {Accessor: meta keys command} -returnCodes error -body {
     crimp meta keys [empty] a b
-} -result {wrong # args: should be "dict keys dictionary ?pattern?"}
+} -result [wa dict keys dictionary ?pattern?]
 
 
 test crimp-meta-7.1 {Accessor: meta values command} {
@@ -338,7 +337,7 @@ test crimp-meta-7.7 {Accessor: meta values command} {
 
 test crimp-meta-7.8 {Accessor: meta values command} -returnCodes error -body {
     crimp meta values [empty] a b
-} -result {wrong # args: should be "dict values dictionary ?pattern?"}
+} -result [wa dict values dictionary ?pattern?]
 
 
 test crimp-meta-8.1 {Accessor: meta size command} {
@@ -355,7 +354,7 @@ test crimp-meta-8.3 {Accessor: meta size command} {
 
 test crimp-meta-8.4 {Accessor: meta size command} -returnCodes error -body {
     crimp meta size [empty] x
-} -result {wrong # args: should be "dict size dictionary"}
+} -result [wa dict size dictionary]
 
 
 test crimp-meta-9.1 {Accessor: meta exists command} {
@@ -380,7 +379,7 @@ test crimp-meta-9.5 {Accessor: meta exists command} {
 
 test crimp-meta-9.6 {Accessor: meta exists command} -returnCodes error -body {
     crimp meta exists [empty]
-} -result {wrong # args: should be "dict exists dictionary key ?key ...?"}
+} -result [wa dict exists dictionary key ?key ...?]
 
 
 test crimp-meta-10.1 {Accessor: meta info command} -body {
@@ -391,11 +390,11 @@ test crimp-meta-10.1 {Accessor: meta info command} -body {
 
 test crimp-meta-10.2 {Accessor: meta info command} -returnCodes error -body {
     dict info
-} -result {wrong # args: should be "dict info dictionary"}
+} -result [wa dict info dictionary]
 
 test crimp-meta-10.3 {Accessor: meta info command} -returnCodes error -body {
     crimp meta info [empty] x
-} -result {wrong # args: should be "dict info dictionary"}
+} -result [wa dict info dictionary]
 
 
 test crimp-meta-11.7 {Accessor: meta incr command: unknown values} -body {
@@ -466,15 +465,15 @@ test crimp-meta-13.3 {Accessor: meta append command} -body {
 
 test crimp-meta-14.1 {Accessor: meta for command: syntax} -returnCodes error -body {
     crimp meta for [empty]
-} -result {wrong # args: should be "dict for {keyVar valueVar} dictionary script"}
+} -result [wa dict for {keyVar valueVar} dictionary script]
 
 test crimp-meta-14.2 {Accessor: meta for command: syntax} -returnCodes error -body {
     crimp meta for [empty] x
-} -result {wrong # args: should be "dict for {keyVar valueVar} dictionary script"}
+} -result [wa dict for {keyVar valueVar} dictionary script]
 
 test crimp-meta-14.3 {Accessor: meta for command: syntax} -returnCodes error -body {
     crimp meta for [empty] x x x
-} -result {wrong # args: should be "dict for {keyVar valueVar} dictionary script"}
+} -result [wa dict for {keyVar valueVar} dictionary script]
 
 test crimp-meta-14.4 {Accessor: meta for command: syntax} -returnCodes error -body {
     crimp meta for [empty] x x
@@ -517,11 +516,11 @@ test crimp-meta-15.3 {Accessor: meta set command} -body {
 
 test crimp-meta-15.4 {Accessor: meta set command: syntax} -returnCodes error -body {
     crimp meta set [empty]
-} -result {wrong # args: should be "dict set varName key ?key ...? value"}
+} -result [wa dict set varName key ?key ...? value]
 
 test crimp-meta-15.5 {Accessor: meta set command: syntax} -returnCodes error -body {
     crimp meta set [empty] a
-} -result {wrong # args: should be "dict set varName key ?key ...? value"}
+} -result [wa dict set varName key ?key ...? value]
 
 
 test crimp-meta-16.1 {Accessor: meta unset command} -body {
@@ -538,7 +537,7 @@ test crimp-meta-16.3 {Accessor: meta unset command} -body {
 
 test crimp-meta-16.4 {Accessor: meta unset command} -returnCodes error -body {
     crimp meta unset [empty]
-} -result {wrong # args: should be "dict unset varName key ?key ...?"}
+} -result [wa dict unset varName key ?key ...?]
 
 
 test crimp-meta-17.1 {Accessor: meta filter command: key} -body {
@@ -637,39 +636,39 @@ test crimp-core-rplace-1.4 "Accessors: rplace" -setup {
 
 test crimp-core-bbox2-1.0 {bbox2, wrong#args, not enough} -body {
     crimp bbox2
-} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+} -returnCodes error -result [wa crimp bbox2 ax ay aw ah bx by bw bh]
 
 test crimp-core-bbox2-1.1 {bbox2, wrong#args, not enough} -body {
     crimp bbox2 ax
-} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+} -returnCodes error -result [wa crimp bbox2 ax ay aw ah bx by bw bh]
 
 test crimp-core-bbox2-1.2 {bbox2, wrong#args, not enough} -body {
     crimp bbox2 ax ay
-} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+} -returnCodes error -result [wa crimp bbox2 ax ay aw ah bx by bw bh]
 
 test crimp-core-bbox2-1.3 {bbox2, wrong#args, not enough} -body {
     crimp bbox2 ax ay aw
-} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+} -returnCodes error -result [wa crimp bbox2 ax ay aw ah bx by bw bh]
 
 test crimp-core-bbox2-1.4 {bbox2, wrong#args, not enough} -body {
     crimp bbox2 ax ay aw ah
-} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+} -returnCodes error -result [wa crimp bbox2 ax ay aw ah bx by bw bh]
 
 test crimp-core-bbox2-1.5 {bbox2, wrong#args, not enough} -body {
     crimp bbox2 ax ay aw ah bx
-} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+} -returnCodes error -result [wa crimp bbox2 ax ay aw ah bx by bw bh]
 
 test crimp-core-bbox2-1.6 {bbox2, wrong#args, not enough} -body {
     crimp bbox2 ax ay aw ah bx by
-} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+} -returnCodes error -result [wa crimp bbox2 ax ay aw ah bx by bw bh]
 
 test crimp-core-bbox2-1.7 {bbox2, wrong#args, not enough} -body {
     crimp bbox2 ax ay aw ah bx by bw
-} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+} -returnCodes error -result [wa crimp bbox2 ax ay aw ah bx by bw bh]
 
 test crimp-core-bbox2-1.8 {bbox2, wrong#args, too many} -body {
     crimp bbox2 ax ay aw ah bx by bw bh toomuch
-} -returnCodes error -result {wrong # args: should be "crimp bbox2 ax ay aw ah bx by bw bh"}
+} -returnCodes error -result [wa crimp bbox2 ax ay aw ah bx by bw bh]
 
 set bboxexamples {
     0 {0 0 0 0} {0 0 0 0} {0 0 0 0}
@@ -697,11 +696,11 @@ foreach {n a b r} $bboxexamples {
 
 test crimp-core-bbox-1.0 {bbox, wrong#args, not enough} -body {
     crimp bbox
-} -returnCodes error -result {wrong # args: should be "crimp bbox head ..."}
+} -returnCodes error -result [wa crimp bbox head ...]
 
 test crimp-core-bbox-1.0 {bbox, wrong#args, not enough} -body {
     crimp bbox
-} -returnCodes error -result {wrong # args: should be "crimp bbox head ..."}
+} -returnCodes error -result [wa crimp bbox head ...]
 
 foreach {n a b r} $bboxexamples {
     lassign $a x y w h

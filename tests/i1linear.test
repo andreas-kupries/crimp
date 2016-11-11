@@ -14,19 +14,19 @@ kt local testing crimp::core
 
 test crimp-core-math-1linear-1.0 {interpolate linear, wrong args, not enough} -body {
     crimp interpolate linear
-} -returnCodes error -result {wrong # args: should be "crimp interpolate linear a b xf"}
+} -returnCodes error -result [wa crimp interpolate linear a b xf]
 
 test crimp-core-math-1linear-1.1 {interpolate linear, wrong args, not enough} -body {
     crimp interpolate linear A
-} -returnCodes error -result {wrong # args: should be "crimp interpolate linear a b xf"}
+} -returnCodes error -result [wa crimp interpolate linear a b xf]
 
 test crimp-core-math-1linear-1.2 {interpolate linear, wrong args, not enough} -body {
     crimp interpolate linear A B
-} -returnCodes error -result {wrong # args: should be "crimp interpolate linear a b xf"}
+} -returnCodes error -result [wa crimp interpolate linear a b xf]
 
 test crimp-core-math-1linear-1.3 {interpolate linear, wrong args, too many} -body {
     crimp interpolate linear A B XF XXX
-} -returnCodes error -result {wrong # args: should be "crimp interpolate linear a b xf"}
+} -returnCodes error -result [wa crimp interpolate linear a b xf]
 
 # -------------------------------------------------------------------------
 ## Fixed functionality

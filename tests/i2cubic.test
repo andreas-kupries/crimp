@@ -14,79 +14,79 @@ kt local testing crimp::core
 
 test crimp-core-math-2cubic-1.0 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.1 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.2 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.3 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.4 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.5 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.6 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.7 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.8 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.9 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H I
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.10 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H I J
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.11 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H I J K
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.12 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H I J K L
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.13 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H I J K L M
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.14 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H I J K L M N
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.15 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H I J K L M N O
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.16 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H I J K L M N O P
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.17 {interpolate bicubic, wrong args, not enough} -body {
     crimp interpolate bicubic A B C D E F G H I J K L M N O P XF
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 test crimp-core-math-2cubic-1.18 {interpolate bicubic, wrong args, too many} -body {
     crimp interpolate bicubic A B C D E F G H I J K L M N O P XF YF XXX
-} -returnCodes error -result {wrong # args: should be "crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf"}
+} -returnCodes error -result [wa crimp interpolate bicubic a b c d e f g h i j k l m n o p xf yf]
 
 # -------------------------------------------------------------------------
 ## Fixed functionality

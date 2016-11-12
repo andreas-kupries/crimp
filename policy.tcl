@@ -1396,6 +1396,32 @@ proc ::crimp::split {image} {
 
 # # ## ### ##### ######## #############
 
+proc ::crimp::exp {image} {
+    set type [TypeOf $image]
+    if {![Has exp_$type]} {
+	return -code error "Unable to exponentiate images of type \"$type\""
+    }
+    return [exp_$type $image]
+}
+
+proc ::crimp::log {image} {
+    set type [TypeOf $image]
+    if {![Has log_$type]} {
+	return -code error "Unable to log images of type \"$type\""
+    }
+    return [log_$type $image]
+}
+
+proc ::crimp::log10 {image} {
+    set type [TypeOf $image]
+    if {![Has log10_$type]} {
+	return -code error "Unable to log10 images of type \"$type\""
+    }
+    return [log10_$type $image]
+}
+
+# # ## ### ##### ######## #############
+
 proc ::crimp::blank {type w h args} {
     if {![Has blank_$type]} {
 	return -code error "Unable to create blank images of type \"$type\""

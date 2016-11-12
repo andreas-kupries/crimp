@@ -7,10 +7,13 @@
 package require math::constants
 package require struct::matrix
 
-proc types {}  { return {grey8 grey16 grey32 rgb rgba hsv float fpcomplex} }
-proc greys {}  { return {grey8 grey16 grey32} }
-proc floats {} { return {float fpcomplex} }
-proc float2 {} { return {float double} }
+proc types   {} { return {grey8 grey16 grey32 rgb rgba hsv float fpcomplex} }
+#                        ^ add double, see what break - TODO
+proc greys   {} { return {grey8 grey16 grey32} }
+proc floats  {} { return {float fpcomplex} }
+proc float2  {} { return {float double} }
+proc simples {} { return {grey8 grey16 grey32 float double} }
+proc multis  {} { return {rgb rgba hsv fpcomplex} }
 
 proc t_ramp {} {
     for {set i 0} {$i < 256} {incr i} {

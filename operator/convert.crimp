@@ -1,0 +1,70 @@
+#
+# Type conversions
+#
+
+#
+# This converter maps between floating and grey types using identity. Values
+# outside of the destination range are clamped to the maximum and minimum
+# values, respectively. I.e. saturated arithmetic is used.
+#
+# FUTURE: Either extend this converter to take semi-arbitrary mapping
+# functions (concatenation of arbitrary polynomials), or make such
+# transformations a separate primitive we can handle under the 'map'
+# method.
+#
+
+foreach itype { float double } {
+    foreach otype { grey32 grey16 grey8 } {
+	set map [list GREY [string toupper $otype]]
+
+	crimp_map_pixel $itype convert {} $otype [string map $map {
+	    z = CLAMPT (MINVAL, int, a, MAXVAL_GREY);
+	}]
+    }
+}
+
+foreach itype { grey32 grey16 grey8 } {
+    foreach otype { float double } {
+	crimp_map_pixel $itype convert {} $otype { z = a; }
+    }
+}
+
+foreach itype { float double } {
+    foreach otype { float double } {
+        if {$itype eq $otype} continue
+	crimp_map_pixel $itype convert {} $otype { z = a; }
+    }
+}
+
+foreach itype { grey32 grey16 grey8 } {
+    foreach otype { grey32 grey16 grey8 } {
+        if {$itype eq $otype} continue
+	set irange [string map {grey {}} $itype]
+	set orange [string map {grey {}} $otype]
+
+	if {$orange > $irange} {
+	    # output has larger range, simple identity conversion.
+	    crimp_map_pixel $itype convert {} $otype { z = a; }
+	    continue
+	}
+
+	# output has the more restricted range, clamp input to it
+	set map [list GREY [string toupper $otype]]
+
+	crimp_map_pixel $itype convert {} $otype [string map $map {
+	    z = CLAMPT (MINVAL, int, a, MAXVAL_GREY);
+	}]
+    }
+}
+
+# other down conversions - keep msb (see also split)
+
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

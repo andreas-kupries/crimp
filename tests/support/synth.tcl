@@ -10,6 +10,7 @@ package require struct::matrix
 proc types {}  { return {grey8 grey16 grey32 rgb rgba hsv float fpcomplex} }
 proc greys {}  { return {grey8 grey16 grey32} }
 proc floats {} { return {float fpcomplex} }
+proc float2 {} { return {float double} }
 
 proc t_ramp {} {
     for {set i 0} {$i < 256} {incr i} {

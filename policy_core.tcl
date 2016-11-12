@@ -19,10 +19,12 @@ proc ::crimp::K {x y} {
 # # ## ### ##### ######## ############# #####################
 
 proc ::crimp::List {pattern} {
+    # TODO: Memoize
     return [info commands ::crimp::$pattern]
 }
 
 proc ::crimp::Has {name} {
+    # TODO: Memoize
     expr {[namespace which -command ::crimp::$name] ne {}}
 }
 

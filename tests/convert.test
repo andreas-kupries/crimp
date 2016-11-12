@@ -1,0 +1,158 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt source support/synth.tcl
+
+kt local support crimp::core
+kt local testing crimp
+
+# -------------------------------------------------------------------------
+## type conversions.
+# -------------------------------------------------------------------------
+
+test crimp-convert-1.0 {image convert, wrong\#args, not enough} -body {
+    crimp convert
+} -returnCodes error -result [wa crimp convert subcommand ?argument ...?]
+
+set n 0
+foreach itype [linsert [simples] 0 fpcomplex] {
+    set itype [string map {fpcomplex complex} $itype]
+    test crimp-convert-1.1.$n {image convert, wrong\#args, too many} -body {
+        crimp convert 2$itype X1 X2 X3 X5 X5
+    } -returnCodes error -result [wa crimp convert 2$itype image]
+    incr n
+}
+foreach itype [multis] {
+    if {$itype eq "fpcomplex"} continue
+    test crimp-convert-1.1.$n {image convert, wrong\#args, too many} -body {
+        crimp convert 2$itype X1 X2 X3 X5 X5
+    } -returnCodes error -result [wa crimp convert 2$itype image ?gradient?]
+    incr n
+}
+
+test crimp-convert-1.2 {image convert, bogus destination type} -body {
+    crimp convert 2bogus IMAGE
+} -returnCodes error \
+    -result {unknown or ambiguous subcommand "2bogus": must be 2complex, 2double, 2float, 2grey16, 2grey32, 2grey8, 2hsv, 2rgb, or 2rgba}
+
+# -------------------------------------------------------------------------
+#             TO: gr8 gr16 gr32 rgb rgba hsv flt dbl cpx
+# FROM: grey8     \   *    *    .   .    .   *   *   .
+#       grey16    *   \    *    .   .    .   *   *   .
+#       grey32    *   *    \    .   .    .   *   *   .
+#       rgb       .   .    .    \   .    .   .   .   .
+#       rgba      .   .    .    .   \    .   .   .   .
+#       hsv       .   .    .    .   .    \   .   .   .
+#       float     *   *    *    .   .    .   \   *   .
+#       double    *   *    *    .   .    .   *   \   .
+#       fpcomplex .   .    .    .   .    .   .   .   \
+# -------------------------------------------------------------------------
+#
+# \ = no conversion
+# . = untested - TODO
+# * = tested
+# x = tested, special (gradient)
+
+# TODO: loop over types where possible
+# TODO: for down-conversion into range limited types create tests
+#       which trigger the clamping or wrap-around.
+
+set n 0
+set k 0
+foreach itype [float2] {
+    foreach otype [greys] {
+        test crimp-convert-2.$k.$n "convert, $itype, -> $otype" -body {
+            astcl [crimp convert 2$otype [$itype]]
+        } -result [iconst $otype 0 0 5 5 {
+            0  1  2  3  4
+            5  6  7  8  9
+            10 11 12 13 14
+            15 16 17 18 19
+            20 21 22 23 24
+        }]
+        incr n
+    }
+    incr k
+}
+
+set n 0
+set k 0
+foreach itype [greys] {
+    foreach otype [float2] {
+        test crimp-convert-3.$k.$n "convert, $itype, -> $otype" -body {
+            astclf 0 [crimp convert 2$otype [$itype]]
+        } -result [iconst $otype 0 0 5 5 {
+            0  1  2  3  4
+            5  6  7  8  9
+            10 11 12 13 14
+            15 16 17 18 19
+            20 21 22 23 24
+        }]
+        incr n
+    }
+    incr k
+}
+
+set n 0
+set k 0
+foreach itype [greys] {
+    foreach otype [greys] {
+        if {$itype eq $otype} continue
+
+        test crimp-convert-4.$k.$n "convert, $itype, -> $otype" -body {
+            astclf 0 [crimp convert 2$otype [$itype]]
+        } -result [iconst $otype 0 0 5 5 {
+            0  1  2  3  4
+            5  6  7  8  9
+            10 11 12 13 14
+            15 16 17 18 19
+            20 21 22 23 24
+        }]
+        incr n
+    }
+    incr k
+}
+
+set n 0
+set k 0
+foreach itype [float2] {
+    foreach otype [float2] {
+        if {$itype eq $otype} continue
+
+        test crimp-convert-5.$k.$n "convert, $itype, -> $otype" -body {
+            astclf 0 [crimp convert 2$otype [$itype]]
+        } -result [iconst $otype 0 0 5 5 {
+            0  1  2  3  4
+            5  6  7  8  9
+            10 11 12 13 14
+            15 16 17 18 19
+            20 21 22 23 24
+        }]
+        incr n
+    }
+    incr k
+}
+
+# -------------------------------------------------------------------------
+## Handling of input location: Modified pass through to result.
+
+if 0 {set n 0 ;# -- TODO --
+foreach itype [types] {
+    foreach border {const extend mirror replicate wrap} {
+        test crimp-convert-X.$n "image convert, $itype, location handling" -body {
+            crimp at [crimp convert [crimp place [$itype] 23 45] 4 5 2 2]
+        } -result {19 40}
+    }
+}}
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

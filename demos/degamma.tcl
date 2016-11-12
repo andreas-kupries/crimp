@@ -1,7 +1,7 @@
 def op_gamma_invers {
     label Degamma
     setup {
-	variable gamma 1
+	variable gamma 2.2
 	variable table {}
 
 	proc show {thegamma} {

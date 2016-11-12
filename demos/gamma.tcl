@@ -1,7 +1,7 @@
 def op_gamma {
     label Gamma
     setup {
-	variable gamma 1
+	variable gamma 2.2
 	variable table {}
 
 	proc show {thegamma} {

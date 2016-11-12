@@ -257,7 +257,7 @@ proc demo_time_hook {label script} {
 
     log "$label = [expr {double($x)/1E6}] seconds"
     if {![bases]} return
-    set n [expr {[crimp width [base]]*[crimp height [base]]}]
+    set n [crimp size [base]]
     log "\t$n pixels"
     log "\t[expr {double($x)/$n}] uSeconds/pixel"
     return
@@ -856,8 +856,8 @@ proc show_image {image} {
     #display [crimp degamma $image 2.2]
     display $image
     log TYPE=[crimp type       $image]
-    #log "DIM_=[crimp dimensions $image] @ [crimp at $image]"
-    log "DIM_=[crimp dimensions $image]"
+    log DIM_=[crimp dimensions $image]
+    log AREA=[crimp size $image]
     log META=[crimp::C::meta_get $image]
     return
 }

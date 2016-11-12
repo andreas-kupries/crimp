@@ -163,3 +163,67 @@ apply {{} {
 }}
 
 # # ## ### ##### ######## #############
+
+proc crimp_map_type {type} {
+    dict get {
+	float  float
+	double double
+	grey32 {unsigned int}
+	grey16 {unsigned short}
+	grey8  {unsigned char}
+    } $type
+}
+
+# # ## ### ##### ######## #############
+## pixelwise image manipulation
+## __NOTE__ As is not usable for multi-channel image types
+
+proc crimp_map_pixel {intype name arguments outtype body} {
+    critcl::at::caller
+    critcl::at::incrt $intype
+    critcl::at::incrt $name
+    critcl::at::incrt $arguments
+    critcl::at::incrt $outtype
+    set bodylocation [critcl::at::get*]
+
+    if {$intype eq $outtype} {
+	set constructor crimp_new_like
+	append name _$intype
+    } else {
+	set constructor crimp_new_${outtype}_like
+	append name _2${outtype}_$intype
+    }
+
+    lappend map <<intype>>         [crimp_map_type $intype]
+    lappend map <<outtype>>        [crimp_map_type $outtype]
+    lappend map <<transformation>> \
+	$bodylocation[string map $map $body]
+    lappend map <<constructor>>    $constructor
+
+    lappend params \
+	image_$intype image \
+	{*}$arguments
+
+    crimp_primitive $name \
+	$params \
+	image \
+	[string map $map {
+	    crimp_image* result = <<constructor>> (image);
+	    int          area   = crimp_image_area (image);
+
+	    int idx;
+	    ITER (<<intype>>,  incursor,  image);
+	    ITER (<<outtype>>, outcursor, result);
+
+	    for (idx = 0; idx < area; idx++, NEXT (incursor), NEXT (outcursor)) {
+		<<outtype>> z;
+		<<intype>> a = CURRENT (incursor);
+		<<transformation>>
+		CURRENT (outcursor) = z;
+	    }
+
+	    return result;
+	}]
+}
+
+# # ## ### ##### ######## #############

@@ -1,0 +1,20 @@
+#
+# Pixelwise exponentiation and logs.
+#
+foreach type {
+    float
+    double
+} {
+    crimp_map_pixel $type exp   {} $type { z = exp(a);   }
+    crimp_map_pixel $type log   {} $type { z = log(a);   }
+    crimp_map_pixel $type log10 {} $type { z = log10(a); }
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

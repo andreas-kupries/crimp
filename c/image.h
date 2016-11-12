@@ -2,7 +2,7 @@
 #define CRIMP_IMAGE_H
 /*
  * CRIMP :: Image Declarations, and API :: PUBLIC
- * (C) 2010 - 2011
+ * (C) 2010 - 2016
  */
 
 #include "common.h"
@@ -80,6 +80,29 @@ typedef struct crimp_image {
 #define GREY32(iptr,x,y)  *((unsigned int* )  &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
 #define FLOATP(iptr,x,y)  *((float*)          &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
 #define DOUBLEP(iptr,x,y) *((double*)         &((iptr)->pixel [CRIMP_INDEX (iptr,x,y)]))
+
+/*
+ * Incremental pixel access (iterator parts)
+ */
+
+#define ITER(type,pixcurrent,iptr) type *pixcurrent = (type*) (iptr)->pixel
+#define START0(pixcurrent,iptr)    (pixcurrent) = (iptr)->pixel
+#define NEXT(pixcurrent)           (pixcurrent) ++
+#define NEXTN(pixcurrent,n)        (pixcurrent) += (n)
+#define NEXTC(pixcurrent,iptr)     (pixcurrent) += crimp_c(iptr)
+
+#define CURRENT(pixcurrent)    (pixcurrent)[0]
+#define CURRENTN(pixcurrent,c) (pixcurrent)[c]
+
+#define R_CURRENT(pixcurrent)   CURRENTN (pixcurrent, 0)
+#define G_CURRENT(pixcurrent)   CURRENTN (pixcurrent, 1)
+#define B_CURRENT(pixcurrent)   CURRENTN (pixcurrent, 2)
+#define A_CURRENT(pixcurrent)   CURRENTN (pixcurrent, 3)
+#define H_CURRENT(pixcurrent)   CURRENTN (pixcurrent, 0)
+#define S_CURRENT(pixcurrent)   CURRENTN (pixcurrent, 1)
+#define V_CURRENT(pixcurrent)   CURRENTN (pixcurrent, 2)
+#define RE_CURRENT(pixcurrent)  CURRENTN (pixcurrent, 0)
+#define IM_CURRENT(pixcurrent)  CURRENTN (pixcurrent, 1)
 
 /*
  * Pixel as 2-complement numbers (-128..127, instead of unsigned 0..255).

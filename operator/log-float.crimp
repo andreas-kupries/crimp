@@ -1,25 +1,22 @@
+#
+# Pixelwise log() of the input
+#
 crimp_primitive log_float {
     image_float image
 } image {
-    /*
-     * Natural logarithm of all pixels of the image.
-     */
+    crimp_image* result = crimp_new_like (image);
+    int          area   = crimp_image_area (image);
 
-    crimp_image* result;
-    int          x, y;
+    int idx;
+    ITER (float, rc, result);
+    ITER (float, ic, image);
 
-
-    result = crimp_new_like (image);
-
-    for (y = 0; y < crimp_h (result); y++) {
-        for (x = 0; x < crimp_w (result); x++) {
-
-	    FLOATP (result, x, y) = log (FLOATP (image, x, y));
-        }
+    for (idx = 0; idx < area;
+	 idx++, NEXT (ic), NEXT (rc)) {
+	CURRENT (rc) = log (CURRENT (ic));
     }
 
     return result;
-
 }
 
 # - -- --- ----- -------- -------------

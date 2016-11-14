@@ -1,5 +1,5 @@
 crimp_primitive warp_point {
-    image_double forward
+    projective-transform forward
     double x
     double y
 } object0 {
@@ -8,11 +8,6 @@ crimp_primitive warp_point {
      */
 
     Tcl_Obj* list [2];
-
-    if (!crimp_require_dim (forward, 3, 3)) {
-	Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
-	return NULL;
-    }
 
     crimp_geo_warp_point (forward, &x, &y);
 

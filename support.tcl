@@ -14,6 +14,7 @@ critcl::buildrequirement {
 ## Configuration checks
 
 proc crimp_stdint_h {} {
+    return
     # Check for the presence of the C99 header <stdint.h>.
     # If we have it, we will use it. If not we will make do with
     # compatibility definitions based on the more prevalent header
@@ -24,10 +25,10 @@ proc crimp_stdint_h {} {
     # This enables us to dynamically create/modify a header file
     # needed by the C code.
 
-    lappend paths /usr/include
-    lappend paths /usr/local/include
-    lappend paths compat
-    critcl::cheaders [critcl::util locate stdint.h $paths]/stdint.h
+    lappend paths /usr/include/stdint.h
+    lappend paths /usr/local/include/stdint.h
+    lappend paths compat/stdint.h
+    critcl::cheaders [critcl::util locate stdint.h $paths]
 }
 
 # # ## ### ##### ######## #############
@@ -89,9 +90,7 @@ apply {{} {
 		return TCL_ERROR;
 	    }
 	    if (@A->itype != crimp_imagetype_find ("crimp::image::<<type>>")) {
-		Tcl_SetObjResult (interp,
-				  Tcl_NewStringObj ("expected image type <<type>>",
-						    -1));
+		Tcl_SetResult (interp, "expected image type <<type>>", TCL_STATIC);
 		return TCL_ERROR;
 	    }
 	}] crimp_image* crimp_image*
@@ -101,9 +100,7 @@ apply {{} {
 		return TCL_ERROR;
 	    }
 	    if (@A.i->itype != crimp_imagetype_find ("crimp::image::<<type>>")) {
-		Tcl_SetObjResult (interp,
-				  Tcl_NewStringObj ("expected image type <<type>>",
-						    -1));
+		Tcl_SetResult (interp, "expected image type <<type>>", TCL_STATIC);
 		return TCL_ERROR;
 	    }
 	    @A.o = @@;
@@ -117,6 +114,22 @@ apply {{} {
 		crimp_image* i;
 	    } crimp_image_obj;
 	} image_obj
+
+	# Kernel extends image<<type>>
+	critcl::argtype kernel_$type [string map $map {
+	    if (crimp_get_image_from_obj (interp, @@, &@A) != TCL_OK) {
+		return TCL_ERROR;
+	    }
+	    if (@A->itype != crimp_imagetype_find ("crimp::image::<<type>>")) {
+		Tcl_SetResult (interp, "expected image type <<type>>", TCL_STATIC);
+		return TCL_ERROR;
+	    }
+	    if (((crimp_w (@A) % 2) == 0) ||
+		((crimp_h (@A) % 2) == 0)) {
+		Tcl_SetResult(interp, "bad kernel dimensions, expected odd size", TCL_STATIC);
+		return TCL_ERROR;
+	    }
+	}] crimp_image* crimp_image*
     }
 
     critcl::argtype image {
@@ -155,11 +168,27 @@ apply {{} {
     critcl::argtype photo {
 	@A = Tk_FindPhoto(interp, Tcl_GetString(@@));
 	if (!@A) {
-	    Tcl_AppendResult(interp, "image \"", Tcl_GetString(@@), "\" doesn't exist", NULL);
+	    Tcl_AppendResult(interp, "image \"", Tcl_GetString(@@), "\" doesn't exist",
+			     NULL);
 	    return TCL_ERROR;
 	}
     } Tk_PhotoHandle Tk_PhotoHandle
 
+    # Extend image_double with additional requirements.
+    critcl::argtype projective-transform {
+	if (crimp_get_image_from_obj (interp, @@, &@A) != TCL_OK) {
+	    return TCL_ERROR;
+	}
+	if (@A->itype != crimp_imagetype_find ("crimp::image::double")) {
+	    Tcl_SetResult (interp, "expected image type double", TCL_STATIC);
+	    return TCL_ERROR;
+	}
+	if (!crimp_require_dim (@A, 3, 3)) {
+	    Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
+	    return TCL_ERROR;
+	}
+    } crimp_image* crimp_image*
+    
 }}
 
 # # ## ### ##### ######## #############

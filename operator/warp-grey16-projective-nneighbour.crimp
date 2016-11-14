@@ -1,6 +1,6 @@
 crimp_primitive warp_grey16_projective_nneighbour {
     image_grey16 image
-    image_double forward
+    projective-transform forward
 } image {
     /*
      * Warp the image using the specified transform. The result is made large
@@ -15,12 +15,6 @@ crimp_primitive warp_grey16_projective_nneighbour {
     crimp_image* result;
     int x, y, xt, yt, origx, origy, xi, yi, outside;
     double xf, yf;
-
-
-    if (!crimp_require_dim (forward, 3, 3)) {
-        Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
-        return NULL;
-    }
 
     backward = crimp_la_invert_matrix_3x3 (forward);
     if (!backward) {

@@ -1,6 +1,6 @@
 crimp_primitive convolve_double_hsv {
     image_hsv image
-    image_double kernel
+    kernel_double kernel
     int scale
     int offset
 } image {

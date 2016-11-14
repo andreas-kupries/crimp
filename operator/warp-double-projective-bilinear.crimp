@@ -1,6 +1,6 @@
 crimp_primitive warp_double_projective_bilinear {
     image_double image
-    image_double forward
+    projective-transform forward
 } image {
     /*
      * Warp image using the given specified transform. The result is made large
@@ -15,11 +15,6 @@ crimp_primitive warp_double_projective_bilinear {
     crimp_image* result;
     int x, y, xt, yt, origx, origy;
     double xf, yf;
-
-    if (!crimp_require_dim (forward, 3, 3)) {
-        Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
-        return NULL;
-    }
 
     backward = crimp_la_invert_matrix_3x3 (forward);
     if (!backward) {

@@ -1,6 +1,6 @@
 crimp_primitive convolve_double_grey32 {
     image_grey32 image
-    image_double kernel
+    kernel_double kernel
     int scale
     int offset
 } image {

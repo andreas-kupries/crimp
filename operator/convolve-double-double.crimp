@@ -1,6 +1,6 @@
 crimp_primitive convolve_double_double {
     image_double image
-    image_double kernel
+    kernel_double kernel
     int scale
     int offset
 } image {
@@ -17,16 +17,12 @@ crimp_primitive convolve_double_double {
     crimp_image*     result;
     int              xo, yo, xi, yi, xk, yk, dx, dy, kw, kh;
 
-    if (((crimp_w (kernel) % 2) == 0) ||
-        ((crimp_h (kernel) % 2) == 0)) {
-        Tcl_SetResult(interp, "bad kernel dimensions, expected odd size", TCL_STATIC);
-        return NULL;
-    }
-
     kw = crimp_w (kernel)/2;
     kh = crimp_h (kernel)/2;
 
-    result = crimp_new_at (image->itype, crimp_x (image) + kw, crimp_y (image) + kh, crimp_w (image) - 2*kw, crimp_h (image) - 2*kh);
+    result = crimp_new_at (image->itype,
+			   crimp_x (image) + kw, crimp_y (image) + kh,
+			   crimp_w (image) - 2*kw, crimp_h (image) - 2*kh);
 
     for (yo = 0, yi = kh; yo < crimp_h (result); yo++, yi++) {
         for (xo = 0, xi = kw; xo < crimp_w (result); xo++, xi++) {

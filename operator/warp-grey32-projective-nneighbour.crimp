@@ -1,6 +1,6 @@
 crimp_primitive warp_grey32_projective_nneighbour {
     image_grey32 image
-    image_double forward
+    projective-transform forward
 } image {
     /*
      * Warp the image using the specified transform. The result is made large

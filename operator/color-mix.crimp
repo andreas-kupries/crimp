@@ -1,6 +1,6 @@
 crimp_primitive color_mix {
-    image       image
-    image_float mix
+    image           image
+    color-transform mix
 } image {
     /*
      * Taking a color image in either RGB(A) and HSV it remixes the color channels

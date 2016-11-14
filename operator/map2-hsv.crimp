@@ -1,8 +1,8 @@
 crimp_primitive map2_hsv {
     image_hsv   image
-    image_grey8 hueMap
-    image_grey8 satMap
-    image_grey8 valMap
+    sqlut_grey8 hueMap
+    sqlut_grey8 satMap
+    sqlut_grey8 valMap
     int hueControlChannel
     int satControlChannel
     int valControlChannel
@@ -23,21 +23,6 @@ crimp_primitive map2_hsv {
 
     crimp_image*     result;
     int              x, y;
-
-    if (!crimp_require_dim (hueMap, 256, 256)) {
-        Tcl_SetResult(interp, "bad image dimension for hue map, expected 256x256", TCL_STATIC);
-        return NULL;
-    }
-
-    if (!crimp_require_dim (satMap, 256, 256)) {
-        Tcl_SetResult(interp, "bad image dimension for saturation map, expected 256x256", TCL_STATIC);
-        return NULL;
-    }
-
-    if (!crimp_require_dim (valMap, 256, 256)) {
-        Tcl_SetResult(interp, "bad image dimension for value map, expected 256x256", TCL_STATIC);
-        return NULL;
-    }
 
     if (!CRIMP_RANGEOK (hueControlChannel,2)) {
         Tcl_SetResult(interp, "bad control for hue map, expected index in (0...2)", TCL_STATIC);

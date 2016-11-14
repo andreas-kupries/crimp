@@ -9,11 +9,6 @@ crimp_primitive warp_box {
     crimp_geometry z;
     Tcl_Obj* list [4];
 
-    if (!crimp_require_dim (forward, 3, 3)) {
-	Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
-	return NULL;
-    }
-
     a.x = x;
     a.y = y;
     a.w = w;

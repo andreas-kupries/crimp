@@ -1,8 +1,8 @@
 crimp_primitive map_rgb {
     image_rgb image
-    image_grey8 redMap
-    image_grey8 greenMap
-    image_grey8 blueMap
+    lut_grey8 redMap
+    lut_grey8 greenMap
+    lut_grey8 blueMap
 } image {
     /*
      * This operation is a generalized per-pixel transformation, mapping
@@ -23,21 +23,6 @@ crimp_primitive map_rgb {
 
     crimp_image*     result;
     int              x, y;
-
-    if (!crimp_require_dim (redMap, 256, 1)) {
-        Tcl_SetResult(interp, "bad image dimension for red map, expected 256x1", TCL_STATIC);
-        return NULL;
-    }
-
-    if (!crimp_require_dim (greenMap, 256, 1)) {
-        Tcl_SetResult(interp, "bad image dimension for green map, expected 256x1", TCL_STATIC);
-        return NULL;
-    }
-
-    if (!crimp_require_dim (blueMap, 256, 1)) {
-        Tcl_SetResult(interp, "bad image dimension for blue map, expected 256x1", TCL_STATIC);
-        return NULL;
-    }
 
     result = crimp_new_like (image);
 

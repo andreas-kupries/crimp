@@ -1,6 +1,6 @@
 crimp_primitive color_combine {
-    image       image
-    image_float combine
+    image         image
+    color-weights combine
 } image {
     /*
      * Taking a color image in either RGB(A) and HSV it combines the color channels
@@ -26,9 +26,9 @@ crimp_primitive color_combine {
         return NULL;
     }
 
-    wr = FLOATP (combine, 0, 0);
-    wg = FLOATP (combine, 1, 0);
-    wb = FLOATP (combine, 2, 0);
+    wr = DOUBLEP (combine, 0, 0);
+    wg = DOUBLEP (combine, 1, 0);
+    wb = DOUBLEP (combine, 2, 0);
 
     result = crimp_new_grey8_at (crimp_x (image), crimp_y (image),
 			         crimp_w (image), crimp_h (image));

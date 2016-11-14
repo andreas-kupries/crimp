@@ -1,6 +1,6 @@
 crimp_primitive map_grey8 {
     image_grey8 image
-    image_grey8 map
+    lut_grey8 map
 } image {
     /*
      * This operation is a generalized per-pixel transformation, mapping
@@ -21,11 +21,6 @@ crimp_primitive map_grey8 {
 
     crimp_image*     result;
     int              x, y;
-
-    if (!crimp_require_dim (map, 256, 1)) {
-        Tcl_SetResult(interp, "bad image dimension for map, expected 256x1", TCL_STATIC);
-        return NULL;
-    }
 
     result = crimp_new_like (image);
 

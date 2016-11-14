@@ -1,8 +1,8 @@
 crimp_primitive map2_rgb {
     image_rgb image
-    image_grey8 redMap
-    image_grey8 greenMap
-    image_grey8 blueMap
+    sqlut_grey8 redMap
+    sqlut_grey8 greenMap
+    sqlut_grey8 blueMap
     int redControlChannel
     int greenControlChannel
     int blueControlChannel
@@ -23,21 +23,6 @@ crimp_primitive map2_rgb {
 
     crimp_image*     result;
     int              x, y;
-
-    if (!crimp_require_dim (redMap, 256, 256)) {
-        Tcl_SetResult(interp, "bad image dimension for red map, expected 256x256", TCL_STATIC);
-        return NULL;
-    }
-
-    if (!crimp_require_dim (greenMap, 256, 256)) {
-        Tcl_SetResult(interp, "bad image dimension for green map, expected 256x256", TCL_STATIC);
-        return NULL;
-    }
-
-    if (!crimp_require_dim (blueMap, 256, 256)) {
-        Tcl_SetResult(interp, "bad image dimension for blue map, expected 256x256", TCL_STATIC);
-        return NULL;
-    }
 
     if (!CRIMP_RANGEOK (redControlChannel,2)) {
         Tcl_SetResult(interp, "bad control for red map, expected index in (0...2)", TCL_STATIC);

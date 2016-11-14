@@ -1,6 +1,6 @@
 crimp_primitive convert_2hsv_grey8 {
     image_grey8 image
-    image_hsv   color
+    lut_hsv   color
 } image {
     crimp_image* result;
     int          x, y, value;
@@ -14,11 +14,6 @@ crimp_primitive convert_2hsv_grey8 {
      * (Tcl) list (of values), or array, but as an _image_ itself, a 256x1 (WxH)
      * hsv. We will have constructors for such images.
      */
-
-    if (!crimp_require_dim (color, 256, 1)) {
-        Tcl_SetResult(interp, "bad image dimension for color map, expected 256x1", TCL_STATIC);
-        return NULL;
-    }
 
     result = crimp_new_hsv_at (crimp_x (image), crimp_y (image), crimp_w (image), crimp_h (image));
 

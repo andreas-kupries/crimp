@@ -1,8 +1,8 @@
 crimp_primitive map_hsv {
     image_hsv image
-    image_grey8 hueMap
-    image_grey8 satMap
-    image_grey8 valMap
+    lut_grey8 hueMap
+    lut_grey8 satMap
+    lut_grey8 valMap
 } image {
     /*
      * This operation is a generalized per-pixel transformation, mapping
@@ -23,21 +23,6 @@ crimp_primitive map_hsv {
 
     crimp_image*     result;
     int              x, y;
-
-    if (!crimp_require_dim (hueMap, 256, 1)) {
-        Tcl_SetResult(interp, "bad image dimension for hue map, expected 256x1", TCL_STATIC);
-        return NULL;
-    }
-
-    if (!crimp_require_dim (satMap, 256, 1)) {
-        Tcl_SetResult(interp, "bad image dimension for saturation map, expected 256x1", TCL_STATIC);
-        return NULL;
-    }
-
-    if (!crimp_require_dim (valMap, 256, 1)) {
-        Tcl_SetResult(interp, "bad image dimension for value map, expected 256x1", TCL_STATIC);
-        return NULL;
-    }
 
     result = crimp_new_like (image);
 

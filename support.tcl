@@ -130,6 +130,39 @@ apply {{} {
 		return TCL_ERROR;
 	    }
 	}] crimp_image* crimp_image*
+
+
+	# LUT extends image<<type>>
+	critcl::argtype lut_$type [string map $map {
+	    if (crimp_get_image_from_obj (interp, @@, &@A) != TCL_OK) {
+		return TCL_ERROR;
+	    }
+	    if (@A->itype != crimp_imagetype_find ("crimp::image::<<type>>")) {
+		Tcl_SetResult (interp, "expected image type <<type>>", TCL_STATIC);
+		return TCL_ERROR;
+	    }
+	    if (!crimp_require_dim (@A, 256, 1)) {
+		Tcl_SetResult(interp, "bad map dimension, expected 256x1", TCL_STATIC);
+		return TCL_ERROR;
+	    }
+	}] crimp_image* crimp_image*
+
+	critcl::argtype sqlut_$type [string map $map {
+	    if (crimp_get_image_from_obj (interp, @@, &@A) != TCL_OK) {
+		return TCL_ERROR;
+	    }
+	    if (@A->itype != crimp_imagetype_find ("crimp::image::<<type>>")) {
+		Tcl_SetResult (interp, "expected image type <<type>>", TCL_STATIC);
+		return TCL_ERROR;
+	    }
+	    if (!crimp_require_dim (@A, 256, 256)) {
+		Tcl_SetResult(interp, "bad map dimensions, expected 256x256", TCL_STATIC);
+		return TCL_ERROR;
+	    }
+	}] crimp_image* crimp_image*
+
+
+
     }
 
     critcl::argtype image {
@@ -188,7 +221,34 @@ apply {{} {
 	    return TCL_ERROR;
 	}
     } crimp_image* crimp_image*
-    
+
+    critcl::argtype color-transform {
+	if (crimp_get_image_from_obj (interp, @@, &@A) != TCL_OK) {
+	    return TCL_ERROR;
+	}
+	if (@A->itype != crimp_imagetype_find ("crimp::image::double")) {
+	    Tcl_SetResult (interp, "expected image type double", TCL_STATIC);
+	    return TCL_ERROR;
+	}
+	if (!crimp_require_dim (@A, 3, 3)) {
+	    Tcl_SetResult(interp, "bad color transform dimensions, expected 3x3", TCL_STATIC);
+	    return TCL_ERROR;
+	}
+    } crimp_image* crimp_image*
+
+    critcl::argtype color-weights {
+	if (crimp_get_image_from_obj (interp, @@, &@A) != TCL_OK) {
+	    return TCL_ERROR;
+	}
+	if (@A->itype != crimp_imagetype_find ("crimp::image::double")) {
+	    Tcl_SetResult (interp, "expected image type double", TCL_STATIC);
+	    return TCL_ERROR;
+	}
+	if (!crimp_require_dim (@A, 3, 1)) {
+	    Tcl_SetResult(interp, "bad color weight dimensions, expected 3x3", TCL_STATIC);
+	    return TCL_ERROR;
+	}
+    } crimp_image* crimp_image*
 }}
 
 # # ## ### ##### ######## #############

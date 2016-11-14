@@ -1,6 +1,6 @@
 crimp_primitive convolve_double_rgba {
     image_rgba image
-    image_double kernel
+    kernel_double kernel
     int scale
     int offset
 } image {

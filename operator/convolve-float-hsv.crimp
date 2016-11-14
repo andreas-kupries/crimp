@@ -1,6 +1,6 @@
 crimp_primitive convolve_float_hsv {
     image_hsv image
-    image_float kernel
+    kernel_float kernel
     int scale
     int offset
 } image {
@@ -16,13 +16,6 @@ crimp_primitive convolve_float_hsv {
 
     crimp_image*     result;
     int              xo, yo, xi, yi, xk, yk, dx, dy, kw, kh;
-
-
-    if (((crimp_w (kernel) % 2) == 0) ||
-        ((crimp_h (kernel) % 2) == 0)) {
-        Tcl_SetResult(interp, "bad kernel dimensions, expected odd size", TCL_STATIC);
-        return NULL;
-    }
 
     kw = crimp_w (kernel)/2;
     kh = crimp_h (kernel)/2;

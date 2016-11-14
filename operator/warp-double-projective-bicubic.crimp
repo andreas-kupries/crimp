@@ -1,6 +1,6 @@
 crimp_primitive warp_double_projective_bicubic {
     image_double image
-    image_double forward
+    projective-transform forward
 } image {
     /*
      * Warp image using the given specified transform. The result is made large

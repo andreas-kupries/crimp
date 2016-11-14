@@ -1,6 +1,6 @@
 crimp_primitive warp_grey16_projective_bilinear {
     image_grey16 image
-    image_double forward
+    projective-transform forward
 } image {
     /*
      * Warp image using the given specified transform. The result is made large

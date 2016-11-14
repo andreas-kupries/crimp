@@ -1,6 +1,6 @@
 crimp_primitive convolve_float_grey16 {
     image_grey16 image
-    image_float kernel
+    kernel_float kernel
     int scale
     int offset
 } image {

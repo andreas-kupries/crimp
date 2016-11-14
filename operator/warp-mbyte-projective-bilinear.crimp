@@ -20,12 +20,6 @@ crimp_primitive warp_mbyte_projective_bilinear {
     CRIMP_ASSERT_NOTIMGTYPE (image, grey16);
     CRIMP_ASSERT_NOTIMGTYPE (image, grey32);
 
-
-    if (!crimp_require_dim (forward, 3, 3)) {
-        Tcl_SetResult(interp, "bad matrix dimensions, expected 3x3", TCL_STATIC);
-        return NULL;
-    }
-
     backward = crimp_la_invert_matrix_3x3 (forward);
     if (!backward) {
         Tcl_SetResult(interp, "Unable to invert singular matrix", TCL_STATIC);

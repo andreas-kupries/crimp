@@ -72,11 +72,8 @@ critcl::source support.tcl
 # # ## ### ##### ######## #############
 ## Main C section.
 
-critcl::ccode {
-    #include <math.h>
-    #include <stdlib.h>
-    #include <string.h>
-}
+critcl::include \
+    math.h stdlib.h string.h
 
 # # ## ### ##### ######## #############
 ## Pull in the Tk-specific pieces. These are fit under the read/write namespaces.

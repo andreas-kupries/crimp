@@ -1,46 +1,43 @@
+# See window.crimp for the derivation of the math.
+
 crimp_primitive window_hsv {
     image_hsv image
 } image {
-    crimp_image* result;
+    crimp_image* result = crimp_new_like (image);
 
-    int x, y;
-    float halfw, halfh, tmp, weightx, weighty;
+    int h = crimp_h (image);
+    int w = crimp_w (image);
 
+    int x, y, idx;
+    ITER (unsigned char,  incursor,  image);
+    ITER (unsigned char, outcursor, result);
 
-    /*
-     * outpixel(x,y) = weight(x,width) * weight(y,height) * inpixel(x,y)
-     *    where
-     *    w(x,range) = 1 - ((x - (range-1)/2) / (range/2))**2
-     */
+    for (y = 0; y < h; y++) {
+	double dy = (2*y - (double)h + 1) / (double)h;
+        double wy = 1.0 - dy * dy;
 
-    result = crimp_new_like (image);
+	for (x = 0; x < w; x++, NEXTN (incursor,3), NEXTN (outcursor,3)) {
+	    int zh;
+	    int zs;
+	    int zv;
+	    int ah = CURRENTN (incursor,0);
+	    int as = CURRENTN (incursor,1);
+	    int av = CURRENTN (incursor,2);
 
-    halfw = crimp_w (image) / 2.0;
-    halfh = crimp_h (image) / 2.0;
+	    double dx = (2*x - (double)w + 1) / (double)w;
+	    double wx = 1.0 - dx * dx;
 
-    for (y = 0; y < crimp_h (image); y++) {
-        tmp     = (y - halfh - 0.5) / halfh;
-        weighty =  1.0 - tmp * tmp;
+	    zh = ah * wx * wy;
+	    zs = as * wx * wy;
+	    zv = av * wx * wy;
 
-        for (x = 0; x < crimp_w (image); x++) {
-	    tmp     = (x - halfw - 0.5) / halfw;
-	    weightx = 1.0 - tmp * tmp;
-
-	    /*
-	     * As the windowing is meant to fade pixels towards black we are not
-	     * changing the hue, nor saturation, only the value (luma
-	     * approximation).
-	     */
-
-	    H (result, x, y) = H (image, x, y);
-	    S (result, x, y) = S (image, x, y);
-	    V (result, x, y) = V (image, x, y) * weightx * weighty;
-        }
-    }   
+	    CURRENTN (outcursor,0) = zh;
+	    CURRENTN (outcursor,1) = zs;
+	    CURRENTN (outcursor,2) = zv;
+	}
+    }
 
     return result;
-
-
 }
 
 # - -- --- ----- -------- -------------

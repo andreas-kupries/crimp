@@ -181,6 +181,10 @@ proc float     {} { crimp read tcl float     [t_float]     }
 proc double    {} { crimp read tcl double    [t_float]     }
 proc fpcomplex {} { crimp read tcl fpcomplex [t_fpcomplex] }
 
+proc ones {n} {
+    crimp read tcl double [F %.1f [lrepeat $n [lrepeat $n 1]]]
+}
+
 proc g8  {cmd} { crimp read tcl grey8  [$cmd] }
 proc g16 {cmd} { crimp read tcl grey16 [$cmd] }
 proc g32 {cmd} { crimp read tcl grey32 [$cmd] }

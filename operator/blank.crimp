@@ -1,0 +1,7 @@
+
+crimp_gen_pixel blank {double value} double { z = value; }
+crimp_gen_pixel blank { float value} float  { z = value; }
+crimp_gen_pixel blank { grey8 value} grey8  { z = value; }
+crimp_gen_pixel blank {grey16 value} grey16 { z = value; }
+crimp_gen_pixel blank {grey32 value} grey32 { z = value; }
+

@@ -1,0 +1,28 @@
+#
+# Pixelwise inversion.
+#
+foreach type {
+    float
+    double
+} {
+    crimp_map_pixel $type invert {} $type { z = 1 - a; }
+}
+foreach type {
+    grey8
+    grey16
+    grey32
+} {
+    set map [list GREY [string toupper $type]]
+    crimp_map_pixel $type invert {} $type [string map $map {
+	z = MAXVAL_GREY - a;
+    }]
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

@@ -24,17 +24,40 @@ test crimp-invert-1.1 {image inversion, wrong\#args, too many} -body {
 
 # -------------------------------------------------------------------------
 
-test crimp-invert-2.0 {image inversion, grey8} -body {
-    crimp write 2string tcl [crimp invert [grey8]]
-} -result {{255 254 253 252 251} {250 249 248 247 246} {245 244 243 242 241} {240 239 238 237 236} {235 234 233 232 231}}
+set i_grey8 [iconst grey8 0 0 5 5 {
+    255 254 253 252 251
+    250 249 248 247 246
+    245 244 243 242 241
+    240 239 238 237 236
+    235 234 233 232 231
+}]
 
-test crimp-invert-2.1 {image inversion, grey16} -body {
-    crimp write 2string tcl [crimp invert [grey16]]
-} -result {} -constraints NotSupported
+set i_grey16 [iconst grey16 0 0 5 5 {
+    65535 65534 65533 65532 65531
+    65530 65529 65528 65527 65526
+    65525 65524 65523 65522 65521
+    65520 65519 65518 65517 65516
+    65515 65514 65513 65512 65511
+}]
 
-test crimp-invert-2.2 {image inversion, grey32} -body {
-    crimp write 2string tcl [crimp invert [grey32]]
-} -result {} -constraints NotSupported
+set i_grey32 [iconst grey32 0 0 5 5 {
+    4294967295 4294967294 4294967293 4294967292 4294967291
+    4294967290 4294967289 4294967288 4294967287 4294967286
+    4294967285 4294967284 4294967283 4294967282 4294967281
+    4294967280 4294967279 4294967278 4294967277 4294967276
+    4294967275 4294967274 4294967273 4294967272 4294967271
+}]
+
+set n 0
+foreach itype [greys] {
+    test crimp-invert-2.0.$n "image invert, $itype" -body {
+        astcl [crimp invert [$itype]]
+    } -result [set i_$itype]
+    incr n
+    #{{255 254 253 252 251} {250 249 248 247 246} {245 244 243 242 241} {240 239 238 237 236} {235 234 233 232 231}}
+}
+
+# TODO: get templated and into the loop
 
 test crimp-invert-2.3 {image inversion, rgb} -body {
     crimp write 2string tcl [crimp invert [rgb]]
@@ -54,7 +77,11 @@ test crimp-invert-3.0 {image inversion, float} -body {
     crimp write 2string tcl [crimp invert [float]]
 } -result {} -constraints NotSupported
 
-test crimp-invert-3.1 {image inversion, fpcomplex} -body {
+test crimp-invert-3.1 {image inversion, double} -body {
+    crimp write 2string tcl [crimp invert [double]]
+} -result {} -constraints NotSupported
+
+test crimp-invert-3.2 {image inversion, fpcomplex} -body {
     crimp write 2string tcl [crimp invert [fpcomplex]]
 } -result {} -constraints NotSupported
 
@@ -69,13 +96,14 @@ test crimp-invert-4.0 {image inversion, grey8, ramp} -body {
 
 foreach {n itype cando} {
     0 grey8     {}
-    1 grey16    NotSupported
-    2 grey32    NotSupported
+    1 grey16    {}
+    2 grey32    {}
     3 rgb       {}
     4 rgba      {}
     5 hsv       {}
-    6 float     NotSupported
-    7 fpcomplex NotSupported
+    6 float     {}
+    7 double    {}
+    8 fpcomplex NotSupported
 } {
     test crimp-invert-5.$n "image inversion, $itype, location handling" -body {
 	crimp at [crimp invert [crimp place [$itype] 23 45]]

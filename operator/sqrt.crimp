@@ -1,0 +1,21 @@
+#
+# Pixelwise sqrt.
+#
+foreach type {
+    float
+    double
+    grey8
+    grey16
+    grey32
+} {
+    crimp_map_pixel $type sqrt {} $type { z = sqrt(a); }
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#

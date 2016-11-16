@@ -1,0 +1,82 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt source support/synth.tcl
+
+kt local support crimp::core
+kt local testing crimp
+
+# -------------------------------------------------------------------------
+## Pixel-wise sqrt.
+# -------------------------------------------------------------------------
+
+set n_float  2
+set n_double 4
+
+set e_float [iconst float 0 0 5 5 {
+    0.00 1.00 1.41 1.73 2.00
+    2.24 2.45 2.65 2.83 3.00
+    3.16 3.32 3.46 3.61 3.74
+    3.87 4.00 4.12 4.24 4.36
+    4.47 4.58 4.69 4.80 4.90
+}]
+
+set e_double [iconst double 0 0 5 5 {
+    0.0000 1.0000 1.4142 1.7321 2.0000
+    2.2361 2.4495 2.6458 2.8284 3.0000
+    3.1623 3.3166 3.4641 3.6056 3.7417
+    3.8730 4.0000 4.1231 4.2426 4.3589
+    4.4721 4.5826 4.6904 4.7958 4.8990
+}]
+
+foreach itype {grey8 grey16 grey32} {
+    set e_$itype [iconst $itype 0 0 5 5 {
+        0 1 1 1 2
+        2 2 2 2 3
+        3 3 3 3 3
+        3 4 4 4 4
+        4 4 4 4 4
+    }]
+}
+
+foreach itype [simples] {
+    if {[string match grey* $itype] ||
+        [string match r*    $itype] ||
+        [string match h*    $itype]} {
+        set astcl astcl
+    } else {
+        set astcl [list astclf [set n_$itype]]
+    }
+    # - - -- --- ----- --------
+
+    test crimp-sqrt-${itype}-1.0 "image sqrt, $itype, wrong\#args, not enough" -body {
+        crimp sqrt
+    } -returnCodes error -result [wa crimp sqrt image]
+
+    test crimp-sqrt-${itype}-1.1 "image sqrt, $itype, wrong\#args, too many" -body {
+        crimp sqrt IMAGE X
+    } -returnCodes error -result [wa crimp sqrt image]
+
+    test crimp-sqrt-${itype}-2.0 "image sqrt, $itype" -body {
+        {*}$astcl [crimp sqrt [$itype]]
+    } -result [set e_$itype]
+
+    test crimp-sqrt-${itype}-3.0 "image sqrt ($), input handling" -body {
+        crimp at [crimp sqrt [crimp place [$itype] 4 5]]
+    } -result {4 5}
+}
+
+# TODO: unsupported types - errors on unsupported types
+# TODO: error on argument type mismatch
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

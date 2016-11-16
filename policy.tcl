@@ -1576,13 +1576,22 @@ proc ::crimp::alpha::over {fore back} {
 
 # # ## ### ##### ######## #############
 
-proc ::crimp::scale {a scale} {
-    set type [TypeOf $a]
+proc ::crimp::scale {image factor} {
+    set type [TypeOf $image]
     set f     scale_${type}
     if {![Has $f]} {
-	return -code error "Scale is not supported by \"$atype\""
+	return -code error "Scale is not supported by \"$type\""
     }
-    return [$f $a $scale]
+    return [$f $image $factor]
+}
+
+proc ::crimp::offset {image offset} {
+    set type [TypeOf $image]
+    set f     offset_${type}
+    if {![Has $f]} {
+	return -code error "Offset is not supported by \"$type\""
+    }
+    return [$f $image $offset]
 }
 
 # # ## ### ##### ######## #############

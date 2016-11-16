@@ -1,0 +1,86 @@
+# -*- tcl -*- tcl.tk//DSL tcltest//EN//2.0
+## (c) 2016 Andreas Kupries
+# # ## ### ##### ######## ############# #####################
+
+kt check Tcl     8.5
+kt check tcltest 2
+
+kt source support/synth.tcl
+
+kt local support crimp::core
+kt local testing crimp
+
+# -------------------------------------------------------------------------
+## Pixel-wise offset.
+# -------------------------------------------------------------------------
+
+set n_float  2
+set n_double 4
+
+set e_float [iconst float 0 0 5 5 {
+     0.00  2.00  4.00  6.00  8.00
+    10.00 12.00 14.00 16.00 18.00
+    20.00 22.00 24.00 26.00 28.00
+    30.00 32.00 34.00 36.00 38.00
+    40.00 42.00 44.00 46.00 48.00
+}]
+
+set e_double [iconst double 0 0 5 5 {
+     0.0000  2.0000  4.0000  6.0000  8.0000
+    10.0000 12.0000 14.0000 16.0000 18.0000
+    20.0000 22.0000 24.0000 26.0000 28.0000
+    30.0000 32.0000 34.0000 36.0000 38.0000
+    40.0000 42.0000 44.0000 46.0000 48.0000
+}]
+
+foreach itype {grey8 grey16 grey32} {
+    set e_$itype [iconst $itype 0 0 5 5 {
+         0  2  4  6  8
+        10 12 14 16 18
+        20 22 24 26 28
+        30 32 34 36 38
+        40 42 44 46 48
+    }]
+}
+
+foreach itype [simples] {
+    if {[string match grey* $itype] ||
+        [string match r*    $itype] ||
+        [string match h*    $itype]} {
+        set astcl astcl
+    } else {
+        set astcl [list astclf [set n_$itype]]
+    }
+    # - - -- --- ----- --------
+
+    test crimp-scale-${itype}-1.0 "image scale, $itype, wrong\#args, not enough" -body {
+        crimp scale
+    } -returnCodes error -result [wa crimp scale image factor]
+
+    test crimp-scale-${itype}-1.1 "image scale, $itype, wrong\#args, not enough" -body {
+        crimp scale IMAGE
+    } -returnCodes error -result [wa crimp scale image factor]
+
+    test crimp-scale-${itype}-1.1 "image scale, $itype, wrong\#args, too many" -body {
+        crimp scale IMAGE OFF X
+    } -returnCodes error -result [wa crimp scale image factor]
+
+    test crimp-scale-${itype}-2.0 "image scale, $itype" -body {
+        {*}$astcl [crimp scale [$itype] 2]
+    } -result [set e_$itype]
+
+    test crimp-scale-${itype}-3.0 "image scale ($), input handling" -body {
+        crimp at [crimp scale [crimp place [$itype] 4 5] 10]
+    } -result {4 5}
+}
+
+# TODO: unsupported types - errors on unsupported types
+# TODO: error on argument type mismatch
+
+# -------------------------------------------------------------------------
+cleanupTests
+
+# Local variables:
+# mode: tcl
+# indent-tabs-mode: nil
+# End:

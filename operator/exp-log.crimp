@@ -4,10 +4,25 @@
 foreach type {
     float
     double
+    grey8
+    grey16
+    grey32
 } {
-    crimp_map_pixel $type exp   {} $type { z = exp(a);   }
     crimp_map_pixel $type log   {} $type { z = log(a);   }
     crimp_map_pixel $type log10 {} $type { z = log10(a); }
+    if {[string match grey* $type]} continue
+    crimp_map_pixel $type exp   {} $type { z = exp(a);   }
+}
+
+foreach type {
+    grey8
+    grey16
+    grey32
+} {
+    set map [list GREY [string toupper $type]]
+    crimp_map_pixel $type exp {} $type [string map $map {
+	z = CLAMPT (MINVAL, int, exp(a), MAXVAL_GREY);
+    }]
 }
 
 # - -- --- ----- -------- -------------

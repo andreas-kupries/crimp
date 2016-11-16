@@ -65,8 +65,57 @@ set l10_double [iconst double 0 0 5 5 {
     1.3010 1.3222 1.3424 1.3617 1.3802
 }]
 
+set e_grey8 [iconst grey8 0 0 5 5 {
+      1   2   7  20  54
+    148 255 255 255 255
+    255 255 255 255 255
+    255 255 255 255 255
+    255 255 255 255 255
+}]
 
-foreach itype [float2] {
+set e_grey16 [iconst grey16 0 0 5 5 {
+        1     2     7    20    54
+      148   403  1096  2980  8103
+    22026 59874 65535 65535 65535
+    65535 65535 65535 65535 65535
+    65535 65535 65535 65535 65535
+}]
+
+set e_grey32 [iconst grey32 0 0 5 5 {
+            1          2          7         20         54
+          148        403       1096       2980       8103
+        22026      59874     162754     442413    1202604
+      3269017    8886110   24154952   65659969  178482300
+    485165195 1318815734 2147483648 4294967295 4294967295
+}]
+
+foreach itype {grey8 grey16 grey32} {
+    set l_$itype [iconst $itype 0 0 5 5 {
+        0 0 0 1 1
+        1 1 1 2 2
+        2 2 2 2 2
+        2 2 2 2 2
+        2 3 3 3 3
+    }]
+
+    set l10_$itype [iconst $itype 0 0 5 5 {
+        0 0 0 0 0
+        0 0 0 0 0
+        1 1 1 1 1
+        1 1 1 1 1
+        1 1 1 1 1
+    }]
+}
+
+
+foreach itype [simples] {
+    if {[string match grey* $itype] ||
+        [string match r*    $itype] ||
+        [string match h*    $itype]} {
+        set astcl astcl
+    } else {
+        set astcl [list astclf [set n_$itype]]
+    }
     # - - -- --- ----- --------
 
     test crimp-exp-${itype}-1.0 "image exp, $itype, wrong\#args, not enough" -body {
@@ -78,7 +127,7 @@ foreach itype [float2] {
     } -returnCodes error -result [wa crimp exp image]
 
     test crimp-exp-${itype}-2.0 "image exp, $itype" -body {
-        astclf [set n_$itype] [crimp exp [$itype]]
+        {*}$astcl [crimp exp [$itype]]
     } -result [set e_$itype]
 
     test crimp-exp-${itype}-3.0 "image exp ($), input handling" -body {
@@ -96,7 +145,7 @@ foreach itype [float2] {
     } -returnCodes error -result [wa crimp log10 image]
 
     test crimp-log10-${itype}-2.0 "image log10, $itype" -body {
-        astclf [set n_$itype] [crimp log10 [$itype]]
+        {*}$astcl [crimp log10 [$itype]]
     } -result [set l10_$itype]
 
     # - - -- --- ----- --------
@@ -114,7 +163,7 @@ foreach itype [float2] {
     } -returnCodes error -result [wa crimp log image]
 
     test crimp-log-${itype}-2.0 "image log, $itype" -body {
-        astclf [set n_$itype] [crimp log [$itype]]
+        {*}$astcl [crimp log [$itype]]
     } -result [set l_$itype]
 
     test crimp-log-${itype}-3.0 "image log ($), input handling" -body {

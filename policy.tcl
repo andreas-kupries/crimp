@@ -1395,6 +1395,7 @@ proc ::crimp::split {image} {
 }
 
 # # ## ### ##### ######## #############
+## grey8 => LUT, grey16, grey32 - Direct implement
 
 proc ::crimp::exp {image} {
     set type [TypeOf $image]
@@ -1418,6 +1419,14 @@ proc ::crimp::log10 {image} {
 	return -code error "Unable to log10 images of type \"$type\""
     }
     return [log10_$type $image]
+}
+
+proc ::crimp::sqrt {image} {
+    set type [TypeOf $image]
+    if {![Has sqrt_$type]} {
+	return -code error "Unable to sqrt images of type \"$type\""
+    }
+    return [sqrt_$type $image]
 }
 
 # # ## ### ##### ######## #############
@@ -2019,7 +2028,7 @@ proc ::crimp::filter::MEAN_STDDEV {image radius fe values} {
 			   [::crimp::integrate $expanded] \
 			   $radius] \
 		      $factor]
-    set stddev   [::crimp::sqrt_float \
+    set stddev   [::crimp::sqrt \
 		      [::crimp::subtract \
 			   [::crimp::scale_float \
 				[::crimp::region_sum \

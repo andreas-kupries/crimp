@@ -1,39 +1,39 @@
+# See window.crimp for the derivation of the math.
+
 crimp_primitive window_fpcomplex {
     image_fpcomplex image
 } image {
-    crimp_image* result;
+    crimp_image* result = crimp_new_like (image);
 
-    int x, y;
-    float halfw, halfh, tmp, weightx, weighty;
+    int h = crimp_h (image);
+    int w = crimp_w (image);
 
+    int x, y, idx;
+    ITER (float,  incursor,  image);
+    ITER (float, outcursor, result);
 
-    /*
-     * outpixel(x,y) = weight(x,width) * weight(y,height) * inpixel(x,y)
-     *    where
-     *    w(x,range) = 1 - ((x - (range-1)/2) / (range/2))**2
-     */
+    for (y = 0; y < h; y++) {
+	double dy = (2*y - (double)h + 1) / (double)h;
+        double wy = 1.0 - dy * dy;
 
-    result = crimp_new_like (image);
+	for (x = 0; x < w; x++, NEXTN (incursor,2), NEXTN (outcursor,2)) {
+	    double zr;
+	    double zi;
+	    double ar = CURRENTN (incursor,0);
+	    double ai = CURRENTN (incursor,1);
 
-    halfw = crimp_w (image) / 2.0;
-    halfh = crimp_h (image) / 2.0;
+	    double dx = (2*x - (double)w + 1) / (double)w;
+	    double wx = 1.0 - dx * dx;
 
-    for (y = 0; y < crimp_h (image); y++) {
-        tmp     = (y - halfh - 0.5) / halfh;
-        weighty =  1.0 - tmp * tmp;
+	    zr = ar * wx * wy;
+	    zi = ai * wx * wy;
 
-        for (x = 0; x < crimp_w (image); x++) {
-	    tmp     = (x - halfw - 0.5) / halfw;
-	    weightx = 1.0 - tmp * tmp;
-
-	    RE (result, x, y) = RE (image, x, y) * weightx * weighty;
-	    IM (result, x, y) = IM (image, x, y) * weightx * weighty;
-        }
-    }   
+	    CURRENTN (outcursor,0) = zr;
+	    CURRENTN (outcursor,1) = zi;
+	}
+    }
 
     return result;
-
-
 }
 
 # - -- --- ----- -------- -------------

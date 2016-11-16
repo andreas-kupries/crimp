@@ -178,6 +178,11 @@ apply {{} {
 	@A.o = @@;
     } crimp_image_obj crimp_image_obj
 
+    critcl::argtype grey8  = int ;# limit to 0..255   (uint8_t), error, or wrap
+    critcl::argtype grey16 = int ;# limit to 0..65535 (uint16_t), error or wrap
+    critcl::argtype grey32 = int
+    # grey64 ?
+    
     # Note, the support structure is shared with image_obj_<<type>>
     # above, and the guard above was specified to match us here.
     critcl::argtypesupport image_obj {
@@ -268,6 +273,14 @@ proc crimp_map_type {type} {
 ## __NOTE__ As is not usable for multi-channel image types
 
 proc crimp_map_pixel {intype name arguments outtype body} {
+    # context for body:
+    # * a           - value of current pixel
+    # * z           - variable for transform result pixel
+    # * area        - numbers of pixels in input and output
+    # * arguments
+    # * <<outtype>> - type of output image data
+    # * <<intype>>  - type of input image data
+
     critcl::at::caller
     critcl::at::incrt $intype
     critcl::at::incrt $name
@@ -309,6 +322,122 @@ proc crimp_map_pixel {intype name arguments outtype body} {
 		<<intype>> a = CURRENT (incursor);
 		<<transformation>>
 		CURRENT (outcursor) = z;
+	    }
+
+	    return result;
+	}]
+}
+
+proc crimp_map_xy_pixel {intype name arguments outtype imginit rowinit body} {
+    # use options for img/row init ?
+    ##
+    # context for body:
+    # * w, h        - width and height of input & result
+    # * x, y        - location of current pixel (physical)
+    # * a           - value of current pixel
+    # * z           - variable for transform result pixel
+    # * area        - numbers of pixels in input and output
+    # * arguments
+    # * <<outtype>> - type of output image data
+    # * <<intype>>  - type of input image data
+
+    critcl::at::caller
+    critcl::at::incrt $intype
+    critcl::at::incrt $name
+    critcl::at::incrt $arguments
+    critcl::at::incrt $outtype ; set imgilocation [critcl::at::get*]
+    critcl::at::incrt $imginit ; set rowilocation [critcl::at::get*]
+    critcl::at::incrt $rowinit ; set bodylocation [critcl::at::get*]
+
+    if {$intype eq $outtype} {
+	set constructor crimp_new_like
+	append name _$intype
+    } else {
+	set constructor crimp_new_${outtype}_like
+	append name _2${outtype}_$intype
+    }
+
+    lappend map <<intype>>         [crimp_map_type $intype]
+    lappend map <<outtype>>        [crimp_map_type $outtype]
+
+    set imginit $imgilocation[string map $map $imginit]
+    set rowinit	$rowilocation[string map $map $rowinit]
+    set body 	$bodylocation[string map $map $body]
+    
+    lappend map <<transformation>> $body
+    lappend map <<imginit>>        $imginit
+    lappend map <<rowinit>>        $rowinit
+    lappend map <<constructor>>    $constructor
+
+    lappend params \
+	image_$intype image \
+	{*}$arguments
+
+    crimp_primitive $name \
+	$params \
+	image \
+	[string map $map {
+	    crimp_image* result = <<constructor>> (image);
+	    int h = crimp_h (image);
+	    int w = crimp_w (image);
+
+	    int x, y, idx;
+	    ITER (<<intype>>,  incursor,  image);
+	    ITER (<<outtype>>, outcursor, result);
+	    <<imginit>>
+
+	    for (y = 0; y < h; y++) {
+	        <<rowinit>>
+	        for (x = 0; x < w; x++, NEXT (incursor), NEXT (outcursor)) {
+		    <<outtype>> z;
+		    <<intype>> a = CURRENT (incursor);
+		    <<transformation>>
+		    CURRENT (outcursor) = z;
+		}
+	    }
+
+	    return result;
+	}]
+}
+
+proc crimp_gen_pixel {name arguments outtype body} {
+    # context for body
+    # * <<outtype>> - type of result pixel
+    # * w, h
+    # * arguments
+    
+    critcl::at::caller
+    critcl::at::incrt $name
+    critcl::at::incrt $arguments
+    critcl::at::incrt $outtype
+    set bodylocation [critcl::at::get*]
+
+    set constructor crimp_new_${outtype}
+    append name _${outtype}
+
+    lappend map <<outtype>>        [crimp_map_type $outtype]
+    lappend map <<transformation>> \
+	$bodylocation[string map $map $body]
+    lappend map <<constructor>>    $constructor
+
+    lappend params int w int h {*}$arguments
+
+    crimp_primitive $name \
+	$params \
+	image \
+	[string map $map {
+	    crimp_image* result = <<constructor>> (w, h);
+
+	    if (w && h) {
+		int area = CRIMP_RECT_AREA (w, h);
+		int idx;
+		ITER (<<outtype>>, outcursor, result);
+
+		for (idx = 0; idx < area; idx++, NEXT (outcursor)) {
+		    <<outtype>> z;
+		    <<transformation>>
+		    CURRENT (outcursor) = z;
+		}
 	    }
 
 	    return result;

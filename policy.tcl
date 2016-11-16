@@ -570,7 +570,13 @@ proc ::crimp::montage::vertical {args} {
 # # ## ### ##### ######## #############
 
 proc ::crimp::invert {image} {
-    remap $image [map invers]
+    set type [TypeOf $image]
+    set f     invert_${type}
+    if {![Has $f]} {
+	return [remap $image [map invers]]
+	#return -code error "Invert is not supported by \"$type\""
+    }
+    return [$f $image]
 }
 
 proc ::crimp::solarize {image n} {

@@ -1,0 +1,28 @@
+#
+# Pixelwise application of a multiplicative factor.
+#
+foreach type {
+    float
+    double
+} {
+    crimp_map_pixel $type scale [list $type factor] $type { z = a * factor; }
+}
+foreach type {
+    grey8
+    grey16
+    grey32
+} {
+    set map [list GREY [string toupper $type]]
+    crimp_map_pixel $type scale [list $type factor] $type [string map $map {
+	z = CLAMPT (MINVAL, int, a * factor, MAXVAL_GREY);
+    }]
+}
+
+# - -- --- ----- -------- -------------
+# vim: set sts=4 sw=4 tw=80 et ft=tcl:
+#
+# Local Variables:
+# mode: tcl
+# fill-column: 78
+# End:
+#
